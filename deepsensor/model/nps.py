@@ -37,10 +37,16 @@ def convert_task_to_nps_args(task):
     return context_data, xt, yt, model_kwargs
 
 
-def run_nps_model(neural_process, task, n_samples=None):
+def run_nps_model(neural_process, task, n_samples=None, requires_grad=False):
     """Run `neuralprocesses` model"""
     context_data, xt, yt, model_kwargs = convert_task_to_nps_args(task)
-    dist = neural_process(context_data, xt, **model_kwargs, num_samples=n_samples)
+    if backend.str == "torch" and not requires_grad:
+        # turn off grad
+        import torch
+        with torch.no_grad():
+            dist = neural_process(context_data, xt, **model_kwargs, num_samples=n_samples)
+    else:
+        dist = neural_process(context_data, xt, **model_kwargs, num_samples=n_samples)
     return dist
 
 

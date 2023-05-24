@@ -333,10 +333,10 @@ class ConvNP(DeepSensorModel):
             raise ValueError(f"Task has been modified for {task['modify']}.")
         return task
 
-    def __call__(self, task, n_samples=10):
+    def __call__(self, task, n_samples=10, requires_grad=False):
         """Compute ConvNP distribution."""
         task = ConvNP.check_task(task)
-        dist = run_nps_model(self.model, task, n_samples)
+        dist = run_nps_model(self.model, task, n_samples, requires_grad)
         return dist
 
     @dispatch
