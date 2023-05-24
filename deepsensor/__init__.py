@@ -2,6 +2,7 @@ from .data import *
 from .model import *
 from .plot import *
 
+
 class Backend:
     """Backend for deepsensor
 
@@ -10,6 +11,8 @@ class Backend:
 
     Usage: blah
     """
+
     pass
+
 
 backend = Backend()

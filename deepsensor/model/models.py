@@ -25,6 +25,7 @@ from plum import dispatch
 # For dispatching with TF and PyTorch model types when they have not yet been loaded.
 # See https://beartype.github.io/plum/types.html#moduletype
 from plum import ModuleType
+
 TFModel = ModuleType("tensorflow.keras", "Model")
 TorchModel = ModuleType("torch.nn", "Module")
 
@@ -373,7 +374,10 @@ class ConvNP(DeepSensorModel):
 
     @dispatch
     def logpdf(
-        self, dist: backend.nps.AbstractMultiOutputDistribution, task: dict, station_set_idx=0
+        self,
+        dist: backend.nps.AbstractMultiOutputDistribution,
+        task: dict,
+        station_set_idx=0,
     ):
         # Need Y_target to be the right shape for model in the event that task is from the
         # default DataLoader... is this the best way to do this?
