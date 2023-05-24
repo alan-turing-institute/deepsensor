@@ -67,12 +67,7 @@ def construct_neural_process(
     epsilon=1e-2,
     dtype=np.float32,
 ):
-    """Construct a `neuralprocesses` model
-
-    Parameters
-    ----------
-    task_loader : TaskLoader
-    """
+    """Construct a `neuralprocesses` ConvNP model"""
 
     # Use a stride of 1 for the first layer and 2 for all other layers
     unet_strides = (1, *(2,) * (len(unet_channels) - 1))
