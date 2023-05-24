@@ -4,8 +4,6 @@ import lab.torch  # noqa
 # Load the TF extension in nps (to assign to deepsensor backend)
 import neuralprocesses.torch as nps
 
-from .. import *  # noqa
-
 import torch
 
 # Necessary for dispatching with TF and PyTorch model types when they have not yet been loaded.
@@ -24,3 +22,4 @@ from deepsensor import backend
 backend.nps = nps
 backend.model = torch.nn.Module
 backend.convert_to_tensor = convert_to_tensor
+backend.str = "torch"

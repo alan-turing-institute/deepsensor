@@ -25,3 +25,4 @@ from deepsensor import backend
 backend.nps = nps
 backend.model = tf.keras.Model
 backend.convert_to_tensor = convert_to_tensor
+backend.str = "tf"

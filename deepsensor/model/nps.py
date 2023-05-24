@@ -65,12 +65,20 @@ def construct_neural_process(
     decoder_scale_learnable=False,
     num_basis_functions=64,
     epsilon=1e-2,
-    dtype=np.float32,
 ):
     """Construct a `neuralprocesses` ConvNP model"""
 
     # Use a stride of 1 for the first layer and 2 for all other layers
     unet_strides = (1, *(2,) * (len(unet_channels) - 1))
+
+    if backend.str == "torch":
+        import torch
+        dtype = torch.float32
+    elif backend.str == "tf":
+        import tensorflow as tf
+        dtype = tf.float32
+    else:
+        raise NotImplementedError(f"Backend {backend.str} has no default dtype.")
 
     neural_process = backend.nps.construct_convgnp(
         dim_x=dim_x,
