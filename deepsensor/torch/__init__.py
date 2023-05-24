@@ -5,6 +5,7 @@ import lab.torch  # noqa
 import neuralprocesses.torch as nps
 
 import torch
+import torch.nn
 
 # Necessary for dispatching with TF and PyTorch model types when they have not yet been loaded.
 # See https://beartype.github.io/plum/types.html#moduletype
