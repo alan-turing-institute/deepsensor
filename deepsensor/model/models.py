@@ -1,6 +1,7 @@
 from deepsensor import backend
 from deepsensor.model.defaults import gen_encoder_scales, gen_ppu
 from deepsensor.data.loader import TaskLoader
+from deepsensor.data.processor import DataProcessor
 from deepsensor.data.task import Task
 from deepsensor.model.nps import (
     convert_task_to_nps_args,
@@ -165,6 +166,19 @@ class DeepSensorModel(ProbabilisticModel):
     object containing off-grid predictions.
     """
 
+    def __init__(
+        self,
+        data_processor: DataProcessor = None,
+        task_loader: TaskLoader = None,
+    ):
+        """Initialise DeepSensorModel
+
+        :param task_loader: TaskLoader object, used to determine target variables for unnormalising
+        :param data_processor: DataProcessor object, used to unnormalise predictions
+        """
+        self.task_loader = task_loader
+        self.data_processor = data_processor
+
     def predict_ongrid(
         self,
         tasks: Union[List[dict], dict],
@@ -259,19 +273,34 @@ class ConvNP(DeepSensorModel):
 
     @dispatch
     def __init__(self, *args, **kwargs):
-        """Generate a new model with default or specified parameters"""
+        """Generate a new model using `nps.construct_convgnp` with default or specified parameters
+
+        This method does not take a `TaskLoader` or `DataProcessor` object, so the model
+        will not auto-unnormalise predictions at inference time.
+        """
+        # The parent class will instantiate with `task_loader` and `data_processor` set to None,
+        # so unnormalisation will not be performed at inference time.
+        super().__init__()
+
         self.model = construct_neural_process(
             *args,
             **kwargs,
         )
 
     @dispatch
-    def __init__(self, task_loader: TaskLoader, *args, **kwargs):
-        """Generate a new model from TaskLoader, using data to infer sensible model parameters
+    def __init__(self,
+                 data_processor: DataProcessor,
+                 task_loader: TaskLoader,
+                 *args,
+                 **kwargs):
+        """Instantiate model from TaskLoader, using data to infer model parameters (unless overridden)
 
         Args:
+            data_processor (DataProcessor, optional): DataProcessor object. Defaults to None.
             task_loader (TaskLoader): TaskLoader object
         """
+        super().__init__(data_processor, task_loader)
+
         if "dim_yc" not in kwargs:
             dim_yc = task_loader.context_dims
             print(f"dim_yc inferred from TaskLoader: {dim_yc}")
@@ -296,8 +325,15 @@ class ConvNP(DeepSensorModel):
         )
 
     @dispatch
-    def __init__(self, neural_process: Union[TFModel, TorchModel]):
-        """Use existing model object."""
+    def __init__(
+        self,
+        data_processor: DataProcessor,
+        task_loader: TaskLoader,
+        neural_process: Union[TFModel, TorchModel],
+    ):
+        """Instantiate with a pre-defined neural process model"""
+        super().__init__(data_processor, task_loader)
+
         self.model = neural_process
 
     @classmethod
