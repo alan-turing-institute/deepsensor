@@ -3,6 +3,7 @@ tensorflow_probability
 torch<2  # backends/lab is not compatible with torch 2.0
 backends
 matplotlib
+cartopy
 matrix
 neuralprocesses
 numpy
