@@ -385,36 +385,36 @@ class ConvNP(DeepSensorModel):
 
     @dispatch
     def predict(self, dist: backend.nps.AbstractMultiOutputDistribution):
-        return dist.mean.numpy()[0, 0, 0]
+        return B.to_numpy(dist.mean)[0, 0]
 
     @dispatch
     def predict(self, task: dict):
-        return self(task).mean.numpy()[0, 0, 0]
+        return B.to_numpy(self(task).mean)[0, 0]
 
     @dispatch
     def entropy(self, dist: backend.nps.AbstractMultiOutputDistribution):
         """Model entropy over target points given context points."""
-        return dist.entropy().numpy()[0, 0]
+        return B.to_numpy(dist.entropy())[0]
 
     @dispatch
     def entropy(self, task: dict):
-        return self(task).entropy().numpy()[0, 0]
+        return B.to_numpy(self(task).entropy())[0]
 
     @dispatch
     def covariance(self, dist: backend.nps.AbstractMultiOutputDistribution):
-        return B.dense(dist.vectorised_normal.var).numpy()[0, 0]
+        return B.to_numpy(B.dense(dist.vectorised_normal.var))[0]
 
     @dispatch
     def covariance(self, task: dict):
-        return B.dense(self(task).vectorised_normal.var).numpy()[0, 0]
+        return B.to_numpy(B.dense(self(task).vectorised_normal.var))[0]
 
     @dispatch
     def variance(self, dist: backend.nps.AbstractMultiOutputDistribution):
-        return dist.var.numpy()[0, 0, 0]
+        return B.to_numpy(dist.var)[0, 0]
 
     @dispatch
     def variance(self, task: dict):
-        return self(task).var.numpy()[0, 0, 0]
+        return B.to_numpy(self(task).var)[0, 0]
 
     @dispatch
     def logpdf(
@@ -428,7 +428,7 @@ class ConvNP(DeepSensorModel):
         task = ConvNP.check_task(task)
 
         Y_target = task["Y_t"][station_set_idx]
-        return dist.logpdf(Y_target).numpy().mean()
+        return B.to_numpy(dist.logpdf(Y_target)).mean()
 
     @dispatch
     def logpdf(self, task: dict, station_set_idx=0):
@@ -437,7 +437,7 @@ class ConvNP(DeepSensorModel):
         task = ConvNP.check_task(task)
 
         Y_target = task["Y_t"][station_set_idx]
-        return self(task).logpdf(Y_target).numpy().mean()
+        return B.to_numpy(self(task).logpdf(Y_target)).mean()
 
     def loss_fn(self, task, fix_noise=None, num_lv_samples=8, normalise=False):
         """
@@ -475,15 +475,11 @@ class ConvNP(DeepSensorModel):
     @dispatch
     # TEMP trying wessel's `num_samples` kwarg for model call signature, followed by simple .sample() call
     def sample(self, dist: backend.nps.AbstractMultiOutputDistribution, n_samples=1):
-        return dist.noiseless.sample(n_samples).numpy()[
-            :, 0, 0, 0
-        ]  # first batch, first feature
+        return B.to_numpy(dist.noiseless.sample(n_samples))[:, 0, 0]  # first batch
 
     @dispatch
     def sample(self, task: dict, n_samples=1):
-        return (
-            self(task).noiseless.sample(n_samples).numpy()[:, 0, 0, 0]
-        )  # first batch, first feature
+        return B.to_numpy(self(task).noiseless.sample(n_samples))[:, 0, 0]  # first batch
 
     @dispatch
     def slice_diag(self, task: dict):
@@ -543,7 +539,7 @@ class ConvNP(DeepSensorModel):
         )
 
         # Slice out first (and assumed only) target entry in nps.Aggregate object
-        noiseless_samples = noiseless_samples[0].numpy()
+        noiseless_samples = B.to_numpy(noiseless_samples)[0]
 
         if ar_subsample_factor > 1 or X_target_AR is not None:
             # AR sample locations not equal to target locations - infill the rest of the
