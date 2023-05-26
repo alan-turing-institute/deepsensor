@@ -1,7 +1,10 @@
 import numpy as np
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+import cartopy
 
 from deepsensor.model.nps import compute_encoding_tensor
 
@@ -92,3 +95,34 @@ def plot_context_encoding(
 
     plt.tight_layout()
     return fig
+
+
+def plot_offgrid_context(axes, task, data_processor=None, **scatter_kwargs):
+    """Plot the off-grid context points on `axes`
+
+    Uses `data_processor` to unnormalise the context coordinates if provided.
+    """
+    markers = 'ovs^D'
+    colors = 'kbrgy'
+
+    if type(axes) is np.ndarray:
+        axes = axes.ravel()
+    elif isinstance(axes, (mpl.axes.Axes, cartopy.mpl.geoaxes.GeoAxesSubplot)):
+        axes = [axes]
+
+    for context_i, X_c in enumerate(task["X_c"]):
+        if isinstance(X_c, tuple):
+            continue  # Don't plot gridded context data locations
+        if X_c.ndim == 3:
+            X_c = X_c[0]  # select first batch
+
+        if data_processor is not None:
+            X_c = data_processor.map_coord_array(X_c, unnorm=True)
+
+        X_c = X_c[::-1]  # flip 2D coords for Cartesian fmt
+
+        for ax in axes:
+            ax.scatter(
+                *X_c, marker=markers[context_i], color=colors[context_i],
+                **scatter_kwargs, facecolors=None if markers[context_i] == 'x' else "none"
+            )
