@@ -399,7 +399,7 @@ class TaskLoader:
         task["X_t"] = []
         task["Y_t"] = []
 
-        def sample_variable(var, sampling_strat, delta_t):
+        def sample_variable(var, sampling_strat, delta_t, seed):
             delta_t = pd.Timedelta(delta_t, unit=self.time_freq)
             if isinstance(var, (xr.Dataset, xr.DataArray)):
                 if "time" in var.dims:
@@ -417,13 +417,15 @@ class TaskLoader:
         for i, (var, sampling_strat, delta_t) in enumerate(
             zip(self.context, context_sampling, self.context_delta_t)
         ):
-            X_c, Y_c = sample_variable(var, sampling_strat, delta_t)
+            context_seed = seed + i if seed is not None else None
+            X_c, Y_c = sample_variable(var, sampling_strat, delta_t, context_seed)
             task[f"X_c"].append(X_c)
             task[f"Y_c"].append(Y_c)
         for i, (var, sampling_strat, delta_t) in enumerate(
             zip(self.target, target_sampling, self.target_delta_t)
         ):
-            X_t, Y_t = sample_variable(var, sampling_strat, delta_t)
+            target_seed = seed + i if seed is not None else None
+            X_t, Y_t = sample_variable(var, sampling_strat, delta_t, target_seed)
             task[f"X_t"].append(X_t)
             task[f"Y_t"].append(Y_t)
 
