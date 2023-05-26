@@ -214,7 +214,7 @@ class TaskLoader:
             """If delta_ts is not None, then add the delta_t to the variable ID"""
             var_IDs = []
             # Distinguish between xr.DataArray, xr.Dataset and pd.DataFrame
-            for i, (var, delta_t) in enumerate(zip(datasets, delta_ts)):
+            for i, var, in enumerate(datasets):
                 if isinstance(var, xr.DataArray):
                     var_ID = (var.name,)  # Single data variable
                 elif isinstance(var, xr.Dataset):
@@ -224,9 +224,9 @@ class TaskLoader:
                 else:
                     raise ValueError(f"Unknown type {type(var)} for context set {var}")
 
-                if delta_t is not None:
+                if delta_ts is not None:
                     # Add delta_t to the variable ID
-                    var_ID = tuple([f"{var_ID_i}_t{delta_t}" for var_ID_i in var_ID])
+                    var_ID = tuple([f"{var_ID_i}_t{delta_ts[i]}" for var_ID_i in var_ID])
                 else:
                     var_ID = tuple([f"{var_ID_i}" for var_ID_i in var_ID])
 
