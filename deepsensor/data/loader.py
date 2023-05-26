@@ -118,6 +118,8 @@ class TaskLoader:
         (
             self.context_var_IDs,
             self.target_var_IDs,
+            self.context_var_IDs_and_delta_t,
+            self.target_var_IDs_and_delta_t,
         ) = self.infer_context_and_target_var_IDs()
 
     def cast_context_and_target_to_dtype(
@@ -208,7 +210,8 @@ class TaskLoader:
         target_var_IDs : tuple. Tuple of variable IDs in the target data.
         """
 
-        def infer_var_IDs_of_tuple_of_sets(datasets, delta_ts):
+        def infer_var_IDs_of_tuple_of_sets(datasets, delta_ts=None):
+            """If delta_ts is not None, then add the delta_t to the variable ID"""
             var_IDs = []
             # Distinguish between xr.DataArray, xr.Dataset and pd.DataFrame
             for i, (var, delta_t) in enumerate(zip(datasets, delta_ts)):
@@ -221,20 +224,26 @@ class TaskLoader:
                 else:
                     raise ValueError(f"Unknown type {type(var)} for context set {var}")
 
-                # Add delta_t to the variable ID
-                var_ID = tuple([f"{var_ID_i}_t{delta_t}" for var_ID_i in var_ID])
+                if delta_t is not None:
+                    # Add delta_t to the variable ID
+                    var_ID = tuple([f"{var_ID_i}_t{delta_t}" for var_ID_i in var_ID])
+                else:
+                    var_ID = tuple([f"{var_ID_i}" for var_ID_i in var_ID])
+
                 var_IDs.append(var_ID)
 
             return tuple(var_IDs)
 
-        context_var_IDs = infer_var_IDs_of_tuple_of_sets(
+        context_var_IDs = infer_var_IDs_of_tuple_of_sets(self.context)
+        context_var_IDs_and_delta_t = infer_var_IDs_of_tuple_of_sets(
             self.context, self.context_delta_t
         )
-        target_var_IDs = infer_var_IDs_of_tuple_of_sets(
+        target_var_IDs = infer_var_IDs_of_tuple_of_sets(self.target)
+        target_var_IDs_and_delta_t = infer_var_IDs_of_tuple_of_sets(
             self.target, self.target_delta_t
         )
 
-        return context_var_IDs, target_var_IDs
+        return context_var_IDs, target_var_IDs, context_var_IDs_and_delta_t, target_var_IDs_and_delta_t
 
     def __repr__(self):
         """Representation of the TaskLoader object (for developers)
@@ -242,8 +251,8 @@ class TaskLoader:
         TODO make this a more verbose version of __str__
         """
         s = f"TaskLoader({len(self.context)} context sets, {len(self.target)} target sets)"
-        s += f"\nContext variable IDs: {self.context_var_IDs}"
-        s += f"\nTarget variable IDs: {self.target_var_IDs}"
+        s += f"\nContext variable IDs: {self.context_var_IDs_and_delta_t}"
+        s += f"\nTarget variable IDs: {self.target_var_IDs_and_delta_t}"
         s += f"\nContext data dimensions: {self.context_dims}"
         s += f"\nTarget data dimensions: {self.target_dims}"
         return s
