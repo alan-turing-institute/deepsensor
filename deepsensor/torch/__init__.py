@@ -13,6 +13,8 @@ from plum import clear_all_cache
 
 clear_all_cache()
 
+from .. import *  # noqa
+
 
 def convert_to_tensor(arr):
     return torch.tensor(arr)
