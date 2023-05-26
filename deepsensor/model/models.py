@@ -31,7 +31,7 @@ TFModel = ModuleType("tensorflow.keras", "Model")
 TorchModel = ModuleType("torch.nn", "Module")
 
 
-def create_empty_downscale_array(
+def create_empty_prediction_array(
     dates,
     downscaling_factor,
     reference_grid,
@@ -62,8 +62,15 @@ def create_empty_downscale_array(
     }
 
     pred_ds = xr.Dataset(
-        {data_var: xr.DataArray(dims=dims, coords=coords) for data_var in data_vars}
-    )
+        {data_var: xr.DataArray(dims=dims, coords=coords) for data_var in data_vars},
+    ).astype("float32")
+
+    # Convert time coord to pandas timestamps
+    pred_ds = pred_ds.assign_coords(time=pd.to_datetime(pred_ds.time.values))
+
+    # TODO: Convert init time to forecast time?
+    # pred_ds = pred_ds.assign_coords(
+    #     time=pred_ds['time'] + pd.Timedelta(days=task_loader.target_delta_t[0]))
 
     return pred_ds
 
@@ -191,6 +198,9 @@ class DeepSensorModel(ProbabilisticModel):
     ):
         """Predict on a regular grid
 
+        TODO:
+        - Test with multiple targets model
+
         Returns:
             pred_ds (xr.Dataset): Dataset containing the predictions
         """
@@ -199,63 +209,62 @@ class DeepSensorModel(ProbabilisticModel):
         if type(tasks) is Task:
             tasks = [tasks]
 
-        vars = ["mean", "std"]
-        if n_samples >= 1:
-            vars.extend(list(range(n_samples)))
-
         dates = [task["time"] for task in tasks]
-        pred_ds = create_empty_downscale_array(
-            dates, downscaling_factor, reference_grid, data_vars=vars
-        )
+
+        target_var_IDs = self.task_loader.target_var_IDs[0]  # TEMP just first target set
+
+        mean_ds = create_empty_prediction_array(
+            dates, downscaling_factor, reference_grid, data_vars=target_var_IDs
+        ).to_array(dim="data_var")
+        std_ds = create_empty_prediction_array(
+            dates, downscaling_factor, reference_grid, data_vars=target_var_IDs
+        ).to_array(dim="data_var")
+        if n_samples >= 1:
+            samples_ds = create_empty_prediction_array(
+                dates, downscaling_factor, reference_grid, data_vars=target_var_IDs
+            ).to_array(dim="data_var")
+            samples_ds = samples_ds.expand_dims(dim=dict(sample=np.arange(n_samples))).copy()
 
         X_target = [
-            (pred_ds["x1"].values, pred_ds["x2"].values) for i in range(1)
+            (mean_ds["x1"].values, mean_ds["x2"].values) for i in range(1)
         ]  # TODO - fix this by using number of targets
 
         for task in tqdm(tasks, position=0, disable=progress_bar < 1, leave=True):
-            predictions = {var: [] for var in vars}
-
             task["X_t"] = X_target
 
             # Run model forwards once to generate output distribution
             dist = self(task, n_samples=n_samples)
 
-            predictions["mean"].append(self.predict(dist))
-            predictions["std"].append(self.stddev(dist))
+            self.predict(dist).shape
+            mean_ds
+            mean_ds.sel(time=task["time"]).shape
+
+            mean_ds.loc[:, task["time"], :, :] = self.predict(dist)
+            std_ds.loc[:, task["time"], :, :] = self.stddev(dist)
             if n_samples >= 1:
-                # Is there a way to jointly draw N batched samples?
                 B.set_random_seed(seed)
                 np.random.seed(seed)
-                samples = self.sample(dist, n_samples=n_samples)
-                for i, sample in enumerate(samples):
-                    # This could be improved
-                    predictions[i].append(sample)
+                samples_ds.loc[:, :, task["time"], :, :] = self.sample(dist, n_samples=n_samples)
 
-            # Convert batched outputs to single arrays
-            for var in vars:
-                arr = np.array(predictions[var])
-                # Store
-                pred_ds[var].loc[task["time"], :, :] = arr[
-                    0
-                ]  # Slice 1st batch dim what about multiple targets? TODO fix
-
+        mean_ds = mean_ds.to_dataset(dim="data_var")
+        std_ds = std_ds.to_dataset(dim="data_var")
         if n_samples >= 1:
-            mean_std_pred_ds = pred_ds[["mean", "std"]]
-            pred_ds = pred_ds.drop(["mean", "std"])
-            sample_pred_ds = pred_ds.to_array().rename({"variable": "sample"})
-            prediction_ds_dict = {"samples": sample_pred_ds}
-            prediction_ds_dict["mean"] = mean_std_pred_ds["mean"]
-            prediction_ds_dict["std"] = mean_std_pred_ds["std"]
-            pred_ds = xr.Dataset(prediction_ds_dict)
+            samples_ds = samples_ds.to_dataset(dim="data_var")
 
-        # Convert time coord to pandas timestamps
-        pred_ds = pred_ds.assign_coords(time=pd.to_datetime(pred_ds.time.values))
+        if self.task_loader is not None and self.data_processor is not None:
+            mean_ds = self.data_processor.unnormalise(mean_ds)
+            std_ds = self.data_processor.unnormalise(std_ds, add_offset=False)
+            if n_samples >= 1:
+                samples_ds = self.data_processor.unnormalise(samples_ds)
 
         if verbose:
             dur = time.time() - tic
             print(f"Done in {np.floor(dur / 60)}m:{dur % 60:.0f}s.\n")
 
-        return pred_ds
+        if n_samples >= 1:
+            return mean_ds, std_ds, samples_ds
+        else:
+            return mean_ds, std_ds
 
 
 class ConvNP(DeepSensorModel):
@@ -268,7 +277,6 @@ class ConvNP(DeepSensorModel):
     Alternatively, the model can be run forwards with a `task` dictionary of data
     from the `DataLoader`.
 
-    TODO put dim_y dimension back in to support N-D predictions.
     """
 
     @dispatch
