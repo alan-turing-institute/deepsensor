@@ -103,7 +103,8 @@ class DataProcessor:
             if self.verbose:
                 print(
                     f"Normalisation params for {var_ID} not computed. Computing now... ",
-                    end="", flush=True,
+                    end="",
+                    flush=True,
                 )
             DataProcessor.load_dask(data)
             if method == "mean_std":
@@ -113,7 +114,9 @@ class DataProcessor:
                 param1 = float(data.min())
                 param2 = float(data.max())
             if self.verbose:
-                print(f"Done. {var_ID} {param1_ID}={param1:.3f}, {param2_ID}={param2:.3f}")
+                print(
+                    f"Done. {var_ID} {param1_ID}={param1:.3f}, {param2_ID}={param2:.3f}"
+                )
             self.add_to_norm_params(var_ID, **{param1_ID: param1, param2_ID: param2})
         else:
             param1 = self.norm_params[var_ID][param1_ID]
@@ -203,7 +206,9 @@ class DataProcessor:
         elif isinstance(data, (xr.Dataset, pd.DataFrame)):
             # Multiple vars
             for var_ID in data:
-                param1, param2 = self.get_norm_params(var_ID, data[var_ID], method, unnorm)
+                param1, param2 = self.get_norm_params(
+                    var_ID, data[var_ID], method, unnorm
+                )
                 data[var_ID] = mapper(data[var_ID], param1, param2, method)
 
         data = self.map_coords(data, unnorm=unnorm)

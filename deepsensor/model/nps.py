@@ -1,5 +1,5 @@
 from deepsensor import backend
-import numpy as np
+import lab as B
 
 
 def convert_task_to_nps_args(task):
@@ -43,8 +43,11 @@ def run_nps_model(neural_process, task, n_samples=None, requires_grad=False):
     if backend.str == "torch" and not requires_grad:
         # turn off grad
         import torch
+
         with torch.no_grad():
-            dist = neural_process(context_data, xt, **model_kwargs, num_samples=n_samples)
+            dist = neural_process(
+                context_data, xt, **model_kwargs, num_samples=n_samples
+            )
     else:
         dist = neural_process(context_data, xt, **model_kwargs, num_samples=n_samples)
     return dist
@@ -79,9 +82,11 @@ def construct_neural_process(
 
     if backend.str == "torch":
         import torch
+
         dtype = torch.float32
     elif backend.str == "tf":
         import tensorflow as tf
+
         dtype = tf.float32
     else:
         raise NotImplementedError(f"Backend {backend.str} has no default dtype.")

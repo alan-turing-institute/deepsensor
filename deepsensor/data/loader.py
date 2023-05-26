@@ -243,7 +243,12 @@ class TaskLoader:
             self.target, self.target_delta_t
         )
 
-        return context_var_IDs, target_var_IDs, context_var_IDs_and_delta_t, target_var_IDs_and_delta_t
+        return (
+            context_var_IDs,
+            target_var_IDs,
+            context_var_IDs_and_delta_t,
+            target_var_IDs_and_delta_t,
+        )
 
     def __repr__(self):
         """Representation of the TaskLoader object (for developers)
