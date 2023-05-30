@@ -281,7 +281,8 @@ class DeepSensorModel(ProbabilisticModel):
                     for idxs in X_t.index
                 ]
                 index_samples = pd.MultiIndex.from_tuples(
-                    idxs_samples, names=["sample", "time", *X_t.index.names],
+                    idxs_samples,
+                    names=["sample", "time", *X_t.index.names],
                 )
                 samples = pd.DataFrame(index=index_samples, columns=target_var_IDs)
 
@@ -310,7 +311,9 @@ class DeepSensorModel(ProbabilisticModel):
                 if n_samples >= 1:
                     B.set_random_seed(seed)
                     np.random.seed(seed)
-                    samples_arr = self.sample(dist, n_samples=n_samples, noiseless=noiseless_samples)
+                    samples_arr = self.sample(
+                        dist, n_samples=n_samples, noiseless=noiseless_samples
+                    )
                     for sample_i in range(n_samples):
                         samples.loc[sample_i, task["time"]] = samples_arr[sample_i].T
 
@@ -366,7 +369,12 @@ class ConvNP(DeepSensorModel):
 
     @dispatch
     def __init__(
-        self, data_processor: DataProcessor, task_loader: TaskLoader, *args, **kwargs
+        self,
+        data_processor: DataProcessor,
+        task_loader: TaskLoader,
+        *args,
+        verbose: bool = True,
+        **kwargs,
     ):
         """Instantiate model from TaskLoader, using data to infer model parameters (unless overridden)
 
@@ -378,19 +386,23 @@ class ConvNP(DeepSensorModel):
 
         if "dim_yc" not in kwargs:
             dim_yc = task_loader.context_dims
-            print(f"dim_yc inferred from TaskLoader: {dim_yc}")
+            if verbose:
+                print(f"dim_yc inferred from TaskLoader: {dim_yc}")
             kwargs["dim_yc"] = dim_yc
         if "dim_yt" not in kwargs:
             dim_yt = sum(task_loader.target_dims)  # Must be an int
-            print(f"dim_yt inferred from TaskLoader: {dim_yt}")
+            if verbose:
+                print(f"dim_yt inferred from TaskLoader: {dim_yt}")
             kwargs["dim_yt"] = dim_yt
         if "points_per_unit" not in kwargs:
             ppu = gen_ppu(task_loader)
-            print(f"points_per_unit inferred from TaskLoader: {ppu}")
+            if verbose:
+                print(f"points_per_unit inferred from TaskLoader: {ppu}")
             kwargs["points_per_unit"] = ppu
         if "encoder_scales" not in kwargs:
             encoder_scales = gen_encoder_scales(kwargs["points_per_unit"], task_loader)
-            print(f"encoder_scales inferred from TaskLoader: {encoder_scales}")
+            if verbose:
+                print(f"encoder_scales inferred from TaskLoader: {encoder_scales}")
             kwargs["encoder_scales"] = encoder_scales
 
         self.model = construct_neural_process(
@@ -543,7 +555,12 @@ class ConvNP(DeepSensorModel):
         return loss
 
     @dispatch
-    def sample(self, dist: backend.nps.AbstractMultiOutputDistribution, n_samples=1, noiseless=True):
+    def sample(
+        self,
+        dist: backend.nps.AbstractMultiOutputDistribution,
+        n_samples=1,
+        noiseless=True,
+    ):
         if noiseless:
             return B.to_numpy(dist.noiseless.sample(n_samples))[:, 0, 0]  # first batch
         else:
