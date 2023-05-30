@@ -18,6 +18,7 @@ def plot_context_encoding(
     cbar=True,
     clim=None,
     cmap="viridis",
+    verbose_titles=True,
     titles=None,
     size=3,
 ):
@@ -34,8 +35,12 @@ def plot_context_encoding(
         Indices of context sets to plot, by default None (plots all context sets)
     land_idx : int, optional
         Index of the land mask in the encoding (used to overlay land contour on plots), by default None
+    verbose_titles : bool, optional
+        Whether to include verbose titles for the variable IDs in the context set (including
+        the time index), by default True
     titles : list, optional
-        List of titles for each subplot, by default None
+        List of titles to override for each subplot, by default None.
+        If None, titles are generated from context set metadata
     size : int, optional
         Size of the figure in inches, by default 20
     """
@@ -60,7 +65,10 @@ def plot_context_encoding(
 
     channel_i = 0
     for ctx_i in context_set_idxs:
-        var_IDs = task_loader.context_var_IDs[ctx_i]
+        if verbose_titles:
+            var_IDs = task_loader.context_var_IDs_and_delta_t[ctx_i]
+        else:
+            var_IDs = task_loader.context_var_IDs[ctx_i]
         size = task_loader.context_dims[ctx_i] + 1  # Add density channel
         for var_i in range(size):
             ax = axes[ctx_i, var_i]
