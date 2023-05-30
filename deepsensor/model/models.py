@@ -33,24 +33,24 @@ TorchModel = ModuleType("torch.nn", "Module")
 
 def create_empty_prediction_array(
     dates,
-    downscaling_factor,
-    reference_grid,
+    resolution_factor,
+    X_t,
     coord_names={"x1": "x1", "x2": "x2"},
     data_vars=["mean", "std"],
 ):
-    x1_lowres = reference_grid.coords[coord_names["x1"]]
-    x2_lowres = reference_grid.coords[coord_names["x2"]]
+    x1_lowres = X_t.coords[coord_names["x1"]]
+    x2_lowres = X_t.coords[coord_names["x2"]]
 
     x1_hires = np.linspace(
         x1_lowres[0],
         x1_lowres[-1],
-        int(x1_lowres.size * downscaling_factor),
+        int(x1_lowres.size * resolution_factor),
         dtype="float32",
     )
     x2_hires = np.linspace(
         x2_lowres[0],
         x2_lowres[-1],
-        int(x2_lowres.size * downscaling_factor),
+        int(x2_lowres.size * resolution_factor),
         dtype="float32",
     )
 
@@ -86,7 +86,7 @@ class ProbabilisticModel:
     def __init__(self):
         pass
 
-    def predict(self, dataset, *args, **kwargs):
+    def mean(self, dataset, *args, **kwargs):
         """
         Computes the model mean prediction over target points based on given context
         data.
@@ -186,85 +186,154 @@ class DeepSensorModel(ProbabilisticModel):
         self.task_loader = task_loader
         self.data_processor = data_processor
 
-    def predict_ongrid(
+    def predict(
         self,
         tasks: Union[List[dict], dict],
-        reference_grid: xr.Dataset,
-        downscaling_factor=1,
+        X_t: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
+        X_t_normalised: bool = False,
+        resolution_factor=1,
         n_samples=0,
+        noiseless_samples=True,
         seed=0,
         progress_bar=0,
         verbose=False,
     ):
-        """Predict on a regular grid
+        """Predict on a regular grid or at off-grid locations.
 
         TODO:
         - Test with multiple targets model
 
+        :param tasks: List of tasks containing context data.
+        :param X_t: Target locations to predict at. Can be an xarray object containing
+            on-grid locations or a pandas object containing off-grid locations.
+        :param X_t_normalised: Whether the `X_t` coords are normalised.
+            If False, will normalise the coords before passing to model. Default False.
+        :param resolution_factor: Optional factor to increase the resolution of the
+            target grid by. E.g. 2 will double the target resolution, 0.5 will halve it.
+            Applies to on-grid predictions only. Default 1.
+        :param n_samples: Number of joint samples to draw from the model.
+            If 0, will not draw samples. Default 0.
+        :param noiseless_samples: Whether to draw noiseless samples from the model. Default True.
+        :param seed: Random seed for deterministic sampling. Default 0.
+        :param progress_bar: Whether to display a progress bar over tasks. Default 0.
+        :param verbose: Whether to print time taken for prediction. Default False.
+
         Returns:
-            pred_ds (xr.Dataset): Dataset containing the predictions
+            - If X_t is a pandas object, returns pandas objects containing off-grid predictions.
+            - If X_t is an xarray object, returns xarray object containing on-grid predictions.
+            - If n_samples == 0, returns only mean and std predictions.
+            - If n_samples > 0, returns mean, std and samples predictions.
         """
         tic = time.time()
 
         if type(tasks) is Task:
             tasks = [tasks]
 
+        if n_samples >= 1:
+            B.set_random_seed(seed)
+            np.random.seed(seed)
+
         dates = [task["time"] for task in tasks]
 
-        target_var_IDs = self.task_loader.target_var_IDs[0]  # TEMP just first target set
+        target_var_IDs = self.task_loader.target_var_IDs[
+            0
+        ]  # TEMP just first target set
 
-        mean_ds = create_empty_prediction_array(
-            dates, downscaling_factor, reference_grid, data_vars=target_var_IDs
-        ).to_array(dim="data_var")
-        std_ds = create_empty_prediction_array(
-            dates, downscaling_factor, reference_grid, data_vars=target_var_IDs
-        ).to_array(dim="data_var")
-        if n_samples >= 1:
-            samples_ds = create_empty_prediction_array(
-                dates, downscaling_factor, reference_grid, data_vars=target_var_IDs
+        if isinstance(X_t, pd.Index):
+            X_t = pd.DataFrame(index=X_t)
+
+        if not X_t_normalised:
+            X_t = self.data_processor.map_coords(X_t)
+
+        if isinstance(X_t, (xr.DataArray, xr.Dataset)):
+            mode = "on-grid"
+        elif isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index)):
+            mode = "off-grid"
+
+        if mode == "on-grid":
+            mean = create_empty_prediction_array(
+                dates, resolution_factor, X_t, data_vars=target_var_IDs
             ).to_array(dim="data_var")
-            samples_ds = samples_ds.expand_dims(dim=dict(sample=np.arange(n_samples))).copy()
+            std = create_empty_prediction_array(
+                dates, resolution_factor, X_t, data_vars=target_var_IDs
+            ).to_array(dim="data_var")
+            if n_samples >= 1:
+                samples = create_empty_prediction_array(
+                    dates, resolution_factor, X_t, data_vars=target_var_IDs
+                ).to_array(dim="data_var")
+                samples = samples.expand_dims(
+                    dim=dict(sample=np.arange(n_samples))
+                ).copy()
 
-        X_target = [
-            (mean_ds["x1"].values, mean_ds["x2"].values) for i in range(1)
-        ]  # TODO - fix this by using number of targets
+            X_t_arr = (mean["x1"].values, mean["x2"].values)
+
+        elif mode == "off-grid":
+            # Repeat target locs for each date to create multiindex
+            idxs = [(date, *idxs) for date in dates for idxs in X_t.index]
+            index = pd.MultiIndex.from_tuples(idxs, names=["time", *X_t.index.names])
+            mean = pd.DataFrame(index=index, columns=target_var_IDs)
+            std = pd.DataFrame(index=index, columns=target_var_IDs)
+            if n_samples >= 1:
+                idxs_samples = [
+                    (sample, date, *idxs)
+                    for sample in range(n_samples)
+                    for date in dates
+                    for idxs in X_t.index
+                ]
+                index_samples = pd.MultiIndex.from_tuples(
+                    idxs_samples, names=["sample", "time", *X_t.index.names],
+                )
+                samples = pd.DataFrame(index=index_samples, columns=target_var_IDs)
+
+            X_t_arr = X_t.reset_index()[["x1", "x2"]].values.T
 
         for task in tqdm(tasks, position=0, disable=progress_bar < 1, leave=True):
-            task["X_t"] = X_target
+            # TODO - repeat based on number of targets?
+            task["X_t"] = [X_t_arr]
 
             # Run model forwards once to generate output distribution
             dist = self(task, n_samples=n_samples)
 
-            self.predict(dist).shape
-            mean_ds
-            mean_ds.sel(time=task["time"]).shape
+            if mode == "on-grid":
+                mean.loc[:, task["time"], :, :] = self.mean(dist)
+                std.loc[:, task["time"], :, :] = self.stddev(dist)
+                if n_samples >= 1:
+                    B.set_random_seed(seed)
+                    np.random.seed(seed)
+                    samples.loc[:, :, task["time"], :, :] = self.sample(
+                        dist, n_samples=n_samples, noiseless=noiseless_samples
+                    )
+            elif mode == "off-grid":
+                # TODO multi-target case
+                mean.loc[task["time"]] = self.mean(dist).T
+                std.loc[task["time"]] = self.stddev(dist).T
+                if n_samples >= 1:
+                    B.set_random_seed(seed)
+                    np.random.seed(seed)
+                    samples_arr = self.sample(dist, n_samples=n_samples, noiseless=noiseless_samples)
+                    for sample_i in range(n_samples):
+                        samples.loc[sample_i, task["time"]] = samples_arr[sample_i].T
 
-            mean_ds.loc[:, task["time"], :, :] = self.predict(dist)
-            std_ds.loc[:, task["time"], :, :] = self.stddev(dist)
+        if mode == "on-grid":
+            mean = mean.to_dataset(dim="data_var")
+            std = std.to_dataset(dim="data_var")
             if n_samples >= 1:
-                B.set_random_seed(seed)
-                np.random.seed(seed)
-                samples_ds.loc[:, :, task["time"], :, :] = self.sample(dist, n_samples=n_samples)
-
-        mean_ds = mean_ds.to_dataset(dim="data_var")
-        std_ds = std_ds.to_dataset(dim="data_var")
-        if n_samples >= 1:
-            samples_ds = samples_ds.to_dataset(dim="data_var")
+                samples = samples.to_dataset(dim="data_var")
 
         if self.task_loader is not None and self.data_processor is not None:
-            mean_ds = self.data_processor.unnormalise(mean_ds)
-            std_ds = self.data_processor.unnormalise(std_ds, add_offset=False)
+            mean = self.data_processor.unnormalise(mean)
+            std = self.data_processor.unnormalise(std, add_offset=False)
             if n_samples >= 1:
-                samples_ds = self.data_processor.unnormalise(samples_ds)
+                samples = self.data_processor.unnormalise(samples)
 
         if verbose:
             dur = time.time() - tic
             print(f"Done in {np.floor(dur / 60)}m:{dur % 60:.0f}s.\n")
 
         if n_samples >= 1:
-            return mean_ds, std_ds, samples_ds
+            return mean, std, samples
         else:
-            return mean_ds, std_ds
+            return mean, std
 
 
 class ConvNP(DeepSensorModel):
@@ -296,11 +365,9 @@ class ConvNP(DeepSensorModel):
         )
 
     @dispatch
-    def __init__(self,
-                 data_processor: DataProcessor,
-                 task_loader: TaskLoader,
-                 *args,
-                 **kwargs):
+    def __init__(
+        self, data_processor: DataProcessor, task_loader: TaskLoader, *args, **kwargs
+    ):
         """Instantiate model from TaskLoader, using data to infer model parameters (unless overridden)
 
         Args:
@@ -384,11 +451,11 @@ class ConvNP(DeepSensorModel):
         return dist
 
     @dispatch
-    def predict(self, dist: backend.nps.AbstractMultiOutputDistribution):
+    def mean(self, dist: backend.nps.AbstractMultiOutputDistribution):
         return B.to_numpy(dist.mean)[0, 0]
 
     @dispatch
-    def predict(self, task: dict):
+    def mean(self, task: dict):
         return B.to_numpy(self(task).mean)[0, 0]
 
     @dispatch
@@ -557,7 +624,7 @@ class ConvNP(DeepSensorModel):
                 if type(self) is ConvCNP:
                     # Independent predictions for each target location - just compute the mean
                     # conditioned on the AR samples
-                    pred = self.predict(
+                    pred = self.mean(
                         task_with_sample
                     )  # Should this be a `.sample` call?
                 else:
@@ -570,6 +637,4 @@ class ConvNP(DeepSensorModel):
 
             return full_samples
         else:
-            return noiseless_samples[
-                :, 0, 0
-            ]  # Slice out batch dim and feature dim (assumed size 1)
+            return noiseless_samples[:, 0]  # Slice out batch dim
