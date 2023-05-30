@@ -277,7 +277,7 @@ class TaskLoader:
     def sample_da(
         self,
         da: Union[xr.DataArray, xr.Dataset],
-        sampling_strat: Union[str, int],
+        sampling_strat: Union[str, int, float],
         seed: int = None,
     ) -> (np.ndarray, np.ndarray):
         """Sample a DataArray according to a given strategy
@@ -290,6 +290,9 @@ class TaskLoader:
         da = da.load()  # Converts dask -> numpy if not already loaded
         if isinstance(da, xr.Dataset):
             da = da.to_array()
+
+        if isinstance(sampling_strat, float):
+            sampling_strat = int(sampling_strat * da.size)
 
         if isinstance(sampling_strat, int):
             N = sampling_strat
@@ -312,7 +315,7 @@ class TaskLoader:
     def sample_df(
         self,
         df: Union[pd.DataFrame, pd.Series],
-        sampling_strat: Union[str, int],
+        sampling_strat: Union[str, int, float],
         seed: int = None,
     ) -> (np.ndarray, np.ndarray):
         """Sample a DataArray according to a given strategy
@@ -323,6 +326,10 @@ class TaskLoader:
         :return: Sampled DataArray
         """
         df = df.dropna(how="any")  # If any obs are NaN, drop them
+
+        if isinstance(sampling_strat, float):
+            sampling_strat = int(sampling_strat * df.shape[0])
+
         if isinstance(sampling_strat, int):
             # N = sampling_strat
             # rng = np.random.default_rng()
@@ -342,8 +349,8 @@ class TaskLoader:
     def task_generation(
         self,
         date: pd.Timestamp,
-        context_sampling: Union[str, int, List[Union[str, int]]] = "grid",
-        target_sampling: Union[str, int, List[Union[str, int]]] = "grid",
+        context_sampling: Union[str, int, float, List[Union[str, int]]] = "all",
+        target_sampling: Union[str, int, float, List[Union[str, int]]] = "all",
         deterministic: bool = False,
     ) -> Task:
         """Generate a task for a given date
@@ -393,9 +400,8 @@ class TaskLoader:
         task = {}
 
         task["time"] = date
-        task[
-            "flag"
-        ] = None  # Flag for modifying the task (reshaping, adding data, etc.)
+        # Flag for modifying the task (reshaping, adding data, etc.)
+        task["flag"] = None
         task["X_c"] = []
         task["Y_c"] = []
         task["X_t"] = []
@@ -423,10 +429,10 @@ class TaskLoader:
             X_c, Y_c = sample_variable(var, sampling_strat, delta_t, context_seed)
             task[f"X_c"].append(X_c)
             task[f"Y_c"].append(Y_c)
-        for i, (var, sampling_strat, delta_t) in enumerate(
+        for j, (var, sampling_strat, delta_t) in enumerate(
             zip(self.target, target_sampling, self.target_delta_t)
         ):
-            target_seed = seed + i if seed is not None else None
+            target_seed = seed + i + j if seed is not None else None
             X_t, Y_t = sample_variable(var, sampling_strat, delta_t, target_seed)
             task[f"X_t"].append(X_t)
             task[f"Y_t"].append(Y_t)
