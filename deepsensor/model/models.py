@@ -371,9 +371,9 @@ class ConvNP(DeepSensorModel):
     @classmethod
     def check_task(cls, task):
         """Check that the task is compatible with the model."""
-        if task["modify"] is None:
+        if task["flag"] is None:
             task = cls.modify_task(task)
-        elif task["modify"] != "NPS":
+        elif task["flag"] != "NPS":
             raise ValueError(f"Task has been modified for {task['modify']}.")
         return task
 

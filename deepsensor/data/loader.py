@@ -392,7 +392,7 @@ class TaskLoader:
 
         task["time"] = date
         task[
-            "modify"
+            "flag"
         ] = None  # Flag for modifying the task (reshaping, adding data, etc.)
         task["X_c"] = []
         task["Y_c"] = []

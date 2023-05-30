@@ -97,6 +97,6 @@ class Task(dict):
         self = copy.deepcopy(self)  # don't modify the original
         for k, v in self.items():
             self[k] = modify(k, v)
-        self["modify"] = modify_flag
+        self["flag"] = modify_flag
 
         return self  # altered by reference, but return anyway
