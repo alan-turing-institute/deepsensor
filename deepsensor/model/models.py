@@ -418,12 +418,15 @@ class ConvNP(DeepSensorModel):
         def array_modify_fn(arr):
             arr = arr[np.newaxis, ...]  # Add batch dim
 
+            arr = arr.astype(np.float32)  # Cast to float32
+
             # Find NaNs and keep size-1 variable dim
             mask = np.any(np.isnan(arr), axis=1, keepdims=False)
             if np.any(mask):
                 # Set NaNs to zero - necessary for `neural_process`
                 arr[mask] = 0.0
 
+            # Convert to tensor object based on deep learning backend
             arr = backend.convert_to_tensor(arr)
 
             # Convert to `nps.Masked` object if there are NaNs
