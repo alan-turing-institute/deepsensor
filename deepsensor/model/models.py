@@ -543,13 +543,20 @@ class ConvNP(DeepSensorModel):
         return loss
 
     @dispatch
-    # TEMP trying wessel's `num_samples` kwarg for model call signature, followed by simple .sample() call
-    def sample(self, dist: backend.nps.AbstractMultiOutputDistribution, n_samples=1):
-        return B.to_numpy(dist.noiseless.sample(n_samples))[:, 0, 0]  # first batch
+    def sample(self, dist: backend.nps.AbstractMultiOutputDistribution, n_samples=1, noiseless=True):
+        if noiseless:
+            return B.to_numpy(dist.noiseless.sample(n_samples))[:, 0, 0]  # first batch
+        else:
+            return B.to_numpy(dist.sample(n_samples))[:, 0, 0]
 
     @dispatch
-    def sample(self, task: dict, n_samples=1):
-        return B.to_numpy(self(task).noiseless.sample(n_samples))[:, 0, 0]  # first batch
+    def sample(self, task: dict, n_samples=1, noiseless=True):
+        if noiseless:
+            return B.to_numpy(self(task).noiseless.sample(n_samples))[
+                :, 0, 0
+            ]  # first batch
+        else:
+            return B.to_numpy(self(task).sample(n_samples))[:, 0, 0]
 
     @dispatch
     def slice_diag(self, task: dict):
