@@ -1,3 +1,5 @@
+import numpy as np
+
 import xarray as xr
 import pandas as pd
 
@@ -123,8 +125,29 @@ class DataProcessor:
             param2 = self.norm_params[var_ID][param2_ID]
         return param1, param2
 
+    def map_coord_array(self, coord_array: np.ndarray, unnorm: bool = False):
+        """Normalise or unnormalise spatial coords in a array
+
+        Args:
+            coord_array (np.ndarray): Array of shape (2, N) containing spatial coords of x1 and x2
+            unnorm (bool, optional): Whether to unnormalise. Defaults to False.
+        """
+        x11, x12 = self.norm_params["coords"]["x1"]["map"]
+        x21, x22 = self.norm_params["coords"]["x2"]["map"]
+
+        if not unnorm:
+            new_coords_x1 = (coord_array[0] - x11) / (x12 - x11)
+            new_coords_x2 = (coord_array[1] - x21) / (x22 - x21)
+        else:
+            new_coords_x1 = coord_array[0] * (x12 - x11) + x11
+            new_coords_x2 = coord_array[1] * (x22 - x21) + x21
+
+        new_coord_tensor = np.stack([new_coords_x1, new_coords_x2], axis=0)
+
+        return new_coord_tensor
+
     def map_coords(self, data, unnorm=False):
-        """Normalise spatial coords"""
+        """Normalise spatial coords in a pandas or xarray object"""
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Reset index to get coords as columns
             indexes = list(data.index.names)
@@ -142,23 +165,27 @@ class DataProcessor:
                 for coord_ID in ["x1", "x2"]
             ]
             old_coord_IDs = ["x1", "x2"]
-        x11, x12 = self.norm_params["coords"]["x1"]["map"]
-        x21, x22 = self.norm_params["coords"]["x2"]["map"]
-        for new_coord_ID, old_coord_ID, (xi1, xi2) in zip(
-            new_coord_IDs, old_coord_IDs, [(x11, x12), (x21, x22)]
-        ):
-            if not unnorm:
-                new_coords_vals = (data[old_coord_ID] - xi1) / (xi2 - xi1)
-            else:
-                new_coords_vals = xi1 + data[old_coord_ID] * (xi2 - xi1)
-            if isinstance(data, (pd.DataFrame, pd.Series)):
-                # Add coords to dataframe
-                data[new_coord_ID] = new_coords_vals
-                # Drop old coord column
-                data = data.drop(columns=[old_coord_ID])
-            elif isinstance(data, (xr.DataArray, xr.Dataset)):
-                data = data.assign_coords({old_coord_ID: new_coords_vals})
-                data = data.rename({old_coord_ID: new_coord_ID})
+
+        coord_tensor = np.stack(
+            [data[old_coord_IDs[0]], data[old_coord_IDs[1]]], axis=0
+        )
+        new_coord_tensor = self.map_coord_array(coord_tensor, unnorm=unnorm)
+        if isinstance(data, (pd.DataFrame, pd.Series)):
+            # Add coords to dataframe
+            data[new_coord_IDs[0]] = new_coord_tensor[0]
+            data[new_coord_IDs[1]] = new_coord_tensor[1]
+            # Drop old coord columns
+            data = data.drop(columns=old_coord_IDs)
+        elif isinstance(data, (xr.DataArray, xr.Dataset)):
+            data = data.assign_coords(
+                {
+                    old_coord_IDs[0]: new_coord_tensor[0],
+                    old_coord_IDs[1]: new_coord_tensor[1],
+                }
+            )
+            data = data.rename(
+                {old_coord_IDs[0]: new_coord_IDs[0], old_coord_IDs[1]: new_coord_IDs[1]}
+            )
 
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Set index back to original
