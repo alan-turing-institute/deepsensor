@@ -283,7 +283,7 @@ class TaskLoader:
         """Sample a DataArray according to a given strategy
 
         :param da: DataArray to sample, assumed to be sliced for the task already
-        :param sampling_strat: Sampling strategy, either "grid" or an integer for random grid cell sampling
+        :param sampling_strat: Sampling strategy, either "all" or an integer for random grid cell sampling
         :param seed: Seed for random sampling
         :return: Sampled DataArray
         """
@@ -298,11 +298,11 @@ class TaskLoader:
             x2 = rng.choice(da.coords["x2"].values, N)
             X_c = np.array([x1, x2])
             Y_c = da.sel(x1=xr.DataArray(x1), x2=xr.DataArray(x2)).data
-        elif sampling_strat == "grid":
+        elif sampling_strat == "all":
             X_c = (da.coords["x1"].values, da.coords["x2"].values)
             Y_c = da.data
             if Y_c.ndim == 2:
-                # "grid" sampling returned a 2D array, but we need a 3D array of shape (variable, x1, x2)
+                # "all" sampling returned a 2D array, but we need a 3D array of shape (variable, x1, x2)
                 Y_c = Y_c.reshape(1, *Y_c.shape)
         else:
             raise ValueError(f"Unknown sampling strategy {sampling_strat}")
@@ -318,7 +318,7 @@ class TaskLoader:
         """Sample a DataArray according to a given strategy
 
         :param da: DataArray to sample, assumed to be sliced for the task already
-        :param sampling_strat: Sampling strategy, either "grid" or an integer for random grid cell sampling
+        :param sampling_strat: Sampling strategy, either "all" or an integer for random grid cell sampling
         :param seed: Seed for random sampling
         :return: Sampled DataArray
         """
@@ -331,11 +331,7 @@ class TaskLoader:
             # X_c = np.array([x1, x2])
             # Y_c = da.sel(x1=xr.DataArray(x1), x2=xr.DataArray(x2)).data
             pass
-        elif sampling_strat == "grid":  # TODO rename from "grid" to "all"
-            # X_c = np.array([
-            #     df.index.get_level_values("x1").values,
-            #     df.index.get_level_values("x2").values,
-            # ])
+        elif sampling_strat == "all":
             X_c = df.reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
             Y_c = df.values.T
         else:
@@ -353,8 +349,9 @@ class TaskLoader:
         """Generate a task for a given date
 
         There are several sampling strategies available for the context and target data:
-        - "grid": Sample all grid cells.
-        - int: Sample N grid cells uniformly at random.
+        - "all": Sample all observations.
+        - int: Sample N observations uniformly at random.
+        - float: Sample a fraction of observations uniformly at random.
 
         :param date: Date for which to generate the task
         :param context_sampling: Sampling strategy for the context data, either a list of
