@@ -13,13 +13,13 @@ def plot_context_encoding(
     model,
     task,
     task_loader,
+    context_set_idxs=None,
     land_idx=None,
     cbar=True,
     clim=None,
     cmap="viridis",
     titles=None,
     size=3,
-    no_axis_labels=False,
 ):
     """Plot the encoding of a context set in a task
 
@@ -30,6 +30,8 @@ def plot_context_encoding(
         Task containing context set to plot encoding of
     task_loader : deepsensor.data.loader.TaskLoader
         DataLoader used to load the data, containing context set metadata used for plotting
+    context_set_idxs : list or int, optional
+        Indices of context sets to plot, by default None (plots all context sets)
     land_idx : int, optional
         Index of the land mask in the encoding (used to overlay land contour on plots), by default None
     titles : list, optional
@@ -39,12 +41,17 @@ def plot_context_encoding(
     """
     encoding_tensor = compute_encoding_tensor(model, task)
 
+    if isinstance(context_set_idxs, int):
+        context_set_idxs = [context_set_idxs]
+    if context_set_idxs is None:
+        context_set_idxs = np.array(range(len(task_loader.context)))
+
     context_var_ID_set_sizes = [
-        ndim + 1 for ndim in task_loader.context_dims
+        ndim + 1 for ndim in np.array(task_loader.context_dims)[context_set_idxs]
     ]  # Add density channel to each set size
     max_context_set_size = max(context_var_ID_set_sizes)
     ncols = max_context_set_size
-    nrows = len(task_loader.context)
+    nrows = len(context_set_idxs)
 
     figsize = (ncols * size, nrows * size)
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
@@ -52,9 +59,9 @@ def plot_context_encoding(
         axes = axes[np.newaxis]
 
     channel_i = 0
-    for ctx_i, (var_IDs, size) in enumerate(
-        zip(task_loader.context_var_IDs, context_var_ID_set_sizes)
-    ):
+    for ctx_i in context_set_idxs:
+        var_IDs = task_loader.context_var_IDs[ctx_i]
+        size = task_loader.context_dims[ctx_i] + 1  # Add density channel
         for var_i in range(size):
             ax = axes[ctx_i, var_i]
             # Need `origin="lower"` because encoding has `x1` increasing from top to bottom,
@@ -102,8 +109,8 @@ def plot_offgrid_context(axes, task, data_processor=None, **scatter_kwargs):
 
     Uses `data_processor` to unnormalise the context coordinates if provided.
     """
-    markers = 'ovs^D'
-    colors = 'kbrgy'
+    markers = "ovs^D"
+    colors = "kbrgy"
 
     if type(axes) is np.ndarray:
         axes = axes.ravel()
@@ -123,6 +130,9 @@ def plot_offgrid_context(axes, task, data_processor=None, **scatter_kwargs):
 
         for ax in axes:
             ax.scatter(
-                *X_c, marker=markers[context_i], color=colors[context_i],
-                **scatter_kwargs, facecolors=None if markers[context_i] == 'x' else "none"
+                *X_c,
+                marker=markers[context_i],
+                color=colors[context_i],
+                **scatter_kwargs,
+                facecolors=None if markers[context_i] == "x" else "none",
             )
