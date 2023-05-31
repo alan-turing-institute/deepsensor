@@ -334,8 +334,8 @@ class TaskLoader:
         if isinstance(sampling_strat, int):
             N = sampling_strat
             rng = np.random.default_rng(seed)
-            x1 = rng.choice(da.coords["x1"].values, N)
-            x2 = rng.choice(da.coords["x2"].values, N)
+            x1 = rng.choice(da.coords["x1"].values, N, replace=True)
+            x2 = rng.choice(da.coords["x2"].values, N, replace=True)
             X_c = np.array([x1, x2])
             Y_c = da.sel(x1=xr.DataArray(x1), x2=xr.DataArray(x2)).data
         elif sampling_strat == "all":
