@@ -4,8 +4,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-import cartopy
-
 from deepsensor.model.nps import compute_encoding_tensor
 
 
@@ -21,6 +19,7 @@ def plot_context_encoding(
     verbose_titles=True,
     titles=None,
     size=3,
+    return_axes=False,
 ):
     """Plot the encoding of a context set in a task
 
@@ -43,6 +42,8 @@ def plot_context_encoding(
         If None, titles are generated from context set metadata
     size : int, optional
         Size of the figure in inches, by default 20
+    return_axes : bool, optional
+        Whether to return the axes of the figure, by default False
     """
     encoding_tensor = compute_encoding_tensor(model, task)
 
@@ -80,11 +81,11 @@ def plot_context_encoding(
             if titles is not None:
                 ax.set_title(titles[channel_i])
             elif var_i == 0:
-                ax.set_title(f"Density {ctx_i + 1}")
+                ax.set_title(f"Density {ctx_i}")
             elif var_i > 0:
                 ax.set_title(f"{var_IDs[var_i - 1]}")
             if var_i == 0:
-                ax.set_ylabel(f"Context set {ctx_i + 1}")
+                ax.set_ylabel(f"Context set {ctx_i}")
             if cbar:
                 divider = make_axes_locatable(ax)
                 cax = divider.append_axes("right", size="5%", pad=0.05)
@@ -109,10 +110,15 @@ def plot_context_encoding(
             ax.axis("off")
 
     plt.tight_layout()
-    return fig
+    if not return_axes:
+        return fig
+    elif return_axes:
+        return fig, axes
 
 
-def plot_offgrid_context(axes, task, data_processor=None, **scatter_kwargs):
+def plot_offgrid_context(axes, task, data_processor=None, task_loader=None,
+                         plot_target=False, add_legend=True,
+                         **scatter_kwargs):
     """Plot the off-grid context points on `axes`
 
     Uses `data_processor` to unnormalise the context coordinates if provided.
@@ -122,25 +128,44 @@ def plot_offgrid_context(axes, task, data_processor=None, **scatter_kwargs):
 
     if type(axes) is np.ndarray:
         axes = axes.ravel()
-    elif isinstance(axes, (mpl.axes.Axes, cartopy.mpl.geoaxes.GeoAxesSubplot)):
+    elif not isinstance(axes, (list, tuple)):
         axes = [axes]
 
-    for context_i, X_c in enumerate(task["X_c"]):
-        if isinstance(X_c, tuple):
+    if plot_target:
+        X = [*task["X_c"], *task["X_t"]]
+    else:
+        X = task["X_c"]
+
+    for set_i, X in enumerate(X):
+        if isinstance(X, tuple):
             continue  # Don't plot gridded context data locations
-        if X_c.ndim == 3:
-            X_c = X_c[0]  # select first batch
+        if X.ndim == 3:
+            X = X[0]  # select first batch
 
         if data_processor is not None:
-            X_c = data_processor.map_coord_array(X_c, unnorm=True)
+            X = data_processor.map_coord_array(X, unnorm=True)
 
-        X_c = X_c[::-1]  # flip 2D coords for Cartesian fmt
+        X = X[::-1]  # flip 2D coords for Cartesian fmt
+
+        label = ""
+        if plot_target and set_i < len(task["X_c"]):
+            label += f"Context set {set_i} "
+            if task_loader is not None:
+                label += f"({task_loader.context_var_IDs[set_i]})"
+        elif plot_target and set_i >= len(task["X_c"]):
+            label += f"Target set {set_i - len(task['X_c'])} "
+            if task_loader is not None:
+                label += f"({task_loader.target_var_IDs[set_i - len(task['X_c'])]})"
 
         for ax in axes:
             ax.scatter(
-                *X_c,
-                marker=markers[context_i],
-                color=colors[context_i],
+                *X,
+                marker=markers[set_i],
+                color=colors[set_i],
                 **scatter_kwargs,
-                facecolors=None if markers[context_i] == "x" else "none",
+                facecolors=None if markers[set_i] == "x" else "none",
+                label=label,
             )
+
+    if add_legend:
+        axes[0].legend(loc="best")
