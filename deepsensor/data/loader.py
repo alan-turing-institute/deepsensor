@@ -73,7 +73,7 @@ class TaskLoader:
             pd.DataFrame,
             List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
         ],
-        links: Union[Tuple, List[Tuple[int]], None] = None,
+        links: Union[Tuple, List[*Tuple[*int]], None] = None,
         context_delta_t: Union[int, List[int]] = 0,
         target_delta_t: Union[int, List[int]] = 0,
         time_freq: str = "D",
