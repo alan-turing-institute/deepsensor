@@ -44,13 +44,7 @@ class DataProcessor:
 
         if "coords" not in self.norm_params:
             # Add coordinate normalisation info to norm_params
-            self.norm_params["coords"] = {}
-            self.norm_params["coords"]["x1"] = {}
-            self.norm_params["coords"]["x2"] = {}
-            self.norm_params["coords"]["x1"]["name"] = x1_name
-            self.norm_params["coords"]["x1"]["map"] = x1_map
-            self.norm_params["coords"]["x2"]["name"] = x2_name
-            self.norm_params["coords"]["x2"]["map"] = x2_map
+            self.set_coord_params(x1_name, x1_map, x2_name, x2_map)
 
         self.deepcopy = deepcopy
         self.verbose = verbose
@@ -70,6 +64,24 @@ class DataProcessor:
         elif isinstance(data, xr.Dataset):
             data.load()
         return data
+    
+    def set_coord_params(self, x1_name, x1_map, x2_name, x2_map):
+        """Set coordinate normalisation params"""
+        x1_map = np.array(x1_map)
+        x2_map = np.array(x2_map)
+        self.norm_params["coords"] = {}
+        self.norm_params["coords"]["x1"] = {}
+        self.norm_params["coords"]["x2"] = {}
+        self.norm_params["coords"]["x1"]["name"] = x1_name
+        self.norm_params["coords"]["x1"]["map"] = x1_map
+        self.norm_params["coords"]["x2"]["name"] = x2_name
+        self.norm_params["coords"]["x2"]["map"] = x2_map
+
+        # Check that map is not two of the same number
+        if np.diff(x1_map) == 0:
+            raise ValueError(f"x1_map must be a 2-tuple of different numbers, not {x1_map}")
+        if np.diff(x2_map) == 0:
+            raise ValueError(f"x2_map must be a 2-tuple of different numbers, not {x2_map}")
 
     def check_params_computed(self, var_ID, param1_ID, param2_ID):
         """Check if normalisation params computed for a given variable"""
