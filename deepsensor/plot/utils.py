@@ -120,9 +120,15 @@ def plot_context_encoding(
         return fig, axes
 
 
-def plot_offgrid_context(axes, task, data_processor=None, task_loader=None,
-                         plot_target=False, add_legend=True,
-                         **scatter_kwargs):
+def plot_offgrid_context(
+    axes,
+    task,
+    data_processor=None,
+    task_loader=None,
+    plot_target=False,
+    add_legend=True,
+    **scatter_kwargs,
+):
     """Plot the off-grid context points on `axes`
 
     Uses `data_processor` to unnormalise the context coordinates if provided.

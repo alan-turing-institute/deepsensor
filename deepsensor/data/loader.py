@@ -344,7 +344,7 @@ class TaskLoader:
         elif sampling_strat == "all":
             X_c = (
                 da.coords["x1"].values[np.newaxis],
-                da.coords["x2"].values[np.newaxis]
+                da.coords["x2"].values[np.newaxis],
             )
             Y_c = da.data
             if Y_c.ndim == 2:
@@ -543,7 +543,9 @@ class TaskLoader:
                     context_slices[link[0]].index
                 )
 
-        for i, (var, sampling_strat) in enumerate(zip(context_slices, context_sampling)):
+        for i, (var, sampling_strat) in enumerate(
+            zip(context_slices, context_sampling)
+        ):
             context_seed = seed + i if seed is not None else None
             X_c, Y_c = sample_variable(var, sampling_strat, context_seed)
             task[f"X_c"].append(X_c)

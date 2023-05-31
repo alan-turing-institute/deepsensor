@@ -64,7 +64,7 @@ class DataProcessor:
         elif isinstance(data, xr.Dataset):
             data.load()
         return data
-    
+
     def set_coord_params(self, x1_name, x1_map, x2_name, x2_map):
         """Set coordinate normalisation params"""
         x1_map = (float(x1_map[0]), float(x1_map[1]))
@@ -79,9 +79,13 @@ class DataProcessor:
 
         # Check that map is not two of the same number
         if np.diff(x1_map) == 0:
-            raise ValueError(f"x1_map must be a 2-tuple of different numbers, not {x1_map}")
+            raise ValueError(
+                f"x1_map must be a 2-tuple of different numbers, not {x1_map}"
+            )
         if np.diff(x2_map) == 0:
-            raise ValueError(f"x2_map must be a 2-tuple of different numbers, not {x2_map}")
+            raise ValueError(
+                f"x2_map must be a 2-tuple of different numbers, not {x2_map}"
+            )
 
     def check_params_computed(self, var_ID, param1_ID, param2_ID):
         """Check if normalisation params computed for a given variable"""
