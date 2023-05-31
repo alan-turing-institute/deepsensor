@@ -338,11 +338,17 @@ class TaskLoader:
             x2 = rng.choice(da.coords["x2"].values, N, replace=True)
             X_c = np.array([x1, x2])
             Y_c = da.sel(x1=xr.DataArray(x1), x2=xr.DataArray(x2)).data
+            if Y_c.ndim == 1:
+                # returned a 1D array, but we need a 2D array of shape (variable, N)
+                Y_c = Y_c.reshape(1, *Y_c.shape)
         elif sampling_strat == "all":
-            X_c = (da.coords["x1"].values, da.coords["x2"].values)
+            X_c = (
+                da.coords["x1"].values[np.newaxis],
+                da.coords["x2"].values[np.newaxis]
+            )
             Y_c = da.data
             if Y_c.ndim == 2:
-                # "all" sampling returned a 2D array, but we need a 3D array of shape (variable, x1, x2)
+                # returned a 2D array, but we need a 3D array of shape (variable, N_x1, N_x2)
                 Y_c = Y_c.reshape(1, *Y_c.shape)
         else:
             raise ValueError(f"Unknown sampling strategy {sampling_strat}")
