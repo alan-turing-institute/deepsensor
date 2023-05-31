@@ -1,8 +1,10 @@
 from deepsensor import backend
 import lab as B
 
+from deepsensor.data.task import Task
 
-def convert_task_to_nps_args(task):
+
+def convert_task_to_nps_args(task: Task):
     """Infer & build model call signature from `task` dict
 
     TODO move to ConvNP class?
@@ -117,7 +119,7 @@ def construct_neural_process(
     return neural_process
 
 
-def compute_encoding_tensor(model, task):
+def compute_encoding_tensor(model, task: Task):
     neural_process_encoder = backend.nps.Model(model.model.encoder, lambda x: x)
     task = model.check_task(task)
     encoding = B.to_numpy(run_nps_model(neural_process_encoder, task))

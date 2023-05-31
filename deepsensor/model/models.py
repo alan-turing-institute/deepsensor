@@ -188,7 +188,7 @@ class DeepSensorModel(ProbabilisticModel):
 
     def predict(
         self,
-        tasks: Union[List[dict], dict],
+        tasks: Union[List[Task], Task],
         X_t: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
         X_t_normalised: bool = False,
         resolution_factor=1,
@@ -470,7 +470,7 @@ class ConvNP(DeepSensorModel):
         return B.to_numpy(dist.mean)[0, 0]
 
     @dispatch
-    def mean(self, task: dict):
+    def mean(self, task: Task):
         return B.to_numpy(self(task).mean)[0, 0]
 
     @dispatch
@@ -479,7 +479,7 @@ class ConvNP(DeepSensorModel):
         return B.to_numpy(dist.entropy())[0]
 
     @dispatch
-    def entropy(self, task: dict):
+    def entropy(self, task: Task):
         return B.to_numpy(self(task).entropy())[0]
 
     @dispatch
@@ -487,7 +487,7 @@ class ConvNP(DeepSensorModel):
         return B.to_numpy(B.dense(dist.vectorised_normal.var))[0]
 
     @dispatch
-    def covariance(self, task: dict):
+    def covariance(self, task: Task):
         return B.to_numpy(B.dense(self(task).vectorised_normal.var))[0]
 
     @dispatch
@@ -495,14 +495,14 @@ class ConvNP(DeepSensorModel):
         return B.to_numpy(dist.var)[0, 0]
 
     @dispatch
-    def variance(self, task: dict):
+    def variance(self, task: Task):
         return B.to_numpy(self(task).var)[0, 0]
 
     @dispatch
     def logpdf(
         self,
         dist: backend.nps.AbstractMultiOutputDistribution,
-        task: dict,
+        task: Task,
         station_set_idx=0,
     ):
         # Need Y_target to be the right shape for model in the event that task is from the
@@ -513,7 +513,7 @@ class ConvNP(DeepSensorModel):
         return B.to_numpy(dist.logpdf(Y_target)).mean()
 
     @dispatch
-    def logpdf(self, task: dict, station_set_idx=0):
+    def logpdf(self, task: Task, station_set_idx=0):
         # Need Y_target to be the right shape for model in the event that task is from the
         # default DataLoader... is this the best way to do this?
         task = ConvNP.check_task(task)
@@ -567,7 +567,7 @@ class ConvNP(DeepSensorModel):
             return B.to_numpy(dist.sample(n_samples))[:, 0, 0]
 
     @dispatch
-    def sample(self, task: dict, n_samples=1, noiseless=True):
+    def sample(self, task: Task, n_samples=1, noiseless=True):
         if noiseless:
             return B.to_numpy(self(task).noiseless.sample(n_samples))[
                 :, 0, 0
@@ -576,7 +576,7 @@ class ConvNP(DeepSensorModel):
             return B.to_numpy(self(task).sample(n_samples))[:, 0, 0]
 
     @dispatch
-    def slice_diag(self, task: dict):
+    def slice_diag(self, task: Task):
         """Slice out the ConvCNP part of the ConvNP distribution."""
         dist = self(task)
         dist_diag = backend.nps.MultiOutputNormal(
@@ -599,7 +599,7 @@ class ConvNP(DeepSensorModel):
         return dist_diag
 
     def ar_sample(
-        self, task: dict, n_samples=1, X_target_AR=None, ar_subsample_factor=1
+        self, task: Task, n_samples=1, X_target_AR=None, ar_subsample_factor=1
     ):
         """AR sampling with optional functionality to only draw AR samples over a subset of the
         target set and then infull the rest of the sample with the model mean conditioned on the
