@@ -1,3 +1,4 @@
+import deepsensor
 import numpy as np
 import lab as B
 import plum
@@ -32,6 +33,8 @@ class Task(dict):
     def summarise_repr(cls, k, v):
         if plum.isinstance(v, B.Numeric):
             return f"{type(v).__name__}/{v.dtype}/{v.shape}"
+        if plum.isinstance(v, deepsensor.backend.nps.mask.Masked):
+            return f"{type(v).__name__}/(y={v.y.dtype}/{v.y.shape})/(mask={v.mask.dtype}/{v.mask.shape})"
         elif plum.isinstance(v, tuple):
             # return tuple(vi.shape for vi in v)
             return tuple([cls.summarise_repr(k, vi) for vi in v])
