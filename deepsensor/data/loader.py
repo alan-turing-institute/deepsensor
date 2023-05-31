@@ -4,7 +4,7 @@ import numpy as np
 import xarray as xr
 import pandas as pd
 
-from typing import List, Union
+from typing import List, Tuple, Union
 
 
 def construct_x1x2_ds(gridded_ds):
@@ -73,6 +73,7 @@ class TaskLoader:
             pd.DataFrame,
             List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
         ],
+        links: Union[Tuple, List[Tuple[int]], None] = None,
         context_delta_t: Union[int, List[int]] = 0,
         target_delta_t: Union[int, List[int]] = 0,
         time_freq: str = "D",
@@ -84,6 +85,10 @@ class TaskLoader:
             or a list/tuple of these.
         :param target: Target data. Can be a single xr.DataArray, xr.Dataset or pd.DataFrame,
             or a list/tuple of these.
+        :param links: Specifies links between context and target data. Each link is a tuple of
+            two integers, where the first integer is the index of the context data and the second
+            integer is the index of the target data. Can be a single tuple in the case of a single
+            link. If None, no links are specified. Default: None.
         :param context_delta_t: Time difference between context data and t=0 (task init time).
             Can be a single int (same for all context data) or a list/tuple of ints.
         :param target_delta_t: Time difference between target data and t=0 (task init time).
@@ -102,6 +107,8 @@ class TaskLoader:
         context, target = self.cast_context_and_target_to_dtype(context, target)
         self.context = context
         self.target = target
+
+        self.links = self.check_links(links)
 
         if isinstance(context_delta_t, int):
             context_delta_t = (context_delta_t,) * len(context)
@@ -255,6 +262,36 @@ class TaskLoader:
             target_var_IDs_and_delta_t,
         )
 
+    def check_links(self, links):
+        """Check that the context-target links are valid."""
+        if links is None:
+            return None
+
+        if type(links) is list and type(links[0]) is not tuple:
+            raise ValueError("If `links` is a list, then it must be a list of tuples")
+        elif type(links) is tuple and type(links[0]) is not int:
+            raise ValueError("If `links` is a tuple, then it must be a tuple of ints")
+        elif type(links) is tuple and len(links) != 2:
+            raise ValueError("If `links` is a tuple of ints, then it must be length 2")
+        elif type(links) is tuple and len(links) == 2:
+            # Convert single tuple to list of tuples
+            links = [links]
+
+        # Check that the links are valid
+        for link_i, (context_idx, target_idx) in enumerate(links):
+            if context_idx >= len(self.context):
+                raise ValueError(
+                    f"Invalid context index {context_idx} in link {link_i} of {links}: "
+                    f"there are only {len(self.context)} context sets"
+                )
+            if target_idx >= len(self.target):
+                raise ValueError(
+                    f"Invalid target index {target_idx} in link {link_i} of {links}: "
+                    f"there are only {len(self.target)} target sets"
+                )
+
+        return links
+
     def __repr__(self):
         """Representation of the TaskLoader object (for developers)
 
@@ -331,14 +368,14 @@ class TaskLoader:
             sampling_strat = int(sampling_strat * df.shape[0])
 
         if isinstance(sampling_strat, int):
-            # N = sampling_strat
-            # rng = np.random.default_rng()
-            # x1 = rng.choice(da.coords["x1"].values, N)
-            # x2 = rng.choice(da.coords["x2"].values, N)
-            # X_c = np.array([x1, x2])
-            # Y_c = da.sel(x1=xr.DataArray(x1), x2=xr.DataArray(x2)).data
-            pass
-        elif sampling_strat == "all":
+            N = sampling_strat
+            rng = np.random.default_rng(seed)
+            idx = rng.choice(df.index, N)
+            X_c = df.loc[idx, ["x1", "x2"]].values.T.astype(self.dtype)
+            Y_c = df.loc[idx].values.T
+        elif sampling_strat in ["all", "split"]:
+            # NOTE if "split", we assume that the context-target split has already been applied to the df
+            # in an earlier scope with access to both the context and target data. This is maybe risky!
             X_c = df.reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
             Y_c = df.values.T
         else:
@@ -351,6 +388,7 @@ class TaskLoader:
         date: pd.Timestamp,
         context_sampling: Union[str, int, float, List[Union[str, int]]] = "all",
         target_sampling: Union[str, int, float, List[Union[str, int]]] = "all",
+        split_frac: float = 0.5,
         deterministic: bool = False,
     ) -> Task:
         """Generate a task for a given date
@@ -365,12 +403,20 @@ class TaskLoader:
             sampling strategies for each context set, or a single strategy applied to all context sets
         :param target_sampling: Sampling strategy for the target data, either a list of
             sampling strategies for each target set, or a single strategy applied to all target sets
-        :param: deterministic: Whether random sampling is deterministic based on
+        :param split_frac: The fraction of observations to use for the context set with the "split"
+            sampling strategy for linked context and target set pairs. The remaining observations
+            are used for the target set. Default is 0.5.
+        :param: deterministic: Whether random sampling is deterministic based on the date. Default is False.
         :return: Task object containing the context and target data
         """
 
         def check_sampling_strat(sampling_strat, set):
-            """Check the sampling strategy fits the number of context sets and convert to tuple"""
+            """Check the sampling strategy
+
+            Ensure `sampling_strat` is either a single strategy (broadcast to all sets) or a list
+            of length equal to the number of sets. Convert to a tuple of length equal to the number
+            of sets and return.
+            """
             if not isinstance(sampling_strat, (list, tuple)):
                 sampling_strat = tuple([sampling_strat] * len(set))
             elif isinstance(sampling_strat, (list, tuple)) and len(
@@ -384,8 +430,49 @@ class TaskLoader:
                 sampling_strat = tuple([sampling_strat] * len(set))
             return sampling_strat
 
+        def time_slice_variable(var, delta_t):
+            """Slice a variable by a given time delta"""
+            # TODO: Does this work with instantaneous time?
+            delta_t = pd.Timedelta(delta_t, unit=self.time_freq)
+            if isinstance(var, (xr.Dataset, xr.DataArray)):
+                if "time" in var.dims:
+                    var = var.sel(time=date + delta_t)
+            elif type(var) is pd.DataFrame:
+                if "time" in var.index.names:
+                    var = var.loc[date + delta_t]
+            else:
+                raise ValueError(f"Unknown variable type {type(var)}")
+            return var
+
+        def sample_variable(var, sampling_strat, seed):
+            """Sample a variable by a given sampling strategy to get input and output data"""
+            if isinstance(var, (xr.Dataset, xr.DataArray)):
+                X, Y = self.sample_da(var, sampling_strat, seed)
+            elif type(var) is pd.DataFrame:
+                X, Y = self.sample_df(var, sampling_strat, seed)
+            else:
+                raise ValueError(f"Unknown type {type(var)} for context set {var}")
+            return X, Y
+
         context_sampling = check_sampling_strat(context_sampling, self.context)
         target_sampling = check_sampling_strat(target_sampling, self.target)
+
+        if (
+            self.links is not None
+            and "split" in context_sampling
+            and "split" not in target_sampling
+        ):
+            raise ValueError(
+                "Cannot use 'split' sampling strategy for context set and not target set"
+            )
+        elif (
+            self.links is not None
+            and "split" not in context_sampling
+            and "split" in target_sampling
+        ):
+            raise ValueError(
+                "Cannot use 'split' sampling strategy for target set and not context set"
+            )
 
         if not isinstance(date, pd.Timestamp):
             date = pd.Timestamp(date)
@@ -407,33 +494,57 @@ class TaskLoader:
         task["X_t"] = []
         task["Y_t"] = []
 
-        def sample_variable(var, sampling_strat, delta_t, seed):
-            delta_t = pd.Timedelta(delta_t, unit=self.time_freq)
-            if isinstance(var, (xr.Dataset, xr.DataArray)):
-                if "time" in var.dims:
-                    var = var.sel(time=date + delta_t)
-                X_c, Y_c = self.sample_da(var, sampling_strat, seed)
-            elif type(var) is pd.DataFrame:
-                if "time" in var.index.names:
-                    var = var.loc[date + delta_t]
-                X_c, Y_c = self.sample_df(var, sampling_strat, seed)
-            else:
-                raise ValueError(f"Unknown type {type(var)} for context set {var}")
+        context_slices = [
+            time_slice_variable(var, delta_t)
+            for var, delta_t in zip(self.context, self.context_delta_t)
+        ]
+        target_slices = [
+            time_slice_variable(var, delta_t)
+            for var, delta_t in zip(self.target, self.target_delta_t)
+        ]
 
-            return X_c, Y_c
-
-        for i, (var, sampling_strat, delta_t) in enumerate(
-            zip(self.context, context_sampling, self.context_delta_t)
+        if (
+            self.links is not None
+            and "split" in context_sampling
+            and "split" in target_sampling
         ):
+            # Perform the split sampling strategy for linked context and target sets at this point
+            # while we have the full context and target data in scope
+            for link_i, link in enumerate(self.links):
+                N_obs = len(context_slices[link[0]])
+                N_obs_target_check = len(target_slices[link[1]])
+                if N_obs != N_obs_target_check:
+                    raise ValueError(
+                        f"Context set {link[0]} has {N_obs} observations, but target set {link[1]}"
+                        f"has {N_obs_target_check} observations"
+                    )
+
+                if not isinstance(context_slices[link[0]], pd.DataFrame):
+                    raise ValueError(
+                        f"Context set {link[0]} must be a pandas DataFrame when using the 'split' sampling strategy"
+                    )
+                if not isinstance(target_slices[link[1]], pd.DataFrame):
+                    raise ValueError(
+                        f"Target set {link[1]} must be a pandas DataFrame when using the 'split' sampling strategy"
+                    )
+
+                N_context = int(N_obs * split_frac)
+                split_seed = seed + link_i if seed is not None else None
+                rng = np.random.default_rng(split_seed)
+                idxs_context = rng.choice(N_obs, N_context, replace=False)
+                context_slices[link[0]] = context_slices[link[0]].iloc[idxs_context]
+                target_slices[link[1]] = target_slices[link[1]].drop(
+                    context_slices[link[0]].index
+                )
+
+        for i, (var, sampling_strat) in enumerate(zip(context_slices, context_sampling)):
             context_seed = seed + i if seed is not None else None
-            X_c, Y_c = sample_variable(var, sampling_strat, delta_t, context_seed)
+            X_c, Y_c = sample_variable(var, sampling_strat, context_seed)
             task[f"X_c"].append(X_c)
             task[f"Y_c"].append(Y_c)
-        for j, (var, sampling_strat, delta_t) in enumerate(
-            zip(self.target, target_sampling, self.target_delta_t)
-        ):
+        for j, (var, sampling_strat) in enumerate(zip(target_slices, target_sampling)):
             target_seed = seed + i + j if seed is not None else None
-            X_t, Y_t = sample_variable(var, sampling_strat, delta_t, target_seed)
+            X_t, Y_t = sample_variable(var, sampling_strat, target_seed)
             task[f"X_t"].append(X_t)
             task[f"Y_t"].append(Y_t)
 
