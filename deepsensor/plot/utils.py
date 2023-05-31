@@ -11,6 +11,7 @@ def plot_context_encoding(
     model,
     task,
     task_loader,
+    batch_idx=0,
     context_set_idxs=None,
     land_idx=None,
     cbar=True,
@@ -30,6 +31,8 @@ def plot_context_encoding(
         Task containing context set to plot encoding of
     task_loader : deepsensor.data.loader.TaskLoader
         DataLoader used to load the data, containing context set metadata used for plotting
+    batch_idx : int, optional
+        Batch index in encoding to plot, by default 0
     context_set_idxs : list or int, optional
         Indices of context sets to plot, by default None (plots all context sets)
     land_idx : int, optional
@@ -46,6 +49,7 @@ def plot_context_encoding(
         Whether to return the axes of the figure, by default False
     """
     encoding_tensor = compute_encoding_tensor(model, task)
+    encoding_tensor = encoding_tensor[batch_idx]
 
     if isinstance(context_set_idxs, int):
         context_set_idxs = [context_set_idxs]
