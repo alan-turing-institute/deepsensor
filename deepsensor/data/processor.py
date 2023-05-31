@@ -15,7 +15,7 @@ class DataProcessor:
 
     def __init__(
         self,
-        norm_params: dict = {},
+        norm_params: dict = None,
         x1_name: str = "x1",
         x2_name: str = "x2",
         x1_map: tuple = (0, 1),
@@ -37,6 +37,9 @@ class DataProcessor:
                 not changed by reference when normalising. Defaults to True.
             verbose (bool, optional): Whether to print verbose output. Defaults to False.
         """
+        if norm_params is None:
+            norm_params = {}
+
         self.norm_params = norm_params
 
         if "coords" not in self.norm_params:
