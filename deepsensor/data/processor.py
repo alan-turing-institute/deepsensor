@@ -125,26 +125,24 @@ class DataProcessor:
             param2 = self.norm_params[var_ID][param2_ID]
         return param1, param2
 
-    def map_coord_array(self, coord_array: np.ndarray, unnorm: bool = False):
+    def map_x1_and_x2(self, x1: np.ndarray, x2: np.ndarray, unnorm: bool = False):
         """Normalise or unnormalise spatial coords in a array
 
         Args:
-            coord_array (np.ndarray): Array of shape (2, N) containing spatial coords of x1 and x2
+            x1 (np.ndarray): Array of shape (N_x1,) containing spatial coords of x1
             unnorm (bool, optional): Whether to unnormalise. Defaults to False.
         """
         x11, x12 = self.norm_params["coords"]["x1"]["map"]
         x21, x22 = self.norm_params["coords"]["x2"]["map"]
 
         if not unnorm:
-            new_coords_x1 = (coord_array[0] - x11) / (x12 - x11)
-            new_coords_x2 = (coord_array[1] - x21) / (x22 - x21)
+            new_coords_x1 = (x1 - x11) / (x12 - x11)
+            new_coords_x2 = (x2 - x21) / (x22 - x21)
         else:
-            new_coords_x1 = coord_array[0] * (x12 - x11) + x11
-            new_coords_x2 = coord_array[1] * (x22 - x21) + x21
+            new_coords_x1 = x1 * (x12 - x11) + x11
+            new_coords_x2 = x2 * (x22 - x21) + x21
 
-        new_coord_tensor = np.stack([new_coords_x1, new_coords_x2], axis=0)
-
-        return new_coord_tensor
+        return new_coords_x1, new_coords_x2
 
     def map_coords(self, data, unnorm=False):
         """Normalise spatial coords in a pandas or xarray object"""
@@ -166,10 +164,9 @@ class DataProcessor:
             ]
             old_coord_IDs = ["x1", "x2"]
 
-        coord_tensor = np.stack(
-            [data[old_coord_IDs[0]], data[old_coord_IDs[1]]], axis=0
+        new_coord_tensor = self.map_x1_and_x2(
+            data[old_coord_IDs[0]], data[old_coord_IDs[1]], unnorm=unnorm
         )
-        new_coord_tensor = self.map_coord_array(coord_tensor, unnorm=unnorm)
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Add coords to dataframe
             data[new_coord_IDs[0]] = new_coord_tensor[0]

@@ -143,7 +143,8 @@ def plot_offgrid_context(axes, task, data_processor=None, task_loader=None,
             X = X[0]  # select first batch
 
         if data_processor is not None:
-            X = data_processor.map_coord_array(X, unnorm=True)
+            x1, x2 = data_processor.map_x1_and_x2(X[0], X[1], unnorm=True)
+            X = np.stack([x1, x2], axis=0)
 
         X = X[::-1]  # flip 2D coords for Cartesian fmt
 
