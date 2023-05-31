@@ -67,8 +67,8 @@ class DataProcessor:
     
     def set_coord_params(self, x1_name, x1_map, x2_name, x2_map):
         """Set coordinate normalisation params"""
-        x1_map = np.array(x1_map)
-        x2_map = np.array(x2_map)
+        x1_map = (float(x1_map[0]), float(x1_map[1]))
+        x2_map = (float(x2_map[0]), float(x2_map[1]))
         self.norm_params["coords"] = {}
         self.norm_params["coords"]["x1"] = {}
         self.norm_params["coords"]["x2"] = {}
