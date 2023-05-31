@@ -1,16 +1,16 @@
+pandas
+xarray
+numpy
+dask
+distributed
+neuralprocesses
 tensorflow
 tensorflow_probability
 torch<2  # backends/lab is not compatible with torch 2.0
+matrix
 backends
 matplotlib
 cartopy
 seaborn
-matrix
-neuralprocesses
-numpy
-dask
-distributed
-pandas
 tqdm
-xarray
 jupyter
