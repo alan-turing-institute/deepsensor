@@ -16,6 +16,7 @@ class DataProcessor:
     def __init__(
         self,
         norm_params: dict = None,
+        time_name: str = "time",
         x1_name: str = "x1",
         x2_name: str = "x2",
         x1_map: tuple = (0, 1),
@@ -37,6 +38,8 @@ class DataProcessor:
                 not changed by reference when normalising. Defaults to True.
             verbose (bool, optional): Whether to print verbose output. Defaults to False.
         """
+        x1_map, x2_map = self._validate_maps(x1_map, x2_map)
+
         if norm_params is None:
             norm_params = {}
 
@@ -44,12 +47,52 @@ class DataProcessor:
 
         if "coords" not in self.norm_params:
             # Add coordinate normalisation info to norm_params
-            self.set_coord_params(x1_name, x1_map, x2_name, x2_map)
+            self.set_coord_params(time_name, x1_name, x1_map, x2_name, x2_map)
 
         self.deepcopy = deepcopy
         self.verbose = verbose
 
         self.valid_methods = ["mean_std", "min_max"]
+
+    def _validate_maps(self, x1_map, x2_map):
+        """Ensure the maps are valid and of appropriate types."""
+        try:
+            x1_map = (float(x1_map[0]), float(x1_map[1]))
+            x2_map = (float(x2_map[0]), float(x2_map[1]))
+        except:
+            raise TypeError("Provided maps can't be cast to 2D Tuple[float]")
+
+        # Check that map is not two of the same number
+        if np.diff(x1_map) == 0:
+            raise ValueError(
+                f"x1_map must be a 2-tuple of different numbers, not {x1_map}"
+            )
+        if np.diff(x2_map) == 0:
+            raise ValueError(
+                f"x2_map must be a 2-tuple of different numbers, not {x2_map}"
+            )
+
+        return x1_map, x2_map
+
+    def _validate_xr(self, da: Union[xr.DataArray, xr.Dataset]):
+        coord_names = [
+            self.norm_params["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
+        ]
+
+        if list(da.dims) != coord_names:
+            raise ValueError(
+                f"Dimensions need to be {coord_names} but are {list(da.dims)}."
+            )
+
+    def _validate_pandas(self, df: Union[pd.DataFrame, pd.Series]):
+        coord_names = [
+            self.norm_params["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
+        ]
+
+        if list(df.index.names) != coord_names:
+            raise ValueError(
+                f"Dimensions need to be {coord_names} but are {list(df.index.names)}."
+            )
 
     def __str__(self):
         s = "DataProcessor with normalisation params:\n"
@@ -65,27 +108,16 @@ class DataProcessor:
             data.load()
         return data
 
-    def set_coord_params(self, x1_name, x1_map, x2_name, x2_map):
+    def set_coord_params(self, time_name, x1_name, x1_map, x2_name, x2_map):
         """Set coordinate normalisation params"""
-        x1_map = (float(x1_map[0]), float(x1_map[1]))
-        x2_map = (float(x2_map[0]), float(x2_map[1]))
         self.norm_params["coords"] = {}
+        self.norm_params["coords"]["time"] = {"name": time_name}
         self.norm_params["coords"]["x1"] = {}
         self.norm_params["coords"]["x2"] = {}
         self.norm_params["coords"]["x1"]["name"] = x1_name
         self.norm_params["coords"]["x1"]["map"] = x1_map
         self.norm_params["coords"]["x2"]["name"] = x2_name
         self.norm_params["coords"]["x2"]["map"] = x2_map
-
-        # Check that map is not two of the same number
-        if np.diff(x1_map) == 0:
-            raise ValueError(
-                f"x1_map must be a 2-tuple of different numbers, not {x1_map}"
-            )
-        if np.diff(x2_map) == 0:
-            raise ValueError(
-                f"x2_map must be a 2-tuple of different numbers, not {x2_map}"
-            )
 
     def check_params_computed(self, var_ID, param1_ID, param2_ID):
         """Check if normalisation params computed for a given variable"""
@@ -171,37 +203,45 @@ class DataProcessor:
             data = data.reset_index()
 
         if not unnorm:
-            new_coord_IDs = ["x1", "x2"]
+            new_coord_IDs = ["time", "x1", "x2"]
             old_coord_IDs = [
                 self.norm_params["coords"][coord_ID]["name"]
-                for coord_ID in ["x1", "x2"]
+                for coord_ID in ["time", "x1", "x2"]
             ]
         else:
             new_coord_IDs = [
                 self.norm_params["coords"][coord_ID]["name"]
-                for coord_ID in ["x1", "x2"]
+                for coord_ID in ["time", "x1", "x2"]
             ]
-            old_coord_IDs = ["x1", "x2"]
+            old_coord_IDs = ["time", "x1", "x2"]
 
-        new_coord_tensor = self.map_x1_and_x2(
-            data[old_coord_IDs[0]], data[old_coord_IDs[1]], unnorm=unnorm
+        new_x1, new_x2 = self.map_x1_and_x2(
+            data[old_coord_IDs[1]], data[old_coord_IDs[2]], unnorm=unnorm
         )
+
         if isinstance(data, (pd.DataFrame, pd.Series)):
+            # Drop old spatial coord columns *before* adding new ones, in case
+            # the old name is already x1.
+            data = data.drop(columns=old_coord_IDs[1:])
             # Add coords to dataframe
-            data[new_coord_IDs[0]] = new_coord_tensor[0]
-            data[new_coord_IDs[1]] = new_coord_tensor[1]
-            # Drop old coord columns
-            data = data.drop(columns=old_coord_IDs)
+            data[new_coord_IDs[1]] = new_x1
+            data[new_coord_IDs[2]] = new_x2
+            # Rename time dimension.
+            rename = {old_coord_IDs[0]: new_coord_IDs[0]}
+            data = data.rename(rename, axis=1)
         elif isinstance(data, (xr.DataArray, xr.Dataset)):
             data = data.assign_coords(
                 {
-                    old_coord_IDs[0]: new_coord_tensor[0],
-                    old_coord_IDs[1]: new_coord_tensor[1],
+                    old_coord_IDs[1]: new_x1,
+                    old_coord_IDs[2]: new_x2,
                 }
             )
-            data = data.rename(
-                {old_coord_IDs[0]: new_coord_IDs[0], old_coord_IDs[1]: new_coord_IDs[1]}
-            )
+
+            # Rename all dimensions.
+            rename = {
+                old: new for old, new in zip(old_coord_IDs, new_coord_IDs) if old != new
+            }
+            data = data.rename(rename)
 
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Set index back to original
@@ -240,6 +280,11 @@ class DataProcessor:
             if add_offset:
                 data = data + offset
             return data
+
+        if isinstance(data, (xr.DataArray, xr.Dataset)) and not unnorm:
+            self._validate_xr(data)
+        elif isinstance(data, (pd.DataFrame, pd.Series)) and not unnorm:
+            self._validate_pandas(data)
 
         if isinstance(data, (xr.DataArray, pd.Series)):
             # Single var
