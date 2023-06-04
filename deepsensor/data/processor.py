@@ -79,6 +79,10 @@ class DataProcessor:
             self.norm_params["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
         ]
 
+        if coord_names[0] not in da.dims:
+            # We don't have a time dimension.
+            coord_names = coord_names[1:]
+
         if list(da.dims) != coord_names:
             raise ValueError(
                 f"Dimensions need to be {coord_names} but are {list(da.dims)}."
@@ -88,6 +92,10 @@ class DataProcessor:
         coord_names = [
             self.norm_params["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
         ]
+
+        if coord_names[0] not in df.index.names:
+            # We don't have a time dimension.
+            coord_names = coord_names[1:]
 
         if list(df.index.names) != coord_names:
             raise ValueError(
@@ -226,9 +234,16 @@ class DataProcessor:
             # Add coords to dataframe
             data[new_coord_IDs[1]] = new_x1
             data[new_coord_IDs[2]] = new_x2
-            # Rename time dimension.
-            rename = {old_coord_IDs[0]: new_coord_IDs[0]}
-            data = data.rename(rename, axis=1)
+
+            if old_coord_IDs[0] in data.columns:
+                # Rename time dimension.
+                rename = {old_coord_IDs[0]: new_coord_IDs[0]}
+                data = data.rename(rename, axis=1)
+            else:
+                # We don't have a time dimension.
+                old_coord_IDs = old_coord_IDs[1:]
+                new_coord_IDs = new_coord_IDs[1:]
+
         elif isinstance(data, (xr.DataArray, xr.Dataset)):
             data = data.assign_coords(
                 {
@@ -236,6 +251,11 @@ class DataProcessor:
                     old_coord_IDs[2]: new_x2,
                 }
             )
+
+            if old_coord_IDs[0] not in data.dims:
+                # We don't have a time dimension.
+                old_coord_IDs = old_coord_IDs[1:]
+                new_coord_IDs = new_coord_IDs[1:]
 
             # Rename all dimensions.
             rename = {

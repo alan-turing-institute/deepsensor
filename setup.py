@@ -13,4 +13,6 @@ setup(
     python_requires=">=3.6",
     install_requires=requirements,
     include_package_data=True,
+    name="deepsensor",
+    version="0.1",
 )

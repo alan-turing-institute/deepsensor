@@ -2,3 +2,4 @@
 *.xml
 *.pyc
 .vscode/
+.DS_Store
