@@ -126,7 +126,7 @@ class TestDataProcessor(unittest.TestCase):
         df = self._gen_data_pandas()
         original_df = deepcopy(df)
 
-        df.index.names = ["datetime", "lat", "lon"]
+        original_df.index.names = ["datetime", "lat", "lon"]
 
         dp = DataProcessor(
             x1_map=(20, 40),
@@ -136,7 +136,7 @@ class TestDataProcessor(unittest.TestCase):
             x2_name="lon",
         )
 
-        df = dp(df)
+        df = dp(original_df)
 
         self.assertListEqual(["time", "x1", "x2"], list(df.index.names))
 
