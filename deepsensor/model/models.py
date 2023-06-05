@@ -490,19 +490,19 @@ class ConvNP(DeepSensorModel):
     @dispatch
     def entropy(self, dist: backend.nps.AbstractMultiOutputDistribution):
         """Model entropy over target points given context points."""
-        return B.to_numpy(dist.entropy())[0]
+        return B.to_numpy(dist.entropy())[0, 0]
 
     @dispatch
     def entropy(self, task: Task):
-        return B.to_numpy(self(task).entropy())[0]
+        return B.to_numpy(self(task).entropy())[0, 0]
 
     @dispatch
     def covariance(self, dist: backend.nps.AbstractMultiOutputDistribution):
-        return B.to_numpy(B.dense(dist.vectorised_normal.var))[0]
+        return B.to_numpy(B.dense(dist.vectorised_normal.var))[0, 0]
 
     @dispatch
     def covariance(self, task: Task):
-        return B.to_numpy(B.dense(self(task).vectorised_normal.var))[0]
+        return B.to_numpy(B.dense(self(task).vectorised_normal.var))[0, 0]
 
     @dispatch
     def variance(self, dist: backend.nps.AbstractMultiOutputDistribution):
