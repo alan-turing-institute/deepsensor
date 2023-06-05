@@ -245,9 +245,10 @@ class DeepSensorModel(ProbabilisticModel):
 
         dates = [task["time"] for task in tasks]
 
-        target_var_IDs = self.task_loader.target_var_IDs[
-            0
-        ]  # TEMP just first target set
+        # Flatten tuple of tups to single list
+        target_var_IDs = [
+            var_ID for set in self.task_loader.target_var_IDs for var_ID in set
+        ]
 
         if isinstance(X_t, pd.Index):
             X_t = pd.DataFrame(index=X_t)
@@ -522,19 +523,19 @@ class ConvNP(DeepSensorModel):
         # default DataLoader... is this the best way to do this?
         task = ConvNP.check_task(task)
 
-        Y_target = task["Y_t"][station_set_idx]
+        Y_target = B.concat(*task["Y_t"], axis=1)
         return B.to_numpy(dist.logpdf(Y_target)).mean()
 
     @dispatch
-    def logpdf(self, task: Task, station_set_idx=0):
+    def logpdf(self, task: Task):
         # Need Y_target to be the right shape for model in the event that task is from the
         # default DataLoader... is this the best way to do this?
         task = ConvNP.check_task(task)
 
-        Y_target = task["Y_t"][station_set_idx]
+        Y_target = B.concat(*task["Y_t"], axis=1)
         return B.to_numpy(self(task).logpdf(Y_target)).mean()
 
-    def loss_fn(self, task, fix_noise=None, num_lv_samples=8, normalise=False):
+    def loss_fn(self, task: Task, fix_noise=None, num_lv_samples=8, normalise=False):
         """
 
         Parameters

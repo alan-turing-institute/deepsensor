@@ -15,15 +15,14 @@ def convert_task_to_nps_args(task: Task):
     # context_data = [nps.mask.merge_contexts(ctx, multiple=5000) for ctx in context_data]
     # context_data[0] = nps.mask.merge_contexts(context_data[0], multiple=5000)  # TEMP not converting gridded
 
-    target_set_idx = 0
-    # TEMP: assume just one target set and just use the first entry from the lists of target data
-    xt = task["X_t"][target_set_idx]
-    yt = task["Y_t"][target_set_idx]
-    # xt = tf.cast(tf.convert_to_tensor(xt), tf.float32)
+    # TEMP: assume target sets all on same spatial locations
+    #   just use the first entry from the lists of target data
+    xt = task["X_t"][0]
+    yt = B.concat(*task["Y_t"], axis=1)
 
-    # TODO implement this and test downstream functionality
-    # xt = nps.AggregateInput(*[(xt, i) for i, xt in enumerate(task['X_t'])])
-    # yt = nps.Aggregate(*[yt for yt in enumerate(task['Y_t'])])
+    # TODO: allow for varying target set locations
+    # xt = backend.nps.AggregateInput(*[(xt, i) for i, xt in enumerate(task['X_t'])])
+    # yt = backend.nps.Aggregate(*[yt for yt in enumerate(task['Y_t'])])
 
     # Assume one target set, convert to tf.Tensor and AggregateInput for AR
     #   sampling
