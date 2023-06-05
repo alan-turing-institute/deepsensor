@@ -193,6 +193,7 @@ class DeepSensorModel(ProbabilisticModel):
         X_t_normalised: bool = False,
         resolution_factor=1,
         n_samples=0,
+        unnormalise=True,
         noiseless_samples=True,
         seed=0,
         progress_bar=0,
@@ -213,6 +214,8 @@ class DeepSensorModel(ProbabilisticModel):
             Applies to on-grid predictions only. Default 1.
         :param n_samples: Number of joint samples to draw from the model.
             If 0, will not draw samples. Default 0.
+        :param unnormalise: Whether to unnormalise the predictions. Only works if
+            `self` has a `data_processor` and `task_loader` attribute. Default True.
         :param noiseless_samples: Whether to draw noiseless samples from the model. Default True.
         :param seed: Random seed for deterministic sampling. Default 0.
         :param progress_bar: Whether to display a progress bar over tasks. Default 0.
@@ -323,7 +326,11 @@ class DeepSensorModel(ProbabilisticModel):
             if n_samples >= 1:
                 samples = samples.to_dataset(dim="data_var")
 
-        if self.task_loader is not None and self.data_processor is not None:
+        if (
+            self.task_loader is not None
+            and self.data_processor is not None
+            and unnormalise == True
+        ):
             mean = self.data_processor.unnormalise(mean)
             std = self.data_processor.unnormalise(std, add_offset=False)
             if n_samples >= 1:
@@ -503,7 +510,6 @@ class ConvNP(DeepSensorModel):
         self,
         dist: backend.nps.AbstractMultiOutputDistribution,
         task: Task,
-        station_set_idx=0,
     ):
         # Need Y_target to be the right shape for model in the event that task is from the
         # default DataLoader... is this the best way to do this?
