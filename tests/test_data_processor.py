@@ -16,6 +16,7 @@ class TestDataProcessor(unittest.TestCase):
     - Test different time frequencies
     - ...
     """
+
     def _gen_data_xr(self):
         data = np.random.rand(31, 30, 20)
         time = pd.date_range("2020-01-01", "2020-01-31", freq="D")
