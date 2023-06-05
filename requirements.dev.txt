@@ -3,4 +3,5 @@ pytest
 pytest-cov
 parameterized
 tox
+tox-gh-actions
 coveralls
