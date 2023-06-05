@@ -1,3 +1,5 @@
+# Requirements for development, testing, and documentation
+-e .
 pandas
 xarray
 numpy
@@ -14,3 +16,4 @@ cartopy
 seaborn
 tqdm
 jupyter
+pytest
