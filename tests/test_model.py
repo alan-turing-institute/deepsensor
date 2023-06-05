@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import unittest
 
+import lab as B
 import deepsensor.tensorflow as deepsensor
 
 from deepsensor.data.processor import DataProcessor
@@ -67,7 +68,9 @@ class TestModel(unittest.TestCase):
         ]:
             yield [sampling_method] * n_context, [sampling_method] * n_target
 
-    @parameterized.expand(range(1, 4))
+
+    # TEMP only 1D because non-overlapping target sets are not yet supported
+    @parameterized.expand(range(1, 2))
     def test_model_call(self, n_context_and_target):
         """Check `ConvNP` runs with all possible combinations of context/target sampling methods
 
@@ -110,8 +113,8 @@ class TestModel(unittest.TestCase):
 
         return None
 
-    @parameterized.expand(range(1, 2))
-    def test_prediction_shapes(self, target_dim):
+    @parameterized.expand(range(1, 4))
+    def test_prediction_shapes_lowlevel(self, target_dim):
         """Test low-level model prediction interface"""
         tl = TaskLoader(
             context=self.da,
@@ -133,24 +136,42 @@ class TestModel(unittest.TestCase):
 
             # Tensors
             assert_shape(model.mean(dist), (target_dim, *expected_shape))
+            assert_shape(model.mean(task), (target_dim, *expected_shape))
             assert_shape(model.variance(dist), (target_dim, *expected_shape))
+            assert_shape(model.variance(task), (target_dim, *expected_shape))
             assert_shape(model.stddev(dist), (target_dim, *expected_shape))
+            assert_shape(model.stddev(task), (target_dim, *expected_shape))
             assert_shape(
                 model.covariance(dist), (n_targets * target_dim, n_targets * target_dim)
+            )
+            assert_shape(
+                model.covariance(task), (n_targets * target_dim, n_targets * target_dim)
             )
             n_samples = 5
             assert_shape(
                 model.sample(dist, n_samples), (n_samples, target_dim, *expected_shape)
             )
+            assert_shape(
+                model.sample(task, n_samples), (n_samples, target_dim, *expected_shape)
+            )
 
             # Scalars
             x = model.logpdf(dist, task)
             assert x.size == 1 and x.shape == ()
+            x = model.logpdf(task)
+            assert x.size == 1 and x.shape == ()
             x = model.entropy(dist)
             assert x.size == 1 and x.shape == ()
+            x = model.entropy(task)
+            assert x.size == 1 and x.shape == ()
+            x = B.to_numpy(model.loss_fn(task))
+            print("\n" * 5)
+            print(x)
+            print("\n" * 5)
+            assert x.size == 1 and x.shape == ()
 
-    @parameterized.expand(range(1, 3))
-    def test_prediction_shapes(self, target_dim):
+    @parameterized.expand(range(1, 4))
+    def test_prediction_shapes_highlevel(self, target_dim):
         """Test high-level `.predict` interface"""
 
         if target_dim > 1:
@@ -160,7 +181,6 @@ class TestModel(unittest.TestCase):
             for i, name in enumerate(target_names):
                 target[i] = copy.deepcopy(target[i])
                 target[i].name = name
-            # print([t.name for t in target])
         elif target_dim == 1:
             target = self.da
         tl = TaskLoader(
