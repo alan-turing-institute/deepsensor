@@ -1,4 +1,5 @@
-# Requirements for development, testing, and documentation
+# Additional requirements for development
 pytest
 pytest-cov
+parameterized
 tox
