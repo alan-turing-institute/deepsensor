@@ -38,6 +38,13 @@ def create_empty_prediction_array(
     coord_names={"x1": "x1", "x2": "x2"},
     data_vars=["mean", "std"],
 ):
+    # Check for any repeated data_vars
+    if len(data_vars) != len(set(data_vars)):
+        raise ValueError(
+            f"Duplicate data_vars found in data_vars: {data_vars}. "
+            "This woudld cause the xarray.Dataset to have fewer variables than expected."
+        )
+
     x1_lowres = X_t.coords[coord_names["x1"]]
     x2_lowres = X_t.coords[coord_names["x2"]]
 
