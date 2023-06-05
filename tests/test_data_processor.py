@@ -51,24 +51,24 @@ class TestDataProcessor(unittest.TestCase):
         return True
 
     def test_same_names_xr(self):
-        da = self._gen_data_xr()
+        da_raw = self._gen_data_xr()
 
-        original_da = deepcopy(da)
+        da_raw = deepcopy(da_raw)
         dp = DataProcessor(x1_map=(20, 40), x2_map=(40, 60), x1_name="x1", x2_name="x2")
-        da = dp(da)
+        da_norm = dp(da_raw)
 
-        self.assertListEqual(["time", "x1", "x2"], list(da.dims))
+        self.assertListEqual(["time", "x1", "x2"], list(da_norm.dims))
 
-        da = dp.unnormalise(da)
+        da_unnorm = dp.unnormalise(da_norm)
 
         self.assertTrue(
-            self.assert_allclose_xr(da, original_da), f"Original {type(da).__name__} not restored."
+            self.assert_allclose_xr(da_unnorm, da_raw), f"Original {type(da_raw).__name__} not restored."
         )
 
     def test_different_names_xr(self):
-        da = self._gen_data_xr()
-        da = da.rename({"time": "datetime", "x1": "latitude", "x2": "longitude"})
-        original_da = deepcopy(da)
+        da_raw = self._gen_data_xr()
+        da_raw = da_raw.rename({"time": "datetime", "x1": "latitude", "x2": "longitude"})
+        da_raw = deepcopy(da_raw)
         dp = DataProcessor(
             x1_map=(20, 40),
             x2_map=(40, 60),
@@ -76,20 +76,20 @@ class TestDataProcessor(unittest.TestCase):
             x1_name="latitude",
             x2_name="longitude",
         )
-        da = dp(da)
+        da_norm = dp(da_raw)
         self.assertListEqual(
-            ["time", "x1", "x2"], list(da.dims), "Failed to rename dims."
+            ["time", "x1", "x2"], list(da_norm.dims), "Failed to rename dims."
         )
 
-        da = dp.unnormalise(da)
+        da_unnorm = dp.unnormalise(da_norm)
         self.assertTrue(
-            self.assert_allclose_xr(da, original_da), f"Original {type(da).__name__} not restored."
+            self.assert_allclose_xr(da_unnorm, da_raw), f"Original {type(da_raw).__name__} not restored."
         )
 
     def test_wrong_order_xr(self):
-        da = self._gen_data_xr()
+        da_raw = self._gen_data_xr()
         # Transpose, changing order
-        da = da.T
+        da_raw = da_raw.T
         dp = DataProcessor(
             x1_map=(20, 40),
             x2_map=(40, 60),
@@ -98,11 +98,11 @@ class TestDataProcessor(unittest.TestCase):
             x2_name="x2",
         )
         with self.assertRaises(ValueError):
-            dp(da)
+            dp(da_raw)
 
     def test_same_names_pandas(self):
-        df = self._gen_data_pandas()
-        original_df = deepcopy(df)
+        df_raw = self._gen_data_pandas()
+        df_raw = deepcopy(df_raw)
 
         dp = DataProcessor(
             x1_map=(20, 40),
@@ -112,21 +112,21 @@ class TestDataProcessor(unittest.TestCase):
             x2_name="x2",
         )
 
-        df = dp(df)
+        df_norm = dp(df_raw)
 
-        self.assertListEqual(["time", "x1", "x2"], list(df.index.names))
+        self.assertListEqual(["time", "x1", "x2"], list(df_norm.index.names))
 
-        df = dp.unnormalise(df)
+        df_unnorm = dp.unnormalise(df_norm)
 
         self.assertTrue(
-            self.assert_allclose_pd(df, original_df), f"Original {type(df).__name__} not restored."
+            self.assert_allclose_pd(df_unnorm, df_raw), f"Original {type(df_raw).__name__} not restored."
         )
 
     def test_different_names_pandas(self):
-        df = self._gen_data_pandas()
-        original_df = deepcopy(df)
+        df_raw = self._gen_data_pandas()
+        df_raw = deepcopy(df_raw)
 
-        original_df.index.names = ["datetime", "lat", "lon"]
+        df_raw.index.names = ["datetime", "lat", "lon"]
 
         dp = DataProcessor(
             x1_map=(20, 40),
@@ -136,20 +136,20 @@ class TestDataProcessor(unittest.TestCase):
             x2_name="lon",
         )
 
-        df = dp(original_df)
+        df_norm = dp(df_raw)
 
-        self.assertListEqual(["time", "x1", "x2"], list(df.index.names))
+        self.assertListEqual(["time", "x1", "x2"], list(df_norm.index.names))
 
-        df = dp.unnormalise(df)
+        df_unnorm = dp.unnormalise(df_norm)
 
         self.assertTrue(
-            self.assert_allclose_pd(df, original_df), f"Original {type(df).__name__} not restored."
+            self.assert_allclose_pd(df_unnorm, df_raw), f"Original {type(df_raw).__name__} not restored."
         )
 
     def test_wrong_order_pandas(self):
-        df = self._gen_data_pandas()
+        df_raw = self._gen_data_pandas()
 
-        df = df.swaplevel(0, 2)
+        df_raw = df_raw.swaplevel(0, 2)
 
         dp = DataProcessor(
             x1_map=(20, 40),
@@ -160,7 +160,7 @@ class TestDataProcessor(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError):
-            dp(df)
+            dp(df_raw)
 
 
 if __name__ == "__main__":
