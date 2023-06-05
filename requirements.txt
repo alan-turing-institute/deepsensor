@@ -11,6 +11,8 @@ torch>=2
 backends-matrix
 backends
 matplotlib
+shapely
+pyshp
 cartopy
 seaborn
 tqdm
