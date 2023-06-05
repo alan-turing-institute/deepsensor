@@ -68,7 +68,6 @@ class TestModel(unittest.TestCase):
         ]:
             yield [sampling_method] * n_context, [sampling_method] * n_target
 
-
     # TEMP only 1D because non-overlapping target sets are not yet supported
     @parameterized.expand(range(1, 2))
     def test_model_call(self, n_context_and_target):
