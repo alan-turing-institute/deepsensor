@@ -10,21 +10,25 @@ from deepsensor.data.processor import DataProcessor
 
 
 class TestDataProcessor(unittest.TestCase):
+    """Test DataProcessor
+
+    Tests TODO:
+    - Test different time frequencies
+    - ...
+    """
     def _gen_data_xr(self):
-        data = np.random.rand(200, 30, 20)
-        time = pd.date_range("2020-01-01", "2021-01-01", 200)
+        data = np.random.rand(31, 30, 20)
+        time = pd.date_range("2020-01-01", "2020-01-31", freq="D")
         lat = np.linspace(20, 40, 30)
         lon = np.linspace(40, 60, 20)
         da = xr.DataArray(data, coords={"time": time, "x1": lat, "x2": lon})
         return da
 
     def _gen_data_pandas(self):
-        data = np.random.rand(200, 30, 20)
-
-        time = pd.date_range("2020-01-01", "2021-01-01", 200)
-        lat = np.linspace(20, 40, 30)
-        lon = np.linspace(40, 60, 20)
-
+        data = np.random.rand(31, 10, 10)
+        time = pd.date_range("2020-01-01", "2020-01-31", freq="D")
+        lat = np.linspace(20, 40, 10)
+        lon = np.linspace(40, 60, 10)
         mi = pd.MultiIndex.from_product([time, lat, lon], names=["time", "x1", "x2"])
         df = pd.DataFrame(data.flatten(), index=mi, columns=["t2m"])
         return df
