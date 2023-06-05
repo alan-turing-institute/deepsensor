@@ -97,10 +97,11 @@ class DataProcessor:
             # We don't have a time dimension.
             coord_names = coord_names[1:]
 
-        if list(df.index.names) != coord_names:
-            raise ValueError(
-                f"Dimensions need to be {coord_names} but are {list(df.index.names)}."
-            )
+        for coord in coord_names:
+            if coord not in df.index.names:
+                raise ValueError(
+                    f"Dimensions need to contain {coord_names} or {coord_names[1:]} but are {df.index.names}."
+                )
 
     def __str__(self):
         s = "DataProcessor with normalisation params:\n"
