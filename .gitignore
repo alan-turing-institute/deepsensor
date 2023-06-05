@@ -3,3 +3,5 @@
 *.pyc
 .vscode/
 .DS_Store
+.tox-info.*
+.coverage
