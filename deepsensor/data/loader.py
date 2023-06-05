@@ -394,7 +394,7 @@ class TaskLoader:
                     var = var.sel(time=date + delta_t)
             elif type(var) is pd.DataFrame:
                 if "time" in var.index.names:
-                    var = var.loc[date + delta_t]
+                    var = var[var.index.get_level_values("time") == date + delta_t]
             else:
                 raise ValueError(f"Unknown variable type {type(var)}")
             return var
