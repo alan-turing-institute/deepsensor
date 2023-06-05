@@ -409,9 +409,12 @@ class TaskLoader:
                 raise ValueError(f"Unknown type {type(var)} for context set {var}")
             return X, Y
 
+        # Check that the sampling strategies are valid
         context_sampling = check_sampling_strat(context_sampling, self.context)
         target_sampling = check_sampling_strat(target_sampling, self.target)
-
+        # Check `split_frac
+        if split_frac < 0 or split_frac > 1:
+            raise ValueError(f"split_frac must be between 0 and 1, got {split_frac}")
         if (
             self.links is not None
             and "split" in context_sampling
