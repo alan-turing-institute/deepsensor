@@ -7,6 +7,7 @@ import lab as B
 
 from typing import List
 
+
 def train_epoch(
     model: ConvNP,
     tasks: List[Task],
@@ -27,21 +28,25 @@ def train_epoch(
     if deepsensor.backend.str == "torch":
         # Run on GPU if available
         import torch
+
         if torch.cuda.is_available():
             # Set default GPU device
             torch.set_default_device("cuda")
             B.set_global_device("cuda:0")
-    elif deepsensor.backend.str == "tensorflow":
+    elif deepsensor.backend.str == "tf":
         # Run on GPU if available
         import tensorflow as tf
+
         if tf.test.is_gpu_available():
             # Set default GPU device
-            tf.config.set_visible_devices(tf.config.list_physical_devices('GPU')[0], 'GPU')
+            tf.config.set_visible_devices(
+                tf.config.list_physical_devices("GPU")[0], "GPU"
+            )
             B.set_global_device("GPU:0")
         # Check GPU visible to tf
         # print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
-    if deepsensor.backend.str == 'tf':
+    if deepsensor.backend.str == "tf":
         import tensorflow as tf
 
         opt = tf.keras.optimizers.Adam(lr)
@@ -58,7 +63,7 @@ def train_epoch(
             opt.apply_gradients(zip(grads, model.model.trainable_weights))
             return mean_batch_loss
 
-    elif deepsensor.backend.str == 'torch':
+    elif deepsensor.backend.str == "torch":
         import torch.optim as optim
 
         opt = optim.Adam(model.model.parameters(), lr=lr)
@@ -74,6 +79,7 @@ def train_epoch(
             mean_batch_loss.backward()
             opt.step()
             return mean_batch_loss.detach().cpu().numpy()
+
     else:
         raise NotImplementedError(f"Backend {deepsensor.backend.str} not implemented")
 
@@ -85,7 +91,9 @@ def train_epoch(
     batch_losses = []
     for batch_i in range(n_batches):
         if batch_size is not None:
-            task = concat_tasks(tasks[batch_i * batch_size : (batch_i + 1) * batch_size])
+            task = concat_tasks(
+                tasks[batch_i * batch_size : (batch_i + 1) * batch_size]
+            )
         else:
             task = tasks[batch_i]
         batch_loss = train_step(task)
