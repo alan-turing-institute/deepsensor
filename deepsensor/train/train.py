@@ -8,23 +8,7 @@ import lab as B
 from typing import List
 
 
-def train_epoch(
-    model: ConvNP,
-    tasks: List[Task],
-    lr: float = 5e-5,
-    batch_size: int = None,
-) -> List[float]:
-    """Train model for one epoch
-
-    Args:
-        model (ConvNP): Model to train
-        tasks (List[Task]): List of tasks to train on
-        lr (float): Learning rate
-        batch_size (int, optional): Batch size. Defaults to None. If None, no batching is performed.
-
-    Returns:
-        List[float]: List of losses for each task/batch
-    """
+def set_gpu_default_device():
     if deepsensor.backend.str == "torch":
         # Run on GPU if available
         import torch
@@ -46,10 +30,36 @@ def train_epoch(
         # Check GPU visible to tf
         # print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
+        else:
+            raise NotImplementedError(
+                f"Backend {deepsensor.backend.str} not implemented"
+            )
+
+
+def train_epoch(
+    model: ConvNP,
+    tasks: List[Task],
+    lr: float = 5e-5,
+    batch_size: int = None,
+    opt=None,
+) -> List[float]:
+    """Train model for one epoch
+
+    Args:
+        model (ConvNP): Model to train
+        tasks (List[Task]): List of tasks to train on
+        lr (float): Learning rate
+        batch_size (int, optional): Batch size. Defaults to None. If None, no batching is performed.
+        opt: TF or Torch optimiser object. Optional.
+
+    Returns:
+        List[float]: List of losses for each task/batch
+    """
     if deepsensor.backend.str == "tf":
         import tensorflow as tf
 
-        opt = tf.keras.optimizers.Adam(lr)
+        if opt is None:
+            opt = tf.keras.optimizers.Adam(lr)
 
         def train_step(tasks):
             if not isinstance(tasks, list):
@@ -58,7 +68,7 @@ def train_epoch(
                 task_losses = []
                 for task in tasks:
                     task_losses.append(model.loss_fn(task, normalise=True))
-                mean_batch_loss = B.mean(task_losses)
+                mean_batch_loss = B.mean(B.stack(*task_losses))
             grads = tape.gradient(mean_batch_loss, model.model.trainable_weights)
             opt.apply_gradients(zip(grads, model.model.trainable_weights))
             return mean_batch_loss
@@ -66,7 +76,8 @@ def train_epoch(
     elif deepsensor.backend.str == "torch":
         import torch.optim as optim
 
-        opt = optim.Adam(model.model.parameters(), lr=lr)
+        if opt is None:
+            opt = optim.Adam(model.model.parameters(), lr=lr)
 
         def train_step(tasks):
             if not isinstance(tasks, list):
@@ -75,7 +86,7 @@ def train_epoch(
             task_losses = []
             for task in tasks:
                 task_losses.append(model.loss_fn(task, normalise=True))
-            mean_batch_loss = B.mean(torch.stack(task_losses))
+            mean_batch_loss = B.mean(B.stack(*task_losses))
             mean_batch_loss.backward()
             opt.step()
             return mean_batch_loss.detach().cpu().numpy()
