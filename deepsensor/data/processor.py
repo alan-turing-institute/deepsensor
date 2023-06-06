@@ -247,10 +247,7 @@ class DataProcessor:
 
         elif isinstance(data, (xr.DataArray, xr.Dataset)):
             data = data.assign_coords(
-                {
-                    old_coord_IDs[1]: new_x1,
-                    old_coord_IDs[2]: new_x2,
-                }
+                {old_coord_IDs[1]: new_x1, old_coord_IDs[2]: new_x2}
             )
 
             if old_coord_IDs[0] not in data.dims:

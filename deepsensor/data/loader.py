@@ -79,9 +79,7 @@ class TaskLoader:
         ) = self.infer_context_and_target_var_IDs()
 
     def cast_context_and_target_to_dtype(
-        self,
-        context: List,
-        target: List,
+        self, context: List, target: List
     ) -> (List, List):
         """Cast context and target data to the default dtype.
 
@@ -170,10 +168,7 @@ class TaskLoader:
             """If delta_ts is not None, then add the delta_t to the variable ID"""
             var_IDs = []
             # Distinguish between xr.DataArray, xr.Dataset and pd.DataFrame
-            for (
-                i,
-                var,
-            ) in enumerate(datasets):
+            for i, var in enumerate(datasets):
                 if isinstance(var, xr.DataArray):
                     var_ID = (var.name,)  # Single data variable
                 elif isinstance(var, xr.Dataset):

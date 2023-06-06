@@ -74,10 +74,7 @@ def construct_x1x2_ds(gridded_ds):
     X1, X2 = np.meshgrid(gridded_ds.x1, gridded_ds.x2, indexing="ij")
     ds = xr.Dataset(
         coords={"x1": gridded_ds.x1, "x2": gridded_ds.x2},
-        data_vars={
-            "x1_arr": (("x1", "x2"), X1),
-            "x2_arr": (("x1", "x2"), X2),
-        },
+        data_vars={"x1_arr": (("x1", "x2"), X1), "x2_arr": (("x1", "x2"), X2)},
     )
     return ds
 

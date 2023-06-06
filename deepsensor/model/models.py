@@ -69,7 +69,7 @@ def create_empty_prediction_array(
     }
 
     pred_ds = xr.Dataset(
-        {data_var: xr.DataArray(dims=dims, coords=coords) for data_var in data_vars},
+        {data_var: xr.DataArray(dims=dims, coords=coords) for data_var in data_vars}
     ).astype("float32")
 
     # Convert time coord to pandas timestamps
@@ -181,9 +181,7 @@ class DeepSensorModel(ProbabilisticModel):
     """
 
     def __init__(
-        self,
-        data_processor: DataProcessor = None,
-        task_loader: TaskLoader = None,
+        self, data_processor: DataProcessor = None, task_loader: TaskLoader = None
     ):
         """Initialise DeepSensorModel
 
@@ -292,8 +290,7 @@ class DeepSensorModel(ProbabilisticModel):
                     for idxs in X_t.index
                 ]
                 index_samples = pd.MultiIndex.from_tuples(
-                    idxs_samples,
-                    names=["sample", "time", *X_t.index.names],
+                    idxs_samples, names=["sample", "time", *X_t.index.names]
                 )
                 samples = pd.DataFrame(index=index_samples, columns=target_var_IDs)
 
@@ -377,10 +374,7 @@ class ConvNP(DeepSensorModel):
         # so unnormalisation will not be performed at inference time.
         super().__init__()
 
-        self.model = construct_neural_process(
-            *args,
-            **kwargs,
-        )
+        self.model = construct_neural_process(*args, **kwargs)
 
     @dispatch
     def __init__(
@@ -420,11 +414,7 @@ class ConvNP(DeepSensorModel):
                 print(f"encoder_scales inferred from TaskLoader: {encoder_scales}")
             kwargs["encoder_scales"] = encoder_scales
 
-        self.model = construct_neural_process(
-            dim_x=2,
-            *args,
-            **kwargs,
-        )
+        self.model = construct_neural_process(dim_x=2, *args, **kwargs)
 
     @dispatch
     def __init__(
@@ -514,11 +504,7 @@ class ConvNP(DeepSensorModel):
         return B.to_numpy(self(task).var)[0, 0]
 
     @dispatch
-    def logpdf(
-        self,
-        dist: backend.nps.AbstractMultiOutputDistribution,
-        task: Task,
-    ):
+    def logpdf(self, dist: backend.nps.AbstractMultiOutputDistribution, task: Task):
         # Need Y_target to be the right shape for model in the event that task is from the
         # default DataLoader... is this the best way to do this?
         task = ConvNP.check_task(task)
