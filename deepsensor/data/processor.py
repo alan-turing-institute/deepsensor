@@ -74,19 +74,28 @@ class DataProcessor:
 
         return x1_map, x2_map
 
-    def _validate_xr(self, da: Union[xr.DataArray, xr.Dataset]):
-        coord_names = [
-            self.norm_params["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
-        ]
-
-        if coord_names[0] not in da.dims:
-            # We don't have a time dimension.
-            coord_names = coord_names[1:]
-
-        if list(da.dims) != coord_names:
-            raise ValueError(
-                f"Dimensions need to be {coord_names} but are {list(da.dims)}."
-            )
+    def _validate_xr(self, data: Union[xr.DataArray, xr.Dataset]):
+        if isinstance(data, xr.DataArray):
+            coord_names = [self.norm_params["coords"][coord]["name"] for coord in ["time", "x1", "x2"]]
+            if coord_names[0] not in data.dims:
+                # We don't have a time dimension.
+                coord_names = coord_names[1:]
+            if list(data.dims) != coord_names:
+                raise ValueError(
+                    f"Dimensions need to be {coord_names} but are {list(data.dims)}."
+                )
+            
+        elif isinstance(data, xr.Dataset):
+            for var_ID in data:
+                coord_names = [self.norm_params["coords"][coord]["name"] for coord in ["time", "x1", "x2"]]
+                da = data[var_ID]
+                if coord_names[0] not in da.dims:
+                    # We don't have a time dimension.
+                    coord_names = coord_names[1:]
+                if list(da.dims) != coord_names:
+                    raise ValueError(
+                        f"Dimensions of {var_ID} need to be {coord_names} but are {list(da.dims)}."
+                    )
 
     def _validate_pandas(self, df: Union[pd.DataFrame, pd.Series]):
         coord_names = [
