@@ -8,40 +8,47 @@ import numpy as np
 import pandas as pd
 import unittest
 
+from tests.utils import gen_random_data_xr, gen_random_data_pandas
+
 from deepsensor.data.loader import TaskLoader
 
 
-class TestDataProcessor(unittest.TestCase):
+def _gen_data_xr(coords=None, dims=None, data_vars=None):
+    """Gen random normalised data"""
+    if coords is None:
+        coords = dict(
+            time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+            x1=np.linspace(0, 1, 30),
+            x2=np.linspace(0, 1, 20),
+        )
+    da = gen_random_data_xr(coords, dims, data_vars)
+    return da
+
+
+def _gen_data_pandas(coords=None, dims=None, cols=None):
+    """Gen random normalised data"""
+    if coords is None:
+        coords = dict(
+            time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+            x1=np.linspace(0, 1, 10),
+            x2=np.linspace(0, 1, 10),
+        )
+    df = gen_random_data_pandas(coords, dims, cols)
+    return df
+
+
+class TestTaskLoader(unittest.TestCase):
     """Test TaskLoader
 
     Tests TODO:
-    - Loop over matrix of all TL setups and context/target sampling methods
     - Task batching shape as expected
-    - assertRaises for invalid inputs
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # It's safe to share data between tests because the TaskLoader does not modify data
-        self.da = self._gen_data_xr()
-        self.df = self._gen_data_pandas()
-
-    def _gen_data_xr(self):
-        data = np.random.rand(31, 30, 20)
-        time = pd.date_range("2020-01-01", "2020-01-31", freq="D")
-        x1 = np.linspace(0, 1, 30)
-        x2 = np.linspace(0, 1, 20)
-        da = xr.DataArray(data, coords={"time": time, "x1": x1, "x2": x2})
-        return da
-
-    def _gen_data_pandas(self):
-        data = np.random.rand(31, 10, 10)
-        time = pd.date_range("2020-01-01", "2020-01-31", freq="D")
-        x1 = np.linspace(0, 1, 10)
-        x2 = np.linspace(0, 1, 10)
-        mi = pd.MultiIndex.from_product([time, x1, x2], names=["time", "x1", "x2"])
-        df = pd.DataFrame(data.flatten(), index=mi, columns=["t2m"])
-        return df
+        self.da = _gen_data_xr()
+        self.df = _gen_data_pandas()
 
     def _gen_task_loader_call_args(self, n_context, n_target):
         """Generate arguments for TaskLoader.__call__
@@ -108,6 +115,7 @@ class TestDataProcessor(unittest.TestCase):
         return None
 
     def test_wrong_length_sampling_strat(self):
+        """Sampling strategy must be same length as context/target"""
         tl = TaskLoader(
             context=self.da,
             target=self.da,
@@ -116,17 +124,18 @@ class TestDataProcessor(unittest.TestCase):
             task = tl("2020-01-01", ["all", "all"], ["all", "all"])
 
     def test_split_fails_if_not_df(self):
-        tl = TaskLoader(context=self.da, target=self.df, links=[(0, 0)])
+        """The "split" sampling strategy only works with pandas objects (currently)"""
         with self.assertRaises(ValueError):
-            task = tl("2020-01-01", "split", "split")
+            # Indexes don't connect two pandas objects
+            tl = TaskLoader(context=self.df, target=self.da, links=[(0, 0)])
 
     def test_wrong_links(self):
-        """Test wrong link inputs raise ValueError"""
+        """Test link indexes out of range"""
         with self.assertRaises(ValueError):
             tl = TaskLoader(context=self.df, target=self.df, links=[(0, 1)])
 
     def test_links(self):
-        """Test sampling from linked dataframes"""
+        """Test sampling from linked dataframes works as expected"""
         tl = TaskLoader(context=self.df, target=self.df, links=[(0, 0)])
         task = tl("2020-01-01", "split", "split", split_frac=0.0)
         self.assertEqual(task["Y_c"][0].size, 0)  # Should be no context data
@@ -134,8 +143,8 @@ class TestDataProcessor(unittest.TestCase):
         self.assertEqual(task["Y_t"][0].size, 0)  # Should be no target data
         task = tl("2020-01-01", "split", "split", split_frac=0.5)
         self.assertEqual(
-            task["Y_c"][0].size, task["Y_t"][0].size
-        )  # Should be split equally (if even)
+            task["Y_c"][0].size // 2, task["Y_t"][0].size // 2
+        )  # Should be split equally
 
         # Should raise ValueError if "split" provided for context but not target (or vice versa)
         with self.assertRaises(ValueError):
