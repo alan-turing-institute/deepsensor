@@ -36,7 +36,8 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
         tasks[i] = task
 
         # List of tuples of (x_c, y_c)
-        contexts.append(list(zip(task["X_c"], task["Y_c"])))
+        context_i = list(zip(task["X_c"], task["Y_c"]))
+        contexts.append(context_i)
 
     # List of tuples of merged (x_c, y_c) along batch dim with padding (w/ multiple=1000)
     merged_context = [
@@ -50,6 +51,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     merged_task["X_c"] = [c[0] for c in merged_context]
     merged_task["Y_c"] = [c[1] for c in merged_context]
 
+    # TODO this assumes that all tasks have the same number of targets
     merged_task["X_t"] = [
         B.concat(*[t["X_t"][i] for t in tasks], axis=0)
         for i in range(len(tasks[0]["X_t"]))
