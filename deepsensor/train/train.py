@@ -32,10 +32,10 @@ def set_gpu_default_device():
         # Check GPU visible to tf
         # print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
-        else:
-            raise NotImplementedError(
-                f"Backend {deepsensor.backend.str} not implemented"
-            )
+    else:
+        raise NotImplementedError(
+            f"Backend {deepsensor.backend.str} not implemented"
+        )
 
 
 def train_epoch(
