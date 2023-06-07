@@ -22,7 +22,7 @@ def gen_ppu(task_loader: TaskLoader) -> int:
             x2_res = np.abs(np.mean(np.diff(var["x2"])))
             data_ppu = 1 / np.mean([x1_res, x2_res])
             max_ppu = max(max_ppu, data_ppu * 1.2)  # Add 20% margin
-        elif isinstance(var, pd.DataFrame):
+        elif isinstance(var, (pd.DataFrame, pd.Series)):
             # Point-based variable: make ppu as large as possible
             max_ppu = 300  # TODO: How should we choose this?
         else:
@@ -49,7 +49,7 @@ def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> list:
             x2_res = np.abs(np.mean(np.diff(var["x2"])))
             data_ppu = 1 / np.mean([x1_res, x2_res])
             encoder_scale = 0.5 / data_ppu
-        elif isinstance(var, pd.DataFrame):
+        elif isinstance(var, (pd.DataFrame, pd.Series)):
             # Point-based variable: use smallest possible scale within model discretisation
             encoder_scale = 0.5 / model_ppu
         else:

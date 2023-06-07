@@ -7,6 +7,31 @@ import pandas as pd
 import unittest
 
 from deepsensor.data.processor import DataProcessor
+from tests.utils import gen_random_data_xr, gen_random_data_pandas
+
+
+def _gen_data_xr(coords=None, dims=None, data_vars=None):
+    """Gen random raw data"""
+    if coords is None:
+        coords = dict(
+            time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+            lat=np.linspace(20, 40, 30),
+            lon=np.linspace(40, 60, 20),
+        )
+    da = gen_random_data_xr(coords, dims, data_vars)
+    return da
+
+
+def _gen_data_pandas(coords=None, dims=None, cols=None):
+    """Gen random raw data"""
+    if coords is None:
+        coords = dict(
+            time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+            lat=np.linspace(20, 40, 10),
+            lon=np.linspace(40, 60, 10),
+        )
+    df = gen_random_data_pandas(coords, dims, cols)
+    return df
 
 
 class TestDataProcessor(unittest.TestCase):
@@ -17,28 +42,13 @@ class TestDataProcessor(unittest.TestCase):
     - ...
     """
 
-    def _gen_data_xr(self):
-        data = np.random.rand(31, 30, 20)
-        time = pd.date_range("2020-01-01", "2020-01-31", freq="D")
-        lat = np.linspace(20, 40, 30)
-        lon = np.linspace(40, 60, 20)
-        da = xr.DataArray(data, coords={"time": time, "x1": lat, "x2": lon})
-        return da
-
-    def _gen_data_pandas(self):
-        data = np.random.rand(31, 10, 10)
-        time = pd.date_range("2020-01-01", "2020-01-31", freq="D")
-        lat = np.linspace(20, 40, 10)
-        lon = np.linspace(40, 60, 10)
-        mi = pd.MultiIndex.from_product([time, lat, lon], names=["time", "x1", "x2"])
-        df = pd.DataFrame(data.flatten(), index=mi, columns=["t2m"])
-        return df
-
     def assert_allclose_pd(
         self, df1: Union[pd.DataFrame, pd.Series], df2: Union[pd.DataFrame, pd.Series]
     ):
         if isinstance(df1, pd.Series):
             df1 = df1.to_frame()
+        if isinstance(df2, pd.Series):
+            df2 = df2.to_frame()
         try:
             pd.testing.assert_frame_equal(df1, df2)
         except AssertionError:
@@ -54,25 +64,14 @@ class TestDataProcessor(unittest.TestCase):
             return False
         return True
 
-    def test_same_names_xr(self):
-        da_raw = self._gen_data_xr()
-
-        dp = DataProcessor(x1_map=(20, 40), x2_map=(40, 60), x1_name="x1", x2_name="x2")
-        da_norm = dp(da_raw)
-
-        self.assertListEqual(["time", "x1", "x2"], list(da_norm.dims))
-
-        da_unnorm = dp.unnormalise(da_norm)
-
-        self.assertTrue(
-            self.assert_allclose_xr(da_unnorm, da_raw),
-            f"Original {type(da_raw).__name__} not restored.",
-        )
-
     def test_different_names_xr(self):
-        da_raw = self._gen_data_xr()
+        """
+        The time, x1 and x2 dimensions can have arbitrary names and these should be restored
+        after unnormalisation.
+        """
+        da_raw = _gen_data_xr()
         da_raw = da_raw.rename(
-            {"time": "datetime", "x1": "latitude", "x2": "longitude"}
+            {"time": "datetime", "lat": "latitude", "lon": "longitude"}
         )
 
         dp = DataProcessor(
@@ -93,8 +92,28 @@ class TestDataProcessor(unittest.TestCase):
             f"Original {type(da_raw).__name__} not restored.",
         )
 
+    def test_same_names_xr(self):
+        """
+        Test edge case when dim names are already in standard form.
+        """
+        da_raw = _gen_data_xr()
+        da_raw = da_raw.rename({"lat": "x1", "lon": "x2"})
+
+        dp = DataProcessor(x1_map=(20, 40), x2_map=(40, 60))
+        da_norm = dp(da_raw)
+        self.assertListEqual(
+            ["time", "x1", "x2"], list(da_norm.dims), "Failed to rename dims."
+        )
+
+        da_unnorm = dp.unnormalise(da_norm)
+        self.assertTrue(
+            self.assert_allclose_xr(da_unnorm, da_raw),
+            f"Original {type(da_raw).__name__} not restored.",
+        )
+
     def test_wrong_order_xr(self):
-        da_raw = self._gen_data_xr()
+        """Order of dimensions in xarray must be: time, x1, x2"""
+        da_raw = _gen_data_xr()
         da_raw = da_raw.T  # Transpose, changing order
 
         dp = DataProcessor(
@@ -107,30 +126,12 @@ class TestDataProcessor(unittest.TestCase):
         with self.assertRaises(ValueError):
             dp(da_raw)
 
-    def test_same_names_pandas(self):
-        df_raw = self._gen_data_pandas()
-
-        dp = DataProcessor(
-            x1_map=(20, 40),
-            x2_map=(40, 60),
-            time_name="time",
-            x1_name="x1",
-            x2_name="x2",
-        )
-
-        df_norm = dp(df_raw)
-
-        self.assertListEqual(["time", "x1", "x2"], list(df_norm.index.names))
-
-        df_unnorm = dp.unnormalise(df_norm)
-
-        self.assertTrue(
-            self.assert_allclose_pd(df_unnorm, df_raw),
-            f"Original {type(df_raw).__name__} not restored.",
-        )
-
     def test_different_names_pandas(self):
-        df_raw = self._gen_data_pandas()
+        """
+        The time, x1 and x2 dimensions can have arbitrary names and these should be restored
+        after unnormalisation.
+        """
+        df_raw = _gen_data_pandas()
         df_raw.index.names = ["datetime", "lat", "lon"]
 
         dp = DataProcessor(
@@ -152,9 +153,89 @@ class TestDataProcessor(unittest.TestCase):
             f"Original {type(df_raw).__name__} not restored.",
         )
 
+    def test_same_names_pandas(self):
+        """
+        Test edge case when dim names are already in standard form.
+        """
+        df_raw = _gen_data_pandas()
+        df_raw.index.names = ["time", "x1", "x2"]
+
+        dp = DataProcessor(x1_map=(20, 40), x2_map=(40, 60))  # No name changes
+
+        df_norm = dp(df_raw)
+
+        self.assertListEqual(["time", "x1", "x2"], list(df_norm.index.names))
+
+        df_unnorm = dp.unnormalise(df_norm)
+
+        self.assertTrue(
+            self.assert_allclose_pd(df_unnorm, df_raw),
+            f"Original {type(df_raw).__name__} not restored.",
+        )
+
     def test_wrong_order_pandas(self):
-        df_raw = self._gen_data_pandas()
+        """Order of dimensions in pandas index must be: time, x1, x2"""
+        df_raw = _gen_data_pandas()
         df_raw = df_raw.swaplevel(0, 2)
+
+        dp = DataProcessor(
+            x1_map=(20, 40),
+            x2_map=(40, 60),
+            time_name="time",
+            x1_name="lat",
+            x2_name="lon",
+        )
+
+        with self.assertRaises(ValueError):
+            dp(df_raw)
+
+    def test_extra_indexes_preserved_pandas(self):
+        """
+        Other metadata indexes are allowed (only *before* the default dimension indexes of
+        [time, x1, x2] or just [x1, x2]), and these should be preserved during normalisation.
+        """
+        coords = dict(
+            station=["A", "B"],
+            time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+            lat=np.linspace(20, 40, 30),
+            lon=np.linspace(40, 60, 20),
+        )
+        df_raw = _gen_data_pandas(coords=coords)
+
+        dp = DataProcessor(
+            x1_map=(20, 40),
+            x2_map=(40, 60),
+            time_name="time",
+            x1_name="lat",
+            x2_name="lon",
+        )
+
+        df_norm = dp(df_raw)
+        df_unnorm = dp.unnormalise(df_norm)
+
+        print("\n" * 5)
+        print(df_unnorm)
+        print(df_raw)
+        print("\n" * 5)
+
+        self.assertListEqual(list(df_raw.index.names), list(df_unnorm.index.names))
+        self.assertTrue(
+            self.assert_allclose_pd(df_unnorm, df_raw),
+            f"Original {type(df_raw).__name__} not restored.",
+        )
+
+    def test_wrong_extra_indexes_pandas(self):
+        """
+        Other metadata indexes are allowed but if they are not *before* the default dimension
+        indexes of [time, x1, x2] or just [x1, x2], then an error should be raised.
+        """
+        coords = dict(
+            time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+            lat=np.linspace(20, 40, 30),
+            lon=np.linspace(40, 60, 20),
+            station=["A", "B"],
+        )
+        df_raw = _gen_data_pandas(coords=coords)
 
         dp = DataProcessor(
             x1_map=(20, 40),

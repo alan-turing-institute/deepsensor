@@ -10,40 +10,49 @@ import pandas as pd
 import unittest
 
 import lab as B
+
 import deepsensor.tensorflow as deepsensor
 
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.loader import TaskLoader
 from deepsensor.model.models import ConvNP
 
+from tests.utils import gen_random_data_xr, gen_random_data_pandas
+
+
+def _gen_data_xr(coords=None, dims=None, data_vars=None):
+    """Gen random normalised data"""
+    if coords is None:
+        coords = dict(
+            time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+            x1=np.linspace(0, 1, 30),
+            x2=np.linspace(0, 1, 20),
+        )
+    da = gen_random_data_xr(coords, dims, data_vars)
+    return da
+
+
+def _gen_data_pandas(coords=None, dims=None, cols=None):
+    """Gen random normalised data"""
+    if coords is None:
+        coords = dict(
+            time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+            x1=np.linspace(0, 1, 10),
+            x2=np.linspace(0, 1, 10),
+        )
+    df = gen_random_data_pandas(coords, dims, cols)
+    return df
+
 
 class TestModel(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # It's safe to share data between tests because the TaskLoader does not modify data
-        self.da = self._gen_data_xr()
-        self.df = self._gen_data_pandas()
+        self.da = _gen_data_xr()
+        self.df = _gen_data_pandas()
 
         self.dp = DataProcessor()
         _ = self.dp([self.da, self.df])  # Compute normalization parameters
-
-    def _gen_data_xr(self):
-        data = np.random.rand(31, 30, 20)
-        time = pd.date_range("2020-01-01", "2020-01-31", freq="D")
-        x1 = np.linspace(0, 1, 30)
-        x2 = np.linspace(0, 1, 20)
-        da = xr.DataArray(data, coords={"time": time, "x1": x1, "x2": x2})
-        da.name = "gridded_var"
-        return da
-
-    def _gen_data_pandas(self):
-        data = np.random.rand(31, 10, 10)
-        time = pd.date_range("2020-01-01", "2020-01-31", freq="D")
-        x1 = np.linspace(0, 1, 10)
-        x2 = np.linspace(0, 1, 10)
-        mi = pd.MultiIndex.from_product([time, x1, x2], names=["time", "x1", "x2"])
-        df = pd.DataFrame(data.flatten(), index=mi, columns=["station_var"])
-        return df
 
     def _gen_task_loader_call_args(self, n_context, n_target):
         """Generate arguments for TaskLoader.__call__
@@ -164,9 +173,6 @@ class TestModel(unittest.TestCase):
             x = model.entropy(task)
             assert x.size == 1 and x.shape == ()
             x = B.to_numpy(model.loss_fn(task))
-            print("\n" * 5)
-            print(x)
-            print("\n" * 5)
             assert x.size == 1 and x.shape == ()
 
     @parameterized.expand(range(1, 4))

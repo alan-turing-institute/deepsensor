@@ -49,9 +49,9 @@ class TaskLoader:
         self.time_freq = time_freq
         self.dtype = dtype
 
-        if isinstance(context, (xr.DataArray, xr.Dataset, pd.DataFrame)):
+        if isinstance(context, (xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series)):
             context = (context,)
-        if isinstance(target, (xr.DataArray, xr.Dataset, pd.DataFrame)):
+        if isinstance(target, (xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series)):
             target = (target,)
         context, target = self.cast_context_and_target_to_dtype(context, target)
         self.context = context
@@ -175,6 +175,8 @@ class TaskLoader:
                     var_ID = tuple(var.data_vars.keys())  # Multiple data variables
                 elif isinstance(var, pd.DataFrame):
                     var_ID = tuple(var.columns)
+                elif isinstance(var, pd.Series):
+                    var_ID = (var.name,)
                 else:
                     raise ValueError(f"Unknown type {type(var)} for context set {var}")
 
@@ -232,6 +234,14 @@ class TaskLoader:
                 raise ValueError(
                     f"Invalid target index {target_idx} in link {link_i} of {links}: "
                     f"there are only {len(self.target)} target sets"
+                )
+            if not isinstance(self.context[context_idx], (pd.DataFrame, pd.Series)):
+                raise ValueError(
+                    f"Context set {context_idx} must be a pandas object when using the 'split' sampling strategy"
+                )
+            if not isinstance(self.target[target_idx], (pd.DataFrame, pd.Series)):
+                raise ValueError(
+                    f"Target set {target_idx} must be a pandas object when using the 'split' sampling strategy"
                 )
 
         return links
@@ -387,7 +397,7 @@ class TaskLoader:
             if isinstance(var, (xr.Dataset, xr.DataArray)):
                 if "time" in var.dims:
                     var = var.sel(time=date + delta_t)
-            elif type(var) is pd.DataFrame:
+            elif isinstance(var, (pd.DataFrame, pd.Series)):
                 if "time" in var.index.names:
                     var = var[var.index.get_level_values("time") == date + delta_t]
             else:
@@ -398,7 +408,7 @@ class TaskLoader:
             """Sample a variable by a given sampling strategy to get input and output data"""
             if isinstance(var, (xr.Dataset, xr.DataArray)):
                 X, Y = self.sample_da(var, sampling_strat, seed)
-            elif type(var) is pd.DataFrame:
+            elif isinstance(var, (pd.DataFrame, pd.Series)):
                 X, Y = self.sample_df(var, sampling_strat, seed)
             else:
                 raise ValueError(f"Unknown type {type(var)} for context set {var}")
@@ -470,15 +480,6 @@ class TaskLoader:
                     raise ValueError(
                         f"Context set {link[0]} has {N_obs} observations, but target set {link[1]}"
                         f"has {N_obs_target_check} observations"
-                    )
-
-                if not isinstance(context_slices[link[0]], pd.DataFrame):
-                    raise ValueError(
-                        f"Context set {link[0]} must be a pandas DataFrame when using the 'split' sampling strategy"
-                    )
-                if not isinstance(target_slices[link[1]], pd.DataFrame):
-                    raise ValueError(
-                        f"Target set {link[1]} must be a pandas DataFrame when using the 'split' sampling strategy"
                     )
 
                 N_context = int(N_obs * split_frac)

@@ -3,6 +3,8 @@ from deepsensor.data.task import Task
 from deepsensor.data.utils import concat_tasks
 from deepsensor.model.models import ConvNP
 
+import numpy as np
+
 import lab as B
 
 from typing import List
@@ -30,10 +32,10 @@ def set_gpu_default_device():
         # Check GPU visible to tf
         # print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
-        else:
-            raise NotImplementedError(
-                f"Backend {deepsensor.backend.str} not implemented"
-            )
+    else:
+        raise NotImplementedError(
+            f"Backend {deepsensor.backend.str} not implemented"
+        )
 
 
 def train_epoch(
@@ -93,6 +95,8 @@ def train_epoch(
 
     else:
         raise NotImplementedError(f"Backend {deepsensor.backend.str} not implemented")
+
+    tasks = np.random.permutation(tasks)
 
     if batch_size is not None:
         n_batches = len(tasks) // batch_size  # Note that this will drop the remainder
