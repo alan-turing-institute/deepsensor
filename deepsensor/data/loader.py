@@ -235,6 +235,14 @@ class TaskLoader:
                     f"Invalid target index {target_idx} in link {link_i} of {links}: "
                     f"there are only {len(self.target)} target sets"
                 )
+            if not isinstance(self.context[context_idx], (pd.DataFrame, pd.Series)):
+                raise ValueError(
+                    f"Context set {context_idx} must be a pandas object when using the 'split' sampling strategy"
+                )
+            if not isinstance(self.target[target_idx], (pd.DataFrame, pd.Series)):
+                raise ValueError(
+                    f"Target set {target_idx} must be a pandas object when using the 'split' sampling strategy"
+                )
 
         return links
 
@@ -472,15 +480,6 @@ class TaskLoader:
                     raise ValueError(
                         f"Context set {link[0]} has {N_obs} observations, but target set {link[1]}"
                         f"has {N_obs_target_check} observations"
-                    )
-
-                if not isinstance(context_slices[link[0]], (pd.DataFrame, pd.Series)):
-                    raise ValueError(
-                        f"Context set {link[0]} must be a pandas DataFrame when using the 'split' sampling strategy"
-                    )
-                if not isinstance(target_slices[link[1]], (pd.DataFrame, pd.Series)):
-                    raise ValueError(
-                        f"Target set {link[1]} must be a pandas DataFrame when using the 'split' sampling strategy"
                     )
 
                 N_context = int(N_obs * split_frac)
