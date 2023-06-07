@@ -95,12 +95,15 @@ class DataProcessor:
 
         if coord_names[0] not in df.index.names:
             # We don't have a time dimension.
-            coord_names = coord_names[1:]
-
-        for coord in coord_names:
-            if coord not in df.index.names:
+            if list(df.index.names)[-2:] != coord_names[1:]:
                 raise ValueError(
-                    f"Dimensions need to contain {coord_names} or {coord_names[1:]} but are {df.index.names}."
+                    f"Indexes need to end with {coord_names} or {coord_names[1:]} but are {df.index.names}."
+                )
+        else:
+            # We have a time dimension.
+            if list(df.index.names)[-3:] != coord_names:
+                raise ValueError(
+                    f"Indexes need to end with {coord_names} or {coord_names[1:]} but are {df.index.names}."
                 )
 
     def __str__(self):
