@@ -110,8 +110,22 @@ class TestDataProcessor(unittest.TestCase):
             self.assert_allclose_xr(da_unnorm, da_raw),
             f"Original {type(da_raw).__name__} not restored.",
         )
+    def test_wrong_order_xr_ds(self):
+        """Order of dimensions in xarray must be: time, x1, x2"""
+        ds_raw = _gen_data_xr(dims=("time", "lat", "lon"), data_vars=["var1", "var2"])
+        ds_raw = ds_raw.transpose("time", "lon", "lat")  # Transpose, changing order
 
-    def test_wrong_order_xr(self):
+        dp = DataProcessor(
+            x1_map=(20, 40),
+            x2_map=(40, 60),
+            time_name="time",
+            x1_name="lat",
+            x2_name="lon",
+        )
+        with self.assertRaises(ValueError):
+            dp(ds_raw)
+
+    def test_wrong_order_xr_da(self):
         """Order of dimensions in xarray must be: time, x1, x2"""
         da_raw = _gen_data_xr()
         da_raw = da_raw.T  # Transpose, changing order
@@ -120,8 +134,8 @@ class TestDataProcessor(unittest.TestCase):
             x1_map=(20, 40),
             x2_map=(40, 60),
             time_name="time",
-            x1_name="x1",
-            x2_name="x2",
+            x1_name="lat",
+            x2_name="lon",
         )
         with self.assertRaises(ValueError):
             dp(da_raw)
@@ -212,11 +226,6 @@ class TestDataProcessor(unittest.TestCase):
 
         df_norm = dp(df_raw)
         df_unnorm = dp.unnormalise(df_norm)
-
-        print("\n" * 5)
-        print(df_unnorm)
-        print(df_raw)
-        print("\n" * 5)
 
         self.assertListEqual(list(df_raw.index.names), list(df_unnorm.index.names))
         self.assertTrue(
