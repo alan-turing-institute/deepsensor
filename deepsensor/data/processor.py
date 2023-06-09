@@ -75,9 +75,11 @@ class DataProcessor:
         return x1_map, x2_map
 
     def _validate_xr(self, data: Union[xr.DataArray, xr.Dataset]):
-
         def _validate_da(da: xr.DataArray):
-            coord_names = [self.norm_params["coords"][coord]["name"] for coord in ["time", "x1", "x2"]]
+            coord_names = [
+                self.norm_params["coords"][coord]["name"]
+                for coord in ["time", "x1", "x2"]
+            ]
             if coord_names[0] not in da.dims:
                 # We don't have a time dimension.
                 coord_names = coord_names[1:]
@@ -85,10 +87,10 @@ class DataProcessor:
                 raise ValueError(
                     f"Dimensions of {da.name} need to be {coord_names} but are {list(da.dims)}."
                 )
-            
+
         if isinstance(data, xr.DataArray):
             _validate_da(data)
-            
+
         elif isinstance(data, xr.Dataset):
             for var_ID, da in data.data_vars.items():
                 _validate_da(da)

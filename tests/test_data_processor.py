@@ -110,6 +110,7 @@ class TestDataProcessor(unittest.TestCase):
             self.assert_allclose_xr(da_unnorm, da_raw),
             f"Original {type(da_raw).__name__} not restored.",
         )
+
     def test_wrong_order_xr_ds(self):
         """Order of dimensions in xarray must be: time, x1, x2"""
         ds_raw = _gen_data_xr(dims=("time", "lat", "lon"), data_vars=["var1", "var2"])
