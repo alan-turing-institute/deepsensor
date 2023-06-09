@@ -42,6 +42,8 @@ def train_epoch(
     lr: float = 5e-5,
     batch_size: int = None,
     opt=None,
+    progress_bar=False,
+    tqdm_notebook=False,
 ) -> List[float]:
     """Train model for one epoch
 
@@ -101,8 +103,13 @@ def train_epoch(
     else:
         n_batches = len(tasks)
 
+    if tqdm_notebook:
+        from tqdm.notebook import tqdm
+    else:
+        from tqdm import tqdm
+
     batch_losses = []
-    for batch_i in range(n_batches):
+    for batch_i in tqdm(range(n_batches), disable=not progress_bar):
         if batch_size is not None:
             task = concat_tasks(
                 tasks[batch_i * batch_size : (batch_i + 1) * batch_size]
