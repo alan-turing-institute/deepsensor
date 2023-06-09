@@ -32,3 +32,21 @@ jobs:
         pip install -r requirements.dev.txt
     - name: Test with tox
       run: tox
+    - name: Run coveralls
+      run: coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_FLAG_NAME: ${{ matrix.test-name }}
+        COVERALLS_PARALLEL: true
+
+
+  finish:
+    name: Finish Coveralls
+    needs: test
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Finish Coveralls
+      uses: coverallsapp/github-action@v1
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
