@@ -65,10 +65,9 @@ def construct_neural_process(
     unet_resize_convs=True,
     unet_resize_conv_interp_method="bilinear",
     aux_t_mlp_layers=None,
-    likelihood="lowrank",
+    likelihood="cnp",
     unet_kernels=5,
     points_per_unit=100,
-    # By default use a different setconv length scale for each context set
     encoder_scales=1 / 100,
     encoder_scales_learnable=False,
     decoder_scale=1 / 100,
@@ -76,7 +75,74 @@ def construct_neural_process(
     num_basis_functions=64,
     epsilon=1e-2,
 ):
-    """Construct a `neuralprocesses` ConvNP model"""
+    """Construct a `neuralprocesses` ConvNP model
+    
+    See: https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py
+
+    Docstring below modified from `neuralprocesses`. If more kwargs are needed, they must be
+    explicitly passed to `neuralprocesses` constructor (not currently safe to use `**kwargs` here).
+
+    Args:
+        dim_x (int, optional): Dimensionality of the inputs. Defaults to 1.
+        dim_y (int, optional): Dimensionality of the outputs. Defaults to 1.
+        dim_yc (int or tuple[int], optional): Dimensionality of the outputs of the
+            context set. You should set this if the dimensionality of the outputs
+            of the context set is not equal to the dimensionality of the outputs
+            of the target set. You should also set this if you want to use multiple
+            context sets. In that case, set this equal to a tuple of integers
+            indicating the respective output dimensionalities.
+        dim_yt (int, optional): Dimensionality of the outputs of the target set. You
+            should set this if the dimensionality of the outputs of the target set is
+            not equal to the dimensionality of the outputs of the context set.
+        dim_aux_t (int, optional): Dimensionality of target-specific auxiliary
+            variables.
+        points_per_unit (int, optional): Density of the internal discretisation.
+            Defaults to 100.
+        likelihood (str, optional): Likelihood. Must be one of `"cnp"` (equivalently `"het"`),
+            `"gnp"` (equivalently `"lowrank"`), or `"cnp-spikes-beta"` (equivalently `"spikes-beta"`).
+            Defaults to `"cnp"`.
+        conv_arch (str, optional): Convolutional architecture to use. Must be one of
+            `"unet[-res][-sep]"` or `"conv[-res][-sep]"`. Defaults to `"unet"`.
+        unet_channels (tuple[int], optional): Channels of every layer of the UNet.
+            Defaults to six layers each with 64 channels.
+        unet_kernels (int or tuple[int], optional): Sizes of the kernels in the UNet.
+            Defaults to 5.
+        unet_resize_convs (bool, optional): Use resize convolutions rather than
+            transposed convolutions in the UNet. Defaults to `False`.
+        unet_resize_conv_interp_method (str, optional): Interpolation method for the
+            resize convolutions in the UNet. Can be set to `"bilinear"`. Defaults
+            to "bilinear".
+        num_basis_functions (int, optional): Number of basis functions for the
+            low-rank likelihood. Defaults to `64`.
+        dim_lv (int, optional): Dimensionality of the latent variable. Setting to >0
+             constructs a latent neural process. Defaults to 0.
+        encoder_scales (float or tuple[float], optional): Initial value for the length
+            scales of the set convolutions for the context sets embeddings. Set to a tuple
+            equal to the number of context sets to use different values for each set.
+            Set to a single value to use the same value for all context sets.
+            Defaults to `1 / points_per_unit`.
+        encoder_scales_learnable (bool, optional): Whether the encoder SetConv
+            length scale(s) are learnable. Defaults to `False`.
+        decoder_scale (float, optional): Initial value for the length scale of the
+            set convolution in the decoder. Defaults to `1 / points_per_unit`.
+        decoder_scale_learnable (bool, optional): Whether the decoder SetConv
+            length scale(s) are learnable. Defaults to `False`.
+        aux_t_mlp_layers (tuple[int], optional): Widths of the layers of the MLP
+            for the target-specific auxiliary variable. Defaults to three layers of
+            width 128.
+        epsilon (float, optional): Epsilon added by the set convolutions before
+            dividing by the density channel. Defaults to `1e-2`.
+        dtype (dtype, optional): Data type.
+
+    Returns:
+        :class:`.model.Model`: ConvNP model.
+    """
+    if likelihood == "cnp":
+        likelihood = "het"
+    elif likelihood == "gnp":
+        likelihood = "lowrank"
+    elif likelihood == "cnp-spikes-beta":
+        likelihood = "spikes-beta"
 
     # Use a stride of 1 for the first layer and 2 for all other layers
     unet_strides = (1, *(2,) * (len(unet_channels) - 1))
