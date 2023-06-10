@@ -76,7 +76,7 @@ def construct_neural_process(
     epsilon=1e-2,
 ):
     """Construct a `neuralprocesses` ConvNP model
-    
+
     See: https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py
 
     Docstring below modified from `neuralprocesses`. If more kwargs are needed, they must be
