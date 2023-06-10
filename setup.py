@@ -10,9 +10,14 @@ requirements = [
 
 setup(
     packages=find_packages(exclude=["docs"]),
-    python_requires=">=3.6",
+    python_requires=">=3.9",
     install_requires=requirements,
     include_package_data=True,
     name="deepsensor",
-    version="0.1",
+    version="0.1.0",
 )
+
+
+from setuptools import setup
+if __name__ == '__main__':
+    setup()
