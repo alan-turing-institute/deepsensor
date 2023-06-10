@@ -13,7 +13,6 @@ backends
 matplotlib
 shapely
 pyshp
-cartopy
 seaborn
 tqdm
 jupyter
