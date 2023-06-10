@@ -4,34 +4,36 @@
 
 name: Publish to PyPI
 
-on:
-  release:
-    types: [published]
+on: push
+#  release:
+#    types: [published]
 
 jobs:
   deploy:
+    name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
-
-      # Make sure tags are fetched so we can get a version.
-      - run: |
-          git fetch --prune --unshallow --tags
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -U setuptools 'setuptools_scm[toml]' setuptools_scm_git_archive wheel twine
+
       - name: Build and publish
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-
         run: |
           python setup.py sdist bdist_wheel
-          twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
+
+      - name: Publish distribution 📦 to PyPI
+        if: startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
