@@ -8,6 +8,10 @@ on: push
 #  release:
 #    types: [published]
 
+# https://github.com/pypa/gh-action-pypi-publish#trusted-publishing
+permissions:
+  id-token: write   # IMPORTANT: this permission is mandatory for trusted publishing
+
 jobs:
   deploy:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
