@@ -29,7 +29,7 @@ jobs:
           pip install -U setuptools 'setuptools_scm[toml]' setuptools_scm_git_archive wheel twine
       - name: Build and publish
         env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
 
         run: |
