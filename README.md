@@ -111,11 +111,11 @@ Data variables:
 Learn more
 ----------
 - Documentation: TODO
-- Issue tracker: https://github.com/tom-andersson/deepsensor/issues>
-- Source code: https://github.com/tom-andersson/deepsensor>
+- Issue tracker: https://github.com/tom-andersson/deepsensor/issues
+- Source code: https://github.com/tom-andersson/deepsensor
 
 **Talks**
-- Environmental Sensor Placement with ConvGNPs: https://youtu.be/v0pmqh09u1Y>
+- Environmental Sensor Placement with ConvGNPs: https://youtu.be/v0pmqh09u1Y
 
 **Papers**
 - TODO
