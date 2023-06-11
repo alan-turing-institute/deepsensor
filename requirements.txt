@@ -16,3 +16,4 @@ pyshp
 seaborn
 tqdm
 jupyter
+pooch
