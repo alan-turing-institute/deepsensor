@@ -189,13 +189,18 @@ def receptive_field(receptive_field, data_processor, crs, extent):
         receptive_field, receptive_field, unnorm=True
     )
     rect = [x1_rf_raw, x2_rf_raw]
-    ax.add_patch(mpatches.Rectangle(xy=[0, 0], width=rect[1], height=rect[0],
-                                    facecolor='black',
-                                    alpha=0.3,
-                                    transform=crs)
-                 )
+    ax.add_patch(
+        mpatches.Rectangle(
+            xy=[0, 0],
+            width=rect[1],
+            height=rect[0],
+            facecolor="black",
+            alpha=0.3,
+            transform=crs,
+        )
+    )
     ax.coastlines()
     ax.gridlines(draw_labels=True, alpha=0.2)
-    ax.text(0, 0, f'{rect[1]:.2f} x {rect[0]:.2f}', fontsize=6)
+    ax.text(0, 0, f"{rect[1]:.2f} x {rect[0]:.2f}", fontsize=6)
 
     return fig
