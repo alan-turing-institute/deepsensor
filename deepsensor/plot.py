@@ -185,9 +185,13 @@ def offgrid_context(
 def receptive_field(receptive_field, data_processor, crs, extent):
     fig, ax = plt.subplots(subplot_kw=dict(projection=crs))
     ax.set_extent(extent, crs=crs)
-    x1_rf_raw, x2_rf_raw = data_processor.map_x1_and_x2(
-        receptive_field, receptive_field, unnorm=True
-    )
+
+    x11, x12 = data_processor.norm_params["coords"]["x1"]["map"]
+    x21, x22 = data_processor.norm_params["coords"]["x2"]["map"]
+
+    x1_rf_raw = receptive_field * (x12 - x11)
+    x2_rf_raw = receptive_field * (x22 - x21)
+
     rect = [x1_rf_raw, x2_rf_raw]
     ax.add_patch(
         mpatches.Rectangle(
