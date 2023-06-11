@@ -182,9 +182,13 @@ def offgrid_context(
         axes[0].legend(loc="best")
 
 
-def receptive_field(receptive_field, data_processor, crs, extent):
+def receptive_field(receptive_field, data_processor, crs, extent="global"):
     fig, ax = plt.subplots(subplot_kw=dict(projection=crs))
-    ax.set_extent(extent, crs=crs)
+
+    if extent == "global":
+        ax.set_global()
+    else:
+        ax.set_extent(extent, crs=crs)
 
     x11, x12 = data_processor.norm_params["coords"]["x1"]["map"]
     x21, x22 = data_processor.norm_params["coords"]["x2"]["map"]
@@ -192,12 +196,18 @@ def receptive_field(receptive_field, data_processor, crs, extent):
     x1_rf_raw = receptive_field * (x12 - x11)
     x2_rf_raw = receptive_field * (x22 - x21)
 
-    rect = [x1_rf_raw, x2_rf_raw]
+    x1_midpoint_raw = (x12 + x11) / 2
+    x2_midpoint_raw = (x22 + x21) / 2
+
+    # Compute bottom left corner of receptive field
+    x1_corner = x1_midpoint_raw - x1_rf_raw / 2
+    x2_corner = x2_midpoint_raw - x2_rf_raw / 2
+
     ax.add_patch(
         mpatches.Rectangle(
-            xy=[0, 0],
-            width=rect[1],
-            height=rect[0],
+            xy=[x2_corner, x1_corner],  # Cartesian fmt: x2, x1
+            width=x2_rf_raw,
+            height=x1_rf_raw,
             facecolor="black",
             alpha=0.3,
             transform=crs,
@@ -205,6 +215,11 @@ def receptive_field(receptive_field, data_processor, crs, extent):
     )
     ax.coastlines()
     ax.gridlines(draw_labels=True, alpha=0.2)
-    ax.text(0, 0, f"{rect[1]:.2f} x {rect[0]:.2f}", fontsize=6)
+
+    x1_name = data_processor.norm_params["coords"]["x1"]["name"]
+    x2_name = data_processor.norm_params["coords"]["x2"]["name"]
+    ax.set_title(
+        f"Receptive field in raw coords: {x1_name}={x1_rf_raw:.2f}, {x2_name}={x2_rf_raw:.2f}"
+    )
 
     return fig
