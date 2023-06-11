@@ -2,6 +2,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.patches as mpatches
 
 
 def context_encoding(
@@ -179,3 +180,22 @@ def offgrid_context(
 
     if add_legend:
         axes[0].legend(loc="best")
+
+
+def receptive_field(receptive_field, data_processor, crs, extent):
+    fig, ax = plt.subplots(subplot_kw=dict(projection=crs))
+    ax.set_extent(extent, crs=crs)
+    x1_rf_raw, x2_rf_raw = data_processor.map_x1_and_x2(
+        receptive_field, receptive_field, unnorm=True
+    )
+    rect = [x1_rf_raw, x2_rf_raw]
+    ax.add_patch(mpatches.Rectangle(xy=[0, 0], width=rect[1], height=rect[0],
+                                    facecolor='black',
+                                    alpha=0.3,
+                                    transform=crs)
+                 )
+    ax.coastlines()
+    ax.gridlines(draw_labels=True, alpha=0.2)
+    ax.text(0, 0, f'{rect[1]:.2f} x {rect[0]:.2f}', fontsize=6)
+
+    return fig
