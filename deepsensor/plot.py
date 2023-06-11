@@ -1,13 +1,10 @@
 import numpy as np
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from deepsensor.model.nps import compute_encoding_tensor
 
-
-def plot_context_encoding(
+def context_encoding(
     model,
     task,
     task_loader,
@@ -27,7 +24,7 @@ def plot_context_encoding(
     Parameters
     ----------
     model : DeepSensor model
-    task : dict
+    task : Task
         Task containing context set to plot encoding of
     task_loader : deepsensor.data.loader.TaskLoader
         DataLoader used to load the data, containing context set metadata used for plotting
@@ -48,6 +45,8 @@ def plot_context_encoding(
     return_axes : bool, optional
         Whether to return the axes of the figure, by default False
     """
+    from .model.nps import compute_encoding_tensor
+
     encoding_tensor = compute_encoding_tensor(model, task)
     encoding_tensor = encoding_tensor[batch_idx]
 
@@ -120,7 +119,7 @@ def plot_context_encoding(
         return fig, axes
 
 
-def plot_offgrid_context(
+def offgrid_context(
     axes,
     task,
     data_processor=None,
