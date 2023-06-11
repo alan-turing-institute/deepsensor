@@ -11,7 +11,7 @@ deepsensor_version = (
 assert "-" not in deepsensor_version
 assert "." in deepsensor_version
 
-assert os.path.isfile("deepsensor/version.py")
+assert os.path.isfile("deepsensor/_version.py")
 with open("deepsensor/VERSION", "w", encoding="utf-8") as fh:
     fh.write("%s\n" % deepsensor_version)
 
