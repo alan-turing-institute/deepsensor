@@ -24,7 +24,9 @@ def gen_ppu(task_loader: TaskLoader) -> int:
             max_ppu = max(max_ppu, data_ppu * 1.2)  # Add 20% margin
         elif isinstance(var, (pd.DataFrame, pd.Series)):
             # Point-based variable: make ppu as large as possible
-            max_ppu = 300  # TODO: How should we choose this?
+            # TODO: Consider choosing based on shortest distance between points, perhaps with some
+            # check for outliers causing excessively large ppu
+            max_ppu = 300
         else:
             raise ValueError(f"Unknown context input type: {type(var)}")
 
