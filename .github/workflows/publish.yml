@@ -4,9 +4,9 @@
 
 name: Publish to PyPI
 
-on: push
-#  release:
-#    types: [published]
+on:
+  release:
+    types: [published]
 
 # https://github.com/pypa/gh-action-pypi-publish#trusted-publishing
 permissions:
