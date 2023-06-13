@@ -11,11 +11,15 @@ on:
 jobs:
   deploy:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     # https://github.com/pypa/gh-action-pypi-publish#trusted-publishing
     permissions:
       id-token: write   # IMPORTANT: this permission is mandatory for trusted publishing
+
+    environment:
+      name: pypi
+      url: https://pypi.org/p/deepsensor
 
     steps:
       - uses: actions/checkout@v3
