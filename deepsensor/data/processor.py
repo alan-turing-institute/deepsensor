@@ -102,15 +102,15 @@ class DataProcessor:
 
         if coord_names[0] not in df.index.names:
             # We don't have a time dimension.
-            if list(df.index.names)[-2:] != coord_names[1:]:
+            if list(df.index.names)[:2] != coord_names[1:]:
                 raise ValueError(
-                    f"Indexes need to end with {coord_names} or {coord_names[1:]} but are {df.index.names}."
+                    f"Indexes need to start with {coord_names} or {coord_names[1:]} but are {df.index.names}."
                 )
         else:
             # We have a time dimension.
-            if list(df.index.names)[-3:] != coord_names:
+            if list(df.index.names)[:3] != coord_names:
                 raise ValueError(
-                    f"Indexes need to end with {coord_names} or {coord_names[1:]} but are {df.index.names}."
+                    f"Indexes need to start with {coord_names} or {coord_names[1:]} but are {df.index.names}."
                 )
 
     def __str__(self):
@@ -274,7 +274,7 @@ class DataProcessor:
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Set index back to original
             [indexes.remove(old_coord_ID) for old_coord_ID in old_coord_IDs]
-            indexes.extend(new_coord_IDs)
+            indexes = new_coord_IDs + indexes  # Put dims first
             data = data.set_index(indexes)
         return data
 

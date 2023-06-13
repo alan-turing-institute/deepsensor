@@ -206,14 +206,14 @@ class TestDataProcessor(unittest.TestCase):
 
     def test_extra_indexes_preserved_pandas(self):
         """
-        Other metadata indexes are allowed (only *before* the default dimension indexes of
+        Other metadata indexes are allowed (only *after* the default dimension indexes of
         [time, x1, x2] or just [x1, x2]), and these should be preserved during normalisation.
         """
         coords = dict(
-            station=["A", "B"],
             time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
             lat=np.linspace(20, 40, 30),
             lon=np.linspace(40, 60, 20),
+            station=["A", "B"],
         )
         df_raw = _gen_data_pandas(coords=coords)
 
@@ -236,14 +236,14 @@ class TestDataProcessor(unittest.TestCase):
 
     def test_wrong_extra_indexes_pandas(self):
         """
-        Other metadata indexes are allowed but if they are not *before* the default dimension
+        Other metadata indexes are allowed but if they are not *after* the default dimension
         indexes of [time, x1, x2] or just [x1, x2], then an error should be raised.
         """
         coords = dict(
+            station=["A", "B"],
             time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
             lat=np.linspace(20, 40, 30),
             lon=np.linspace(40, 60, 20),
-            station=["A", "B"],
         )
         df_raw = _gen_data_pandas(coords=coords)
 
