@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.patches as mpatches
 
+import lab as B
+
 
 def context_encoding(
     model,
@@ -223,3 +225,44 @@ def receptive_field(receptive_field, data_processor, crs, extent="global"):
     )
 
     return fig
+
+
+def feature_maps(model, task, seed=None):
+    """Plot the feature maps of a `ConvNP` model's decoder layers after a forward pass with a `Task`
+
+    Currently only plots feature maps for the downsampling path. TODO: Work out how to
+    construct partial U-Net including the upsample path.
+    """
+    import deepsensor
+    from deepsensor.model.nps import run_nps_model
+
+    figs = []
+
+    rng = np.random.default_rng(seed)
+
+    layers = np.array(model.model.decoder[0].before_turn_layers)
+    for layer_i, layer in enumerate(layers):
+        if hasattr(layer, "output"):
+            submodel = deepsensor.backend.nps.Model(
+                model.model.encoder,
+                deepsensor.backend.nps.Chain(*layers[: layer_i + 1]),
+            )
+            task = model.check_task(task)
+            feature_map = B.to_numpy(run_nps_model(submodel, task))
+
+            n_features = feature_map.shape[1]
+            feature_idx = rng.choice(n_features)
+
+            fig, ax = plt.subplots()
+            ax.imshow(feature_map[0, feature_idx, :, :], origin="lower")
+            ax.set_title(f"Layer {layer_i} feature map. Shape: {feature_map.shape}")
+            ax.tick_params(
+                which="both",
+                bottom=False,
+                left=False,
+                labelbottom=False,
+                labelleft=False,
+            )
+            figs.append(fig)
+
+    return figs
