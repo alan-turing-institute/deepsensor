@@ -4,10 +4,6 @@ testpaths = [
     "tests",
 ]
 
-
-[tool.setuptools_scm]
-write_to = "deepsensor/_version.py"
-
 [tool.mypy]
 mypy_path = "deepsensor"
 check_untyped_defs = true
