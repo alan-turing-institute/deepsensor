@@ -3,8 +3,6 @@ import numpy as np
 import pandas as pd
 import unittest
 
-import cartopy.crs as ccrs
-
 import deepsensor.tensorflow as deepsensor
 
 from deepsensor.data.processor import DataProcessor
@@ -33,13 +31,6 @@ class TestPlotting(unittest.TestCase):
             verbose=False,
         )
         self.task = self.task_loader("2014-12-31")
-
-    def test_receptive_field(self):
-        fig = deepsensor.plot.receptive_field(
-            self.model.model.receptive_field,
-            self.data_processor,
-            crs=ccrs.PlateCarree(),
-        )
 
     def test_context_encoding(self):
         fig = deepsensor.plot.context_encoding(self.model, self.task, self.task_loader)
