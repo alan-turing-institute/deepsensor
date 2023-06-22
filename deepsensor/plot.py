@@ -227,35 +227,95 @@ def receptive_field(receptive_field, data_processor, crs, extent="global"):
     return fig
 
 
-def feature_maps(model, task, seed=None):
+def feature_maps(
+    model,
+    task,
+    n_features_per_layer=1,
+    seed=None,
+    figsize=3,
+    add_colorbar=False,
+    cmap="Greys",
+):
     """Plot the feature maps of a `ConvNP` model's decoder layers after a forward pass with a `Task`
 
     Currently only plots feature maps for the downsampling path. TODO: Work out how to
     construct partial U-Net including the upsample path.
     """
+    from .model.nps import compute_encoding_tensor
+
     import deepsensor
-    from deepsensor.model.nps import run_nps_model
+
+    # Hacky way to load the correct __init__.py to get `convert_to_tensor` method
+    if deepsensor.backend.str == "tf":
+        import deepsensor.tensorflow as deepsensor
+    elif deepsensor.backend.str == "torch":
+        import deepsensor.torch as deepsensor
+    else:
+        raise ValueError(f"Unknown backend: {deepsensor.backend.str}")
+
+    unet = model.model.decoder[0]
+
+    # Produce encoding
+    x = deepsensor.convert_to_tensor(compute_encoding_tensor(model, task))
+
+    # Manually construct the U-Net forward pass from `neuralprocesses.construct_convgnp` to
+    # get the feature maps
+    def unet_forward(unet, x):
+        feature_maps = []
+
+        h = unet.activations[0](unet.before_turn_layers[0](x))
+        hs = [h]
+        feature_map = B.to_numpy(h)
+        feature_maps.append(feature_map)
+        for layer, activation in zip(
+            unet.before_turn_layers[1:],
+            unet.activations[1:],
+        ):
+            h = activation(layer(hs[-1]))
+            hs.append(h)
+            feature_map = B.to_numpy(h)
+            feature_maps.append(feature_map)
+
+        # Now make the turn!
+
+        h = unet.activations[-1](unet.after_turn_layers[-1](hs[-1]))
+        feature_map = B.to_numpy(h)
+        feature_maps.append(feature_map)
+        for h_prev, layer, activation in zip(
+            reversed(hs[:-1]),
+            reversed(unet.after_turn_layers[:-1]),
+            reversed(unet.activations[:-1]),
+        ):
+            h = activation(layer(B.concat(h_prev, h, axis=1)))
+            feature_map = B.to_numpy(h)
+            feature_maps.append(feature_map)
+
+        h = unet.final_linear(h)
+        feature_map = B.to_numpy(h)
+        feature_maps.append(feature_map)
+
+        return feature_maps
+
+    feature_maps = unet_forward(unet, x)
 
     figs = []
-
     rng = np.random.default_rng(seed)
+    for layer_i, feature_map in enumerate(feature_maps):
+        n_features = feature_map.shape[1]
+        n_features_to_plot = min(n_features_per_layer, n_features)
+        feature_idxs = rng.choice(n_features, n_features_to_plot, replace=False)
 
-    layers = np.array(model.model.decoder[0].before_turn_layers)
-    for layer_i, layer in enumerate(layers):
-        if hasattr(layer, "output"):
-            submodel = deepsensor.backend.nps.Model(
-                model.model.encoder,
-                deepsensor.backend.nps.Chain(*layers[: layer_i + 1]),
-            )
-            task = model.check_task(task)
-            feature_map = B.to_numpy(run_nps_model(submodel, task))
-
-            n_features = feature_map.shape[1]
-            feature_idx = rng.choice(n_features)
-
-            fig, ax = plt.subplots()
-            ax.imshow(feature_map[0, feature_idx, :, :], origin="lower")
-            ax.set_title(f"Layer {layer_i} feature map. Shape: {feature_map.shape}")
+        fig, axes = plt.subplots(
+            nrows=1,
+            ncols=n_features_to_plot,
+            figsize=(figsize * n_features_to_plot, figsize),
+        )
+        if n_features_to_plot == 1:
+            axes = [axes]
+        for f_i, ax in zip(feature_idxs, axes):
+            fm = feature_map[0, f_i]
+            im = ax.imshow(fm, origin="lower", cmap=cmap)
+            ax.set_title(f"Feature {f_i}", fontsize=figsize * 15 / 4)
             ax.tick_params(
                 which="both",
                 bottom=False,
@@ -263,6 +323,15 @@ def feature_maps(model, task, seed=None):
                 labelbottom=False,
                 labelleft=False,
             )
-            figs.append(fig)
+            if add_colorbar:
+                cbar = ax.figure.colorbar(im, ax=ax, format="%.2f")
+
+        fig.suptitle(
+            f"Layer {layer_i} feature map. Shape: {feature_map.shape}. Min={np.min(feature_map):.2f}, Max={np.max(feature_map):.2f}.",
+            fontsize=figsize * 15 / 4,
+        )
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.75)
+        figs.append(fig)
 
     return figs
