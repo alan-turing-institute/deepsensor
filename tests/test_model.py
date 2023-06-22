@@ -15,7 +15,7 @@ import deepsensor.tensorflow as deepsensor
 
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.loader import TaskLoader
-from deepsensor.model.models import ConvNP
+from deepsensor.model.convnp import ConvNP
 
 from tests.utils import gen_random_data_xr, gen_random_data_pandas
 

@@ -7,7 +7,7 @@ import xarray as xr
 
 import deepsensor
 from deepsensor.data.task import Task
-from deepsensor.model.models import ConvNP
+from deepsensor.model.convnp import ConvNP
 
 
 def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:

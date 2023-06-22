@@ -1,7 +1,7 @@
 import deepsensor
 from deepsensor.data.task import Task
 from deepsensor.data.utils import concat_tasks
-from deepsensor.model.models import ConvNP
+from deepsensor.model.convnp import ConvNP
 
 import numpy as np
 
