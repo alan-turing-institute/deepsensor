@@ -18,6 +18,16 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install GEOS for cartopy (https://scitools.org.uk/cartopy/docs/latest/installing.html#required-dependencies)
+      run: |
+        if [ ${{ matrix.os }} == 'ubuntu-20.04' ]; then
+          sudo apt-get install libgeos-dev
+        elif [ ${{ matrix.os }} == 'macos-latest' ]; then
+          brew install geos
+        fi
+    - name: Pip install cartopy for testing plotting
+      run: |
+        pip install cartopy
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
