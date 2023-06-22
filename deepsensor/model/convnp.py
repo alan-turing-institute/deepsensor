@@ -12,7 +12,11 @@ from deepsensor.data.processor import DataProcessor
 from deepsensor.data.task import Task
 from deepsensor.model.defaults import gen_ppu, gen_encoder_scales
 from deepsensor.model.model import DeepSensorModel
-from deepsensor.model.nps import construct_neural_process, run_nps_model, convert_task_to_nps_args
+from deepsensor.model.nps import (
+    construct_neural_process,
+    run_nps_model,
+    convert_task_to_nps_args,
+)
 
 TFModel = ModuleType("tensorflow.keras", "Model")
 TorchModel = ModuleType("torch.nn", "Module")

@@ -342,5 +342,3 @@ class DeepSensorModel(ProbabilisticModel):
             return mean, std, samples
         else:
             return mean, std
-
-
