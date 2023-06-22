@@ -16,7 +16,7 @@ from deepsensor.model.convnp import ConvNP
 from tests.utils import gen_random_data_xr, gen_random_data_pandas
 
 
-class TestModel(unittest.TestCase):
+class TestTraining(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # It's safe to share data between tests because the TaskLoader does not modify data

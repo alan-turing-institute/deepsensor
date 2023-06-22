@@ -12,7 +12,7 @@ from deepsensor.data.loader import TaskLoader
 from deepsensor.model.convnp import ConvNP
 
 
-class TestModel(unittest.TestCase):
+class TestPlotting(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # It's safe to share data between tests because the TaskLoader does not modify data
