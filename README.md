@@ -55,11 +55,12 @@ pip install tensorflow-probability
 ```
 
 We can go from imports to predictions with a trained model in <30 lines of code!
+
 ```python
 import deepsensor.tensorflow
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
-from deepsensor.model.models import ConvNP
+from deepsensor.model.convnp import ConvNP
 from deepsensor.train.train import train_epoch
 
 import xarray as xr
@@ -85,11 +86,11 @@ train_tasks = []
 for date in pd.date_range("2013-01-01", "2014-11-30"):
     task = task_loader(date, context_sampling=np.random.uniform(0.0, 0.1), target_sampling="all")
     train_tasks.append(task)
-    
+
 # Train model
 for epoch in range(100):
     train_epoch(model, train_tasks, progress_bar=True)
-    
+
 # Predict on new task with 10% of context data
 test_task = task_loader("2014-12-31", 0.1)
 mean_ds, std_ds = model.predict(test_task, X_t=ds_raw)
