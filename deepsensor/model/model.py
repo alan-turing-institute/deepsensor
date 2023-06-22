@@ -185,7 +185,6 @@ class DeepSensorModel(ProbabilisticModel):
         resolution_factor=1,
         n_samples=0,
         unnormalise=True,
-        noiseless_samples=True,
         seed=0,
         progress_bar=0,
         verbose=False,
@@ -207,7 +206,6 @@ class DeepSensorModel(ProbabilisticModel):
             If 0, will not draw samples. Default 0.
         :param unnormalise: Whether to unnormalise the predictions. Only works if
             `self` has a `data_processor` and `task_loader` attribute. Default True.
-        :param noiseless_samples: Whether to draw noiseless samples from the model. Default True.
         :param seed: Random seed for deterministic sampling. Default 0.
         :param progress_bar: Whether to display a progress bar over tasks. Default 0.
         :param verbose: Whether to print time taken for prediction. Default False.
@@ -286,28 +284,37 @@ class DeepSensorModel(ProbabilisticModel):
             # TODO - repeat based on number of targets?
             task["X_t"] = [X_t_arr]
 
-            # Run model forwards once to generate output distribution
-            dist = self(task, n_samples=n_samples)
+            # If `DeepSensor` model child has been sub-classed with a `__call__` method,
+            # we assume this is a distribution-like object that can be used to compute
+            # mean, std and samples. Otherwise, run the model with `Task` for each prediction type.
+            if hasattr(self, "__call__"):
+                # Run model forwards once to generate output distribution, which we re-use
+                dist = self(task, n_samples=n_samples)
+                mean_arr = self.mean(dist)
+                std_arr = self.stddev(dist)
+                if n_samples >= 1:
+                    samples_arr = self.sample(dist, n_samples=n_samples)
+            else:
+                # Re-run model for each prediction type
+                mean_arr = self.mean(task)
+                std_arr = self.stddev(task)
+                if n_samples >= 1:
+                    samples_arr = self.sample(task, n_samples=n_samples)
 
             if mode == "on-grid":
-                mean.loc[:, task["time"], :, :] = self.mean(dist)
-                std.loc[:, task["time"], :, :] = self.stddev(dist)
+                mean.loc[:, task["time"], :, :] = mean_arr
+                std.loc[:, task["time"], :, :] = std_arr
                 if n_samples >= 1:
                     B.set_random_seed(seed)
                     np.random.seed(seed)
-                    samples.loc[:, :, task["time"], :, :] = self.sample(
-                        dist, n_samples=n_samples, noiseless=noiseless_samples
-                    )
+                    samples.loc[:, :, task["time"], :, :] = samples_arr
             elif mode == "off-grid":
                 # TODO multi-target case
-                mean.loc[task["time"]] = self.mean(dist).T
-                std.loc[task["time"]] = self.stddev(dist).T
+                mean.loc[task["time"]] = mean_arr.T
+                std.loc[task["time"]] = std_arr.T
                 if n_samples >= 1:
                     B.set_random_seed(seed)
                     np.random.seed(seed)
-                    samples_arr = self.sample(
-                        dist, n_samples=n_samples, noiseless=noiseless_samples
-                    )
                     for sample_i in range(n_samples):
                         samples.loc[sample_i, task["time"]] = samples_arr[sample_i].T
 
