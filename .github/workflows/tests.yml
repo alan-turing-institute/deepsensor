@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04, macos-latest]
-        python-version: ['3.9', '3.10', '3.11']
+        python-version: ['3.11']
 
     steps:
     - uses: actions/checkout@v2
@@ -25,14 +25,12 @@ jobs:
         elif [ ${{ matrix.os }} == 'macos-latest' ]; then
           brew install geos
         fi
-    - name: Pip install cartopy for testing plotting
-      run: |
-        pip install --no-cache-dir cartopy
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install --no-cache-dir -r requirements.txt
         pip install --no-cache-dir -r requirements.dev.txt
+        pip install --no-cache-dir cartopy
     - name: Test with tox
       run: tox
     - name: Run coveralls
