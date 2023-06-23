@@ -13,6 +13,8 @@ from deepsensor.model.convnp import ConvNP
 def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     """Concatenate a list of tasks into a single task containing multiple batches.
 
+    TODO: Consider moving to `nps.py` as this leverages `neuralprocesses` functionality.
+
     Parameters
     ----------
     tasks : list of Task. List of tasks to concatenate into a single task.
