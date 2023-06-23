@@ -130,6 +130,10 @@ def append_obs_to_task(
 
     task_with_new = copy.deepcopy(task)
 
+    if Y_new.ndim == 0:
+        # Add size-1 observation and data dimension
+        Y_new = Y_new[None, None]
+
     # Add size-1 observation dimension
     if X_new.ndim == 1:
         X_new = X_new[:, None]
