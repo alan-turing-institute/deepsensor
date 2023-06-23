@@ -20,8 +20,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Print space
       run: df -h
-      with:
-        verbose: true
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
