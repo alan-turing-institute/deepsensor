@@ -13,9 +13,11 @@ class Backend:
     """
 
     def __getattr__(self, attr):
-        raise AttributeError(f"Attempting to access Backend.{attr} before {attr} has been assigned. "
-                             f"Please assign a backend with `import deepsensor.tensorflow` "
-                             f"or `import deepsensor.torch` before using backend-dependent functionality.")
+        raise AttributeError(
+            f"Attempting to access Backend.{attr} before {attr} has been assigned. "
+            f"Please assign a backend with `import deepsensor.tensorflow` "
+            f"or `import deepsensor.torch` before using backend-dependent functionality."
+        )
 
 
 backend = Backend()

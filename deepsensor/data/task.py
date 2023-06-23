@@ -122,11 +122,11 @@ def append_obs_to_task(
     TODO for speed during active learning algs, consider a shallow copy option plus
     ability to remove observations.
     """
-    if not 0 <= context_set_idx <= len(task['X_c']) - 1:
-        raise TaskSetIndexError(context_set_idx, len(task['X_c']), 'context')
+    if not 0 <= context_set_idx <= len(task["X_c"]) - 1:
+        raise TaskSetIndexError(context_set_idx, len(task["X_c"]), "context")
 
-    if isinstance(task['X_c'][context_set_idx], tuple):
-        raise GriddedDataError('Cannot append to gridded data')
+    if isinstance(task["X_c"][context_set_idx], tuple):
+        raise GriddedDataError("Cannot append to gridded data")
 
     task_with_new = copy.deepcopy(task)
 
@@ -137,11 +137,13 @@ def append_obs_to_task(
         Y_new = Y_new[:, None]
 
     # Context set with proposed latent sensors
-    task_with_new['X_c'][context_set_idx] = np.concatenate(
-        [task['X_c'][context_set_idx], X_new], axis=-1)
+    task_with_new["X_c"][context_set_idx] = np.concatenate(
+        [task["X_c"][context_set_idx], X_new], axis=-1
+    )
 
     # Append proxy observations
-    task_with_new['Y_c'][context_set_idx] = np.concatenate(
-        [task['Y_c'][context_set_idx], Y_new], axis=-1)
+    task_with_new["Y_c"][context_set_idx] = np.concatenate(
+        [task["Y_c"][context_set_idx], Y_new], axis=-1
+    )
 
     return task_with_new

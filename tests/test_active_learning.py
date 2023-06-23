@@ -50,8 +50,8 @@ class TestActiveLearning(unittest.TestCase):
         self.assertEqual(new_task["Y_c"][ctx_idx].shape, (1, 11))
 
         # 1 context observation with flattened obs dim
-        X_new = np.random.randn(2,)
-        Y_new = np.random.randn(1,)
+        X_new = np.random.randn(2)
+        Y_new = np.random.randn(1)
         new_task = append_obs_to_task(task, X_new, Y_new, ctx_idx)
         self.assertEqual(new_task["X_c"][ctx_idx].shape, (2, 11))
         self.assertEqual(new_task["Y_c"][ctx_idx].shape, (1, 11))
@@ -77,7 +77,7 @@ class TestActiveLearning(unittest.TestCase):
             _ = append_obs_to_task(task, X_new, Y_new, ctx_idx)
 
     def test_concat_obs_to_task_fails_for_gridded_data(self):
-        ctx_idx = 0   # Context set index to add new observations to
+        ctx_idx = 0  # Context set index to add new observations to
 
         # Sample context observations on a grid
         task = self.task_loader("2014-12-31", context_sampling="all")
