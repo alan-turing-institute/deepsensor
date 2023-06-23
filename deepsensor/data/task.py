@@ -5,6 +5,8 @@ import lab as B
 import plum
 import copy
 
+from deepsensor.errors import TaskSetIndexError, GriddedDataError
+
 
 class Task(dict):
     """Task dictionary class
@@ -104,3 +106,42 @@ class Task(dict):
         self["flag"] = modify_flag
 
         return self  # altered by reference, but return anyway
+
+
+def append_obs_to_task(
+    task: Task,
+    X_new: B.Numeric,
+    Y_new: B.Numeric,
+    context_set_idx: int,
+):
+    """Append a single observation to a context set in `task`
+
+    Makes a deep copy of the data structure to avoid affecting the
+    original object.
+
+    TODO for speed during active learning algs, consider a shallow copy option plus
+    ability to remove observations.
+    """
+    if not 0 <= context_set_idx <= len(task['X_c']) - 1:
+        raise TaskSetIndexError(context_set_idx, len(task['X_c']), 'context')
+
+    if isinstance(task['X_c'][context_set_idx], tuple):
+        raise GriddedDataError('Cannot append to gridded data')
+
+    task_with_new = copy.deepcopy(task)
+
+    # Add size-1 observation dimension
+    if X_new.ndim == 1:
+        X_new = X_new[:, None]
+    if Y_new.ndim == 1:
+        Y_new = Y_new[:, None]
+
+    # Context set with proposed latent sensors
+    task_with_new['X_c'][context_set_idx] = np.concatenate(
+        [task['X_c'][context_set_idx], X_new], axis=-1)
+
+    # Append proxy observations
+    task_with_new['Y_c'][context_set_idx] = np.concatenate(
+        [task['Y_c'][context_set_idx], Y_new], axis=-1)
+
+    return task_with_new
