@@ -76,9 +76,6 @@ class ProbabilisticModel:
     are implemented by specific model classes that inherit from it.
     """
 
-    def __init__(self):
-        pass
-
     def mean(self, dataset, *args, **kwargs):
         """
         Computes the model mean prediction over target points based on given context
