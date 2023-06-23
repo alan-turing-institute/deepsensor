@@ -105,9 +105,18 @@ class ProbabilisticModel:
         var = self.variance(dataset)
         return var**0.5
 
-    def entropy(self, dataset, *args, **kwargs):
+    def mean_marginal_entropy(self, dataset, *args, **kwargs):
         """
-        Computes the model entropy over target points based on given context
+        Computes the mean marginal entropy over target points based on given context
+        data.
+
+        Note: Getting a vector of marginal entropies would be useful too.
+        """
+        raise NotImplementedError()
+
+    def joint_entropy(self, dataset, *args, **kwargs):
+        """
+        Computes the model joint entropy over target points based on given context
         data.
         """
         raise NotImplementedError()
@@ -132,27 +141,6 @@ class ProbabilisticModel:
         returned shape is (n_samples, n_target).
         """
         raise NotImplementedError()
-
-    def mutual_information(
-        self, dataset, X_new, Y_new, *args, context_set_idx=0, **kwargs
-    ):
-        """
-        WIP: Old code not using new dataset data structure.
-
-        Computes the mutual information over target set T given context set C and
-        the new (proposed) context set N:
-            I(T|C;N) = H(T|C) - H(T|C,N)
-
-        Uses the subclassed `entropy` method.
-        """
-
-        dataset_with_new = concat_obs_to_dataset(dataset, X_new, Y_new, context_set_idx)
-
-        entropy_before = self.entropy(dataset)
-
-        entropy_after = self.entropy(dataset_with_new)
-
-        return entropy_before - entropy_after
 
 
 class DeepSensorModel(ProbabilisticModel):

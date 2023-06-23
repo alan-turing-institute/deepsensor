@@ -208,12 +208,24 @@ class ConvNP(DeepSensorModel):
         return B.to_numpy(self(task).mean)[0, 0]
 
     @dispatch
-    def entropy(self, dist: backend.nps.AbstractMultiOutputDistribution):
+    def mean_marginal_entropy(self, dist: backend.nps.AbstractMultiOutputDistribution):
+        """Mean marginal entropy over target points given context points."""
+        dist_diag = self.slice_diag(dist)
+        return B.mean(B.to_numpy(dist_diag.entropy())[0, 0])
+
+    @dispatch
+    def mean_marginal_entropy(self, task: Task):
+        """Mean marginal entropy over target points given context points."""
+        dist_diag = self.slice_diag(task)
+        return B.mean(B.to_numpy(dist_diag.entropy())[0, 0])
+
+    @dispatch
+    def joint_entropy(self, dist: backend.nps.AbstractMultiOutputDistribution):
         """Model entropy over target points given context points."""
         return B.to_numpy(dist.entropy())[0, 0]
 
     @dispatch
-    def entropy(self, task: Task):
+    def joint_entropy(self, task: Task):
         return B.to_numpy(self(task).entropy())[0, 0]
 
     @dispatch
