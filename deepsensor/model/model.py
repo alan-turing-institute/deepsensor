@@ -20,7 +20,7 @@ import lab as B
 def create_empty_spatiotemporal_xarray(
     X: Union[xr.Dataset, xr.DataArray],
     dates: List,
-    resolution_factor: Union[float, int] = 1.,
+    resolution_factor: Union[float, int] = 1.0,
     coord_names: dict = {"x1": "x1", "x2": "x2"},
     data_vars: List = ["var"],
     prepend_dims: List[str] = [],
@@ -247,8 +247,12 @@ class DeepSensorModel(ProbabilisticModel):
             ).to_array(dim="data_var")
             if n_samples >= 1:
                 samples = create_empty_spatiotemporal_xarray(
-                    X_t, dates, resolution_factor, data_vars=target_var_IDs,
-                    prepend_dims=["sample"], prepend_coords=[np.arange(n_samples)]
+                    X_t,
+                    dates,
+                    resolution_factor,
+                    data_vars=target_var_IDs,
+                    prepend_dims=["sample"],
+                    prepend_coords=[np.arange(n_samples)],
                 ).to_array(dim="data_var")
                 samples = samples.expand_dims(
                     dim=dict(sample=np.arange(n_samples))
