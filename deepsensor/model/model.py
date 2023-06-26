@@ -17,12 +17,14 @@ import lab as B
 # See https://beartype.github.io/plum/types.html#moduletype
 
 
-def create_empty_prediction_array(
-    dates,
-    resolution_factor,
-    X_t,
-    coord_names={"x1": "x1", "x2": "x2"},
-    data_vars=["mean", "std"],
+def create_empty_spatiotemporal_xarray(
+    X: Union[xr.Dataset, xr.DataArray],
+    dates: List,
+    resolution_factor: Union[float, int] = 1.,
+    coord_names: dict = {"x1": "x1", "x2": "x2"},
+    data_vars: List = ["var"],
+    prepend_dims: List[str] = [],
+    prepend_coords: dict = {},
 ):
     # Check for any repeated data_vars
     if len(data_vars) != len(set(data_vars)):
@@ -31,27 +33,35 @@ def create_empty_prediction_array(
             "This woudld cause the xarray.Dataset to have fewer variables than expected."
         )
 
-    x1_lowres = X_t.coords[coord_names["x1"]]
-    x2_lowres = X_t.coords[coord_names["x2"]]
+    x1_raw = X.coords[coord_names["x1"]]
+    x2_raw = X.coords[coord_names["x2"]]
 
-    x1_hires = np.linspace(
-        x1_lowres[0],
-        x1_lowres[-1],
-        int(x1_lowres.size * resolution_factor),
+    x1_predict = np.linspace(
+        x1_raw[0],
+        x1_raw[-1],
+        int(x1_raw.size * resolution_factor),
         dtype="float32",
     )
-    x2_hires = np.linspace(
-        x2_lowres[0],
-        x2_lowres[-1],
-        int(x2_lowres.size * resolution_factor),
+    x2_predict = np.linspace(
+        x2_raw[0],
+        x2_raw[-1],
+        int(x2_raw.size * resolution_factor),
         dtype="float32",
     )
 
-    dims = ["time", coord_names["x1"], coord_names["x2"]]
+    if len(prepend_dims) != len(set(prepend_dims)):
+        # TODO unit test
+        raise ValueError(
+            f"Length of prepend_dims ({len(prepend_dims)}) must be equal to length of "
+            f"prepend_coords ({len(prepend_coords)})."
+        )
+
+    dims = [*prepend_dims, "time", coord_names["x1"], coord_names["x2"]]
     coords = {
+        **prepend_coords,
         "time": pd.to_datetime(dates),
-        coord_names["x1"]: x1_hires,
-        coord_names["x2"]: x2_hires,
+        coord_names["x1"]: x1_predict,
+        coord_names["x2"]: x2_predict,
     }
 
     pred_ds = xr.Dataset(
@@ -221,7 +231,7 @@ class DeepSensorModel(ProbabilisticModel):
             X_t = pd.DataFrame(index=X_t)
 
         if not X_t_normalised:
-            X_t = self.data_processor.map_coords(X_t)
+            X_t = self.data_processor.map_coords(X_t)  # Normalise
 
         if isinstance(X_t, (xr.DataArray, xr.Dataset)):
             mode = "on-grid"
@@ -229,15 +239,16 @@ class DeepSensorModel(ProbabilisticModel):
             mode = "off-grid"
 
         if mode == "on-grid":
-            mean = create_empty_prediction_array(
-                dates, resolution_factor, X_t, data_vars=target_var_IDs
+            mean = create_empty_spatiotemporal_xarray(
+                X_t, dates, resolution_factor, data_vars=target_var_IDs
             ).to_array(dim="data_var")
-            std = create_empty_prediction_array(
-                dates, resolution_factor, X_t, data_vars=target_var_IDs
+            std = create_empty_spatiotemporal_xarray(
+                X_t, dates, resolution_factor, data_vars=target_var_IDs
             ).to_array(dim="data_var")
             if n_samples >= 1:
-                samples = create_empty_prediction_array(
-                    dates, resolution_factor, X_t, data_vars=target_var_IDs
+                samples = create_empty_spatiotemporal_xarray(
+                    X_t, dates, resolution_factor, data_vars=target_var_IDs,
+                    prepend_dims=["sample"], prepend_coords=[np.arange(n_samples)]
                 ).to_array(dim="data_var")
                 samples = samples.expand_dims(
                     dim=dict(sample=np.arange(n_samples))
