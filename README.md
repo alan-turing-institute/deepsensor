@@ -1,22 +1,20 @@
 [//]: # (![]&#40;figs/DeepSensorLogo.png&#41;)
-<p style="text-align: center;">
-<img src="figs/DeepSensorLogo.png" width="800", margin: -150px 0px 0px -150px; />
-</p>
+<ul style="text-align: center;">
+<img src="figs/DeepSensorLogo.png" width="700"/>
+</ul>
 
-<ul style="margin-top:-50px;">
+<ul style="margin-top:0px;">
 
 
-<p style="text-align: center;">A Python package for modelling environmental data with processes</p>
+<p style="text-align: center; font-size: 15px">A Python package and open-source project for modelling environmental
+data with neural processes</p>
+
 -----------
 
 [![release](https://img.shields.io/badge/release-v0.1.3-green?logo=github)](https://github.com/tom-andersson/deepsensor/releases)
 ![Tests](https://github.com/tom-andersson/deepsensor/actions/workflows/tests.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/tom-andersson/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/tom-andersson/deepsensor?branch=main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-
-
-**DeepSensor** is an open source project and Python package
-for modelling xarray and pandas data with neural processes (NPs).
 
 **NOTE**: This package is currently undergoing very active development. If you are interested in using
 DeepSensor, please get in touch first (tomand@bas.ac.uk).
