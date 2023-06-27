@@ -19,6 +19,8 @@ def set_gpu_default_device():
             # Set default GPU device
             torch.set_default_device("cuda")
             B.set_global_device("cuda:0")
+        else:
+            raise RuntimeError("No GPU available: torch.cuda.is_available() == False")
     elif deepsensor.backend.str == "tf":
         # Run on GPU if available
         import tensorflow as tf
@@ -29,8 +31,8 @@ def set_gpu_default_device():
                 tf.config.list_physical_devices("GPU")[0], "GPU"
             )
             B.set_global_device("GPU:0")
-        # Check GPU visible to tf
-        # print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+        else:
+            raise RuntimeError("No GPU available: tf.test.is_gpu_available() == False")
 
     else:
         raise NotImplementedError(f"Backend {deepsensor.backend.str} not implemented")
