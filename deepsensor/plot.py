@@ -335,3 +335,55 @@ def feature_maps(
         figs.append(fig)
 
     return figs
+
+
+def placements(task, X_new_df, data_processor, crs, extent=None, figsize=3):
+    fig, ax = plt.subplots(subplot_kw={"projection": crs}, figsize=(figsize, figsize))
+    ax.coastlines()
+    if extent is None:
+        pass
+    elif extent == "global":
+        ax.set_global()
+    else:
+        ax.set_extent(extent, crs=crs)
+    ax.scatter(*X_new_df.values.T[::-1], s=3**2, c="r", linewidths=0.5)
+    offgrid_context(ax, task, data_processor, s=3**2, linewidths=0.5)
+
+    return fig
+
+
+def acquisition_fn(
+    task, acquisition_fn_ds, X_new_df, data_processor, crs, cmap="Greys_r", figsize=3
+):
+    ncols = np.max(acquisition_fn_ds.iteration.values) + 1
+    fig, axes = plt.subplots(
+        subplot_kw={"projection": crs}, ncols=ncols, figsize=(figsize * ncols, figsize)
+    )
+    min, max = acquisition_fn_ds.min(), acquisition_fn_ds.max()
+    for iteration in range(len(acquisition_fn_ds.iteration)):
+        ax = axes[iteration]
+        if iteration == np.max(acquisition_fn_ds.iteration):
+            add_colorbar = True
+        else:
+            add_colorbar = False
+        acquisition_fn_ds.sel(iteration=iteration).plot(
+            ax=ax, cmap=cmap, vmin=min, vmax=max, add_colorbar=False
+        )
+        if add_colorbar:
+            im = ax.get_children()[0]
+            label = acquisition_fn_ds.name
+            cax = plt.axes([0.93, 0.035, 0.02, 0.91])  # add a small custom axis
+            cbar = plt.colorbar(
+                im, cax=cax, label=label
+            )  # specify axis for colorbar to occupy with cax
+        ax.set_title(f"Iteration {iteration+1}")
+        ax.coastlines()
+        ax.scatter(
+            *X_new_df.loc[slice(0, iteration)].values.T[::-1],
+            s=3**2,
+            c="r",
+            linewidths=0.5,
+        )
+    offgrid_context(axes, task, data_processor, s=3**2, linewidths=0.5)
+
+    return fig
