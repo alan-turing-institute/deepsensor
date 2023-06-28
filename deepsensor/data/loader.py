@@ -26,6 +26,7 @@ class TaskLoader:
         context_delta_t: Union[int, List[int]] = 0,
         target_delta_t: Union[int, List[int]] = 0,
         time_freq: str = "D",
+        xarray_interp_method: str = "linear",
         dtype: object = "float32",
     ) -> None:
         """Initialise a TaskLoader object
@@ -43,10 +44,12 @@ class TaskLoader:
         :param target_delta_t: Time difference between target data and t=0 (task init time).
             Can be a single int (same for all target data) or a list/tuple of ints.
         :param time_freq: Time frequency of the data. Default: 'D' (daily).
+        :param xarray_interp_method: Interpolation method to use when interpolating xr.DataArray
         :param dtype: Data type of the data. Used to cast the data to the specified dtype.
             Default: 'float32'.
         """
         self.time_freq = time_freq
+        self.xarray_interp_method = xarray_interp_method
         self.dtype = dtype
 
         if isinstance(context, (xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series)):
@@ -268,7 +271,7 @@ class TaskLoader:
     def sample_da(
         self,
         da: Union[xr.DataArray, xr.Dataset],
-        sampling_strat: Union[str, int, float],
+        sampling_strat: Union[str, int, float, np.ndarray],
         seed: int = None,
     ) -> (np.ndarray, np.ndarray):
         """Sample a DataArray according to a given strategy
@@ -295,6 +298,22 @@ class TaskLoader:
             if Y_c.ndim == 1:
                 # returned a 1D array, but we need a 2D array of shape (variable, N)
                 Y_c = Y_c.reshape(1, *Y_c.shape)
+
+        elif isinstance(sampling_strat, np.ndarray):
+            X_c = sampling_strat.astype(self.dtype)
+            Y_c = np.array(
+                da.interp(
+                    x1=xr.DataArray(X_c[0]),
+                    x2=xr.DataArray(X_c[1]),
+                    method=self.xarray_interp_method,
+                    kwargs=dict(fill_value=None, bounds_error=False),
+                ),
+                dtype=self.dtype,
+            )
+            if Y_c.ndim == 1:
+                # returned a 1D array, but we need a 2D array of shape (variable, N)
+                Y_c = Y_c.reshape(1, *Y_c.shape)
+
         elif sampling_strat == "all":
             X_c = (
                 da.coords["x1"].values[np.newaxis],
@@ -346,8 +365,12 @@ class TaskLoader:
     def task_generation(
         self,
         date: pd.Timestamp,
-        context_sampling: Union[str, int, float, List[Union[str, int]]] = "all",
-        target_sampling: Union[str, int, float, List[Union[str, int]]] = "all",
+        context_sampling: Union[
+            str, int, float, np.ndarray, List[Union[str, int, float, np.ndarray]]
+        ] = "all",
+        target_sampling: Union[
+            str, int, float, np.ndarray, List[Union[str, int, float, np.ndarray]]
+        ] = "all",
         split_frac: float = 0.5,
         deterministic: bool = False,
     ) -> Task:
@@ -357,6 +380,8 @@ class TaskLoader:
         - "all": Sample all observations.
         - int: Sample N observations uniformly at random.
         - float: Sample a fraction of observations uniformly at random.
+        - np.ndarray, shape (2, N): Sample N observations at the given x1, x2 coordinates.
+            Coords are assumed to be unnormalised.
 
         :param date: Date for which to generate the task
         :param context_sampling: Sampling strategy for the context data, either a list of
