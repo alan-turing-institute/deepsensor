@@ -3,6 +3,8 @@ import xarray as xr
 import numpy as np
 
 import deepsensor.tensorflow as deepsensor
+from deepsensor.active_learning.acquisition_fns import MeanVariance
+from deepsensor.active_learning.algorithms import GreedyAlgorithm
 
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
@@ -14,7 +16,7 @@ from deepsensor.model.convnp import ConvNP
 # from deepsensor.active_learning.acquisition_fns import
 
 
-class TestActiveLearning(unittest.TestCase):
+class TestConcatTasks(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # It's safe to share data between tests because the TaskLoader does not modify data
@@ -91,3 +93,43 @@ class TestActiveLearning(unittest.TestCase):
 
         with self.assertRaises(GriddedDataError):
             new_task = append_obs_to_task(task, X_new, Y_new, ctx_idx)
+
+
+class TestActiveLearning(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # It's safe to share data between tests because the TaskLoader does not modify data
+        ds_raw = xr.tutorial.open_dataset("air_temperature")
+        self.ds_raw = ds_raw
+        self.data_processor = DataProcessor(
+            x1_name="lat",
+            x2_name="lon",
+            x1_map=(ds_raw["lat"].min(), ds_raw["lat"].max()),
+            x2_map=(ds_raw["lon"].min(), ds_raw["lon"].max()),
+        )
+        ds = self.data_processor(ds_raw)
+        self.task_loader = TaskLoader(ds, ds)
+        self.model = ConvNP(
+            self.data_processor,
+            self.task_loader,
+            unet_channels=(5, 5, 5),
+            verbose=False,
+        )
+        self.task = self.task_loader("2014-12-31")
+
+    def test_wrong_n_new_sensors(self):
+        with self.assertRaises(ValueError):
+            alg = GreedyAlgorithm(
+                model=self.model,
+                X_t=self.ds_raw,
+                X_s=self.ds_raw,
+                N_new_context=-1,
+            )
+
+        with self.assertRaises(ValueError):
+            alg = GreedyAlgorithm(
+                model=self.model,
+                X_t=self.ds_raw,
+                X_s=self.ds_raw,
+                N_new_context=10_000,  # > number of search points
+            )
