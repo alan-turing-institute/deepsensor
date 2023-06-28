@@ -242,6 +242,10 @@ class DeepSensorModel(ProbabilisticModel):
             mode = "on-grid"
         elif isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index)):
             mode = "off-grid"
+        else:
+            raise ValueError(
+                f"X_t must be an xarray object or a pandas object, not {type(X_t)}"
+            )
 
         if mode == "on-grid":
             mean = create_empty_spatiotemporal_xarray(
@@ -257,11 +261,8 @@ class DeepSensorModel(ProbabilisticModel):
                     resolution_factor,
                     data_vars=target_var_IDs,
                     prepend_dims=["sample"],
-                    prepend_coords=[np.arange(n_samples)],
+                    prepend_coords={"sample": np.arange(n_samples)},
                 ).to_array(dim="data_var")
-                samples = samples.expand_dims(
-                    dim=dict(sample=np.arange(n_samples))
-                ).copy()
 
             X_t_arr = (mean["x1"].values, mean["x2"].values)
 
@@ -298,28 +299,29 @@ class DeepSensorModel(ProbabilisticModel):
                 mean_arr = self.mean(dist)
                 std_arr = self.stddev(dist)
                 if n_samples >= 1:
+                    B.set_random_seed(seed)
+                    np.random.seed(seed)
                     samples_arr = self.sample(dist, n_samples=n_samples)
             else:
                 # Re-run model for each prediction type
                 mean_arr = self.mean(task)
                 std_arr = self.stddev(task)
                 if n_samples >= 1:
+                    B.set_random_seed(seed)
+                    np.random.seed(seed)
                     samples_arr = self.sample(task, n_samples=n_samples)
 
             if mode == "on-grid":
                 mean.loc[:, task["time"], :, :] = mean_arr
                 std.loc[:, task["time"], :, :] = std_arr
                 if n_samples >= 1:
-                    B.set_random_seed(seed)
-                    np.random.seed(seed)
-                    samples.loc[:, :, task["time"], :, :] = samples_arr
+                    for sample_i in range(n_samples):
+                        samples.loc[:, sample_i, task["time"], :, :] = samples_arr[sample_i]
             elif mode == "off-grid":
                 # TODO multi-target case
                 mean.loc[task["time"]] = mean_arr.T
                 std.loc[task["time"]] = std_arr.T
                 if n_samples >= 1:
-                    B.set_random_seed(seed)
-                    np.random.seed(seed)
                     for sample_i in range(n_samples):
                         samples.loc[sample_i, task["time"]] = samples_arr[sample_i].T
 
