@@ -1,4 +1,6 @@
+import numpy
 import numpy as np
+import xarray
 
 import xarray as xr
 import pandas as pd
@@ -195,6 +197,17 @@ class DataProcessor:
             param2 = self.norm_params[var_ID][param2_ID]
         return param1, param2
 
+    def map_coord_array(self, coord_array: np.ndarray, unnorm: bool = False):
+        """Normalise or unnormalise a coordinate array
+
+        Args:
+            coord_array (np.ndarray): Array of shape (2, N) containing coords
+            unnorm (bool, optional): Whether to unnormalise. Defaults to False.
+        """
+        x1, x2 = self.map_x1_and_x2(coord_array[0], coord_array[1], unnorm=unnorm)
+        new_coords = np.stack([x1, x2], axis=0)
+        return new_coords
+
     def map_x1_and_x2(self, x1: np.ndarray, x2: np.ndarray, unnorm: bool = False):
         """Normalise or unnormalise spatial coords in a array
 
@@ -214,7 +227,11 @@ class DataProcessor:
 
         return new_coords_x1, new_coords_x2
 
-    def map_coords(self, data, unnorm=False):
+    def map_coords(
+        self,
+        data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series],
+        unnorm=False,
+    ):
         """Normalise spatial coords in a pandas or xarray object"""
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Reset index to get coords as columns
@@ -369,3 +386,23 @@ class DataProcessor:
             return [self.map(d, method, add_offset, unnorm=True) for d in data]
         else:
             return self.map(data, method, add_offset, unnorm=True)
+
+
+def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]):
+    x1, x2 = da["x1"].values, da["x2"].values
+    X1, X2 = np.meshgrid(x1, x2, indexing="ij")
+    return np.stack([X1.ravel(), X2.ravel()], axis=0)
+
+
+def mask_coord_array_normalised(coord_arr, mask_da):
+    if mask_da is None:
+        return coord_arr
+    mask_da = mask_da.astype(float)  # Temporarily convert to float for interpolation
+    mask_da = mask_da.interp(
+        {"x1": xr.DataArray(coord_arr[0]), "x2": xr.DataArray(coord_arr[1])},
+        method="nearest",
+        kwargs=dict(fill_value=None, bounds_error=False),
+    ).data.astype(
+        bool
+    )  # Shape `coord_arr.shape[1]`, False if point is outside mask
+    return coord_arr[:, mask_da]
