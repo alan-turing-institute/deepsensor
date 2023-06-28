@@ -23,9 +23,14 @@ def create_empty_spatiotemporal_xarray(
     resolution_factor: Union[float, int] = 1.0,
     coord_names: dict = {"x1": "x1", "x2": "x2"},
     data_vars: List = ["var"],
-    prepend_dims: List[str] = [],
-    prepend_coords: dict = {},
+    prepend_dims: List[str] = None,
+    prepend_coords: dict = None,
 ):
+    if prepend_dims is None:
+        prepend_dims = []
+    if prepend_coords is None:
+        prepend_coords = {}
+
     # Check for any repeated data_vars
     if len(data_vars) != len(set(data_vars)):
         raise ValueError(
