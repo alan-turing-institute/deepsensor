@@ -411,8 +411,23 @@ class TaskLoader:
                     f"Length of sampling_strat ({len(sampling_strat)}) must match number of"
                     f"context sets ({len(set)})"
                 )
-            elif isinstance(sampling_strat, (str, int)):
-                sampling_strat = tuple([sampling_strat] * len(set))
+
+            for strat in sampling_strat:
+                if not isinstance(strat, (str, int, float, np.ndarray)):
+                    raise ValueError(f"Unknown sampling strategy {strat}")
+                if isinstance(strat, str) and strat not in ["all", "split"]:
+                    raise ValueError(f"Unknown sampling strategy {strat}")
+                if isinstance(strat, float) and not 0 <= strat <= 1:
+                    raise ValueError(
+                        f"Sampling fraction must be in (0, 1], got {strat}"
+                    )
+                if isinstance(strat, int) and strat <= 0:
+                    raise ValueError(f"Sampling N must be positive, got {strat}")
+                if isinstance(strat, np.ndarray) and strat.shape[0] != 2:
+                    raise ValueError(
+                        f"Sampling coordinates must be of shape (2, N), got {strat.shape}"
+                    )
+
             return sampling_strat
 
         def time_slice_variable(var, delta_t):
