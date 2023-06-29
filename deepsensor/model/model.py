@@ -91,36 +91,36 @@ class ProbabilisticModel:
     are implemented by specific model classes that inherit from it.
     """
 
-    def mean(self, dataset, *args, **kwargs):
+    def mean(self, task: Task, *args, **kwargs):
         """
         Computes the model mean prediction over target points based on given context
         data.
         """
         raise NotImplementedError()
 
-    def covariance(self, dataset, *args, **kwargs):
-        """
-        Computes the model covariance matrix over target points based on given context
-        data. Shape (N, N).
-        """
-        raise NotImplementedError()
-
-    def variance(self, dataset, *args, **kwargs):
+    def variance(self, task: Task, *args, **kwargs):
         """
         Model marginal variance over target points given context points.
         Shape (N,).
         """
         raise NotImplementedError()
 
-    def stddev(self, dataset):
+    def stddev(self, task: Task):
         """
         Model marginal standard deviation over target points given context points.
         Shape (N,).
         """
-        var = self.variance(dataset)
+        var = self.variance(task)
         return var**0.5
 
-    def mean_marginal_entropy(self, dataset, *args, **kwargs):
+    def covariance(self, task: Task, *args, **kwargs):
+        """
+        Computes the model covariance matrix over target points based on given context
+        data. Shape (N, N).
+        """
+        raise NotImplementedError()
+
+    def mean_marginal_entropy(self, task: Task, *args, **kwargs):
         """
         Computes the mean marginal entropy over target points based on given context
         data.
@@ -129,27 +129,27 @@ class ProbabilisticModel:
         """
         raise NotImplementedError()
 
-    def joint_entropy(self, dataset, *args, **kwargs):
+    def joint_entropy(self, task: Task, *args, **kwargs):
         """
         Computes the model joint entropy over target points based on given context
         data.
         """
         raise NotImplementedError()
 
-    def logpdf(self, dataset, *args, **kwargs):
+    def logpdf(self, task: Task, *args, **kwargs):
         """
         Computes the joint model logpdf over target points based on given context
         data.
         """
         raise NotImplementedError()
 
-    def loss(self, dataset, *args, **kwargs):
+    def loss(self, task: Task, *args, **kwargs):
         """
         Computes the model loss over target points based on given context data.
         """
         raise NotImplementedError()
 
-    def sample(self, dataset, n_samples=1, *args, **kwargs):
+    def sample(self, task: Task, n_samples=1, *args, **kwargs):
         """
         Draws `n_samples` joint samples over target points based on given context
         data.
@@ -316,7 +316,9 @@ class DeepSensorModel(ProbabilisticModel):
                 std.loc[:, task["time"], :, :] = std_arr
                 if n_samples >= 1:
                     for sample_i in range(n_samples):
-                        samples.loc[:, sample_i, task["time"], :, :] = samples_arr[sample_i]
+                        samples.loc[:, sample_i, task["time"], :, :] = samples_arr[
+                            sample_i
+                        ]
             elif mode == "off-grid":
                 # TODO multi-target case
                 mean.loc[task["time"]] = mean_arr.T
