@@ -30,9 +30,10 @@ NPs are a highly flexible class of probabilistic models that can:
 These capabilities make NPs well suited to modelling spatio-temporal data, such as
 satellite observations, climate model output, and in-situ measurements.
 NPs have been used for range of environmental applications, including:
-- spatial interpolation (sensor placement)
 - downscaling (i.e. super-resolution)
 - forecasting
+- infilling missing satellite data
+- sensor placement
 
 Why DeepSensor?
 -----------
@@ -43,12 +44,11 @@ package for the core modelling functionality, while allowing users to stay in
 the familiar [xarray](https://xarray.pydata.org) and [pandas](https://pandas.pydata.org) world
 and avoid the murky depths of tensors!
 
-Backend agnosticism
+Deep learning library agnosticism
 -----------
 DeepSensor leverages the [backends](https://github.com/wesselb/lab) package to be compatible with
-either [PyTorch](https://pytorch.org/) or [TensorFlow](https://www.tensorflow.org/)
-deep learning libraries.
-Simply `import deepsensor.torch` or `import deepsensor.tensorflow` to choose your backend!
+either [PyTorch](https://pytorch.org/) or [TensorFlow](https://www.tensorflow.org/).
+Simply `import deepsensor.torch` or `import deepsensor.tensorflow` to choose between them!
 
 Quick start
 ----------
@@ -116,6 +116,31 @@ Coordinates:
 Data variables:
     air      (time, lat, lon) float32 246.7 244.4 245.5 ... 290.2 289.8 289.4
 ```
+
+Extending DeepSensor with new models
+----------
+DeepSensor is designed to simple to extend with new models.
+Simply create a new class that inherits from `deepsensor.model.DeepSensorModel`
+and implement the low-level prediction methods defined in `deepsensor.model.ProbabilisticModel`.
+```python
+class NewModel(DeepSensorModel):
+    """A very naive model that predicts the mean of the first context set with a fixed stddev"""
+    def __init__(self, data_processor: DataProcessor, task_loader: TaskLoader):
+        super().__init__(data_processor, task_loader)
+        
+    def mean(self, task: Task):
+        """Compute mean at target locations"""
+        return np.mean(task["Y_c"][0])
+    
+    def stddev(self, task: Task):
+        """Compute stddev at target locations"""
+        return 0.1
+    
+    ...
+```
+`NewModel` can then be used in the same way as the built-in `ConvNP` model.
+See [this Jupyter notebook](https://github.com/tom-andersson/deepsensor/blob/main/notebooks/extending_models.ipynb)
+for more details.
 
 Learn more
 ----------
