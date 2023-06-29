@@ -17,12 +17,25 @@ def convert_task_to_nps_args(task: Task):
 
     # TEMP: assume target sets all on same spatial locations
     #   just use the first entry from the lists of target data
-    xt = task["X_t"][0]
-    yt = B.concat(*task["Y_t"], axis=1)
+    # xt = task["X_t"][0]
+    # yt = B.concat(*task["Y_t"], axis=1)
 
-    # TODO: allow for varying target set locations
-    # xt = backend.nps.AggregateInput(*[(xt, i) for i, xt in enumerate(task['X_t'])])
-    # yt = backend.nps.Aggregate(*[yt for yt in enumerate(task['Y_t'])])
+    if len(task["X_t"]) == 1 and len(task["Y_t"]) == 1:
+        # Single target set
+        xt = task["X_t"][0]
+        yt = task["Y_t"][0]
+    elif len(task["X_t"]) > 1 and len(task["Y_t"]) > 1:
+        # Multiple target sets, different target locations
+        xt = backend.nps.AggregateInput(*[(xt, i) for i, xt in enumerate(task["X_t"])])
+        yt = backend.nps.Aggregate(*[yt for yt in enumerate(task["Y_t"])])
+    elif len(task["X_t"]) == 1 and len(task["Y_t"]) > 1:
+        # Multiple target sets, same target locations
+        xt = task["X_t"][0]
+        yt = B.concat(*task["Y_t"], axis=1)
+    else:
+        raise ValueError(
+            f"Incorrect target locations and target observations (got {len(task['X_t'])} and {len(task['Y_t'])})"
+        )
 
     # Assume one target set, convert to tf.Tensor and AggregateInput for AR
     #   sampling

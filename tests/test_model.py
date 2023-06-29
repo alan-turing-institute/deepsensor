@@ -122,66 +122,83 @@ class TestModel(unittest.TestCase):
         return None
 
     @parameterized.expand(range(1, 4))
-    def test_prediction_shapes_lowlevel(self, target_dim):
-        """Test low-level model prediction interface"""
+    def test_prediction_shapes_lowlevel(self, n_target_sets):
+        """Test low-level model prediction interface over a range of number of target sets"""
         tl = TaskLoader(
             context=self.da,
-            target=[self.da] * target_dim,
+            target=[self.da] * n_target_sets,
         )
+
+        context_sampling = 10
 
         model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
 
-        context_sampling = 10
-        for expected_shape, target_sampling in (
-            ((10,), 10),
-            (self.da.shape[-2:], "all"),
+        for target_sampling, expected_obs_shape in (
+            (10, (10,)),  # expected shape is (10,) when target_sampling is 10
+            (
+                "all",
+                self.da.shape[-2:],
+            ),  # expected shape is da.shape[-2:] when target_sampling is "all"
         ):
             task = tl("2020-01-01", context_sampling, target_sampling)
 
-            dist = model(task)
-
-            n_targets = np.product(expected_shape)
+            n_targets = np.product(expected_obs_shape)
 
             # Tensors
-            assert_shape(model.mean(dist), (target_dim, *expected_shape))
-            assert_shape(model.mean(task), (target_dim, *expected_shape))
-            assert_shape(model.variance(dist), (target_dim, *expected_shape))
-            assert_shape(model.variance(task), (target_dim, *expected_shape))
-            assert_shape(model.stddev(dist), (target_dim, *expected_shape))
-            assert_shape(model.stddev(task), (target_dim, *expected_shape))
-            assert_shape(
-                model.covariance(dist), (n_targets * target_dim, n_targets * target_dim)
-            )
-            assert_shape(
-                model.covariance(task), (n_targets * target_dim, n_targets * target_dim)
-            )
+            mean = model.mean(task)
+            # TODO avoid repeated code
+            if isinstance(mean, (list, tuple)):
+                for m, dim_y in zip(mean, tl.target_dims):
+                    assert_shape(m, (dim_y, *expected_obs_shape))
+            else:
+                assert_shape(mean, (n_target_sets, *expected_obs_shape))
+
+            variance = model.variance(task)
+            if isinstance(variance, (list, tuple)):
+                for v, dim_y in zip(variance, tl.target_dims):
+                    assert_shape(v, (dim_y, *expected_obs_shape))
+            else:
+                assert_shape(variance, (n_target_sets, *expected_obs_shape))
+
+            stddev = model.stddev(task)
+            if isinstance(stddev, (list, tuple)):
+                for s, dim_y in zip(stddev, tl.target_dims):
+                    assert_shape(s, (dim_y, *expected_obs_shape))
+            else:
+                assert_shape(stddev, (n_target_sets, *expected_obs_shape))
+
             n_samples = 5
+            samples = model.sample(task, n_samples)
+            if isinstance(samples, (list, tuple)):
+                for s, dim_y in zip(samples, tl.target_dims):
+                    assert_shape(s, (n_samples, dim_y, *expected_obs_shape))
+            else:
+                assert_shape(samples, (n_samples, n_target_sets, *expected_obs_shape))
+
+            n_target_dims = np.product(tl.target_dims)
             assert_shape(
-                model.sample(dist, n_samples), (n_samples, target_dim, *expected_shape)
-            )
-            assert_shape(
-                model.sample(task, n_samples), (n_samples, target_dim, *expected_shape)
+                model.covariance(task),
+                (
+                    n_targets * n_target_sets * n_target_dims,
+                    n_targets * n_target_sets * n_target_dims,
+                ),
             )
 
             # Scalars
-            x = model.logpdf(dist, task)
-            assert x.size == 1 and x.shape == ()
             x = model.logpdf(task)
-            assert x.size == 1 and x.shape == ()
-            x = model.mean_marginal_entropy(dist)
-            assert x.size == 1 and x.shape == ()
-            x = model.mean_marginal_entropy(task)
-            assert x.size == 1 and x.shape == ()
-            x = model.joint_entropy(dist)
             assert x.size == 1 and x.shape == ()
             x = model.joint_entropy(task)
             assert x.size == 1 and x.shape == ()
-            x = B.to_numpy(model.loss_fn(task))
+            x = model.mean_marginal_entropy(task)
+            assert x.size == 1 and x.shape == ()
+            if n_target_sets == 1:
+                # TEMP loss function for multiple non-overlapping target sets is not yet implemented
+                x = B.to_numpy(model.loss_fn(task))
             assert x.size == 1 and x.shape == ()
 
     @parameterized.expand(range(1, 4))
     def test_prediction_shapes_highlevel(self, target_dim):
-        """Test high-level `.predict` interface"""
+        """Test high-level `.predict` interface over a range of number of target sets"""
 
         if target_dim > 1:
             # Avoid data var name clash in `predict`
@@ -238,6 +255,19 @@ class TestModel(unittest.TestCase):
         assert_shape(mean_df, (n_preds, target_dim))
         assert_shape(std_df, (n_preds, target_dim))
         assert_shape(samples_df, (n_samples * n_preds, target_dim))
+
+    def test_nans_in_context(self):
+        """Test nothing breaks when NaNs present in context"""
+        tl = TaskLoader(context=self.da, target=self.da)
+        task = tl("2020-01-01", context_sampling=10, target_sampling=10)
+
+        # Convert first observation of context to NaN
+        task["Y_c"][0][0] = np.nan
+
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+
+        # Check that nothing breaks
+        model(task)
 
 
 def assert_shape(x, shape: tuple):

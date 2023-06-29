@@ -201,11 +201,96 @@ class ConvNP(DeepSensorModel):
 
     @dispatch
     def mean(self, dist: backend.nps.AbstractMultiOutputDistribution):
-        return B.to_numpy(dist.mean)[0, 0]
+        mean = dist.mean
+        if isinstance(mean, backend.nps.Aggregate):
+            return [B.to_numpy(m)[0, 0] for m in mean]
+        else:
+            return B.to_numpy(mean)[0, 0]
 
     @dispatch
     def mean(self, task: Task):
-        return B.to_numpy(self(task).mean)[0, 0]
+        dist = self(task)
+        return self.mean(dist)
+
+    @dispatch
+    def variance(self, dist: backend.nps.AbstractMultiOutputDistribution):
+        variance = dist.var
+        if isinstance(variance, backend.nps.Aggregate):
+            return [B.to_numpy(v)[0, 0] for v in variance]
+        else:
+            return B.to_numpy(variance)[0, 0]
+
+    @dispatch
+    def variance(self, task: Task):
+        dist = self(task)
+        return self.variance(dist)
+
+    @dispatch
+    def stddev(self, dist: backend.nps.AbstractMultiOutputDistribution):
+        variance = self.variance(dist)
+        if isinstance(variance, (list, tuple)):
+            return [np.sqrt(v) for v in variance]
+        else:
+            return np.sqrt(variance)
+
+    @dispatch
+    def stddev(self, task: Task):
+        dist = self(task)
+        return self.stddev(dist)
+
+    @dispatch
+    def covariance(self, dist: backend.nps.AbstractMultiOutputDistribution):
+        return B.to_numpy(B.dense(dist.vectorised_normal.var))[0, 0]
+
+    @dispatch
+    def covariance(self, task: Task):
+        dist = self(task)
+        return self.covariance(dist)
+
+    @dispatch
+    def sample(
+        self,
+        dist: backend.nps.AbstractMultiOutputDistribution,
+        n_samples=1,
+        noiseless=True,
+    ):
+        if noiseless:
+            samples = dist.noiseless.sample(n_samples)
+        else:
+            samples = dist.sample(n_samples)
+
+        if isinstance(samples, backend.nps.Aggregate):
+            return [B.to_numpy(s)[:, 0, 0] for s in samples]
+        else:
+            return B.to_numpy(samples)[:, 0, 0]
+
+    @dispatch
+    def sample(self, task: Task, n_samples=1, noiseless=True):
+        dist = self(task)
+        return self.sample(dist, n_samples, noiseless)
+
+    @dispatch
+    def slice_diag(self, task: Task):
+        """Slice out the ConvCNP part of the ConvNP distribution."""
+        dist = self(task)
+        dist_diag = backend.nps.MultiOutputNormal(
+            dist._mean,
+            B.zeros(dist._var),
+            Diagonal(B.diag(dist._noise + dist._var)),
+            dist.shape,
+        )
+        return dist_diag
+
+    @dispatch
+    def slice_diag(self, dist: backend.nps.AbstractMultiOutputDistribution):
+        """Slice out the ConvCNP part of the ConvNP distribution."""
+        dist_diag = backend.nps.MultiOutputNormal(
+            dist._mean,
+            B.zeros(dist._var),
+            Diagonal(B.diag(dist._noise + dist._var)),
+            dist.shape,
+        )
+        return dist_diag
 
     @dispatch
     def mean_marginal_entropy(self, dist: backend.nps.AbstractMultiOutputDistribution):
@@ -229,38 +314,15 @@ class ConvNP(DeepSensorModel):
         return B.to_numpy(self(task).entropy())[0, 0]
 
     @dispatch
-    def covariance(self, dist: backend.nps.AbstractMultiOutputDistribution):
-        return B.to_numpy(B.dense(dist.vectorised_normal.var))[0, 0]
-
-    @dispatch
-    def covariance(self, task: Task):
-        return B.to_numpy(B.dense(self(task).vectorised_normal.var))[0, 0]
-
-    @dispatch
-    def variance(self, dist: backend.nps.AbstractMultiOutputDistribution):
-        return B.to_numpy(dist.var)[0, 0]
-
-    @dispatch
-    def variance(self, task: Task):
-        return B.to_numpy(self(task).var)[0, 0]
-
-    @dispatch
     def logpdf(self, dist: backend.nps.AbstractMultiOutputDistribution, task: Task):
-        # Need Y_target to be the right shape for model in the event that task is from the
-        # default DataLoader... is this the best way to do this?
-        task = ConvNP.check_task(task)
-
-        Y_target = B.concat(*task["Y_t"], axis=1)
-        return B.to_numpy(dist.logpdf(Y_target)).mean()
+        # Model outputs joint distribution over all targets: Concat targets along observation dimension
+        Y_t = B.concat(*task["Y_t"], axis=-1)
+        return B.to_numpy(dist.logpdf(Y_t)).mean()
 
     @dispatch
     def logpdf(self, task: Task):
-        # Need Y_target to be the right shape for model in the event that task is from the
-        # default DataLoader... is this the best way to do this?
-        task = ConvNP.check_task(task)
-
-        Y_target = B.concat(*task["Y_t"], axis=1)
-        return B.to_numpy(self(task).logpdf(Y_target)).mean()
+        dist = self(task)
+        return self.logpdf(dist, task)
 
     def loss_fn(self, task: Task, fix_noise=None, num_lv_samples=8, normalise=False):
         """
@@ -294,50 +356,6 @@ class ConvNP(DeepSensorModel):
         loss = -B.mean(logpdfs)
 
         return loss
-
-    @dispatch
-    def sample(
-        self,
-        dist: backend.nps.AbstractMultiOutputDistribution,
-        n_samples=1,
-        noiseless=True,
-    ):
-        if noiseless:
-            return B.to_numpy(dist.noiseless.sample(n_samples))[:, 0, 0]  # first batch
-        else:
-            return B.to_numpy(dist.sample(n_samples))[:, 0, 0]
-
-    @dispatch
-    def sample(self, task: Task, n_samples=1, noiseless=True):
-        if noiseless:
-            return B.to_numpy(self(task).noiseless.sample(n_samples))[
-                :, 0, 0
-            ]  # first batch
-        else:
-            return B.to_numpy(self(task).sample(n_samples))[:, 0, 0]
-
-    @dispatch
-    def slice_diag(self, task: Task):
-        """Slice out the ConvCNP part of the ConvNP distribution."""
-        dist = self(task)
-        dist_diag = backend.nps.MultiOutputNormal(
-            dist._mean,
-            B.zeros(dist._var),
-            Diagonal(B.diag(dist._noise + dist._var)),
-            dist.shape,
-        )
-        return dist_diag
-
-    @dispatch
-    def slice_diag(self, dist: backend.nps.AbstractMultiOutputDistribution):
-        """Slice out the ConvCNP part of the ConvNP distribution."""
-        dist_diag = backend.nps.MultiOutputNormal(
-            dist._mean,
-            B.zeros(dist._var),
-            Diagonal(B.diag(dist._noise + dist._var)),
-            dist.shape,
-        )
-        return dist_diag
 
     def ar_sample(
         self, task: Task, n_samples=1, X_target_AR=None, ar_subsample_factor=1
