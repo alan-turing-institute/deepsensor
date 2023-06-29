@@ -355,6 +355,13 @@ def placements(task, X_new_df, data_processor, crs, extent=None, figsize=3):
 def acquisition_fn(
     task, acquisition_fn_ds, X_new_df, data_processor, crs, cmap="Greys_r", figsize=3
 ):
+    if "time" in acquisition_fn_ds.dims:
+        # Average over time
+        acquisition_fn_ds = acquisition_fn_ds.mean("time")
+    if "sample" in acquisition_fn_ds.dims:
+        # Average over samples
+        acquisition_fn_ds = acquisition_fn_ds.mean("sample")
+
     ncols = np.max(acquisition_fn_ds.iteration.values) + 1
     fig, axes = plt.subplots(
         subplot_kw={"projection": crs}, ncols=ncols, figsize=(figsize * ncols, figsize)
