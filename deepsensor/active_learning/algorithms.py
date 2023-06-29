@@ -32,9 +32,11 @@ class GreedyAlgorithm:
         N_new_context: int = 1,
         X_normalised: bool = False,
         model_infill_method: str = "mean",
+        query_groundtruth: xr.DataArray = None,
+        placed_groundtruth: xr.DataArray = None,
         context_set_idx: int = 0,
         target_set_idx: int = 0,
-        progress_bar: int = 3,
+        progress_bar: int = 0,
         min_or_max: str = "min",
     ):
         if not isinstance(model, DeepSensorModel):
@@ -46,6 +48,8 @@ class GreedyAlgorithm:
         self.N_new_context = N_new_context
         self.progress_bar = progress_bar
         self.model_infill_method = model_infill_method
+        self.query_groundtruth = query_groundtruth
+        self.placed_groundtruth = placed_groundtruth
         self.context_set_idx = context_set_idx
         self.target_set_idx = target_set_idx
         self.min_or_max = min_or_max
@@ -377,7 +381,10 @@ class GreedyAlgorithm:
         self.tasks = tasks
 
         # Generate infill values at search points
-        self.infill_ds = self._model_infill_at_search_points(self.X_s)
+        if self.query_groundtruth is not None:
+            self.infill_ds = self.query_groundtruth
+        else:
+            self.infill_ds = self._model_infill_at_search_points(self.X_s)
 
         # Instantiate empty acquisition function object
         self._init_acquisition_fn_ds(self.X_s)
