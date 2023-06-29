@@ -167,9 +167,9 @@ class ConvNP(DeepSensorModel):
             arr = arr.astype(np.float32)  # Cast to float32
 
             # Find NaNs and keep size-1 variable dim
-            mask = np.any(np.isnan(arr), axis=1, keepdims=False)
+            mask = np.any(np.isnan(arr), axis=1, keepdims=True)
             if np.any(mask):
-                # Set NaNs to zero - necessary for `neural_process`
+                # Set NaNs to zero - necessary for `neuralprocesses` (can't have NaNs)
                 arr[mask] = 0.0
 
             # Convert to tensor object based on deep learning backend
