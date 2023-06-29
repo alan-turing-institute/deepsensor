@@ -2,6 +2,8 @@ import copy
 
 import numpy as np
 
+from scipy.stats import norm
+
 from deepsensor.model.model import ProbabilisticModel
 from deepsensor.data.task import Task
 
@@ -126,7 +128,7 @@ class ContextDist(AcquisitionFunctionParallel):
         return dist_to_closest_sensor
 
 
-class MaxStddev(AcquisitionFunctionParallel):
+class Stddev(AcquisitionFunctionParallel):
     """Random acquisition function."""
 
     def __call__(self, task, X_s, target_set_idx=0):
@@ -135,3 +137,46 @@ class MaxStddev(AcquisitionFunctionParallel):
         task["X_t"] = X_s
 
         return self.model.stddev(task)[target_set_idx]
+
+
+class ExpectedImprovement(AcquisitionFunctionParallel):
+    """Expected improvement acquisition function."""
+
+    def __init__(self, model: ProbabilisticModel, context_set_idx: int = 0):
+        """
+        Args:
+            model (ProbabilisticModel):
+            context_set_idx (int): Index of context set to add new observations to when computing
+                the acquisition function.
+        """
+        super().__init__(model)
+        self.context_set_idx = context_set_idx
+
+    def __call__(self, task: Task, X_s: np.ndarray, target_set_idx: int = 0):
+        """
+        Args:
+            task (Task): Task object containing context and target sets.
+            X_s (np.ndarray): Search points. Shape (2, N_search).
+            target_set_idx (int): Index of target set to compute acquisition function for.
+
+        Returns:
+            np.ndarray: Acquisition function value/s. Shape (N_search,).
+        """
+        # Set the target points to the search points
+        task = copy.deepcopy(task)
+        task["X_t"] = X_s
+
+        # Compute the predictive mean and variance of the target set
+        mean = self.model.mean(task)[target_set_idx]
+
+        # Compute the best target value seen so far
+        best_target_value = task["Y_c"][self.context_set_idx].max()
+
+        # Compute the standard deviation of the context set
+        stddev = self.model.stddev(task)[self.context_set_idx]
+
+        # Compute the expected improvement
+        Z = (mean - best_target_value) / stddev
+        ei = stddev * (mean - best_target_value) * norm.cdf(Z) + stddev * norm.pdf(Z)
+
+        return ei
