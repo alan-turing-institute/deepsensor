@@ -11,7 +11,7 @@ import deepsensor.tensorflow as deepsensor
 from deepsensor.train.train import train_epoch
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.loader import TaskLoader
-from deepsensor.model.convnp import ConvNP
+from deepsensor.model.convnp import ConvNP, concat_tasks
 
 from tests.utils import gen_random_data_xr, gen_random_data_pandas
 
@@ -32,6 +32,31 @@ class TestTraining(unittest.TestCase):
 
         self.da = self.data_processor(ds_raw)
 
+    def test_concat_tasks(self):
+        tl = TaskLoader(context=self.da, target=self.da)
+
+        seed = 42
+        rng = np.random.default_rng(seed)
+
+        n_tasks = 5
+        tasks = []
+        tasks_different_n_targets = []
+        for i in range(n_tasks):
+            n_context = rng.integers(1, 100)
+            n_target = rng.integers(1, 100)
+            date = rng.choice(self.da.time.values)
+            tasks_different_n_targets.append(
+                tl(date, n_context, n_target)
+            )  # Changing number of targets
+            tasks.append(tl(date, n_context, 42))  # Fixed number of targets
+
+        multiple = 50
+        with self.assertRaises(ValueError):
+            merged_task = concat_tasks(tasks_different_n_targets, multiple=multiple)
+
+        # Check that the context and target data are concatenated correctly
+        merged_task = concat_tasks(tasks, multiple=multiple)
+
     def test_training(self):
         """A basic test of the training loop
 
@@ -49,7 +74,8 @@ class TestTraining(unittest.TestCase):
             train_tasks.append(tl(date, 10, 10))
 
         # Train
-        batch_size = None
+        # batch_size = None
+        batch_size = 5
         n_epochs = 10
         epoch_losses = []
         for epoch in tqdm(range(n_epochs)):
