@@ -414,7 +414,9 @@ class TaskLoader:
 
             for strat in sampling_strat:
                 if not isinstance(strat, (str, int, np.integer, float, np.ndarray)):
-                    raise ValueError(f"Unknown sampling strategy {strat} of type {type(strat)}")
+                    raise ValueError(
+                        f"Unknown sampling strategy {strat} of type {type(strat)}"
+                    )
                 if isinstance(strat, str) and strat not in ["all", "split"]:
                     raise ValueError(f"Unknown sampling strategy {strat} for type str")
                 if isinstance(strat, float) and not 0 <= strat <= 1:
