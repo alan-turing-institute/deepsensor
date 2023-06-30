@@ -1,5 +1,5 @@
 import copy
-from typing import Union
+from typing import Union, List
 
 import lab as B
 import numpy as np
@@ -424,3 +424,87 @@ class ConvNP(DeepSensorModel):
             return full_samples
         else:
             return noiseless_samples[:, 0]  # Slice out batch dim
+
+
+def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
+    """Concatenate a list of tasks into a single task containing multiple batches.
+
+    TODO:
+    - Consider moving to `nps.py` as this leverages `neuralprocesses` functionality.
+    - Raise error if aux_t values passed (not supported I don't think)
+
+    Parameters
+    ----------
+    tasks : list of Task. List of tasks to concatenate into a single task.
+    multiple : int. Contexts are padded to the smallest multiple of this number that is greater
+        than the number of contexts in each task. Defaults to 1 (padded to the largest number of
+        contexts in the tasks). Setting to a larger number will increase the amount of padding
+        but decrease the range of tensor shapes presented to the model, which simplifies
+        the computational graph in graph mode.
+
+    Returns
+    -------
+    merged_task : Task. Task containing multiple batches.
+    """
+    if len(tasks) == 1:
+        return tasks[0]
+
+    # Assert number of target sets equal
+    n_targets = [len(task["Y_t"]) for task in tasks]
+    if not all([n == n_targets[0] for n in n_targets]):
+        raise ValueError(
+            f"All tasks must have the same number of target sets to concatenate: got {n_targets}. "
+        )
+
+    # For each target set, determine number of targets in each task and raise error if not all equal
+    for target_set_i in range(len(tasks[0]["Y_t"])):
+        n_target_obs = [task["Y_t"][target_set_i].shape[-1] for task in tasks]
+        if not all([n == n_target_obs[0] for n in n_target_obs]):
+            raise ValueError(
+                f"All tasks must have the same number of targets to concatenate: got {n_targets}. "
+                "If you want to train using batches containing tasks with differing numbers of targets, "
+                "you can run the model individually over each task and average the losses."
+            )
+
+    contexts = []
+    for i, task in enumerate(tasks):
+        # Ensure converted to tensors with batch dims
+        task = ConvNP.modify_task(task)
+        tasks[i] = task
+
+        # List of tuples of (x_c, y_c)
+        context_i = list(zip(task["X_c"], task["Y_c"]))
+        contexts.append(context_i)
+
+    # List of tuples of merged (x_c, y_c) along batch dim with padding (w/ multiple=1000)
+    merged_context = [
+        backend.nps.merge_contexts(*[ci for ci in c], multiple=multiple)
+        for c in zip(*contexts)
+    ]
+
+    merged_task = copy.deepcopy(tasks[0])
+
+    # Convert list of tuples of (x_c, y_c) to list of x_c and list of y_c
+    merged_task["X_c"] = [c[0] for c in merged_context]
+    merged_task["Y_c"] = [c[1] for c in merged_context]
+
+    # This assumes that all tasks have the same number of targets
+    merged_task["X_t"] = [
+        B.concat(*[t["X_t"][i] for t in tasks], axis=0)
+        for i in range(len(tasks[0]["X_t"]))
+    ]
+    merged_task["Y_t"] = [
+        B.concat(*[t["Y_t"][i] for t in tasks], axis=0)
+        for i in range(len(tasks[0]["Y_t"]))
+    ]
+    # # Multiple target sets, different target locations
+    # xts = [task["X_t"] for task in tasks]
+    # yts = [task["Y_t"] for task in tasks]
+    # merged_task["X_t"] = backend.nps.AggregateInput(*[(xt, i) for i, xt in enumerate(xts)])
+    # merged_task["Y_t"] = backend.nps.Aggregate(*yts)
+
+    merged_task["time"] = [t["time"] for t in tasks]
+
+    merged_task = Task(merged_task)
+
+    return merged_task
