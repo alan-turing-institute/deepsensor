@@ -288,7 +288,7 @@ class TaskLoader:
         if isinstance(sampling_strat, float):
             sampling_strat = int(sampling_strat * da.size)
 
-        if isinstance(sampling_strat, int):
+        if isinstance(sampling_strat, (int, np.integer)):
             N = sampling_strat
             rng = np.random.default_rng(seed)
             x1 = rng.choice(da.coords["x1"].values, N, replace=True)
@@ -346,7 +346,7 @@ class TaskLoader:
         if isinstance(sampling_strat, float):
             sampling_strat = int(sampling_strat * df.shape[0])
 
-        if isinstance(sampling_strat, int):
+        if isinstance(sampling_strat, (int, np.integer)):
             N = sampling_strat
             rng = np.random.default_rng(seed)
             idx = rng.choice(df.index, N)
@@ -413,13 +413,13 @@ class TaskLoader:
                 )
 
             for strat in sampling_strat:
-                if not isinstance(strat, (str, int, float, np.ndarray)):
-                    raise ValueError(f"Unknown sampling strategy {strat}")
+                if not isinstance(strat, (str, int, np.integer, float, np.ndarray)):
+                    raise ValueError(f"Unknown sampling strategy {strat} of type {type(strat)}")
                 if isinstance(strat, str) and strat not in ["all", "split"]:
-                    raise ValueError(f"Unknown sampling strategy {strat}")
+                    raise ValueError(f"Unknown sampling strategy {strat} for type str")
                 if isinstance(strat, float) and not 0 <= strat <= 1:
                     raise ValueError(
-                        f"Sampling fraction must be in (0, 1], got {strat}"
+                        f"If sampling strategy is a float, must be fraction must be in [0, 1], got {strat}"
                     )
                 if isinstance(strat, int) and strat <= 0:
                     raise ValueError(f"Sampling N must be positive, got {strat}")
