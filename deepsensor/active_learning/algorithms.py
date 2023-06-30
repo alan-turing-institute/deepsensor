@@ -32,8 +32,8 @@ class GreedyAlgorithm:
         N_new_context: int = 1,
         X_normalised: bool = False,
         model_infill_method: str = "mean",
-        query_groundtruth: xr.DataArray = None,
-        placed_groundtruth: xr.DataArray = None,
+        query_groundtruth: xr.DataArray = None,  # TODO remove "groundtruth" from name?
+        placed_groundtruth: xr.DataArray = None,  # TODO rename to "proposed_"?
         context_set_idx: int = 0,
         target_set_idx: int = 0,
         progress_bar: int = 0,
@@ -242,7 +242,7 @@ class GreedyAlgorithm:
             self.acquisition_fn_ds = self._build_acquisition_fn_ds(X_s)
         elif isinstance(X_s, (pd.DataFrame, pd.Series, pd.Index)):
             raise NotImplementedError(
-                "Pandas support for search points X_s not yet implemented."
+                "Pandas support for active learning search points X_s not yet implemented."
             )
         else:
             raise TypeError(f"Unsupported type for X_s: {type(X_s)}")
@@ -269,19 +269,20 @@ class GreedyAlgorithm:
             leave=True,
             disable=self.progress_bar < 4,
         ):
+            # Parallel computation
             if isinstance(acquisition_fn, AcquisitionFunctionParallel):
-                # Parallel computation
                 importances = acquisition_fn(task, self.X_s_arr)
 
+            # Sequential computation
             elif isinstance(acquisition_fn, AcquisitionFunction):
-                # Add size-1 dim after row dim to preserve row dim for passing to
-                #   acquisition_fn. Also roll final axis to first axis for looping over search points.
                 importances = []
 
-                # TODO make this a bool?
+                # TODO make computing the difference a bool
                 importance_bef = acquisition_fn(task)
 
                 for x_query in tqdm(
+                    # Add size-1 dim after row dim to preserve row dim for passing to
+                    #   acquisition_fn. Also roll final axis to first axis for looping over search points.
                     np.rollaxis(self.X_s_arr[:, np.newaxis], 2),
                     desc="Search",
                     position=6,
@@ -296,14 +297,10 @@ class GreedyAlgorithm:
                     )
                     importance = acquisition_fn(task_with_new)
 
-                    # TODO make this a bool?
+                    # TODO make computing the difference a bool
                     importance = importance - importance_bef
 
                     importances.append(importance)
-
-                # self.acquisition_fn_ds.loc[
-                #     self.iteration, task["time"]
-                # ] = importances.reshape(self.acquisition_fn_ds.shape[-2:])
 
             else:
                 raise ValueError(
@@ -326,7 +323,7 @@ class GreedyAlgorithm:
         return np.mean(importances_list, axis=0)
 
     def _select_best(self, importances, X_s_arr):
-        """Select sensor location corresponding to best importance value.
+        """Select sensor location corresponding to the best importance value.
 
         Appends the chosen search index to a list of chosen search indexes.
         """
@@ -375,9 +372,12 @@ class GreedyAlgorithm:
             tasks = [tasks]
 
         # Make deepcopys so that original tasks are not modified
+        tasks = copy.deepcopy(tasks)
+
+        # Add target set to tasks
         for i, task in enumerate(tasks):
-            tasks[i] = copy.deepcopy(task)
             tasks[i]["X_t"][self.target_set_idx] = self.X_t_arr
+
         self.tasks = tasks
 
         # Generate infill values at search points
