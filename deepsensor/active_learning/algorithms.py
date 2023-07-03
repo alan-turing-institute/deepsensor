@@ -87,7 +87,22 @@ class GreedyAlgorithm:
         # Interpolate masks onto search and target coords
         self.X_s_mask, self.X_t_mask = self._process_masks(X_s_mask, X_t_mask, X_s, X_t)
 
-        self._validate_n_new_context(X_s, N_new_context)
+        # Interpolate query_groundtruth at search points
+        if self.query_groundtruth is not None:
+            x1equal = np.array_equal(
+                self.query_groundtruth["x1"].values, X_s["x1"].values
+            )
+            x2equal = np.array_equal(
+                self.query_groundtruth["x2"].values, X_s["x2"].values
+            )
+            if not x1equal or not x2equal:
+                if verbose:
+                    print("query_groundtruth not on search grid, interpolating.")
+                self.query_groundtruth = self.query_groundtruth.interp(
+                    x1=self.X_s["x1"], x2=self.X_s["x2"], method="nearest"
+                )
+            elif verbose:
+                print("query_groundtruth already on search grid, not interpolating.")
 
         # Convert target coords to numpy arrays and assign to tasks
         if isinstance(X_t, (xr.Dataset, xr.DataArray)):
