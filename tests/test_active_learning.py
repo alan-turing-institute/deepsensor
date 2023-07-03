@@ -3,11 +3,20 @@ import xarray as xr
 import numpy as np
 
 import deepsensor.tensorflow as deepsensor
-from deepsensor.active_learning.acquisition_fns import MeanVariance
+from deepsensor.active_learning.acquisition_fns import (
+    MeanVariance,
+    MeanStddev,
+    pNormStddev,
+    MeanMarginalEntropy,
+    JointEntropy,
+    Stddev,
+    ExpectedImprovement,
+    Random,
+)
 from deepsensor.active_learning.algorithms import GreedyAlgorithm
 
 from deepsensor.data.loader import TaskLoader
-from deepsensor.data.processor import DataProcessor
+from deepsensor.data.processor import DataProcessor, xarray_to_coord_array_normalised
 from deepsensor.data.task import append_obs_to_task
 from deepsensor.errors import TaskSetIndexError, GriddedDataError
 from deepsensor.model.convnp import ConvNP
@@ -133,3 +142,55 @@ class TestActiveLearning(unittest.TestCase):
                 X_s=self.ds_raw,
                 N_new_context=10_000,  # > number of search points
             )
+
+    def test_acquisition_fns_run(self):
+        """Run each acquisition function to check that it runs without error"""
+        sequential_acquisition_fns = [
+            MeanStddev(self.model),
+            MeanVariance(self.model),
+            pNormStddev(self.model, p=3),
+            MeanMarginalEntropy(self.model),
+            JointEntropy(self.model),
+        ]
+        parallel_acquisition_fns = [
+            Stddev(self.model),
+            ExpectedImprovement(self.model),
+            Random(),
+        ]
+
+        # Coarsen search points to speed up computation
+        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+        X_s = self.data_processor.map_coords(X_s)
+        X_s_arr = xarray_to_coord_array_normalised(X_s)
+
+        task = self.task_loader("2014-12-31", context_sampling=10)
+
+        for acquisition_fn in sequential_acquisition_fns:
+            importance = acquisition_fn(task)
+            assert importance.size == 1
+        for acquisition_fn in parallel_acquisition_fns:
+            importances = acquisition_fn(task, X_s_arr)
+            assert importances.size == X_s_arr.shape[-1]
+
+    def test_greedy_alg_runs(self):
+        """Run the greedy algorithm to check that it runs without error"""
+        # Both a sequential and parallel acquisition function
+        acquisition_fns = [
+            MeanStddev(self.model),
+            Stddev(self.model),
+        ]
+
+        # Coarsen search points to speed up computation
+        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+
+        alg = GreedyAlgorithm(
+            model=self.model,
+            X_t=X_s,
+            X_s=X_s,
+            N_new_context=2,
+        )
+
+        task = self.task_loader("2014-12-31", context_sampling=10)
+
+        for acquisition_fn in acquisition_fns:
+            X_new_df, acquisition_fn_ds = alg(acquisition_fn, task)
