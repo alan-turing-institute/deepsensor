@@ -423,7 +423,7 @@ class TaskLoader:
                     raise ValueError(
                         f"If sampling strategy is a float, must be fraction must be in [0, 1], got {strat}"
                     )
-                if isinstance(strat, int) and strat <= 0:
+                if isinstance(strat, int) and strat < 0:
                     raise ValueError(f"Sampling N must be positive, got {strat}")
                 if isinstance(strat, np.ndarray) and strat.shape[0] != 2:
                     raise ValueError(
