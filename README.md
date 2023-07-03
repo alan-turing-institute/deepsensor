@@ -119,9 +119,9 @@ Data variables:
 
 Extending DeepSensor with new models
 ----------
-DeepSensor is designed to simple to extend with new models.
-Simply create a new class that inherits from `deepsensor.model.DeepSensorModel`
-and implement the low-level prediction methods defined in `deepsensor.model.ProbabilisticModel`.
+To extend DeepSensor with a new model, simply create a new class that inherits from `deepsensor.model.DeepSensorModel`
+and implement the low-level prediction methods defined in `deepsensor.model.ProbabilisticModel`,
+such as `.mean` and `.stddev`.
 ```python
 class NewModel(DeepSensorModel):
     """A very naive model that predicts the mean of the first context set with a fixed stddev"""
