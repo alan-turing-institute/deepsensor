@@ -41,18 +41,28 @@ def create_empty_spatiotemporal_xarray(
     x1_raw = X.coords[coord_names["x1"]]
     x2_raw = X.coords[coord_names["x2"]]
 
-    x1_predict = np.linspace(
-        x1_raw[0],
-        x1_raw[-1],
-        int(x1_raw.size * resolution_factor),
-        dtype="float32",
-    )
-    x2_predict = np.linspace(
-        x2_raw[0],
-        x2_raw[-1],
-        int(x2_raw.size * resolution_factor),
-        dtype="float32",
-    )
+    # Assert uniform spacing
+    if not np.allclose(np.diff(x1_raw), np.diff(x1_raw)[0]):
+        raise ValueError(f"Coordinate {coord_names['x1']} must be uniformly spaced.")
+    if not np.allclose(np.diff(x2_raw), np.diff(x2_raw)[0]):
+        raise ValueError(f"Coordinate {coord_names['x2']} must be uniformly spaced.")
+
+    if resolution_factor == 1.0:
+        x1_predict = x1_raw
+        x2_predict = x2_raw
+    else:
+        x1_predict = np.linspace(
+            x1_raw[0],
+            x1_raw[-1],
+            int(x1_raw.size * resolution_factor),
+            dtype="float32",
+        )
+        x2_predict = np.linspace(
+            x2_raw[0],
+            x2_raw[-1],
+            int(x2_raw.size * resolution_factor),
+            dtype="float32",
+        )
 
     if len(prepend_dims) != len(set(prepend_dims)):
         # TODO unit test
