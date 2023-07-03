@@ -112,7 +112,8 @@ class GreedyAlgorithm:
         cls, X_s: Union[xr.Dataset, xr.DataArray], N_new_context: int
     ):
         if isinstance(X_s, (xr.Dataset, xr.DataArray)):
-            X_s = X_s.to_array()
+            if isinstance(X_s, xr.Dataset):
+                X_s = X_s.to_array()
             N_s = X_s.shape[-2] * X_s.shape[-1]
         elif isinstance(X_s, (pd.DataFrame, pd.Series, pd.Index)):
             N_s = len(X_s)
@@ -208,7 +209,9 @@ class GreedyAlgorithm:
         """Sample infill values at a single location"""
         if isinstance(self.infill_ds, (xr.Dataset, xr.DataArray)):
             y = self.infill_ds.sel(time=time, x1=x1, x2=x2)
-            y = y.to_array().data
+            if isinstance(y, xr.Dataset):
+                y = y.to_array()
+            y = y.data
             y = y.reshape(1, y.size)  # 1 observation with N dimensions
         else:
             raise NotImplementedError("TODO")
