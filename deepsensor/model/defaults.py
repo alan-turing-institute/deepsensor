@@ -33,6 +33,15 @@ def gen_ppu(task_loader: TaskLoader) -> int:
     return int(max_ppu)
 
 
+def gen_decoder_scale(model_ppu: int) -> float:
+    """Computes informed setting for the decoder SetConv scale
+
+    The decoder scale should be as small as possible given the model's internal discretisation.
+    The value chosen is 1 / model_ppu.
+    """
+    return 1 / model_ppu
+
+
 def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> list:
     """Computes data-informed settings for the encoder SetConv scale for each context set
 

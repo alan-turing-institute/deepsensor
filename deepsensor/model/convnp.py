@@ -10,7 +10,7 @@ from deepsensor import backend
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.task import Task
-from deepsensor.model.defaults import gen_ppu, gen_encoder_scales
+from deepsensor.model.defaults import gen_ppu, gen_encoder_scales, gen_decoder_scale
 from deepsensor.model.model import DeepSensorModel
 from deepsensor.model.nps import (
     construct_neural_process,
@@ -142,8 +142,13 @@ class ConvNP(DeepSensorModel):
             if verbose:
                 print(f"encoder_scales inferred from TaskLoader: {encoder_scales}")
             kwargs["encoder_scales"] = encoder_scales
+        if "decoder_scale" not in kwargs:
+            decoder_scale = gen_decoder_scale(kwargs["points_per_unit"])
+            if verbose:
+                print(f"decoder_scale inferred from TaskLoader: {decoder_scale}")
+            kwargs["decoder_scale"] = decoder_scale
 
-        self.model = construct_neural_process(dim_x=2, *args, **kwargs)
+        self.model = construct_neural_process(*args, dim_x=2, **kwargs)
 
     @dispatch
     def __init__(
