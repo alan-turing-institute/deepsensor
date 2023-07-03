@@ -12,6 +12,10 @@ from deepsensor.active_learning.acquisition_fns import (
     Stddev,
     ExpectedImprovement,
     Random,
+    OracleMAE,
+    OracleRMSE,
+    OracleMarginalNLL,
+    OracleJointNLL,
 )
 from deepsensor.active_learning.algorithms import GreedyAlgorithm
 
@@ -151,6 +155,10 @@ class TestActiveLearning(unittest.TestCase):
             pNormStddev(self.model, p=3),
             MeanMarginalEntropy(self.model),
             JointEntropy(self.model),
+            OracleMAE(self.model),
+            OracleRMSE(self.model),
+            OracleMarginalNLL(self.model),
+            OracleJointNLL(self.model),
         ]
         parallel_acquisition_fns = [
             Stddev(self.model),
@@ -194,3 +202,21 @@ class TestActiveLearning(unittest.TestCase):
 
         for acquisition_fn in acquisition_fns:
             X_new_df, acquisition_fn_ds = alg(acquisition_fn, task)
+
+    def test_oracle_acquisition_fn_without_task_loader_raises_value_error(self):
+        acquisition_fn = OracleMAE(self.model)
+
+        # Coarsen search points to speed up computation
+        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+
+        alg = GreedyAlgorithm(
+            model=self.model,
+            X_t=X_s,
+            X_s=X_s,
+            N_new_context=2,
+        )
+
+        task = self.task_loader("2014-12-31", context_sampling=10)
+
+        with self.assertRaises(ValueError):
+            _ = alg(acquisition_fn, task)

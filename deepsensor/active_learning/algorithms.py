@@ -1,5 +1,6 @@
 import copy
 
+from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import (
     xarray_to_coord_array_normalised,
     mask_coord_array_normalised,
@@ -9,6 +10,7 @@ from deepsensor.data.task import Task, append_obs_to_task
 from deepsensor.active_learning.acquisition_fns import (
     AcquisitionFunction,
     AcquisitionFunctionParallel,
+    AcquisitionFunctionOracle,
 )
 
 import numpy as np
@@ -38,11 +40,15 @@ class GreedyAlgorithm:
         target_set_idx: int = 0,
         progress_bar: int = 0,
         min_or_max: str = "min",
+        task_loader: TaskLoader = None,  # OPTIONAL for oracle acquisition functions only
+        verbose: bool = False,
     ):
         if not isinstance(model, DeepSensorModel):
             raise ValueError(
                 f"`model` must inherit from DeepSensorModel, but parent classes are {model.__class__.__bases__}"
             )
+
+        self._validate_n_new_context(X_s, N_new_context)
 
         self.model = model
         self.N_new_context = N_new_context
@@ -53,6 +59,7 @@ class GreedyAlgorithm:
         self.context_set_idx = context_set_idx
         self.target_set_idx = target_set_idx
         self.min_or_max = min_or_max
+        self.task_loader = task_loader
 
         self.X_s_mask = X_s_mask
         self.X_t_mask = X_t_mask
@@ -306,9 +313,13 @@ class GreedyAlgorithm:
                     importances.append(importance)
 
             else:
+                allowed_classes = [
+                    AcquisitionFunction,
+                    AcquisitionFunctionParallel,
+                    AcquisitionFunctionOracle,
+                ]
                 raise ValueError(
-                    f"Acquisition function needs to inherit from AcquisitionFunction or AcquisitionFunctionParallel "
-                    f"but inherits from {acquisition_fn.__class__.__name__}"
+                    f"Acquisition function needs to inherit from one of {allowed_classes}."
                 )
 
             importances = np.array(importances)
@@ -369,6 +380,14 @@ class GreedyAlgorithm:
         Returns a tensor of proposed new sensor locations (in greedy iteration/priority order)
             and their corresponding list of indexes in the search space.
         """
+        if (
+            isinstance(acquisition_fn, AcquisitionFunctionOracle)
+            and self.task_loader is None
+        ):
+            raise ValueError(
+                "AcquisitionFunctionOracle requires a task_loader function to be passed to the GreedyOptimal constructor."
+            )
+
         self.min_or_max = min_or_max
 
         if isinstance(tasks, Task):
@@ -380,6 +399,13 @@ class GreedyAlgorithm:
         # Add target set to tasks
         for i, task in enumerate(tasks):
             tasks[i]["X_t"][self.target_set_idx] = self.X_t_arr
+            if isinstance(acquisition_fn, AcquisitionFunctionOracle):
+                # Sample ground truth y-values at target points `self.X_t_arr` using `self.task_loader`
+                date = tasks[i]["time"]
+                task_with_Y_t = self.task_loader(
+                    date, context_sampling=0, target_sampling=self.X_t_arr
+                )
+                tasks[i]["Y_t"] = task_with_Y_t["Y_t"]
 
         self.tasks = tasks
 

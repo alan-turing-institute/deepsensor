@@ -33,6 +33,10 @@ class AcquisitionFunction:
         raise NotImplementedError
 
 
+class AcquisitionFunctionOracle(AcquisitionFunction):
+    """Signifies that the acquisition function is computed using the true target values."""
+
+
 class AcquisitionFunctionParallel(AcquisitionFunction):
     """
     Parent class for acquisition functions that are computed across all search points in parallel.
@@ -92,6 +96,40 @@ class JointEntropy(AcquisitionFunction):
         return self.model.joint_entropy(task)
 
 
+class OracleMAE(AcquisitionFunctionOracle):
+    """Oracle mean absolute error."""
+
+    def __call__(self, task):
+        pred = self.model.mean(task)
+        true = task["Y_t"]
+        return np.mean(np.abs(pred - true))
+
+
+class OracleRMSE(AcquisitionFunctionOracle):
+    """Oracle root mean squared error."""
+
+    def __call__(self, task):
+        pred = self.model.mean(task)
+        true = task["Y_t"]
+        return np.sqrt(np.mean((pred - true) ** 2))
+
+
+class OracleMarginalNLL(AcquisitionFunctionOracle):
+    """Oracle marginal negative log-likelihood."""
+
+    def __call__(self, task):
+        pred = self.model.mean(task)
+        true = task["Y_t"]
+        return -np.mean(norm.logpdf(true, loc=pred, scale=self.model.stddev(task)))
+
+
+class OracleJointNLL(AcquisitionFunctionOracle):
+    """Oracle joint negative log-likelihood."""
+
+    def __call__(self, task):
+        return -self.model.logpdf(task)
+
+
 class Random(AcquisitionFunctionParallel):
     """Random acquisition function."""
 
@@ -140,7 +178,10 @@ class Stddev(AcquisitionFunctionParallel):
 
 
 class ExpectedImprovement(AcquisitionFunctionParallel):
-    """Expected improvement acquisition function."""
+    """Expected improvement acquisition function
+
+    Note, the current implementation of this acquisition function is only valid for maximisation.
+    """
 
     def __init__(self, model: ProbabilisticModel, context_set_idx: int = 0):
         """
@@ -169,8 +210,13 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         # Compute the predictive mean and variance of the target set
         mean = self.model.mean(task)[target_set_idx]
 
-        # Compute the best target value seen so far
-        best_target_value = task["Y_c"][self.context_set_idx].max()
+        if task["Y_c"][self.context_set_idx].size == 0:
+            # No previous context points, so heuristically use the predictive mean as the
+            # acquisition function. This will at least select the most positive predicted mean.
+            return self.model.mean(task)[target_set_idx]
+        else:
+            # Determine the best target value seen so far
+            best_target_value = task["Y_c"][self.context_set_idx].max()
 
         # Compute the standard deviation of the context set
         stddev = self.model.stddev(task)[self.context_set_idx]
