@@ -353,7 +353,15 @@ def placements(task, X_new_df, data_processor, crs, extent=None, figsize=3):
 
 
 def acquisition_fn(
-    task, acquisition_fn_ds, X_new_df, data_processor, crs, cmap="Greys_r", figsize=3
+    task,
+    acquisition_fn_ds,
+    X_new_df,
+    data_processor,
+    crs,
+    cmap="Greys_r",
+    figsize=3,
+    add_colorbar=True,
+    max_ncol=5,
 ):
     if "time" in acquisition_fn_ds.dims:
         # Average over time
@@ -362,28 +370,50 @@ def acquisition_fn(
         # Average over samples
         acquisition_fn_ds = acquisition_fn_ds.mean("sample")
 
-    ncols = np.max(acquisition_fn_ds.iteration.values) + 1
+    iters = acquisition_fn_ds.iteration.values
+    if iters.size == 1:
+        n_iters = 1
+    else:
+        n_iters = len(iters)
+    ncols = np.min([max_ncol, n_iters])
+
+    if n_iters > ncols:
+        nrows = int(np.ceil(n_iters / ncols))
+    else:
+        nrows = 1
+
     fig, axes = plt.subplots(
-        subplot_kw={"projection": crs}, ncols=ncols, figsize=(figsize * ncols, figsize)
+        subplot_kw={"projection": crs},
+        ncols=ncols,
+        nrows=nrows,
+        figsize=(figsize * ncols, figsize * nrows),
     )
-    min, max = acquisition_fn_ds.min(), acquisition_fn_ds.max()
-    for iteration in range(len(acquisition_fn_ds.iteration)):
-        ax = axes[iteration]
-        if iteration == np.max(acquisition_fn_ds.iteration):
-            add_colorbar = True
+    if nrows == 1 and ncols == 1:
+        axes = [axes]
+    else:
+        axes = axes.ravel()
+    if add_colorbar:
+        min, max = acquisition_fn_ds.min(), acquisition_fn_ds.max()
+    else:
+        # Use different colour scales for each iteration
+        min, max = None, None
+    for i, iteration in enumerate(iters):
+        ax = axes[i]
+        if i == len(iters):
+            final_axis = True
         else:
-            add_colorbar = False
+            final_axis = False
         acquisition_fn_ds.sel(iteration=iteration).plot(
             ax=ax, cmap=cmap, vmin=min, vmax=max, add_colorbar=False
         )
-        if add_colorbar:
+        if add_colorbar and final_axis:
             im = ax.get_children()[0]
             label = acquisition_fn_ds.name
             cax = plt.axes([0.93, 0.035, 0.02, 0.91])  # add a small custom axis
             cbar = plt.colorbar(
                 im, cax=cax, label=label
             )  # specify axis for colorbar to occupy with cax
-        ax.set_title(f"Iteration {iteration+1}")
+        ax.set_title(f"Iteration {iteration}")
         ax.coastlines()
         ax.scatter(
             *X_new_df.loc[slice(0, iteration)].values.T[::-1],
@@ -391,6 +421,11 @@ def acquisition_fn(
             c="r",
             linewidths=0.5,
         )
+
     offgrid_context(axes, task, data_processor, s=3**2, linewidths=0.5)
+
+    # Remove any unused axes
+    for ax in axes[len(acquisition_fn_ds.iteration) :]:
+        ax.remove()
 
     return fig
