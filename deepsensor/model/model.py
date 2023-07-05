@@ -190,7 +190,9 @@ class DeepSensorModel(ProbabilisticModel):
     def predict(
         self,
         tasks: Union[List[Task], Task],
-        X_t: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
+        X_t: Union[
+            xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index, np.ndarray
+        ],
         X_t_normalised: bool = False,
         resolution_factor=1,
         n_samples=0,
@@ -244,6 +246,14 @@ class DeepSensorModel(ProbabilisticModel):
 
         if isinstance(X_t, pd.Index):
             X_t = pd.DataFrame(index=X_t)
+        elif isinstance(X_t, np.ndarray):
+            # Convert to empty dataframe with normalised or unnormalised coord names
+            if X_t_normalised:
+                index_names = ["x1", "x2"]
+            else:
+                index_names = self.data_processor.raw_spatial_coord_names
+            X_t = pd.DataFrame(X_t.T, columns=index_names)
+            X_t = X_t.set_index(index_names)
 
         if not X_t_normalised:
             X_t = self.data_processor.map_coords(X_t)  # Normalise
