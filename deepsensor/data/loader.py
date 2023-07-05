@@ -340,7 +340,7 @@ class TaskLoader:
     ) -> (np.ndarray, np.ndarray):
         """Sample a DataArray according to a given strategy
 
-        :param da: DataArray to sample, assumed to be sliced for the task already
+        :param da: DataArray to sample, assumed to be time-sliced for the task already
         :param sampling_strat: Sampling strategy, either "all" or an integer for random grid cell sampling
         :param seed: Seed for random sampling
         :return: Sampled DataArray
@@ -418,26 +418,26 @@ class TaskLoader:
             elif isinstance(sampling_strat, (list, tuple)) and len(
                 sampling_strat
             ) != len(set):
-                raise ValueError(
-                    f"Length of sampling_strat ({len(sampling_strat)}) must match number of"
+                raise InvalidSamplingStrategyError(
+                    f"Length of sampling_strat ({len(sampling_strat)}) must match number of "
                     f"context sets ({len(set)})"
                 )
 
             for strat in sampling_strat:
                 if not isinstance(strat, (str, int, np.integer, float, np.ndarray)):
-                    raise ValueError(
+                    raise InvalidSamplingStrategyError(
                         f"Unknown sampling strategy {strat} of type {type(strat)}"
                     )
-                if isinstance(strat, str) and strat not in ["all", "split"]:
-                    raise ValueError(f"Unknown sampling strategy {strat} for type str")
-                if isinstance(strat, float) and not 0 <= strat <= 1:
-                    raise ValueError(
+                elif isinstance(strat, str) and strat not in ["all", "split"]:
+                    raise InvalidSamplingStrategyError(f"Unknown sampling strategy {strat} for type str")
+                elif isinstance(strat, float) and not 0 <= strat <= 1:
+                    raise InvalidSamplingStrategyError(
                         f"If sampling strategy is a float, must be fraction must be in [0, 1], got {strat}"
                     )
-                if isinstance(strat, int) and strat < 0:
-                    raise ValueError(f"Sampling N must be positive, got {strat}")
-                if isinstance(strat, np.ndarray) and strat.shape[0] != 2:
-                    raise ValueError(
+                elif isinstance(strat, int) and strat < 0:
+                    raise InvalidSamplingStrategyError(f"Sampling N must be positive, got {strat}")
+                elif isinstance(strat, np.ndarray) and strat.shape[0] != 2:
+                    raise InvalidSamplingStrategyError(
                         f"Sampling coordinates must be of shape (2, N), got {strat.shape}"
                     )
 
