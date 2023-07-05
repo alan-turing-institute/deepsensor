@@ -383,7 +383,8 @@ class TaskLoader:
             str, int, float, np.ndarray, List[Union[str, int, float, np.ndarray]]
         ] = "all",
         split_frac: float = 0.5,
-        deterministic: bool = False,
+        datewise_deterministic: bool = False,
+        seed_override=None,
     ) -> Task:
         """Generate a task for a given date
 
@@ -402,7 +403,9 @@ class TaskLoader:
         :param split_frac: The fraction of observations to use for the context set with the "split"
             sampling strategy for linked context and target set pairs. The remaining observations
             are used for the target set. Default is 0.5.
-        :param: deterministic: Whether random sampling is deterministic based on the date. Default is False.
+        :param: datewise_deterministic: Whether random sampling is datewise_deterministic based on the date. Default is False.
+        :param seed_override: Override the seed for random sampling. This can be used to use the same
+            random sampling at different `date`s. Default is None.
         :return: Task object containing the context and target data
         """
 
@@ -429,13 +432,17 @@ class TaskLoader:
                         f"Unknown sampling strategy {strat} of type {type(strat)}"
                     )
                 elif isinstance(strat, str) and strat not in ["all", "split"]:
-                    raise InvalidSamplingStrategyError(f"Unknown sampling strategy {strat} for type str")
+                    raise InvalidSamplingStrategyError(
+                        f"Unknown sampling strategy {strat} for type str"
+                    )
                 elif isinstance(strat, float) and not 0 <= strat <= 1:
                     raise InvalidSamplingStrategyError(
                         f"If sampling strategy is a float, must be fraction must be in [0, 1], got {strat}"
                     )
                 elif isinstance(strat, int) and strat < 0:
-                    raise InvalidSamplingStrategyError(f"Sampling N must be positive, got {strat}")
+                    raise InvalidSamplingStrategyError(
+                        f"Sampling N must be positive, got {strat}"
+                    )
                 elif isinstance(strat, np.ndarray) and strat.shape[0] != 2:
                     raise InvalidSamplingStrategyError(
                         f"Sampling coordinates must be of shape (2, N), got {strat.shape}"
@@ -493,7 +500,10 @@ class TaskLoader:
         if not isinstance(date, pd.Timestamp):
             date = pd.Timestamp(date)
 
-        if deterministic:
+        if seed_override is not None:
+            # Override the seed for random sampling
+            seed = seed_override
+        elif datewise_deterministic:
             # Generate a deterministic seed, based on the date, for random sampling
             seed = int(date.strftime("%Y%m%d"))
         else:
