@@ -198,7 +198,10 @@ class TestModel(unittest.TestCase):
 
     @parameterized.expand(range(1, 4))
     def test_prediction_shapes_highlevel(self, target_dim):
-        """Test high-level `.predict` interface over a range of number of target sets"""
+        """Test high-level `.predict` interface over a range of number of target sets
+
+        TODO: implement and test multiple target sets for pandas case
+        """
 
         if target_dim > 1:
             # Avoid data var name clash in `predict`
@@ -241,20 +244,24 @@ class TestModel(unittest.TestCase):
             (target_dim, n_samples, len(dates), self.da.x1.size, self.da.x2.size),
         )
 
-        # Offgrid predictions
+        # Offgrid predictions: test pandas `X_t` and numpy `X_t`
         n_samples = 5
-        X_t = self.df.loc[dates[0]]
-        mean_df, std_df, samples_df = model.predict(
-            tasks,
-            X_t=X_t,
-            n_samples=n_samples,
-            unnormalise=False if target_dim > 1 else True,
-        )
-        assert [isinstance(df, pd.DataFrame) for df in [mean_df, std_df, samples_df]]
-        n_preds = len(dates) * len(X_t)
-        assert_shape(mean_df, (n_preds, target_dim))
-        assert_shape(std_df, (n_preds, target_dim))
-        assert_shape(samples_df, (n_samples * n_preds, target_dim))
+        for X_t in [self.df.loc[dates[0]], np.zeros((2, 4))]:
+            mean_df, std_df, samples_df = model.predict(
+                tasks,
+                X_t=X_t,
+                n_samples=n_samples,
+                unnormalise=False if target_dim > 1 else True,
+            )
+            assert [isinstance(df, pd.DataFrame) for df in [mean_df, std_df, samples_df]]
+            if isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index)):
+                N_t = len(X_t)
+            elif isinstance(X_t, np.ndarray):
+                N_t = X_t.shape[-1]
+            n_preds = len(dates) * N_t
+            assert_shape(mean_df, (n_preds, target_dim))
+            assert_shape(std_df, (n_preds, target_dim))
+            assert_shape(samples_df, (n_samples * n_preds, target_dim))
 
     def test_nans_in_context(self):
         """Test nothing breaks when NaNs present in context"""
