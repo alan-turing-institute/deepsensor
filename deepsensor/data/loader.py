@@ -305,7 +305,9 @@ class TaskLoader:
             elif not self.discrete_xarray_sampling:
                 if N == 0:
                     # Catch zero-context edge case before interp fails
-                    return np.array([[], []], dtype=self.dtype), np.array([], dtype=self.dtype)
+                    return np.array([[], []], dtype=self.dtype), np.array(
+                        [], dtype=self.dtype
+                    )
                 x1 = rng.uniform(da.coords["x1"].min(), da.coords["x1"].max(), N)
                 x2 = rng.uniform(da.coords["x2"].min(), da.coords["x2"].max(), N)
                 Y_c = da.interp(
