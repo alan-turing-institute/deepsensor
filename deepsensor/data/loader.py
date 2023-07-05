@@ -303,15 +303,19 @@ class TaskLoader:
 
         elif isinstance(sampling_strat, np.ndarray):
             X_c = sampling_strat.astype(self.dtype)
-            Y_c = np.array(
-                da.interp(
+            try:
+                Y_c = da.interp(
                     x1=xr.DataArray(X_c[0]),
                     x2=xr.DataArray(X_c[1]),
                     method=self.xarray_interp_method,
-                    kwargs=dict(fill_value=None, bounds_error=False),
-                ),
-                dtype=self.dtype,
-            )
+                    kwargs=dict(fill_value=None, bounds_error=True),
+                )
+            except ValueError:
+                raise InvalidSamplingStrategyError(
+                    f"Passed a numpy coordinate array to sample xarray object, "
+                    f"but the coordinates are out of bounds."
+                )
+            Y_c = np.array(Y_c, dtype=self.dtype)
             if Y_c.ndim == 1:
                 # returned a 1D array, but we need a 2D array of shape (variable, N)
                 Y_c = Y_c.reshape(1, *Y_c.shape)
@@ -335,7 +339,7 @@ class TaskLoader:
     def sample_df(
         self,
         df: Union[pd.DataFrame, pd.Series],
-        sampling_strat: Union[str, int, float],
+        sampling_strat: Union[str, int, float, np.ndarray],
         seed: int = None,
     ) -> (np.ndarray, np.ndarray):
         """Sample a DataArray according to a given strategy
@@ -365,6 +369,16 @@ class TaskLoader:
             X_c = sampling_strat.astype(self.dtype)
             x1match = np.in1d(df.index.get_level_values("x1"), X_c[0])
             x2match = np.in1d(df.index.get_level_values("x2"), X_c[1])
+            num_matches = np.sum(x1match & x2match)
+
+            # Check that we got all the samples we asked for
+            if num_matches != X_c.shape[1]:
+                raise InvalidSamplingStrategyError(
+                    f"Passed a numpy coordinate array to sample pandas DataFrame, "
+                    f"but the DataFrame did not contain all the requested samples. "
+                    f"Requested {X_c.shape[1]} samples but only got {num_matches}."
+                )
+
             Y_c = df[x1match & x2match].values.T
         else:
             raise InvalidSamplingStrategyError(

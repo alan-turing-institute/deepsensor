@@ -125,10 +125,6 @@ class TestTaskLoader(unittest.TestCase):
         Here we only need to test context sampling strategies because the same code to check
         the validity of the sampling strategy is used for context and target sampling.
         """
-        tl = TaskLoader(
-            context=self.da,
-            target=self.da,
-        )
         invalid_context_sampling_strategies = [
             # Sampling strategy must be same length as context/target
             ["all", "all", "all"],
@@ -142,12 +138,25 @@ class TestTaskLoader(unittest.TestCase):
             "invalid",
             # If np.ndarray, sampling strategy must be shape (2, N)
             np.zeros((1, 2, 2)),
+            # If np.ndarray, coordinates must exist in the dataset
+            np.ones((2, 1)) * 1000,
             # Invalid type
             dict(foo="bar"),
         ]
-        for invalid_sampling_strategy in invalid_context_sampling_strategies:
-            with self.assertRaises(InvalidSamplingStrategyError):
-                task = tl("2020-01-01", invalid_sampling_strategy)
+
+        for tl in [
+            TaskLoader(
+                context=self.da,
+                target=self.da,
+            ),
+            TaskLoader(
+                context=self.df,
+                target=self.df,
+            ),
+        ]:
+            for invalid_sampling_strategy in invalid_context_sampling_strategies:
+                with self.assertRaises(InvalidSamplingStrategyError):
+                    task = tl("2020-01-01", invalid_sampling_strategy)
 
     def test_split_fails_if_not_df(self):
         """The "split" sampling strategy only works with pandas objects (currently)"""
