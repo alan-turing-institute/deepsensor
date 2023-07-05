@@ -3,6 +3,7 @@ from deepsensor.data.processor import DataProcessor
 from deepsensor.data.task import Task
 
 from typing import List, Union
+import copy
 
 import time
 from tqdm import tqdm
@@ -305,6 +306,9 @@ class DeepSensorModel(ProbabilisticModel):
                 samples = pd.DataFrame(index=index_samples, columns=target_var_IDs)
 
             X_t_arr = X_t.reset_index()[["x1", "x2"]].values.T
+
+        # Don't change tasks by reference when overriding target locations
+        tasks = copy.deepcopy(tasks)
 
         for task in tqdm(tasks, position=0, disable=progress_bar < 1, leave=True):
             # TODO - repeat based on number of targets?
