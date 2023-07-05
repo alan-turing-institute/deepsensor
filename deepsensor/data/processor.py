@@ -51,6 +51,10 @@ class DataProcessor:
             # Add coordinate normalisation info to norm_params
             self.set_coord_params(time_name, x1_name, x1_map, x2_name, x2_map)
 
+        self.raw_spatial_coord_names = [
+            self.norm_params["coords"][coord]["name"] for coord in ["x1", "x2"]
+        ]
+
         self.deepcopy = deepcopy
         self.verbose = verbose
 
