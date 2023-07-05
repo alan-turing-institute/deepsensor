@@ -29,6 +29,7 @@ class TaskLoader:
         target_delta_t: Union[int, List[int]] = 0,
         time_freq: str = "D",
         xarray_interp_method: str = "linear",
+        discrete_xarray_sampling: bool = False,
         dtype: object = "float32",
     ) -> None:
         """Initialise a TaskLoader object
@@ -47,11 +48,15 @@ class TaskLoader:
             Can be a single int (same for all target data) or a list/tuple of ints.
         :param time_freq: Time frequency of the data. Default: 'D' (daily).
         :param xarray_interp_method: Interpolation method to use when interpolating xr.DataArray
+        :param discrete_xarray_sampling: When randomly sampling xarray variables, whether to sample
+            at discrete points defined at grid cell centres, or at continuous points within the grid.
+            Default is False.
         :param dtype: Data type of the data. Used to cast the data to the specified dtype.
             Default: 'float32'.
         """
         self.time_freq = time_freq
         self.xarray_interp_method = xarray_interp_method
+        self.discrete_xarray_sampling = discrete_xarray_sampling
         self.dtype = dtype
 
         if isinstance(context, (xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series)):
@@ -293,10 +298,21 @@ class TaskLoader:
         if isinstance(sampling_strat, (int, np.integer)):
             N = sampling_strat
             rng = np.random.default_rng(seed)
-            x1 = rng.choice(da.coords["x1"].values, N, replace=True)
-            x2 = rng.choice(da.coords["x2"].values, N, replace=True)
+            if self.discrete_xarray_sampling:
+                x1 = rng.choice(da.coords["x1"].values, N, replace=True)
+                x2 = rng.choice(da.coords["x2"].values, N, replace=True)
+                Y_c = da.sel(x1=xr.DataArray(x1), x2=xr.DataArray(x2)).data
+            elif not self.discrete_xarray_sampling:
+                x1 = rng.uniform(da.coords["x1"].min(), da.coords["x1"].max(), N)
+                x2 = rng.uniform(da.coords["x2"].min(), da.coords["x2"].max(), N)
+                Y_c = da.interp(
+                    x1=xr.DataArray(x1),
+                    x2=xr.DataArray(x2),
+                    method=self.xarray_interp_method,
+                    kwargs=dict(fill_value=None, bounds_error=True),
+                )
+                Y_c = np.array(Y_c, dtype=self.dtype)
             X_c = np.array([x1, x2])
-            Y_c = da.sel(x1=xr.DataArray(x1), x2=xr.DataArray(x2)).data
             if Y_c.ndim == 1:
                 # returned a 1D array, but we need a 2D array of shape (variable, N)
                 Y_c = Y_c.reshape(1, *Y_c.shape)
