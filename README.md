@@ -55,17 +55,16 @@ Quick start
 
 Here we will demonstrate a simple example of training a convolutional conditional neural process
 (ConvCNP) to spatially interpolate ERA5 data.
-First, pip install the package. In this case we will use the TensorFlow backend.
+First, pip install the package. In this case we will use the PyTorch backend.
 ```bash
 pip install deepsensor
-pip install tensorflow
-pip install tensorflow-probability
+pip install torch
 ```
 
-We can go from imports to predictions with a trained model in <30 lines of code!
+We can go from imports to predictions with a trained model in less than 30 lines of code!
 
 ```python
-import deepsensor.tensorflow
+import deepsensor.torch
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
 from deepsensor.model.convnp import ConvNP
@@ -91,15 +90,15 @@ model = ConvNP(data_processor, task_loader)
 # Generate training tasks with up to 10% of grid cells passed as context and all grid cells
 # passed as targets
 train_tasks = []
-for date in pd.date_range("2013-01-01", "2014-11-30"):
+for date in pd.date_range("2013-01-01", "2014-11-30")[::7]:
     task = task_loader(date, context_sampling=np.random.uniform(0.0, 0.1), target_sampling="all")
     train_tasks.append(task)
 
 # Train model
-for epoch in range(100):
+for epoch in range(10):
     train_epoch(model, train_tasks, progress_bar=True)
 
-# Predict on new task with 10% of context data
+# Predict on new task with 10% of context data and a dense grid of target points
 test_task = task_loader("2014-12-31", 0.1)
 mean_ds, std_ds = model.predict(test_task, X_t=ds_raw)
 ```
@@ -116,6 +115,28 @@ Coordinates:
 Data variables:
     air      (time, lat, lon) float32 246.7 244.4 245.5 ... 290.2 289.8 289.4
 ```
+
+We can also predict directly to `pandas` containing a timeseries of predictions at off-grid locations
+by passing a `numpy` array of target locations to the `X_t` argument of `.predict`:
+```python
+# Predict at two off-grid locations for three days in December 2014
+test_tasks = task_loader(pd.date_range("2014-12-01", "2014-12-31"), 0.1)
+mean_df, std_df = model.predict(test_tasks, X_t=np.array([[50, 280], [40, 250]]).T)
+```
+
+```python
+>>> mean_df
+                              air
+time       lat  lon              
+2014-12-01 50.0 280.0  260.183056
+           40.0 250.0  277.947373
+2014-12-02 50.0 280.0   261.08943
+           40.0 250.0  278.219599
+2014-12-03 50.0 280.0  257.128185
+           40.0 250.0  278.444229
+```
+
+This quickstart example is also available as a [Jupyter notebook](https://github.com/tom-andersson/deepsensor/blob/main/notebooks/quickstart_example.ipynb) with added visualisations.
 
 Extending DeepSensor with new models
 ----------
