@@ -361,6 +361,11 @@ class TaskLoader:
             # in an earlier scope with access to both the context and target data. This is maybe risky!
             X_c = df.reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
             Y_c = df.values.T
+        elif isinstance(sampling_strat, np.ndarray):
+            X_c = sampling_strat.astype(self.dtype)
+            x1match = np.in1d(df.index.get_level_values("x1"), X_c[0])
+            x2match = np.in1d(df.index.get_level_values("x2"), X_c[1])
+            Y_c = df[x1match & x2match].values.T
         else:
             raise InvalidSamplingStrategyError(
                 f"Unknown sampling strategy {sampling_strat}"

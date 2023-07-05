@@ -115,18 +115,7 @@ class TestTaskLoader(unittest.TestCase):
             for context_sampling, target_sampling in self._gen_task_loader_call_args(
                 n_context_and_target, n_context_and_target
             ):
-                if "pd" in context_IDs and any(
-                    isinstance(s, np.ndarray) for s in context_sampling
-                ):
-                    with self.assertRaises(InvalidSamplingStrategyError):
-                        task = tl("2020-01-01", context_sampling, target_sampling)
-                elif "pd" in target_IDs and any(
-                    isinstance(s, np.ndarray) for s in target_sampling
-                ):
-                    with self.assertRaises(InvalidSamplingStrategyError):
-                        task = tl("2020-01-01", context_sampling, target_sampling)
-                else:
-                    task = tl("2020-01-01", context_sampling, target_sampling)
+                task = tl("2020-01-01", context_sampling, target_sampling)
 
         return None
 
