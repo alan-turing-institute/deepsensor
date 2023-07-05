@@ -199,6 +199,7 @@ class DeepSensorModel(ProbabilisticModel):
         n_samples=0,
         unnormalise=True,
         seed=0,
+        append_indexes: dict = None,
         progress_bar=0,
         verbose=False,
     ):
@@ -220,6 +221,8 @@ class DeepSensorModel(ProbabilisticModel):
         :param unnormalise: Whether to unnormalise the predictions. Only works if
             `self` has a `data_processor` and `task_loader` attribute. Default True.
         :param seed: Random seed for deterministic sampling. Default 0.
+        :param append_indexes: Dictionary of index metadata to append to pandas indexes
+            in the off-grid case. Default None.
         :param progress_bar: Whether to display a progress bar over tasks. Default 0.
         :param verbose: Whether to print time taken for prediction. Default False.
 
@@ -230,6 +233,17 @@ class DeepSensorModel(ProbabilisticModel):
             - If n_samples > 0, returns mean, std and samples predictions.
         """
         tic = time.time()
+
+        if not isinstance(X_t, (xr.DataArray, xr.Dataset)):
+            if resolution_factor != 1:
+                raise ValueError(
+                    "resolution_factor can only be used with on-grid predictions."
+                )
+        if not isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index, np.ndarray)):
+            if append_indexes is not None:
+                raise ValueError(
+                    "append_indexes can only be used with off-grid predictions."
+                )
 
         if type(tasks) is Task:
             tasks = [tasks]
@@ -263,6 +277,17 @@ class DeepSensorModel(ProbabilisticModel):
             mode = "on-grid"
         elif isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index)):
             mode = "off-grid"
+            if append_indexes is not None:
+                # Check append_indexes are all same length as X_t
+                if append_indexes is not None:
+                    for idx, vals in append_indexes.items():
+                        if len(vals) != len(X_t):
+                            raise ValueError(
+                                f"append_indexes[{idx}] must be same length as X_t, got {len(vals)} and {len(X_t)} respectively."
+                            )
+                X_t = X_t.reset_index()
+                X_t = pd.concat([X_t, pd.DataFrame(append_indexes)], axis=1)
+                X_t = X_t.set_index(list(X_t.columns))
         else:
             raise ValueError(
                 f"X_t must be an xarray object or a pandas object, not {type(X_t)}"
