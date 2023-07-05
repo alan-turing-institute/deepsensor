@@ -69,6 +69,8 @@ class TestTaskLoader(unittest.TestCase):
             (tuple): Arguments for TaskLoader.__call__
         """
         for sampling_method in [
+            0.,
+            0,
             10,
             0.5,
             "all",
