@@ -253,7 +253,9 @@ class TestModel(unittest.TestCase):
                 n_samples=n_samples,
                 unnormalise=False if target_dim > 1 else True,
             )
-            assert [isinstance(df, pd.DataFrame) for df in [mean_df, std_df, samples_df]]
+            assert [
+                isinstance(df, pd.DataFrame) for df in [mean_df, std_df, samples_df]
+            ]
             if isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index)):
                 N_t = len(X_t)
             elif isinstance(X_t, np.ndarray):
