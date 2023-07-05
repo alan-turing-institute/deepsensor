@@ -6,6 +6,8 @@ import pandas as pd
 
 from typing import List, Tuple, Union
 
+from deepsensor.errors import InvalidSamplingStrategyError
+
 
 class TaskLoader:
     def __init__(
@@ -324,7 +326,9 @@ class TaskLoader:
                 # returned a 2D array, but we need a 3D array of shape (variable, N_x1, N_x2)
                 Y_c = Y_c.reshape(1, *Y_c.shape)
         else:
-            raise ValueError(f"Unknown sampling strategy {sampling_strat}")
+            raise InvalidSamplingStrategyError(
+                f"Unknown sampling strategy {sampling_strat}"
+            )
 
         return X_c, Y_c
 
@@ -358,7 +362,9 @@ class TaskLoader:
             X_c = df.reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
             Y_c = df.values.T
         else:
-            raise ValueError(f"Unknown sampling strategy {sampling_strat}")
+            raise InvalidSamplingStrategyError(
+                f"Unknown sampling strategy {sampling_strat}"
+            )
 
         return X_c, Y_c
 

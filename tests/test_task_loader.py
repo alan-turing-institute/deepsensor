@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import unittest
 
+from deepsensor.errors import InvalidSamplingStrategyError
 from tests.utils import gen_random_data_xr, gen_random_data_pandas
 
 from deepsensor.data.loader import TaskLoader
@@ -50,7 +51,7 @@ class TestTaskLoader(unittest.TestCase):
         self.da = _gen_data_xr()
         self.df = _gen_data_pandas()
 
-    def _gen_task_loader_call_args(self, n_context, n_target):
+    def _gen_task_loader_call_args(self, n_context_sets, n_target_sets):
         """Generate arguments for TaskLoader.__call__
 
         Loops over all possible combinations of context/target sampling methods
@@ -59,10 +60,11 @@ class TestTaskLoader(unittest.TestCase):
         - (int): Random number of samples
         - (float): Fraction of samples
         - "all": All samples
+        - (np.ndarray): Array of coordinates to sample from the dataset (WIP)
 
         Args:
-            n_context (int): Number of context samples
-            n_target (int): Number of target samples
+            n_context_sets (int): Number of context samples
+            n_target_sets (int): Number of target samples
         Returns:
             (tuple): Arguments for TaskLoader.__call__
         """
@@ -70,8 +72,9 @@ class TestTaskLoader(unittest.TestCase):
             10,
             0.5,
             "all",
+            np.zeros((2, 1)),
         ]:
-            yield [sampling_method] * n_context, [sampling_method] * n_target
+            yield [sampling_method] * n_context_sets, [sampling_method] * n_target_sets
 
     @parameterized.expand(range(1, 4))
     def test_loader_call(self, n_context_and_target):
@@ -91,26 +94,39 @@ class TestTaskLoader(unittest.TestCase):
             itertools.product(["xr", "pd"], repeat=n_context_and_target)
         )
 
-        def set_list_to_data(set_list):
+        def data_type_ID_to_data(set_list):
+            """Converts a list of data type IDs ("pd" or "xr") to a list of data objects of that type
+
+            E.g. ["xr", "pd", "xr"] -> [self.da, self.df, self.da]
+            E.g. "xr" -> self.da
+            """
             if set_list == "xr":
                 return self.da
             elif set_list == "pd":
                 return self.df
             elif isinstance(set_list, (list, tuple)):
-                return [set_list_to_data(s) for s in set_list]
+                return [data_type_ID_to_data(s) for s in set_list]
 
         for context_IDs, target_IDs in zip(context_ID_list, target_ID_list):
-            tl = TaskLoader(
-                context=set_list_to_data(context_IDs),
-                target=set_list_to_data(target_IDs),
-            )
-            print(repr(tl))
-            print(tl)
+            context = data_type_ID_to_data(context_IDs)
+            target = data_type_ID_to_data(target_IDs)
+            tl = TaskLoader(context=context, target=target)
 
             for context_sampling, target_sampling in self._gen_task_loader_call_args(
                 n_context_and_target, n_context_and_target
             ):
-                task = tl("2020-01-01", context_sampling, target_sampling)
+                if "pd" in context_IDs and any(
+                    isinstance(s, np.ndarray) for s in context_sampling
+                ):
+                    with self.assertRaises(InvalidSamplingStrategyError):
+                        task = tl("2020-01-01", context_sampling, target_sampling)
+                elif "pd" in target_IDs and any(
+                    isinstance(s, np.ndarray) for s in target_sampling
+                ):
+                    with self.assertRaises(InvalidSamplingStrategyError):
+                        task = tl("2020-01-01", context_sampling, target_sampling)
+                else:
+                    task = tl("2020-01-01", context_sampling, target_sampling)
 
         return None
 

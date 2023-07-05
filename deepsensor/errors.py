@@ -12,3 +12,9 @@ class GriddedDataError(Exception):
     """Raised during invalid operation with gridded data"""
 
     pass
+
+
+class InvalidSamplingStrategyError(Exception):
+    """Raised when TaskLoader sampling strategy is invalid"""
+
+    pass
