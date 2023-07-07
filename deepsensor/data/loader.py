@@ -317,7 +317,7 @@ class TaskLoader:
                     kwargs=dict(fill_value=None, bounds_error=True),
                 )
                 Y_c = np.array(Y_c, dtype=self.dtype)
-            X_c = np.array([x1, x2])
+            X_c = np.array([x1, x2], dtype=self.dtype)
             if Y_c.ndim == 1:
                 # returned a 1D array, but we need a 2D array of shape (variable, N)
                 Y_c = Y_c.reshape(1, *Y_c.shape)
