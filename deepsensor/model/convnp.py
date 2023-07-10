@@ -364,7 +364,12 @@ class ConvNP(DeepSensorModel):
         return loss
 
     def ar_sample(
-        self, task: Task, n_samples=1, X_target_AR=None, ar_subsample_factor=1, fill_type="mean"
+        self,
+        task: Task,
+        n_samples=1,
+        X_target_AR=None,
+        ar_subsample_factor=1,
+        fill_type="mean",
     ):
         """Autoregressive sampling from the model.
 
@@ -382,7 +387,7 @@ class ConvNP(DeepSensorModel):
 
         if X_target_AR is not None:
             # User has specified a set of locations to draw AR samples over
-            task_arsample["X_t"][0] = X_target_AR  # AR sampling only works over 0th context/target set
+            task_arsample["X_t"][0] = X_target_AR
         elif ar_subsample_factor > 1:
             # Subsample target locations to draw AR samples over
             xt = task["X_t"][0]
