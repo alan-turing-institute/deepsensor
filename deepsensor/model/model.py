@@ -197,6 +197,8 @@ class DeepSensorModel(ProbabilisticModel):
         X_t_normalised: bool = False,
         resolution_factor=1,
         n_samples=0,
+        ar_sample=False,
+        ar_subsample_factor=1,
         unnormalise=True,
         seed=0,
         append_indexes: dict = None,
@@ -218,6 +220,7 @@ class DeepSensorModel(ProbabilisticModel):
             Applies to on-grid predictions only. Default 1.
         :param n_samples: Number of joint samples to draw from the model.
             If 0, will not draw samples. Default 0.
+        :param ar_sample: Whether to use autoregressive sampling. Default False.
         :param unnormalise: Whether to unnormalise the predictions. Only works if
             `self` has a `data_processor` and `task_loader` attribute. Default True.
         :param seed: Random seed for deterministic sampling. Default 0.
@@ -336,8 +339,7 @@ class DeepSensorModel(ProbabilisticModel):
         tasks = copy.deepcopy(tasks)
 
         for task in tqdm(tasks, position=0, disable=progress_bar < 1, leave=True):
-            # TODO - repeat based on number of targets?
-            task["X_t"] = [X_t_arr]
+            task["X_t"] = [X_t_arr for _ in range(len(task["X_t"]))]
 
             # If `DeepSensor` model child has been sub-classed with a `__call__` method,
             # we assume this is a distribution-like object that can be used to compute
@@ -350,7 +352,15 @@ class DeepSensorModel(ProbabilisticModel):
                 if n_samples >= 1:
                     B.set_random_seed(seed)
                     np.random.seed(seed)
-                    samples_arr = self.sample(dist, n_samples=n_samples)
+                    if ar_sample:
+                        samples_arr = self.ar_sample(
+                            task,
+                            n_samples=n_samples,
+                            ar_subsample_factor=ar_subsample_factor,
+                        )
+                        samples_arr = samples_arr.reshape((n_samples, *mean_arr.shape))
+                    else:
+                        samples_arr = self.sample(dist, n_samples=n_samples)
             else:
                 # Re-run model for each prediction type
                 mean_arr = self.mean(task)
@@ -358,7 +368,22 @@ class DeepSensorModel(ProbabilisticModel):
                 if n_samples >= 1:
                     B.set_random_seed(seed)
                     np.random.seed(seed)
-                    samples_arr = self.sample(task, n_samples=n_samples)
+                    if ar_sample:
+                        samples_arr = self.ar_sample(
+                            task,
+                            n_samples=n_samples,
+                            ar_subsample_factor=ar_subsample_factor,
+                        )
+                        samples_arr = samples_arr.reshape((n_samples, *mean_arr.shape))
+                    else:
+                        samples_arr = self.sample(task, n_samples=n_samples)
+
+            # Concatenate multi-target predictions
+            if isinstance(mean_arr, (list, tuple)):
+                mean_arr = np.concatenate(mean_arr, axis=0)
+                std_arr = np.concatenate(std_arr, axis=0)
+                if n_samples >= 1:
+                    samples_arr = np.concatenate(samples_arr, axis=0)
 
             if mode == "on-grid":
                 mean.loc[:, task["time"], :, :] = mean_arr
