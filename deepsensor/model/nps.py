@@ -12,14 +12,6 @@ def convert_task_to_nps_args(task: Task):
 
     context_data = list(zip(task["X_c"], task["Y_c"]))
 
-    # context_data = [nps.mask.merge_contexts(ctx, multiple=5000) for ctx in context_data]
-    # context_data[0] = nps.mask.merge_contexts(context_data[0], multiple=5000)  # TEMP not converting gridded
-
-    # TEMP: assume target sets all on same spatial locations
-    #   just use the first entry from the lists of target data
-    # xt = task["X_t"][0]
-    # yt = B.concat(*task["Y_t"], axis=1)
-
     if len(task["X_t"]) == 1 and len(task["Y_t"]) == 1:
         # Single target set
         xt = task["X_t"][0]
@@ -36,13 +28,6 @@ def convert_task_to_nps_args(task: Task):
         raise ValueError(
             f"Incorrect target locations and target observations (got {len(task['X_t'])} and {len(task['Y_t'])})"
         )
-
-    # Assume one target set, convert to tf.Tensor and AggregateInput for AR
-    #   sampling
-    # xt = tf.cast(tf.convert_to_tensor(xt), tf.float32)
-    # xt = nps.aggregate.AggregateInput(
-    #     (xt, 0),
-    # )
 
     model_kwargs = {}
     if "Y_target_auxiliary" in task.keys():
