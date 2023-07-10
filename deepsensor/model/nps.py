@@ -27,7 +27,7 @@ def convert_task_to_nps_args(task: Task):
     elif len(task["X_t"]) > 1 and len(task["Y_t"]) > 1:
         # Multiple target sets, different target locations
         xt = backend.nps.AggregateInput(*[(xt, i) for i, xt in enumerate(task["X_t"])])
-        yt = backend.nps.Aggregate(*[yt for yt in enumerate(task["Y_t"])])
+        yt = backend.nps.Aggregate(*task["Y_t"])
     elif len(task["X_t"]) == 1 and len(task["Y_t"]) > 1:
         # Multiple target sets, same target locations
         xt = task["X_t"][0]
@@ -65,6 +65,21 @@ def run_nps_model(neural_process, task, n_samples=None, requires_grad=False):
     else:
         dist = neural_process(context_data, xt, **model_kwargs, num_samples=n_samples)
     return dist
+
+
+def run_nps_model_ar(neural_process, task, num_samples=1):
+    """Run `neural_process` in AR mode"""
+    context_data, xt, yt, model_kwargs = convert_task_to_nps_args(task)
+
+    # NOTE can't use `model_kwargs` in AR mode (ie can't use auxiliary MLP at targets)
+    mean, variance, noiseless_samples, noisy_samples = backend.nps.ar_predict(
+        neural_process,
+        context_data,
+        xt,
+        num_samples=num_samples,
+    )
+
+    return mean, variance, noiseless_samples, noisy_samples
 
 
 def construct_neural_process(
