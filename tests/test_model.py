@@ -191,9 +191,7 @@ class TestModel(unittest.TestCase):
             assert x.size == 1 and x.shape == ()
             x = model.mean_marginal_entropy(task)
             assert x.size == 1 and x.shape == ()
-            if n_target_sets == 1:
-                # TEMP loss function for multiple non-overlapping target sets is not yet implemented
-                x = B.to_numpy(model.loss_fn(task))
+            x = B.to_numpy(model.loss_fn(task))
             assert x.size == 1 and x.shape == ()
 
     @parameterized.expand(range(1, 4))
