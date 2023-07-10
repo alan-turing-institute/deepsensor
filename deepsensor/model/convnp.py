@@ -8,14 +8,15 @@ from plum import ModuleType, dispatch
 
 from deepsensor import backend
 from deepsensor.data.loader import TaskLoader
-from deepsensor.data.processor import DataProcessor
+from deepsensor.data.processor import DataProcessor, flatten_gridded_data
 from deepsensor.data.task import Task
 from deepsensor.model.defaults import gen_ppu, gen_encoder_scales, gen_decoder_scale
 from deepsensor.model.model import DeepSensorModel
 from deepsensor.model.nps import (
     construct_neural_process,
-    run_nps_model,
     convert_task_to_nps_args,
+    run_nps_model,
+    run_nps_model_ar,
 )
 
 TFModel = ModuleType("tensorflow.keras", "Model")
@@ -363,25 +364,33 @@ class ConvNP(DeepSensorModel):
         return loss
 
     def ar_sample(
-        self, task: Task, n_samples=1, X_target_AR=None, ar_subsample_factor=1
+        self, task: Task, n_samples=1, X_target_AR=None, ar_subsample_factor=1, fill_type="mean"
     ):
-        """AR sampling with optional functionality to only draw AR samples over a subset of the
-        target set and then infull the rest of the sample with the model mean conditioned on the
-        AR samples."""
+        """Autoregressive sampling from the model.
+
+        AR sampling with optional functionality to only draw AR samples over a subset of the
+        target set and then infill the rest of the sample with the model mean or joint sample
+        conditioned on the AR samples.
+
+        NOTE:
+            - AR sampling only works for 0th context/target set
+        """
+
+        # AR sampling requires gridded data to be flattened, not coordinate tuples
+        task_arsample = copy.deepcopy(task)
+        task = copy.deepcopy(task)
+
         if X_target_AR is not None:
             # User has specified a set of locations to draw AR samples over
-            task_arsample = copy.deepcopy(task)
-            task_arsample["X_t"][0] = X_target_AR
+            task_arsample["X_t"][0] = X_target_AR  # AR sampling only works over 0th context/target set
         elif ar_subsample_factor > 1:
             # Subsample target locations to draw AR samples over
-            task_arsample = copy.deepcopy(task)
             xt = task["X_t"][0]
-            ndim_2d = np.sqrt(xt.shape[-1])
-            if int(ndim_2d) == ndim_2d:
-                # Targets on a square: subsample targets for AR along both spatial dimension
-                xt_2d = xt.reshape(-1, int(ndim_2d), int(ndim_2d))
-                xt = xt_2d[..., ::ar_subsample_factor, ::ar_subsample_factor].reshape(
-                    2, -1
+            if isinstance(xt, tuple):
+                # Targets on a grid: subsample targets for AR along spatial dimension
+                xt = (
+                    xt[0][..., ::ar_subsample_factor],
+                    xt[1][..., ::ar_subsample_factor],
                 )
             else:
                 xt = xt[..., ::ar_subsample_factor]
@@ -389,15 +398,27 @@ class ConvNP(DeepSensorModel):
         else:
             task_arsample = copy.deepcopy(task)
 
+        task = flatten_gridded_data(task)
+        task_arsample = flatten_gridded_data(task_arsample)
+
         task_arsample = ConvNP.check_task(task_arsample)
         task = ConvNP.check_task(task)
 
-        mean, variance, noiseless_samples, noisy_samples = run_nps_model_ar(
-            self.model, task_arsample, num_samples=n_samples
-        )
+        if backend.str == "torch":
+            import torch
+
+            # Run AR sampling with torch.no_grad() to avoid prohibitive backprop computation for AR
+            with torch.no_grad():
+                mean, variance, noiseless_samples, noisy_samples = run_nps_model_ar(
+                    self.model, task_arsample, num_samples=n_samples
+                )
+        else:
+            mean, variance, noiseless_samples, noisy_samples = run_nps_model_ar(
+                self.model, task_arsample, num_samples=n_samples
+            )
 
         # Slice out first (and assumed only) target entry in nps.Aggregate object
-        noiseless_samples = B.to_numpy(noiseless_samples)[0]
+        noiseless_samples = B.to_numpy(noiseless_samples)
 
         if ar_subsample_factor > 1 or X_target_AR is not None:
             # AR sample locations not equal to target locations - infill the rest of the
@@ -405,22 +426,18 @@ class ConvNP(DeepSensorModel):
             full_samples = []
             for sample in noiseless_samples:
                 task_with_sample = copy.deepcopy(task)
-                task_with_sample["X_c"][0] = np.concatenate(
-                    [task["X_c"][0], task_arsample["X_t"][0]], axis=-1
+                task_with_sample["X_c"][0] = B.concat(
+                    task["X_c"][0], task_arsample["X_t"][0], axis=-1
                 )
-                task_with_sample["Y_c"][0] = np.concatenate(
-                    [task["Y_c"][0], sample], axis=-1
-                )
+                task_with_sample["Y_c"][0] = B.concat(task["Y_c"][0], sample, axis=-1)
 
-                if type(self) is ConvCNP:
-                    # Independent predictions for each target location - just compute the mean
-                    # conditioned on the AR samples
+                if fill_type == "mean":
+                    # Compute the mean conditioned on the AR samples
                     pred = self.mean(
                         task_with_sample
                     )  # Should this be a `.sample` call?
-                else:
+                elif fill_type == "sample":
                     # Sample from joint distribution over all target locations
-                    # NOTE Risky to assume all model classes other than `ConvCNP` model correlations.
                     pred = self.sample(task_with_sample, n_samples=1)
 
                 full_samples.append(pred)
