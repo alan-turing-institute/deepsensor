@@ -305,9 +305,13 @@ class TaskLoader:
             elif not self.discrete_xarray_sampling:
                 if N == 0:
                     # Catch zero-context edge case before interp fails
-                    return np.array([[], []], dtype=self.dtype), np.array(
-                        [], dtype=self.dtype
-                    )
+                    X_c = np.zeros((2, 0), dtype=self.dtype)
+                    if isinstance(da, xr.Dataset):
+                        dim = len(da.data_vars)  # Multiple data variables
+                    elif isinstance(da, xr.DataArray):
+                        dim = 1  # Single data variable
+                    Y_c = np.zeros((dim, 0), dtype=self.dtype)
+                    return X_c, Y_c
                 x1 = rng.uniform(da.coords["x1"].min(), da.coords["x1"].max(), N)
                 x2 = rng.uniform(da.coords["x2"].min(), da.coords["x2"].max(), N)
                 Y_c = da.interp(
