@@ -3,7 +3,9 @@ import copy
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import (
     xarray_to_coord_array_normalised,
-    mask_coord_array_normalised, da1_da2_same_grid, interp_da1_to_da2,
+    mask_coord_array_normalised,
+    da1_da2_same_grid,
+    interp_da1_to_da2,
 )
 from deepsensor.model.model import DeepSensorModel, create_empty_spatiotemporal_xarray
 from deepsensor.data.task import Task, append_obs_to_task
@@ -229,8 +231,10 @@ class GreedyAlgorithm:
             y = y.data
             y = y.reshape(1, y.size)  # 1 observation with N dimensions
         else:
-            raise NotImplementedError(f"infill_ds must be xr.Dataset or xr.DataArray, "
-                                      f"not {type(infill_ds)}")
+            raise NotImplementedError(
+                f"infill_ds must be xr.Dataset or xr.DataArray, "
+                f"not {type(infill_ds)}"
+            )
         return y
 
     def _build_acquisition_fn_ds(self, X_s: Union[xr.Dataset, xr.DataArray]):
@@ -309,7 +313,10 @@ class GreedyAlgorithm:
                     disable=self.progress_bar < 5,
                 ):
                     y_query = self._sample_y_infill(
-                        self.query_infill, time=task["time"], x1=x_query[0], x2=x_query[1]
+                        self.query_infill,
+                        time=task["time"],
+                        x1=x_query[0],
+                        x2=x_query[1],
                     )
                     task_with_new = append_obs_to_task(
                         task, x_query, y_query, self.context_set_idx
@@ -425,7 +432,6 @@ class GreedyAlgorithm:
                 self.query_infill = model_infill
             if self.proposed_infill is None:
                 self.proposed_infill = model_infill
-
 
         # Instantiate empty acquisition function object
         self._init_acquisition_fn_ds(self.X_s)

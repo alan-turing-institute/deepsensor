@@ -441,7 +441,7 @@ def acquisition_fn(
     offgrid_context(axes, task, data_processor, s=3**2, linewidths=0.5)
 
     # Remove any unused axes
-    for ax in axes[len(col_vals):]:
+    for ax in axes[len(col_vals) :]:
         ax.remove()
 
     return fig

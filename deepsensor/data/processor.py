@@ -436,18 +436,16 @@ def flatten_gridded_data(task):
 
     return task_flattened
 
+
 def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
     """Check if da1 and da2 are on the same grid
 
     Note: da1 and da2 are assumed normalised by DataProcessor.
     """
-    x1equal = np.array_equal(
-        da1["x1"].values, da2["x1"].values
-    )
-    x2equal = np.array_equal(
-        da1["x2"].values, da2["x2"].values
-    )
+    x1equal = np.array_equal(da1["x1"].values, da2["x1"].values)
+    x2equal = np.array_equal(da1["x2"].values, da2["x2"].values)
     return x1equal and x2equal
+
 
 def interp_da1_to_da2(da1: xr.DataArray, da2: xr.DataArray) -> xr.DataArray:
     """Interpolate da1 to da2
