@@ -3,7 +3,7 @@ import copy
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import (
     xarray_to_coord_array_normalised,
-    mask_coord_array_normalised,
+    mask_coord_array_normalised, da1_da2_same_grid, interp_da1_to_da2,
 )
 from deepsensor.model.model import DeepSensorModel, create_empty_spatiotemporal_xarray
 from deepsensor.data.task import Task, append_obs_to_task
@@ -34,8 +34,8 @@ class GreedyAlgorithm:
         N_new_context: int = 1,
         X_normalised: bool = False,
         model_infill_method: str = "mean",
-        query_groundtruth: xr.DataArray = None,  # TODO remove "groundtruth" from name?
-        placed_groundtruth: xr.DataArray = None,  # TODO rename to "proposed_"?
+        query_infill: xr.DataArray = None,
+        proposed_infill: xr.DataArray = None,
         context_set_idx: int = 0,
         target_set_idx: int = 0,
         progress_bar: int = 0,
@@ -54,8 +54,6 @@ class GreedyAlgorithm:
         self.N_new_context = N_new_context
         self.progress_bar = progress_bar
         self.model_infill_method = model_infill_method
-        self.query_groundtruth = query_groundtruth
-        self.placed_groundtruth = placed_groundtruth
         self.context_set_idx = context_set_idx
         self.target_set_idx = target_set_idx
         self.min_or_max = min_or_max
@@ -87,22 +85,17 @@ class GreedyAlgorithm:
         # Interpolate masks onto search and target coords
         self.X_s_mask, self.X_t_mask = self._process_masks(X_s_mask, X_t_mask, X_s, X_t)
 
-        # Interpolate query_groundtruth at search points
-        if self.query_groundtruth is not None:
-            x1equal = np.array_equal(
-                self.query_groundtruth["x1"].values, X_s["x1"].values
-            )
-            x2equal = np.array_equal(
-                self.query_groundtruth["x2"].values, X_s["x2"].values
-            )
-            if not x1equal or not x2equal:
-                if verbose:
-                    print("query_groundtruth not on search grid, interpolating.")
-                self.query_groundtruth = self.query_groundtruth.interp(
-                    x1=self.X_s["x1"], x2=self.X_s["x2"], method="nearest"
-                )
-            elif verbose:
-                print("query_groundtruth already on search grid, not interpolating.")
+        # Interpolate overridden infill datasets at search points if necessary
+        if query_infill is not None and not da1_da2_same_grid(query_infill, X_s):
+            if verbose:
+                print("query_infill not on search grid, interpolating.")
+            query_infill = interp_da1_to_da2(query_infill, self.X_s)
+        if proposed_infill is not None and not da1_da2_same_grid(proposed_infill, X_s):
+            if verbose:
+                print("proposed_infill not on search grid, interpolating.")
+            proposed_infill = interp_da1_to_da2(proposed_infill, self.X_s)
+        self.query_infill = query_infill
+        self.proposed_infill = proposed_infill
 
         # Convert target coords to numpy arrays and assign to tasks
         if isinstance(X_t, (xr.Dataset, xr.DataArray)):
@@ -227,16 +220,17 @@ class GreedyAlgorithm:
 
         return infill_ds
 
-    def _sample_y_infill(self, time, x1, x2):
+    def _sample_y_infill(self, infill_ds, time, x1, x2):
         """Sample infill values at a single location"""
-        if isinstance(self.infill_ds, (xr.Dataset, xr.DataArray)):
-            y = self.infill_ds.sel(time=time, x1=x1, x2=x2)
+        if isinstance(infill_ds, (xr.Dataset, xr.DataArray)):
+            y = infill_ds.sel(time=time, x1=x1, x2=x2)
             if isinstance(y, xr.Dataset):
                 y = y.to_array()
             y = y.data
             y = y.reshape(1, y.size)  # 1 observation with N dimensions
         else:
-            raise NotImplementedError("TODO")
+            raise NotImplementedError(f"infill_ds must be xr.Dataset or xr.DataArray, "
+                                      f"not {type(infill_ds)}")
         return y
 
     def _build_acquisition_fn_ds(self, X_s: Union[xr.Dataset, xr.DataArray]):
@@ -315,7 +309,7 @@ class GreedyAlgorithm:
                     disable=self.progress_bar < 5,
                 ):
                     y_query = self._sample_y_infill(
-                        time=task["time"], x1=x_query[0], x2=x_query[1]
+                        self.query_infill, time=task["time"], x1=x_query[0], x2=x_query[1]
                     )
                     task_with_new = append_obs_to_task(
                         task, x_query, y_query, self.context_set_idx
@@ -424,11 +418,14 @@ class GreedyAlgorithm:
 
         self.tasks = tasks
 
-        # Generate infill values at search points
-        if self.query_groundtruth is not None:
-            self.infill_ds = self.query_groundtruth
-        else:
-            self.infill_ds = self._model_infill_at_search_points(self.X_s)
+        # Generate infill values at search points if not overridden
+        if self.query_infill is None or self.proposed_infill is None:
+            model_infill = self._model_infill_at_search_points(self.X_s)
+            if self.query_infill is None:
+                self.query_infill = model_infill
+            if self.proposed_infill is None:
+                self.proposed_infill = model_infill
+
 
         # Instantiate empty acquisition function object
         self._init_acquisition_fn_ds(self.X_s)
@@ -452,9 +449,10 @@ class GreedyAlgorithm:
         ):
             x_new = self._single_greedy_iteration(acquisition_fn)
 
+            # Append new proposed context points to each task
             for i, task in enumerate(self.tasks):
                 y_new = self._sample_y_infill(
-                    time=task["time"], x1=x_new[0], x2=x_new[1]
+                    self.proposed_infill, time=task["time"], x1=x_new[0], x2=x_new[1]
                 )
                 self.tasks[i] = append_obs_to_task(
                     task, x_new, y_new, self.context_set_idx
