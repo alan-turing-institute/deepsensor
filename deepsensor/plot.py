@@ -358,27 +358,36 @@ def acquisition_fn(
     X_new_df,
     data_processor,
     crs,
+    col_dim="iteration",
     cmap="Greys_r",
     figsize=3,
     add_colorbar=True,
     max_ncol=5,
 ):
-    if "time" in acquisition_fn_ds.dims:
-        # Average over time
-        acquisition_fn_ds = acquisition_fn_ds.mean("time")
-    if "sample" in acquisition_fn_ds.dims:
-        # Average over samples
-        acquisition_fn_ds = acquisition_fn_ds.mean("sample")
+    # Remove spatial dims using data_processor.raw_spatial_coords_names
+    plot_dims = [col_dim, *data_processor.raw_spatial_coord_names]
+    non_plot_dims = [dim for dim in acquisition_fn_ds.dims if dim not in plot_dims]
+    valid_avg_dims = ["time", "sample"]
+    for dim in non_plot_dims:
+        if dim not in valid_avg_dims:
+            raise ValueError(
+                f"Cannot average over dim {dim} for plotting. Must be one of {valid_avg_dims}. "
+                f"Select a single value for {dim} using `acquisition_fn_ds.sel({dim}=...)`."
+            )
+    if len(non_plot_dims) > 0:
+        # Average over non-plot dims
+        print(f"Averaging acquisition function over dims for plotting: {non_plot_dims}")
+        acquisition_fn_ds = acquisition_fn_ds.mean(dim=non_plot_dims)
 
-    iters = acquisition_fn_ds.iteration.values
-    if iters.size == 1:
-        n_iters = 1
+    col_vals = acquisition_fn_ds[col_dim].values
+    if col_vals.size == 1:
+        n_col_vals = 1
     else:
-        n_iters = len(iters)
-    ncols = np.min([max_ncol, n_iters])
+        n_col_vals = len(col_vals)
+    ncols = np.min([max_ncol, n_col_vals])
 
-    if n_iters > ncols:
-        nrows = int(np.ceil(n_iters / ncols))
+    if n_col_vals > ncols:
+        nrows = int(np.ceil(n_col_vals / ncols))
     else:
         nrows = 1
 
@@ -395,15 +404,15 @@ def acquisition_fn(
     if add_colorbar:
         min, max = acquisition_fn_ds.min(), acquisition_fn_ds.max()
     else:
-        # Use different colour scales for each iteration
+        # Use different colour scales for each plot
         min, max = None, None
-    for i, iteration in enumerate(iters):
+    for i, col_val in enumerate(col_vals):
         ax = axes[i]
-        if i == len(iters):
+        if i == len(col_vals):
             final_axis = True
         else:
             final_axis = False
-        acquisition_fn_ds.sel(iteration=iteration).plot(
+        acquisition_fn_ds.sel(**{col_dim: col_val}).plot(
             ax=ax, cmap=cmap, vmin=min, vmax=max, add_colorbar=False
         )
         if add_colorbar and final_axis:
@@ -413,10 +422,17 @@ def acquisition_fn(
             cbar = plt.colorbar(
                 im, cax=cax, label=label
             )  # specify axis for colorbar to occupy with cax
-        ax.set_title(f"Iteration {iteration}")
+        ax.set_title(f"{col_dim}={col_val}")
         ax.coastlines()
+        if col_dim == "iteration":
+            X_new_df_plot = X_new_df.loc[slice(0, col_val)].values.T[::-1]
+        else:
+            # Assumed plotting single iteration
+            iter = acquisition_fn_ds.iteration.values
+            assert iter.size == 1, "Expected single iteration"
+            X_new_df_plot = X_new_df.loc[slice(0, iter.item())].values.T[::-1]
         ax.scatter(
-            *X_new_df.loc[slice(0, iteration)].values.T[::-1],
+            *X_new_df_plot,
             s=3**2,
             c="r",
             linewidths=0.5,
@@ -425,7 +441,7 @@ def acquisition_fn(
     offgrid_context(axes, task, data_processor, s=3**2, linewidths=0.5)
 
     # Remove any unused axes
-    for ax in axes[len(acquisition_fn_ds.iteration) :]:
+    for ax in axes[len(col_vals):]:
         ax.remove()
 
     return fig
