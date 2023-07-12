@@ -52,7 +52,7 @@ class TestModel(unittest.TestCase):
         self.df = _gen_data_pandas()
 
         self.dp = DataProcessor()
-        _ = self.dp([self.da, self.df])  # Compute normalization parameters
+        _ = self.dp([self.da, self.df])  # Compute normalisation parameters
 
     def _gen_task_loader_call_args(self, n_context, n_target):
         """Generate arguments for TaskLoader.__call__
@@ -195,6 +195,48 @@ class TestModel(unittest.TestCase):
             assert x.size == 1 and x.shape == ()
 
     @parameterized.expand(range(1, 4))
+    def test_nans_offgrid_context(self, ndim):
+        """Test that `ConvNP` can handle NaNs in offgrid context"""
+
+        tl = TaskLoader(
+            context=_gen_data_xr(data_vars=range(ndim)),
+            target=self.da,
+        )
+
+        # All NaNs
+        task = tl("2020-01-01", context_sampling=10, target_sampling=10)
+        task["Y_c"][0][:, 0] = np.nan
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        _ = model(task)
+
+        # One NaN
+        task = tl("2020-01-01", context_sampling=10, target_sampling=10)
+        task["Y_c"][0][0, 0] = np.nan
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        _ = model(task)
+
+    @parameterized.expand(range(1, 4))
+    def test_nans_gridded_context(self, ndim):
+        """Test that `ConvNP` can handle NaNs in gridded context"""
+
+        tl = TaskLoader(
+            context=_gen_data_xr(data_vars=range(ndim)),
+            target=self.da,
+        )
+
+        # All NaNs
+        task = tl("2020-01-01", context_sampling="all", target_sampling=10)
+        task["Y_c"][0][:, 0, 0] = np.nan
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        _ = model(task)
+
+        # One NaN
+        task = tl("2020-01-01", context_sampling="all", target_sampling=10)
+        task["Y_c"][0][0, 0, 0] = np.nan
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        _ = model(task)
+
+    @parameterized.expand(range(1, 4))
     def test_prediction_shapes_highlevel(self, target_dim):
         """Test high-level `.predict` interface over a range of number of target sets
 
@@ -226,7 +268,9 @@ class TestModel(unittest.TestCase):
             tasks,
             X_t=self.da,
             n_samples=n_samples,
-            unnormalise=False if target_dim > 1 else True,
+            unnormalise=True
+            if target_dim == 1
+            else False,  # TODO fix unnormalising for multiple equally named targets
         )
         assert [isinstance(ds, xr.Dataset) for ds in [mean_ds, std_ds, samples_ds]]
         assert_shape(
