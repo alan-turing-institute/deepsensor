@@ -108,7 +108,7 @@ class GreedyAlgorithm:
                 # Remove points that lie outside the mask
                 X_t_arr_all = xarray_to_coord_array_normalised(X_t)
                 self.X_t_arr = mask_coord_array_normalised(X_t_arr_all, self.X_t_mask)
-        elif isinstance(X_s, (pd.DataFrame, pd.Series, pd.Index)):
+        elif isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index)):
             self.X_t_arr = X_t.reset_index()[["x1", "x2"]].values.T
         else:
             raise TypeError(f"Unsupported type for X_t: {type(X_t)}")
