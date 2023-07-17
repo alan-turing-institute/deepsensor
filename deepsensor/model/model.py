@@ -36,7 +36,7 @@ def create_empty_spatiotemporal_xarray(
     if len(data_vars) != len(set(data_vars)):
         raise ValueError(
             f"Duplicate data_vars found in data_vars: {data_vars}. "
-            "This woudld cause the xarray.Dataset to have fewer variables than expected."
+            "This would cause the xarray.Dataset to have fewer variables than expected."
         )
 
     x1_raw = X.coords[coord_names["x1"]]
