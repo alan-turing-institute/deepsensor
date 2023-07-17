@@ -38,7 +38,7 @@ def convert_task_to_nps_args(task: Task):
 
 def run_nps_model(neural_process, task, n_samples=None, requires_grad=False):
     """Run `neuralprocesses` model"""
-    context_data, xt, yt, model_kwargs = convert_task_to_nps_args(task)
+    context_data, xt, _, model_kwargs = convert_task_to_nps_args(task)
     if backend.str == "torch" and not requires_grad:
         # turn off grad
         import torch
@@ -54,7 +54,7 @@ def run_nps_model(neural_process, task, n_samples=None, requires_grad=False):
 
 def run_nps_model_ar(neural_process, task, num_samples=1):
     """Run `neural_process` in AR mode"""
-    context_data, xt, yt, model_kwargs = convert_task_to_nps_args(task)
+    context_data, xt, _, _ = convert_task_to_nps_args(task)
 
     # NOTE can't use `model_kwargs` in AR mode (ie can't use auxiliary MLP at targets)
     mean, variance, noiseless_samples, noisy_samples = backend.nps.ar_predict(
