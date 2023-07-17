@@ -8,8 +8,8 @@ from plum import ModuleType, dispatch
 
 from deepsensor import backend
 from deepsensor.data.loader import TaskLoader
-from deepsensor.data.processor import DataProcessor, flatten_gridded_data
-from deepsensor.data.task import Task
+from deepsensor.data.processor import DataProcessor
+from deepsensor.data.task import Task, flatten_gridded_data_in_task, flatten_X, flatten_Y
 from deepsensor.model.defaults import gen_ppu, gen_encoder_scales, gen_decoder_scale
 from deepsensor.model.model import DeepSensorModel
 from deepsensor.model.nps import (
@@ -172,24 +172,23 @@ class ConvNP(DeepSensorModel):
 
             arr = arr.astype(np.float32)  # Cast to float32
 
-            # Find NaNs
-            mask = np.isnan(arr)
-            if np.any(mask):
-                # Set NaNs to zero - necessary for `neuralprocesses` (can't have NaNs)
-                arr[mask] = 0.0
-                # Mask array (True for observed, False for missing) - keep size 1 variable dim
-                mask = ~np.any(mask, axis=1, keepdims=True)
-
             # Convert to tensor object based on deep learning backend
             arr = backend.convert_to_tensor(arr)
 
-            # Convert to `nps.Masked` object if there are NaNs
+            # Convert NaNs to `nps.Masked` object
+            mask = B.isnan(arr)
             if B.any(mask):
+                # Set NaNs to zero - necessary for `neuralprocesses` (can't have NaNs in context)
+                arr[mask] = 0.0
+                # Mask array (True for observed, False for missing) - keep size 1 variable dim
+                mask = ~B.any(mask, axis=1, squeeze=False)
+                # Convert to `nps.Masked` object
                 arr = backend.nps.Masked(arr, B.cast(B.dtype(arr), mask))
 
             return arr
 
         task = task.modify(array_modify_fn, modify_flag="NPS")
+
         return task
 
     @classmethod
