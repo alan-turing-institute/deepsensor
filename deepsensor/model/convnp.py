@@ -178,23 +178,24 @@ class ConvNP(DeepSensorModel):
 
             arr = arr.astype(np.float32)  # Cast to float32
 
+            # Find NaNs
+            mask = np.isnan(arr)
+            if np.any(mask):
+                # Set NaNs to zero - necessary for `neuralprocesses` (can't have NaNs)
+                arr[mask] = 0.0
+                # Mask array (True for observed, False for missing) - keep size 1 variable dim
+                mask = ~np.any(mask, axis=1, keepdims=True)
+
             # Convert to tensor object based on deep learning backend
             arr = backend.convert_to_tensor(arr)
 
-            # Convert NaNs to `nps.Masked` object
-            mask = B.isnan(arr)
+            # Convert to `nps.Masked` object if there are NaNs
             if B.any(mask):
-                # Set NaNs to zero - necessary for `neuralprocesses` (can't have NaNs in context)
-                arr[mask] = 0.0
-                # Mask array (True for observed, False for missing) - keep size 1 variable dim
-                mask = ~B.any(mask, axis=1, squeeze=False)
-                # Convert to `nps.Masked` object
                 arr = backend.nps.Masked(arr, B.cast(B.dtype(arr), mask))
 
             return arr
 
         task = task.modify(array_modify_fn, modify_flag="NPS")
-
         return task
 
     @classmethod
@@ -555,17 +556,19 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
 
 
 def remove_nans_from_task_Y_t_if_present(task):
+    """If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"])"""
     Y_t_nans_list = []
     # First check whether there are any NaNs that we need to remove
-    for i, (X, Y) in enumerate(zip(task["X_t"], task["Y_t"])):
-        Y = flatten_Y(Y)
-        Y_t_nans = np.any(np.isnan(Y), axis=0)  # shape (n_targets,)
-        Y_t_nans_list.append(Y_t_nans)
-
     nans_present = False
     for Y_t_nans in Y_t_nans_list:
         if B.any(Y_t_nans):
             nans_present = True
+
+    if nans_present:
+        for i, (X, Y) in enumerate(zip(task["X_t"], task["Y_t"])):
+            Y = flatten_Y(Y)
+            Y_t_nans = B.any(B.isnan(Y), axis=0)  # shape (n_targets,)
+            Y_t_nans_list.append(Y_t_nans)
 
     if not nans_present:
         return task, False
