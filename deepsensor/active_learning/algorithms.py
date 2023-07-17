@@ -153,11 +153,15 @@ class GreedyAlgorithm:
         """Process masks by interpolating to X_s and X_t"""
         # TODO avoid repeated code
         if X_s_mask is not None:
-            X_s_mask = X_s_mask.astype(float).interp_like(X_s, method="nearest", kwargs={"fill_value": 0})
+            X_s_mask = X_s_mask.astype(float).interp_like(
+                X_s, method="nearest", kwargs={"fill_value": 0}
+            )
             X_s_mask.data = X_s_mask.data.astype(bool)
             X_s_mask.load()
         if X_t_mask is not None:
-            X_t_mask = X_t_mask.astype(float).interp_like(X_t, method="nearest", kwargs={"fill_value": 0})
+            X_t_mask = X_t_mask.astype(float).interp_like(
+                X_t, method="nearest", kwargs={"fill_value": 0}
+            )
             X_t_mask.data = X_t_mask.data.astype(bool)
             X_t_mask.load()
 

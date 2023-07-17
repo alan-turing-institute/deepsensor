@@ -10,7 +10,12 @@ from plum import ModuleType, dispatch
 from deepsensor import backend
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
-from deepsensor.data.task import Task, flatten_gridded_data_in_task, flatten_X, flatten_Y
+from deepsensor.data.task import (
+    Task,
+    flatten_gridded_data_in_task,
+    flatten_X,
+    flatten_Y,
+)
 from deepsensor.model.defaults import gen_ppu, gen_encoder_scales, gen_decoder_scale
 from deepsensor.model.model import DeepSensorModel
 from deepsensor.model.nps import (
