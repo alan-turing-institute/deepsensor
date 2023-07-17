@@ -320,6 +320,76 @@ class TestModel(unittest.TestCase):
         # Check that nothing breaks
         model(task)
 
+    def test_highlevel_predict_coords_align_with_X_t_ongrid(self):
+        """Test coordinates of the xarray returned predictions align with the coordinates of X_t"""
+
+        # Instantiate an xarray object that would lead to rounding errors
+        region_size = (61, 81)
+        lat_lims = (30, 75)
+        lon_lims = (-15, 45)
+        latitude = np.linspace(*lat_lims, region_size[0], dtype=np.float32)
+        longitude = np.linspace(*lon_lims, region_size[1], dtype=np.float32)
+        dummy_data = np.random.normal(size=(1, *region_size))
+        da_raw = xr.DataArray(
+            dummy_data,
+            dims=["time", "latitude", "longitude"],
+            coords={
+                "time": [pd.Timestamp("2020-01-01")],
+                "latitude": latitude,
+                "longitude": longitude,
+            },
+            name="dummy_data",
+        )
+
+        dp = DataProcessor(
+            x1_name="latitude", x1_map=lat_lims, x2_name="longitude", x2_map=lon_lims
+        )
+        da = dp(da_raw)
+
+        tl = TaskLoader(context=da, target=da)
+        model = ConvNP(dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        task = tl("2020-01-01")
+        mean_ds, _ = model.predict(task, X_t=da_raw)
+
+        assert np.array_equal(mean_ds["latitude"], da_raw["latitude"])
+        assert np.array_equal(mean_ds["longitude"], da_raw["longitude"])
+
+    def test_highlevel_predict_coords_align_with_X_t_offgrid(self):
+        """Test coordinates of the pandas returned predictions align with the coordinates of X_t"""
+
+        # Instantiate a pandas object that would lead to rounding errors
+        region_size = (61, 81)
+        lat_lims = (30, 75)
+        lon_lims = (-15, 45)
+        latitude = np.linspace(*lat_lims, region_size[0], dtype=np.float32)
+        longitude = np.linspace(*lon_lims, region_size[1], dtype=np.float32)
+        dummy_data = np.random.normal(size=(region_size)).ravel()
+        df_raw = pd.DataFrame(
+            dummy_data,
+            index=pd.MultiIndex.from_product(
+                [[pd.Timestamp("2020-01-01")], latitude, longitude],
+                names=["time", "latitude", "longitude"],
+            ),
+            columns=["dummy_data"],
+        )
+
+        dp = DataProcessor(
+            x1_name="latitude", x1_map=lat_lims, x2_name="longitude", x2_map=lon_lims
+        )
+        df = dp(df_raw)
+
+        tl = TaskLoader(context=df, target=df)
+        model = ConvNP(dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        task = tl("2020-01-01")
+        mean_df, _ = model.predict(task, X_t=df_raw.loc["2020-01-01"])
+
+        assert np.array_equal(
+            mean_df.reset_index()["latitude"], df_raw.reset_index()["latitude"]
+        )
+        assert np.array_equal(
+            mean_df.reset_index()["longitude"], df_raw.reset_index()["longitude"]
+        )
+
 
 def assert_shape(x, shape: tuple):
     """ex: assert_shape(conv_input_array, [8, 3, None, None])"""

@@ -198,7 +198,7 @@ class GreedyAlgorithm:
             infill_ds, _ = self.model.predict(
                 self.tasks,
                 X_s,
-                X_t_normalised=True,
+                X_t_is_normalised=True,
                 unnormalise=False,
                 progress_bar=self.progress_bar >= 4,
             )
