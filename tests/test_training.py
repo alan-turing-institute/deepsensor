@@ -81,3 +81,7 @@ class TestTraining(unittest.TestCase):
         for epoch in tqdm(range(n_epochs)):
             batch_losses = train_epoch(model, train_tasks, batch_size=batch_size)
             epoch_losses.append(np.mean(batch_losses))
+
+        # Check for NaNs in the loss
+        loss = np.mean(epoch_losses)
+        self.assertFalse(np.isnan(loss))
