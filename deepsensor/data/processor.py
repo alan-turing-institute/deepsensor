@@ -301,6 +301,39 @@ class DataProcessor:
             data = data.set_index(indexes)
         return data
 
+    def map_array(
+        self,
+        data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, np.ndarray],
+        var_ID: str,
+        method: str = "mean_std",
+        unnorm: bool = False,
+        add_offset=True,
+    ):
+        """Normalise or unnormalise the data values in an xarray, pandas, or numpy object"""
+        param1, param2 = self.get_norm_params(var_ID, data, method, unnorm)
+        if method == "mean_std":
+            if not unnorm:
+                scale = 1 / param2
+                offset = -param1 / param2
+            else:
+                scale = param2
+                offset = param1
+        elif method == "min_max":
+            if not unnorm:
+                scale = 2 / (param2 - param1)
+                offset = -(param2 + param1) / (param2 - param1)
+            else:
+                scale = (param2 - param1) / 2
+                offset = (param2 + param1) / 2
+        else:
+            raise ValueError(
+                f"Method {method} not recognised. Use 'mean_std' or 'min_max'."
+            )
+        data = data * scale
+        if add_offset:
+            data = data + offset
+        return data
+
     def map(
         self,
         data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series],
@@ -308,29 +341,9 @@ class DataProcessor:
         add_offset: bool = True,
         unnorm: bool = False,
     ):
-        """Normalise or unnormalise data"""
+        """Normalise or unnormalise the data values and coords in an xarray or pandas object"""
         if self.deepcopy:
             data = deepcopy(data)
-
-        def mapper(data, param1, param2, method):
-            if method == "mean_std":
-                if not unnorm:
-                    scale = 1 / param2
-                    offset = -param1 / param2
-                else:
-                    scale = param2
-                    offset = param1
-            elif method == "min_max":
-                if not unnorm:
-                    scale = 2 / (param2 - param1)
-                    offset = -(param2 + param1) / (param2 - param1)
-                else:
-                    scale = (param2 - param1) / 2
-                    offset = (param2 + param1) / 2
-            data = data * scale
-            if add_offset:
-                data = data + offset
-            return data
 
         if isinstance(data, (xr.DataArray, xr.Dataset)) and not unnorm:
             self._validate_xr(data)
@@ -339,16 +352,13 @@ class DataProcessor:
 
         if isinstance(data, (xr.DataArray, pd.Series)):
             # Single var
-            var_ID = data.name
-            param1, param2 = self.get_norm_params(var_ID, data, method, unnorm)
-            data = mapper(data, param1, param2, method)
+            data = self.map_array(data, data.name, method, unnorm, add_offset)
         elif isinstance(data, (xr.Dataset, pd.DataFrame)):
             # Multiple vars
             for var_ID in data:
-                param1, param2 = self.get_norm_params(
-                    var_ID, data[var_ID], method, unnorm
+                data[var_ID] = self.map_array(
+                    data[var_ID], var_ID, method, unnorm, add_offset
                 )
-                data[var_ID] = mapper(data[var_ID], param1, param2, method)
 
         data = self.map_coords(data, unnorm=unnorm)
 
