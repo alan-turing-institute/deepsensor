@@ -45,6 +45,15 @@ class GreedyAlgorithm:
         task_loader: TaskLoader = None,  # OPTIONAL for oracle acquisition functions only
         verbose: bool = False,
     ):
+        """
+
+        Arguments:
+            model {DeepSensorModel} -- Trained model to use for proposing new context points.
+            X_s {Union[xr.Dataset, xr.DataArray} -- Search coordinates.
+            X_t {Union[xr.Dataset, xr.DataArray} -- Target coordinates.
+            X_s_mask {Union[xr.Dataset, xr.DataArray], optional} -- Mask for search coordinates.
+                If provided, only points where mask is True will be considered. Defaults to None.
+        """
         if not isinstance(model, DeepSensorModel):
             raise ValueError(
                 f"`model` must inherit from DeepSensorModel, but parent classes are {model.__class__.__bases__}"
@@ -117,8 +126,6 @@ class GreedyAlgorithm:
         if isinstance(X_s, (xr.Dataset, xr.DataArray)):
             X_s_arr = xarray_to_coord_array_normalised(X_s)
             if X_s_mask is not None:
-                # Why are there more values in X_s than X_s_mask?
-                # Probably because
                 X_s_arr = mask_coord_array_normalised(X_s_arr, self.X_s_mask)
         self.X_s_arr = X_s_arr
 
@@ -146,11 +153,11 @@ class GreedyAlgorithm:
         """Process masks by interpolating to X_s and X_t"""
         # TODO avoid repeated code
         if X_s_mask is not None:
-            X_s_mask = X_s_mask.interp_like(X_s, method="nearest", kwargs={"fill_value": 0})
+            X_s_mask = X_s_mask.astype(float).interp_like(X_s, method="nearest", kwargs={"fill_value": 0})
             X_s_mask.data = X_s_mask.data.astype(bool)
             X_s_mask.load()
         if X_t_mask is not None:
-            X_t_mask = X_t_mask.interp_like(X_t, method="nearest", kwargs={"fill_value": 0})
+            X_t_mask = X_t_mask.astype(float).interp_like(X_t, method="nearest", kwargs={"fill_value": 0})
             X_t_mask.data = X_t_mask.data.astype(bool)
             X_t_mask.load()
 
