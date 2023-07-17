@@ -1,4 +1,5 @@
 import copy
+import warnings
 from typing import Union, List
 
 import lab as B
@@ -346,7 +347,17 @@ class ConvNP(DeepSensorModel):
         -------
 
         """
+        # Remove NaNs from the target data if present
+        task, nans_present = remove_nans_from_task_Y_t_if_present(task)
+        # if nans_present:
+        #     TODO raise error like:
+        #     warnings.warn(
+        #         "NaNs present in the target data. These will be removed before evaluating the loss.",
+        #
+        #     )
+
         task = ConvNP.check_task(task)
+
         context_data, xt, yt, model_kwargs = convert_task_to_nps_args(task)
 
         logpdfs = backend.nps.loglik(
@@ -404,8 +415,8 @@ class ConvNP(DeepSensorModel):
         else:
             task_arsample = copy.deepcopy(task)
 
-        task = flatten_gridded_data(task)
-        task_arsample = flatten_gridded_data(task_arsample)
+        task = flatten_gridded_data_in_task(task)
+        task_arsample = flatten_gridded_data_in_task(task_arsample)
 
         task_arsample = ConvNP.check_task(task_arsample)
         task = ConvNP.check_task(task)
@@ -536,3 +547,33 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     merged_task = Task(merged_task)
 
     return merged_task
+
+
+def remove_nans_from_task_Y_t_if_present(task):
+    Y_t_nans_list = []
+    # First check whether there are any NaNs that we need to remove
+    for i, (X, Y) in enumerate(zip(task["X_t"], task["Y_t"])):
+        Y = flatten_Y(Y)
+        Y_t_nans = np.any(np.isnan(Y), axis=0)  # shape (n_targets,)
+        Y_t_nans_list.append(Y_t_nans)
+
+    nans_present = False
+    for Y_t_nans in Y_t_nans_list:
+        if B.any(Y_t_nans):
+            nans_present = True
+
+    if not nans_present:
+        return task, False
+
+    # NaNs present in task - make deep copy and remove NaNs
+    task = copy.deepcopy(task)
+    for i, (X, Y, Y_t_nans) in enumerate(zip(task["X_t"], task["Y_t"], Y_t_nans_list)):
+        if B.any(Y_t_nans):
+            if isinstance(X, tuple):
+                # Gridded data
+                X = flatten_X(X)
+                Y = flatten_Y(Y)
+            task["X_t"][i] = X[:, ~Y_t_nans]
+            task["Y_t"][i] = Y[:, ~Y_t_nans]
+
+    return task, True
