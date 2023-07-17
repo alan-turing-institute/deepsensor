@@ -1,8 +1,4 @@
-import copy
-
-import numpy
 import numpy as np
-import xarray
 
 import xarray as xr
 import pandas as pd
@@ -412,29 +408,6 @@ def mask_coord_array_normalised(coord_arr, mask_da):
         bool
     )  # Shape `coord_arr.shape[1]`, False if point is outside mask
     return coord_arr[:, mask_da]
-
-
-def flatten_gridded_data(task):
-    """Necessary for AR sampling, which doesn't yet permit gridded context sets"""
-    task_flattened = copy.deepcopy(task)
-
-    # Flatten context sets
-    def flatten_set(X, Y):
-        new_X = []
-        new_Y = []
-        for i, (x, y) in enumerate(zip(X, Y)):
-            if type(x) is tuple:
-                X1, X2 = np.meshgrid(x[0], x[1], indexing="ij")
-                x = np.stack([X1.ravel(), X2.ravel()], axis=0)
-                y = y.reshape(*y.shape[:-2], -1)
-            new_X.append(x)
-            new_Y.append(y)
-        return new_X, new_Y
-
-    task_flattened["X_c"], task_flattened["Y_c"] = flatten_set(task["X_c"], task["Y_c"])
-    task_flattened["X_t"], task_flattened["Y_t"] = flatten_set(task["X_t"], task["Y_t"])
-
-    return task_flattened
 
 
 def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:

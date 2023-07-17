@@ -1,5 +1,6 @@
 import deepsensor
 
+from typing import Union, Tuple
 import numpy as np
 import lab as B
 import plum
@@ -17,7 +18,8 @@ class Task(dict):
     def __init__(self, task_dict: dict) -> None:
         """Initialise a Task object.
 
-        :param task_dict: Dictionary containing the task information.
+        Args:
+            task_dict (dict): Dictionary containing the task.
         """
         super().__init__(task_dict)
 
@@ -151,3 +153,33 @@ def append_obs_to_task(
     )
 
     return task_with_new
+
+
+def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
+    """Convert tuple of gridded coords to (2, N) array if necessary"""
+    if type(X) is tuple:
+        X1, X2 = np.meshgrid(X[0], X[1], indexing="ij")
+        X = np.stack([X1.ravel(), X2.ravel()], axis=0)
+    return X
+
+
+def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
+    """Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2) array if necessary"""
+    if Y.ndim == 3:
+        Y = Y.reshape(*Y.shape[:-2], -1)
+    return Y
+
+
+def flatten_gridded_data_in_task(task: Task) -> Task:
+    """Convert any gridded data in `Task` to flattened arrays
+
+    Necessary for AR sampling, which doesn't yet permit gridded context sets
+    """
+    task_flattened = copy.deepcopy(task)
+
+    task_flattened["X_c"] = [flatten_X(X) for X in task["X_c"]]
+    task_flattened["Y_c"] = [flatten_Y(Y) for Y in task["Y_c"]]
+    task_flattened["X_t"] = [flatten_X(X) for X in task["X_t"]]
+    task_flattened["Y_t"] = [flatten_Y(Y) for Y in task["Y_t"]]
+
+    return task_flattened
