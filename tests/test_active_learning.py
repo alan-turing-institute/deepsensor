@@ -148,7 +148,7 @@ class TestActiveLearning(unittest.TestCase):
             )
 
     def test_acquisition_fns_run(self):
-        """Run each acquisition function to check that it runs without error"""
+        """Run each acquisition function to check that it runs and returns correct shape"""
         sequential_acquisition_fns = [
             MeanStddev(self.model),
             MeanVariance(self.model),
@@ -203,7 +203,43 @@ class TestActiveLearning(unittest.TestCase):
         for acquisition_fn in acquisition_fns:
             X_new_df, acquisition_fn_ds = alg(acquisition_fn, task)
 
-    def test_oracle_acquisition_fn_without_task_loader_raises_value_error(self):
+    def test_greedy_alg_with_oracle_acquisition_fn(self):
+        acquisition_fn = OracleMAE(self.model)
+
+        # Coarsen search points to speed up computation
+        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+
+        alg = GreedyAlgorithm(
+            model=self.model,
+            X_t=X_s,
+            X_s=X_s,
+            N_new_context=2,
+            task_loader=self.task_loader,
+        )
+
+        task = self.task_loader("2014-12-31", context_sampling=10)
+
+        _ = alg(acquisition_fn, task)
+
+    def test_greedy_alg_with_sequential_acquisition_fn(self):
+        acquisition_fn = Stddev(self.model)
+
+        # Coarsen search points to speed up computation
+        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+
+        alg = GreedyAlgorithm(
+            model=self.model,
+            X_t=X_s,
+            X_s=X_s,
+            N_new_context=2,
+            task_loader=self.task_loader,
+        )
+
+        task = self.task_loader("2014-12-31", context_sampling=10)
+
+        _ = alg(acquisition_fn, task)
+
+    def test_greedy_alg_with_oracle_acquisition_fn_without_task_loader_raises_value_error(self):
         acquisition_fn = OracleMAE(self.model)
 
         # Coarsen search points to speed up computation
