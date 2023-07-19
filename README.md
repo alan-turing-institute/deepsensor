@@ -19,6 +19,9 @@ data with neural processes</p>
 **NOTE**: This package is currently undergoing very active development. If you are interested in using
 DeepSensor, please get in touch first (tomand@bas.ac.uk).
 
+For demonstrators, use cases, and videos showcasing the functionality of DeepSensor, see the
+[DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_demos)!
+
 Why neural processes?
 -----------
 NPs are a highly flexible class of probabilistic models that can:
@@ -136,7 +139,7 @@ time       lat  lon
            40.0 250.0  278.444229
 ```
 
-This quickstart example is also available as a [Jupyter notebook](https://github.com/tom-andersson/deepsensor/blob/main/notebooks/quickstart_example.ipynb) with added visualisations.
+This quickstart example is also available as a [Jupyter notebook](https://github.com/tom-andersson/deepsensor_demos/blob/main/demonstrators/quickstart.ipynb) with added visualisations.
 
 Extending DeepSensor with new models
 ----------
@@ -162,15 +165,3 @@ class NewModel(DeepSensorModel):
 `NewModel` can then be used in the same way as the built-in `ConvNP` model.
 See [this Jupyter notebook](https://github.com/tom-andersson/deepsensor/blob/main/notebooks/extending_models.ipynb)
 for more details.
-
-Learn more
-----------
-- Documentation: TODO
-- Issue tracker: https://github.com/tom-andersson/deepsensor/issues
-- Source code: https://github.com/tom-andersson/deepsensor
-
-**Talks**
-- Environmental Sensor Placement with ConvGNPs: https://youtu.be/v0pmqh09u1Y
-
-**Papers**
-- TODO
