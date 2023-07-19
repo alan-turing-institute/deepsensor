@@ -15,6 +15,7 @@ data with neural processes</p>
 ![Tests](https://github.com/tom-andersson/deepsensor/actions/workflows/tests.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/tom-andersson/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/tom-andersson/deepsensor?branch=main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/tom-andersson/deepsensor/blob/main/LICENSE)
 
 **NOTE**: This package is currently undergoing very active development. If you are interested in using
 DeepSensor, please get in touch first (tomand@bas.ac.uk).
