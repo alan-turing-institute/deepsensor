@@ -239,7 +239,9 @@ class TestActiveLearning(unittest.TestCase):
 
         _ = alg(acquisition_fn, task)
 
-    def test_greedy_alg_with_oracle_acquisition_fn_without_task_loader_raises_value_error(self):
+    def test_greedy_alg_with_oracle_acquisition_fn_without_task_loader_raises_value_error(
+        self,
+    ):
         acquisition_fn = OracleMAE(self.model)
 
         # Coarsen search points to speed up computation
