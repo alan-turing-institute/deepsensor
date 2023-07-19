@@ -139,6 +139,15 @@ class ConvNP(DeepSensorModel):
             if verbose:
                 print(f"dim_yt inferred from TaskLoader: {dim_yt}")
             kwargs["dim_yt"] = dim_yt
+        if "dim_aux_t" not in kwargs:
+            dim_aux_t = task_loader.aux_at_target_dims
+            if verbose:
+                print(f"dim_aux_t inferred from TaskLoader: {dim_aux_t}")
+            kwargs["dim_aux_t"] = dim_aux_t
+        if "aux_t_mlp_layers" not in kwargs and kwargs["dim_aux_t"] > 0:
+            kwargs["aux_t_mlp_layers"] = (64,) * 3
+            if verbose:
+                print(f"Setting aux_t_mlp_layers: {kwargs['aux_t_mlp_layers']}")
         if "points_per_unit" not in kwargs:
             ppu = gen_ppu(task_loader)
             if verbose:
@@ -583,5 +592,7 @@ def remove_nans_from_task_Y_t_if_present(task):
                 Y = flatten_Y(Y)
             task["X_t"][i] = X[:, ~Y_t_nans]
             task["Y_t"][i] = Y[:, ~Y_t_nans]
+            if "Y_t_aux" in task.keys():
+                task["Y_t_aux"] = task["Y_t_aux"][:, ~Y_t_nans]
 
     return task, True

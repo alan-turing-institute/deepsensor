@@ -1,4 +1,4 @@
-from deepsensor.data.task import Task
+from deepsensor.data.task import Task, flatten_X
 
 import numpy as np
 import xarray as xr
@@ -24,6 +24,10 @@ class TaskLoader:
             pd.DataFrame,
             List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
         ],
+        aux_at_targets: Union[
+            xr.DataArray,
+            xr.Dataset,
+        ] = None,
         links: Union[Tuple, List[Tuple[int, int]], None] = None,
         context_delta_t: Union[int, List[int]] = 0,
         target_delta_t: Union[int, List[int]] = 0,
@@ -34,25 +38,28 @@ class TaskLoader:
     ) -> None:
         """Initialise a TaskLoader object
 
-        :param context: Context data. Can be a single xr.DataArray, xr.Dataset or pd.DataFrame,
-            or a list/tuple of these.
-        :param target: Target data. Can be a single xr.DataArray, xr.Dataset or pd.DataFrame,
-            or a list/tuple of these.
-        :param links: Specifies links between context and target data. Each link is a tuple of
-            two integers, where the first integer is the index of the context data and the second
-            integer is the index of the target data. Can be a single tuple in the case of a single
-            link. If None, no links are specified. Default: None.
-        :param context_delta_t: Time difference between context data and t=0 (task init time).
-            Can be a single int (same for all context data) or a list/tuple of ints.
-        :param target_delta_t: Time difference between target data and t=0 (task init time).
-            Can be a single int (same for all target data) or a list/tuple of ints.
-        :param time_freq: Time frequency of the data. Default: 'D' (daily).
-        :param xarray_interp_method: Interpolation method to use when interpolating xr.DataArray
-        :param discrete_xarray_sampling: When randomly sampling xarray variables, whether to sample
-            at discrete points defined at grid cell centres, or at continuous points within the grid.
-            Default is False.
-        :param dtype: Data type of the data. Used to cast the data to the specified dtype.
-            Default: 'float32'.
+        Args:
+            context: Context data. Can be a single xr.DataArray, xr.Dataset or pd.DataFrame,
+                or a list/tuple of these.
+            target: Target data. Can be a single xr.DataArray, xr.Dataset or pd.DataFrame,
+                or a list/tuple of these.
+            aux_at_targets: Auxiliary data at target locations. Can be a single xr.DataArray or
+                xr.Dataset. Default: None.
+            links: Specifies links between context and target data. Each link is a tuple of
+                two integers, where the first integer is the index of the context data and the second
+                integer is the index of the target data. Can be a single tuple in the case of a single
+                link. If None, no links are specified. Default: None.
+            context_delta_t: Time difference between context data and t=0 (task init time).
+                Can be a single int (same for all context data) or a list/tuple of ints.
+            target_delta_t: Time difference between target data and t=0 (task init time).
+                Can be a single int (same for all target data) or a list/tuple of ints.
+            time_freq: Time frequency of the data. Default: 'D' (daily).
+            xarray_interp_method: Interpolation method to use when interpolating xr.DataArray
+            discrete_xarray_sampling: When randomly sampling xarray variables, whether to sample
+                at discrete points defined at grid cell centres, or at continuous points within the grid.
+                Default is False.
+            dtype: Data type of the data. Used to cast the data to the specified dtype.
+                Default: 'float32'.
         """
         self.time_freq = time_freq
         self.xarray_interp_method = xarray_interp_method
@@ -63,9 +70,12 @@ class TaskLoader:
             context = (context,)
         if isinstance(target, (xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series)):
             target = (target,)
-        context, target = self.cast_context_and_target_to_dtype(context, target)
+        context, target, aux_at_targets = self._cast_context_and_target_to_dtype(
+            context, target, aux_at_targets
+        )
         self.context = context
         self.target = target
+        self.aux_at_targets = self._check_aux_at_targets(aux_at_targets)
 
         self.links = self.check_links(links)
 
@@ -80,16 +90,24 @@ class TaskLoader:
         self.context_delta_t = context_delta_t
         self.target_delta_t = target_delta_t
 
-        self.context_dims, self.target_dims = self.count_context_and_target_data_dims()
+        (
+            self.context_dims,
+            self.target_dims,
+            self.aux_at_target_dims,
+        ) = self.count_context_and_target_data_dims()
         (
             self.context_var_IDs,
             self.target_var_IDs,
             self.context_var_IDs_and_delta_t,
             self.target_var_IDs_and_delta_t,
+            self.aux_at_target_var_IDs,
         ) = self.infer_context_and_target_var_IDs()
 
-    def cast_context_and_target_to_dtype(
-        self, context: List, target: List
+    def _cast_context_and_target_to_dtype(
+        self,
+        context: List,
+        target: List,
+        aux_at_targets=None,
     ) -> (List, List):
         """Cast context and target data to the default dtype.
 
@@ -118,19 +136,31 @@ class TaskLoader:
 
         context = tuple([cast_to_dtype(var) for var in context])
         target = tuple([cast_to_dtype(var) for var in target])
+        if aux_at_targets is not None:
+            aux_at_targets = aux_at_targets.astype(self.dtype)
 
-        return context, target
+        return context, target, aux_at_targets
+
+    def _check_aux_at_targets(self, aux_at_targets):
+        if aux_at_targets is not None and "time" in aux_at_targets.coords:
+            raise ValueError(
+                "The auxiliary data at target locations should not have a time dimension."
+            )
+        return aux_at_targets
 
     def load_dask(self) -> None:
         """Load any `dask` data into memory"""
 
         def load(datasets):
+            if not isinstance(datasets, (tuple, list)):
+                datasets = [datasets]
             for i, var in enumerate(datasets):
                 if isinstance(var, (xr.DataArray, xr.Dataset)):
                     var = var.load()
 
         load(self.context)
         load(self.target)
+        load(self.aux_at_targets)
 
         return None
 
@@ -144,6 +174,9 @@ class TaskLoader:
         """
 
         def count_data_dims_of_tuple_of_sets(datasets):
+            if not isinstance(datasets, (tuple, list)):
+                datasets = [datasets]
+
             dims = []
             # Distinguish between xr.DataArray, xr.Dataset and pd.DataFrame
             for i, var in enumerate(datasets):
@@ -162,8 +195,14 @@ class TaskLoader:
 
         context_dims = count_data_dims_of_tuple_of_sets(self.context)
         target_dims = count_data_dims_of_tuple_of_sets(self.target)
+        if self.aux_at_targets is not None:
+            aux_at_target_dims = count_data_dims_of_tuple_of_sets(self.aux_at_targets)[
+                0
+            ]
+        else:
+            aux_at_target_dims = 0
 
-        return context_dims, target_dims
+        return context_dims, target_dims, aux_at_target_dims
 
     def infer_context_and_target_var_IDs(self):
         """Infer the variable IDs of the context and target data.
@@ -176,6 +215,9 @@ class TaskLoader:
 
         def infer_var_IDs_of_tuple_of_sets(datasets, delta_ts=None):
             """If delta_ts is not None, then add the delta_t to the variable ID"""
+            if not isinstance(datasets, (tuple, list)):
+                datasets = [datasets]
+
             var_IDs = []
             # Distinguish between xr.DataArray, xr.Dataset and pd.DataFrame
             for i, var in enumerate(datasets):
@@ -211,11 +253,19 @@ class TaskLoader:
             self.target, self.target_delta_t
         )
 
+        if self.aux_at_targets is not None:
+            aux_at_target_var_IDs = infer_var_IDs_of_tuple_of_sets(self.aux_at_targets)[
+                0
+            ]
+        else:
+            aux_at_target_var_IDs = None
+
         return (
             context_var_IDs,
             target_var_IDs,
             context_var_IDs_and_delta_t,
             target_var_IDs_and_delta_t,
+            aux_at_target_var_IDs,
         )
 
     def check_links(self, links):
@@ -256,6 +306,15 @@ class TaskLoader:
 
         return links
 
+    def __str__(self):
+        """String representation of the TaskLoader object (user-friendly)"""
+        s = f"TaskLoader({len(self.context)} context sets, {len(self.target)} target sets)"
+        s += f"\nContext variable IDs: {self.context_var_IDs}"
+        s += f"\nTarget variable IDs: {self.target_var_IDs}"
+        if self.aux_at_targets is not None:
+            s += f"\nAuxiliary data at targets: {self.aux_at_target_var_IDs}"
+        return s
+
     def __repr__(self):
         """Representation of the TaskLoader object (for developers)
 
@@ -266,13 +325,8 @@ class TaskLoader:
         s += f"\nTarget variable IDs: {self.target_var_IDs_and_delta_t}"
         s += f"\nContext data dimensions: {self.context_dims}"
         s += f"\nTarget data dimensions: {self.target_dims}"
-        return s
-
-    def __str__(self):
-        """String representation of the TaskLoader object (user-friendly)"""
-        s = f"TaskLoader({len(self.context)} context sets, {len(self.target)} target sets)"
-        s += f"\nContext variable IDs: {self.context_var_IDs}"
-        s += f"\nTarget variable IDs: {self.target_var_IDs}"
+        if self.aux_at_targets is not None:
+            s += f"\nAuxiliary data dimensions: {self.aux_at_target_dims}"
         return s
 
     def sample_da(
@@ -411,6 +465,22 @@ class TaskLoader:
             )
 
         return X_c, Y_c
+
+    def sample_aux_t(self, X_t: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]):
+        if isinstance(X_t, tuple):
+            xt1, xt2 = flatten_X(X_t)
+        else:
+            xt1, xt2 = X_t
+        Y_t_aux = self.aux_at_targets.sel(
+            x1=xr.DataArray(xt1),
+            x2=xr.DataArray(xt2),
+            method="nearest",
+            # kwargs=dict(fill_value=None, bounds_error=False),
+        )
+        if isinstance(Y_t_aux, xr.Dataset):
+            Y_t_aux = Y_t_aux.to_array()
+        Y_t_aux = np.array(Y_t_aux, dtype=np.float32)
+        return Y_t_aux
 
     def task_generation(
         self,
@@ -605,6 +675,14 @@ class TaskLoader:
             X_t, Y_t = sample_variable(var, sampling_strat, target_seed)
             task[f"X_t"].append(X_t)
             task[f"Y_t"].append(Y_t)
+
+        if self.aux_at_targets is not None:
+            # Add auxiliary variable to target set
+            if len(task["X_t"]) > 1:
+                raise ValueError(
+                    "Cannot add auxiliary variable to target set when there are multiple target variables"
+                )
+            task["Y_t_aux"] = self.sample_aux_t(task["X_t"][0])
 
         return Task(task)
 

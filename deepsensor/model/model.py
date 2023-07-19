@@ -1,6 +1,6 @@
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
-from deepsensor.data.task import Task
+from deepsensor.data.task import Task, flatten_X
 
 from typing import List, Union
 import copy
@@ -21,7 +21,6 @@ import lab as B
 def create_empty_spatiotemporal_xarray(
     X: Union[xr.Dataset, xr.DataArray],
     dates: List,
-    resolution_factor: Union[float, int] = 1.0,
     coord_names: dict = {"x1": "x1", "x2": "x2"},
     data_vars: List = ["var"],
     prepend_dims: List[str] = None,
@@ -39,31 +38,14 @@ def create_empty_spatiotemporal_xarray(
             "This would cause the xarray.Dataset to have fewer variables than expected."
         )
 
-    x1_raw = X.coords[coord_names["x1"]]
-    x2_raw = X.coords[coord_names["x2"]]
+    x1_predict = X.coords[coord_names["x1"]]
+    x2_predict = X.coords[coord_names["x2"]]
 
     # Assert uniform spacing
-    if not np.allclose(np.diff(x1_raw), np.diff(x1_raw)[0]):
+    if not np.allclose(np.diff(x1_predict), np.diff(x1_predict)[0]):
         raise ValueError(f"Coordinate {coord_names['x1']} must be uniformly spaced.")
-    if not np.allclose(np.diff(x2_raw), np.diff(x2_raw)[0]):
+    if not np.allclose(np.diff(x2_predict), np.diff(x2_predict)[0]):
         raise ValueError(f"Coordinate {coord_names['x2']} must be uniformly spaced.")
-
-    if resolution_factor == 1.0:
-        x1_predict = x1_raw
-        x2_predict = x2_raw
-    else:
-        x1_predict = np.linspace(
-            x1_raw[0],
-            x1_raw[-1],
-            int(x1_raw.size * resolution_factor),
-            dtype="float32",
-        )
-        x2_predict = np.linspace(
-            x2_raw[0],
-            x2_raw[-1],
-            int(x2_raw.size * resolution_factor),
-            dtype="float32",
-        )
 
     if len(prepend_dims) != len(set(prepend_dims)):
         # TODO unit test
@@ -92,6 +74,22 @@ def create_empty_spatiotemporal_xarray(
     #     time=pred_ds['time'] + pd.Timedelta(days=task_loader.target_delta_t[0]))
 
     return pred_ds
+
+
+def increase_spatial_resolution(
+    X_t_normalised, resolution_factor, coord_names: dict = {"x1": "x1", "x2": "x2"}
+):
+    # TODO wasteful to interpolate X_t_normalised
+    assert isinstance(resolution_factor, (float, int))
+    assert isinstance(X_t_normalised, (xr.DataArray, xr.Dataset))
+    x1_name, x2_name = coord_names["x1"], coord_names["x2"]
+    x1, x2 = X_t_normalised.coords[x1_name], X_t_normalised.coords[x2_name]
+    x1 = np.linspace(x1[0], x1[-1], int(x1.size * resolution_factor), dtype="float64")
+    x2 = np.linspace(x2[0], x2[-1], int(x2.size * resolution_factor), dtype="float64")
+    X_t_normalised = X_t_normalised.interp(
+        **{x1_name: x1, x2_name: x2}, method="nearest"
+    )
+    return X_t_normalised
 
 
 class ProbabilisticModel:
@@ -309,6 +307,11 @@ class DeepSensorModel(ProbabilisticModel):
             X_t_normalised = self.data_processor.map_coords(X_t)
 
         if mode == "on-grid":
+            if resolution_factor != 1:
+                X_t_normalised = increase_spatial_resolution(
+                    X_t_normalised, resolution_factor
+                )
+            # TODO rename from _arr because not an array here
             X_t_arr = (X_t_normalised["x1"].values, X_t_normalised["x2"].values)
         elif mode == "off-grid":
             X_t_arr = X_t_normalised.reset_index()[["x1", "x2"]].values.T
@@ -324,17 +327,19 @@ class DeepSensorModel(ProbabilisticModel):
 
         # Create empty xarray/pandas objects to store predictions
         if mode == "on-grid":
+            if resolution_factor != 1:
+                X_t = increase_spatial_resolution(
+                    X_t, resolution_factor, coord_names=coord_names
+                )
             mean = create_empty_spatiotemporal_xarray(
                 X_t,
                 dates,
-                resolution_factor,
                 data_vars=target_var_IDs,
                 coord_names=coord_names,
             ).to_array(dim="data_var")
             std = create_empty_spatiotemporal_xarray(
                 X_t,
                 dates,
-                resolution_factor,
                 data_vars=target_var_IDs,
                 coord_names=coord_names,
             ).to_array(dim="data_var")
@@ -342,7 +347,6 @@ class DeepSensorModel(ProbabilisticModel):
                 samples = create_empty_spatiotemporal_xarray(
                     X_t,
                     dates,
-                    resolution_factor,
                     data_vars=target_var_IDs,
                     coord_names=coord_names,
                     prepend_dims=["sample"],
@@ -384,6 +388,18 @@ class DeepSensorModel(ProbabilisticModel):
 
         for task in tqdm(tasks, position=0, disable=progress_bar < 1, leave=True):
             task["X_t"] = [X_t_arr for _ in range(len(task["X_t"]))]
+
+            # If passing auxiliary data, need to sample at target locations and temporarily
+            # run model in off-grid mode
+            # TODO: This is specific to the ConvNP. Should be moved to ConvNP functionality.
+            undo_regrid = False
+            if "Y_t_aux" in task.keys():
+                if mode == "on-grid":
+                    undo_regrid = True
+                    gridded_shape = (len(X_t_arr[0]), len(X_t_arr[1]))
+                    task["X_t"] = [flatten_X(X_t_arr) for _ in range(len(task["X_t"]))]
+                task["Y_t_aux"] = self.task_loader.sample_aux_t(X_t_arr)
+            print(task)
 
             # If `DeepSensor` model child has been sub-classed with a `__call__` method,
             # we assume this is a distribution-like object that can be used to compute
@@ -428,6 +444,12 @@ class DeepSensorModel(ProbabilisticModel):
                 std_arr = np.concatenate(std_arr, axis=0)
                 if n_samples >= 1:
                     samples_arr = np.concatenate(samples_arr, axis=0)
+
+            if undo_regrid:
+                mean_arr = mean_arr.reshape(-1, *gridded_shape)
+                std_arr = std_arr.reshape(-1, *gridded_shape)
+                if n_samples >= 1:
+                    samples_arr = samples_arr.reshape(-1, *mean_arr.shape)
 
             if unnormalise:
                 mean_arr = unnormalise_pred_array(mean_arr)

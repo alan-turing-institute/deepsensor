@@ -30,8 +30,8 @@ def convert_task_to_nps_args(task: Task):
         )
 
     model_kwargs = {}
-    if "Y_target_auxiliary" in task.keys():
-        model_kwargs["aux_t"] = task["Y_target_auxiliary"]
+    if "Y_t_aux" in task.keys():
+        model_kwargs["aux_t"] = task["Y_t_aux"]
 
     return context_data, xt, yt, model_kwargs
 
