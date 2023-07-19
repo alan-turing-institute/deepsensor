@@ -110,14 +110,13 @@ class GreedyAlgorithm:
 
         # Convert target coords to numpy arrays and assign to tasks
         if isinstance(X_t, (xr.Dataset, xr.DataArray)):
-            if self.X_t_mask is None:
-                # Targets on grid
-                self.X_t_arr = (X_t["x1"].values, X_t["x2"].values)
-            else:
+            # Targets on grid
+            self.X_t_arr = xarray_to_coord_array_normalised(X_t)
+            if self.X_t_mask is not None:
                 # Remove points that lie outside the mask
-                X_t_arr_all = xarray_to_coord_array_normalised(X_t)
-                self.X_t_arr = mask_coord_array_normalised(X_t_arr_all, self.X_t_mask)
+                self.X_t_arr = mask_coord_array_normalised(self.X_t_arr, self.X_t_mask)
         elif isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index)):
+            # Targets off-grid
             self.X_t_arr = X_t.reset_index()[["x1", "x2"]].values.T
         else:
             raise TypeError(f"Unsupported type for X_t: {type(X_t)}")
