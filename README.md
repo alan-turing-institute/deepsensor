@@ -20,8 +20,8 @@ data with neural processes</p>
 **NOTE**: This package is currently undergoing very active development. If you are interested in using
 DeepSensor, please get in touch first (tomand@bas.ac.uk).
 
-For demonstrators, use cases, and videos showcasing the functionality of DeepSensor, see the
-[DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_demos)!
+For demonstrators, use cases, and videos showcasing the functionality of DeepSensor, check out the
+[DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_gallery)!
 
 Why neural processes?
 -----------
