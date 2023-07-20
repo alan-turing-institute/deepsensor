@@ -389,15 +389,8 @@ class DeepSensorModel(ProbabilisticModel):
         for task in tqdm(tasks, position=0, disable=progress_bar < 1, leave=True):
             task["X_t"] = [X_t_arr for _ in range(len(task["X_t"]))]
 
-            # If passing auxiliary data, need to sample at target locations and temporarily
-            # run model in off-grid mode
-            # TODO: This is specific to the ConvNP. Should be moved to ConvNP functionality.
-            undo_regrid = False
+            # If passing auxiliary data, need to sample it at target locations
             if "Y_t_aux" in task.keys():
-                if mode == "on-grid":
-                    undo_regrid = True
-                    gridded_shape = (len(X_t_arr[0]), len(X_t_arr[1]))
-                    task["X_t"] = [flatten_X(X_t_arr) for _ in range(len(task["X_t"]))]
                 task["Y_t_aux"] = self.task_loader.sample_aux_t(X_t_arr)
             print(task)
 
@@ -444,12 +437,6 @@ class DeepSensorModel(ProbabilisticModel):
                 std_arr = np.concatenate(std_arr, axis=0)
                 if n_samples >= 1:
                     samples_arr = np.concatenate(samples_arr, axis=0)
-
-            if undo_regrid:
-                mean_arr = mean_arr.reshape(-1, *gridded_shape)
-                std_arr = std_arr.reshape(-1, *gridded_shape)
-                if n_samples >= 1:
-                    samples_arr = samples_arr.reshape(-1, *mean_arr.shape)
 
             if unnormalise:
                 mean_arr = unnormalise_pred_array(mean_arr)

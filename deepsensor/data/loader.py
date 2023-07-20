@@ -468,15 +468,10 @@ class TaskLoader:
 
     def sample_aux_t(self, X_t: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]):
         if isinstance(X_t, tuple):
-            xt1, xt2 = flatten_X(X_t)
-        else:
             xt1, xt2 = X_t
-        Y_t_aux = self.aux_at_targets.sel(
-            x1=xr.DataArray(xt1),
-            x2=xr.DataArray(xt2),
-            method="nearest",
-            # kwargs=dict(fill_value=None, bounds_error=False),
-        )
+        else:
+            xt1, xt2 = xr.DataArray(X_t[0]), xr.DataArray(X_t[1])
+        Y_t_aux = self.aux_at_targets.sel(x1=xt1, x2=xt2, method="nearest")
         if isinstance(Y_t_aux, xr.Dataset):
             Y_t_aux = Y_t_aux.to_array()
         Y_t_aux = np.array(Y_t_aux, dtype=np.float32)
