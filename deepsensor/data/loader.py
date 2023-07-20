@@ -320,9 +320,7 @@ class TaskLoader:
 
         TODO make this a more verbose version of __str__
         """
-        s = f"TaskLoader({len(self.context)} context sets, {len(self.target)} target sets)"
-        s += f"\nContext variable IDs: {self.context_var_IDs_and_delta_t}"
-        s += f"\nTarget variable IDs: {self.target_var_IDs_and_delta_t}"
+        s = str(self)
         s += f"\nContext data dimensions: {self.context_dims}"
         s += f"\nTarget data dimensions: {self.target_dims}"
         if self.aux_at_targets is not None:
@@ -475,6 +473,10 @@ class TaskLoader:
         if isinstance(Y_t_aux, xr.Dataset):
             Y_t_aux = Y_t_aux.to_array()
         Y_t_aux = np.array(Y_t_aux, dtype=np.float32)
+        if (isinstance(X_t, tuple) and Y_t_aux.ndim == 2) or (
+            isinstance(X_t, np.ndarray) and Y_t_aux.ndim == 1):
+            # Reshape to (variable, *spatial_dims)
+            Y_t_aux = Y_t_aux.reshape(1, *Y_t_aux.shape)
         return Y_t_aux
 
     def task_generation(
