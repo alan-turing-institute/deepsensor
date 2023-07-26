@@ -164,5 +164,5 @@ class NewModel(DeepSensorModel):
     ...
 ```
 `NewModel` can then be used in the same way as the built-in `ConvNP` model.
-See [this Jupyter notebook](https://github.com/tom-andersson/deepsensor/blob/main/notebooks/extending_models.ipynb)
+See [this Jupyter notebook](https://github.com/tom-andersson/deepsensor_gallery/blob/main/demonstrators/extending_models.ipynb)
 for more details.
