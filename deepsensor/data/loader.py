@@ -474,7 +474,8 @@ class TaskLoader:
             Y_t_aux = Y_t_aux.to_array()
         Y_t_aux = np.array(Y_t_aux, dtype=np.float32)
         if (isinstance(X_t, tuple) and Y_t_aux.ndim == 2) or (
-            isinstance(X_t, np.ndarray) and Y_t_aux.ndim == 1):
+            isinstance(X_t, np.ndarray) and Y_t_aux.ndim == 1
+        ):
             # Reshape to (variable, *spatial_dims)
             Y_t_aux = Y_t_aux.reshape(1, *Y_t_aux.shape)
         return Y_t_aux
