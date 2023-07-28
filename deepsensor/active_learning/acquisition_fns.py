@@ -21,6 +21,7 @@ class AcquisitionFunction:
                 the acquisition function.
         """
         self.model = model
+        self.min_or_max = -1
 
     def __call__(self, task: Task):
         """
@@ -57,12 +58,20 @@ class AcquisitionFunctionParallel(AcquisitionFunction):
 class MeanStddev(AcquisitionFunction):
     """Mean of the marginal variances."""
 
+    def __init__(self, model: ProbabilisticModel):
+        super().__init__(model)
+        self.min_or_max = "min"
+
     def __call__(self, task, target_set_idx=0):
         return np.mean(self.model.stddev(task)[target_set_idx])
 
 
 class MeanVariance(AcquisitionFunction):
     """Mean of the marginal variances."""
+
+    def __init__(self, model: ProbabilisticModel):
+        super().__init__(model)
+        self.min_or_max = "min"
 
     def __call__(self, task, target_set_idx=0):
         return np.mean(self.model.variance(task)[target_set_idx])
@@ -74,6 +83,7 @@ class pNormStddev(AcquisitionFunction):
     def __init__(self, *args, p=1, **kwargs):
         super().__init__(*args, **kwargs)
         self.p = p
+        self.min_or_max = "min"
 
     def __call__(self, task, target_set_idx=0):
         return np.linalg.norm(
@@ -84,6 +94,10 @@ class pNormStddev(AcquisitionFunction):
 class MeanMarginalEntropy(AcquisitionFunction):
     """Mean of the entropies of the marginal predictive distributions."""
 
+    def __init__(self, model: ProbabilisticModel):
+        super().__init__(model)
+        self.min_or_max = "min"
+
     def __call__(self, task):
         marginal_entropy = self.model.mean_marginal_entropy(task)
         return marginal_entropy
@@ -92,12 +106,20 @@ class MeanMarginalEntropy(AcquisitionFunction):
 class JointEntropy(AcquisitionFunction):
     """Joint entropy of the predictive distribution."""
 
+    def __init__(self, model: ProbabilisticModel):
+        super().__init__(model)
+        self.min_or_max = "min"
+
     def __call__(self, task):
         return self.model.joint_entropy(task)
 
 
 class OracleMAE(AcquisitionFunctionOracle):
     """Oracle mean absolute error."""
+
+    def __init__(self, model: ProbabilisticModel):
+        super().__init__(model)
+        self.min_or_max = "min"
 
     def __call__(self, task):
         pred = self.model.mean(task)
@@ -108,6 +130,10 @@ class OracleMAE(AcquisitionFunctionOracle):
 class OracleRMSE(AcquisitionFunctionOracle):
     """Oracle root mean squared error."""
 
+    def __init__(self, model: ProbabilisticModel):
+        super().__init__(model)
+        self.min_or_max = "min"
+
     def __call__(self, task):
         pred = self.model.mean(task)
         true = task["Y_t"]
@@ -116,6 +142,10 @@ class OracleRMSE(AcquisitionFunctionOracle):
 
 class OracleMarginalNLL(AcquisitionFunctionOracle):
     """Oracle marginal negative log-likelihood."""
+
+    def __init__(self, model: ProbabilisticModel):
+        super().__init__(model)
+        self.min_or_max = "min"
 
     def __call__(self, task):
         pred = self.model.mean(task)
@@ -126,6 +156,10 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
 class OracleJointNLL(AcquisitionFunctionOracle):
     """Oracle joint negative log-likelihood."""
 
+    def __init__(self, model: ProbabilisticModel):
+        super().__init__(model)
+        self.min_or_max = "min"
+
     def __call__(self, task):
         return -self.model.logpdf(task)
 
@@ -135,6 +169,7 @@ class Random(AcquisitionFunctionParallel):
 
     def __init__(self, seed: int = 42):
         self.rng = np.random.default_rng(seed)
+        self.min_or_max = "max"
 
     def __call__(self, task, X_s):
         return self.rng.random(X_s.shape[1])
@@ -143,8 +178,9 @@ class Random(AcquisitionFunctionParallel):
 class ContextDist(AcquisitionFunctionParallel):
     """Distance to closest context point."""
 
-    def __init__(self, context_set_idx):
-        self.context_set_idx = context_set_idx
+    def __init__(self, model: ProbabilisticModel):
+        super().__init__(model)
+        self.min_or_max = "max"
 
     def __call__(self, task, X_s):
         X_c = task["X_c"][self.context_set_idx]
@@ -169,6 +205,10 @@ class ContextDist(AcquisitionFunctionParallel):
 class Stddev(AcquisitionFunctionParallel):
     """Random acquisition function."""
 
+    def __init__(self, model: ProbabilisticModel):
+        super().__init__(model)
+        self.min_or_max = "min"
+
     def __call__(self, task, X_s, target_set_idx=0):
         # Set the target points to the search points
         task = copy.deepcopy(task)
@@ -192,6 +232,7 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         """
         super().__init__(model)
         self.context_set_idx = context_set_idx
+        self.min_or_max = "max"
 
     def __call__(self, task: Task, X_s: np.ndarray, target_set_idx: int = 0):
         """

@@ -398,7 +398,6 @@ class GreedyAlgorithm:
         self,
         acquisition_fn: AcquisitionFunction,
         tasks: Union[List[Task], Task],
-        min_or_max: str = "min",
     ) -> Tuple[pd.DataFrame, xr.Dataset]:  # TODO is this correct use of typing?
         """
         Iteratively... docstring TODO
@@ -414,7 +413,7 @@ class GreedyAlgorithm:
                 "AcquisitionFunctionOracle requires a task_loader function to be passed to the GreedyOptimal constructor."
             )
 
-        self.min_or_max = min_or_max
+        self.min_or_max = acquisition_fn.min_or_max
 
         if isinstance(tasks, Task):
             tasks = [tasks]
