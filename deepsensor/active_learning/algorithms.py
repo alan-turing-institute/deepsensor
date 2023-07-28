@@ -414,6 +414,10 @@ class GreedyAlgorithm:
             )
 
         self.min_or_max = acquisition_fn.min_or_max
+        if self.min_or_max not in ["min", "max"]:
+            raise ValueError(
+                f"min_or_max must be either 'min' or 'max', got {self.min_or_max}."
+            )
 
         if isinstance(tasks, Task):
             tasks = [tasks]
