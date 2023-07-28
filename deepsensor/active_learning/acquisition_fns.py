@@ -178,8 +178,8 @@ class Random(AcquisitionFunctionParallel):
 class ContextDist(AcquisitionFunctionParallel):
     """Distance to closest context point."""
 
-    def __init__(self, model: ProbabilisticModel):
-        super().__init__(model)
+    def __init__(self, context_set_idx: int = 0):
+        self.context_set_idx = context_set_idx
         self.min_or_max = "max"
 
     def __call__(self, task, X_s):
@@ -207,7 +207,7 @@ class Stddev(AcquisitionFunctionParallel):
 
     def __init__(self, model: ProbabilisticModel):
         super().__init__(model)
-        self.min_or_max = "min"
+        self.min_or_max = "max"
 
     def __call__(self, task, X_s, target_set_idx=0):
         # Set the target points to the search points
