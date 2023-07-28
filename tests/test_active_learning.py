@@ -15,7 +15,8 @@ from deepsensor.active_learning.acquisition_fns import (
     OracleMAE,
     OracleRMSE,
     OracleMarginalNLL,
-    OracleJointNLL, AcquisitionFunction,
+    OracleJointNLL,
+    AcquisitionFunction,
 )
 from deepsensor.active_learning.algorithms import GreedyAlgorithm
 
@@ -264,6 +265,7 @@ class TestActiveLearning(unittest.TestCase):
     ):
         class DummyAcquisitionFn(AcquisitionFunction):
             """Dummy acquisition function that doesn't set min or max"""
+
             def __call__(self, **kwargs):
                 return np.zeros(1)
 
