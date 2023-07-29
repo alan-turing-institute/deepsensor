@@ -504,36 +504,49 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
         return tasks[0]
 
     # Assert number of target sets equal
-    n_targets = [len(task["Y_t"]) for task in tasks]
-    if not all([n == n_targets[0] for n in n_targets]):
+    n_target_sets = [len(task["Y_t"]) for task in tasks]
+    if not all([n == n_target_sets[0] for n in n_target_sets]):
         raise ValueError(
-            f"All tasks must have the same number of target sets to concatenate: got {n_targets}. "
+            f"All tasks must have the same number of target sets to concatenate: got {n_target_sets}. "
         )
+    n_target_sets = n_target_sets[0]
 
-    # For each target set, determine number of targets in each task and raise error if not all equal
-    for target_set_i in range(len(tasks[0]["Y_t"])):
-        n_target_obs = [task["Y_t"][target_set_i].shape[-1] for task in tasks]
+    for target_set_i in range(n_target_sets):
+        # Raise error if target sets have different numbers of targets across tasks
+        n_target_obs = [task["Y_t"][target_set_i].size for task in tasks]
         if not all([n == n_target_obs[0] for n in n_target_obs]):
             raise ValueError(
-                f"All tasks must have the same number of targets to concatenate: got {n_targets}. "
+                f"All tasks must have the same number of targets to concatenate: got {n_target_sets}. "
                 "If you want to train using batches containing tasks with differing numbers of targets, "
                 "you can run the model individually over each task and average the losses."
             )
 
+        # Raise error if target sets are different types (gridded/non-gridded) across tasks
+        if isinstance(tasks[0]["X_t"][target_set_i], tuple):
+            for task in tasks:
+                if not isinstance(task["X_t"][target_set_i], tuple):
+                    raise ValueError(
+                        "All tasks must have the same type of target set (gridded or non-gridded) "
+                        f"to concatenate. For target set {target_set_i}, got {type(task['X_t'][target_set_i])}."
+                    )
+
+    # For each task, store list of tuples of (x_c, y_c) (one tuple per context set)
     contexts = []
     for i, task in enumerate(tasks):
         # Ensure converted to tensors with batch dims
         task = ConvNP.modify_task(task)
         tasks[i] = task
 
-        # List of tuples of (x_c, y_c)
-        context_i = list(zip(task["X_c"], task["Y_c"]))
-        contexts.append(context_i)
+        contexts_i = list(zip(task["X_c"], task["Y_c"]))
+        contexts.append(contexts_i)
 
-    # List of tuples of merged (x_c, y_c) along batch dim with padding (w/ multiple=1000)
+    # List of tuples of merged (x_c, y_c) along batch dim with padding
+    # (up to the smallest multiple of `multiple` greater than the number of contexts in each task)
     merged_context = [
-        backend.nps.merge_contexts(*[ci for ci in c], multiple=multiple)
-        for c in zip(*contexts)
+        backend.nps.merge_contexts(
+            *[context_set for context_set in contexts_i], multiple=multiple
+        )
+        for contexts_i in zip(*contexts)
     ]
 
     merged_task = copy.deepcopy(tasks[0])
@@ -543,19 +556,17 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     merged_task["Y_c"] = [c[1] for c in merged_context]
 
     # This assumes that all tasks have the same number of targets
-    merged_task["X_t"] = [
-        B.concat(*[t["X_t"][i] for t in tasks], axis=0)
-        for i in range(len(tasks[0]["X_t"]))
-    ]
-    merged_task["Y_t"] = [
-        B.concat(*[t["Y_t"][i] for t in tasks], axis=0)
-        for i in range(len(tasks[0]["Y_t"]))
-    ]
-    # # Multiple target sets, different target locations
-    # xts = [task["X_t"] for task in tasks]
-    # yts = [task["Y_t"] for task in tasks]
-    # merged_task["X_t"] = backend.nps.AggregateInput(*[(xt, i) for i, xt in enumerate(xts)])
-    # merged_task["Y_t"] = backend.nps.Aggregate(*yts)
+    for i in range(n_target_sets):
+        if isinstance(tasks[0]["X_t"][i], tuple):
+            # Target set is gridded with tuple of coords for `X_t`
+            merged_task["X_t"][i] = (
+                B.concat(*[t["X_t"][i][0] for t in tasks], axis=0),
+                B.concat(*[t["X_t"][i][1] for t in tasks], axis=0),
+            )
+        else:
+            # Target set is off-the-grid with tensor for `X_t`
+            merged_task["X_t"][i] = B.concat(*[t["X_t"][i] for t in tasks], axis=0)
+        merged_task["Y_t"][i] = B.concat(*[t["Y_t"][i] for t in tasks], axis=0)
 
     merged_task["time"] = [t["time"] for t in tasks]
 
