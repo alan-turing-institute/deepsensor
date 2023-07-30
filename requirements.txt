@@ -4,7 +4,7 @@ xarray
 numpy
 dask
 distributed
-neuralprocesses
+neuralprocesses>=0.2.2
 tensorflow
 tensorflow_probability
 torch>=2
