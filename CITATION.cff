@@ -1,0 +1,42 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: DeepSensor
+message: >-
+  If you use DeepSensor in your research, please cite it
+  using the information below.
+type: software
+authors:
+  - given-names: Tom Robin
+    family-names: Andersson
+    email: tomandersson3@gmail.com
+    affiliation: British Antarctic Survey
+    orcid: 'https://orcid.org/0000-0002-1556-9932'
+repository-code: 'https://github.com/tom-andersson/deepsensor'
+abstract: >-
+  DeepSensor is a Python package for modelling environmental
+  data with convolutional neural processes (ConvNPs).
+  ConvNPs are versatile deep learning models capable of
+  ingesting multiple environmental data streams of varying
+  modalities and resolutions, handling missing data, and
+  predicting at arbitrary target locations with uncertainty.
+  DeepSensor allows users to tackle a diverse array of
+  environmental prediction tasks, including downscaling
+  (super-resolution), sensor placement, gap-filling, and
+  forecasting. The library includes a user-friendly
+  pandas/xarray interface, automatic unnormalisation of
+  model predictions, active learning functionality,
+  integration with both PyTorch and TensorFlow, and model
+  customisation. DeepSensor streamlines and simplifies the
+  environmental data modelling pipeline, enabling
+  researchers and practitioners to harness the potential of
+  ConvNPs for complex environmental prediction challenges.
+keywords:
+  - machine learning
+  - environmental science
+  - neural processes
+  - active learning
+license: MIT
+version: 0.1.7
+date-released: '2023-07-28'
