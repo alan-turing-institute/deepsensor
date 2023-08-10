@@ -425,18 +425,21 @@ class GreedyAlgorithm:
         # Make deepcopys so that original tasks are not modified
         tasks = copy.deepcopy(tasks)
 
-        # Add target set to tasks
-        for i, task in enumerate(tasks):
-            tasks[i]["X_t"][self.target_set_idx] = self.X_t_arr
-            if isinstance(acquisition_fn, AcquisitionFunctionOracle):
-                # Sample ground truth y-values at target points `self.X_t_arr` using `self.task_loader`
-                date = tasks[i]["time"]
-                task_with_Y_t = self.task_loader(
-                    date, context_sampling=0, target_sampling=self.X_t_arr
-                )
-                tasks[i]["Y_t"] = task_with_Y_t["Y_t"]
+        # Add target set to tasks 
+        for i, task in enumerate(tasks): 
+            tasks[i]["X_t"][self.target_set_idx] = self.X_t_arr 
+            if isinstance(acquisition_fn, AcquisitionFunctionOracle): 
+                # Sample ground truth y-values at target points `self.X_t_arr` using `self.task_loader` 
+                date = tasks[i]["time"] 
+                task_with_Y_t = self.task_loader(date, context_sampling=0, target_sampling=self.X_t_arr) 
+                tasks[i]["Y_t"] = task_with_Y_t["Y_t"] 
 
-        self.tasks = tasks
+            if self.task_loader is not None and self.task_loader.aux_at_target_dims > 0:
+                tasks[i]["Y_t_aux"] = self.task_loader.sample_aux_t(self.X_t_arr)
+            elif "Y_t_aux" in tasks[i] and self.task_loader is None:
+                raise ValueError("Model expects Y_t_aux data but a TaskLoader isn't provided to GreedyAlgorithm.")
+
+        self.tasks = tasks 
 
         # Generate infill values at search points if not overridden
         if self.query_infill is None or self.proposed_infill is None:
