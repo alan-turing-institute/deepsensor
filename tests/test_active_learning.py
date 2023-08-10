@@ -43,14 +43,13 @@ class TestConcatTasks(unittest.TestCase):
             x2_map=(ds_raw["lon"].min(), ds_raw["lon"].max()),
         )
         ds = self.data_processor(ds_raw)
-        self.task_loader = TaskLoader(ds, ds)
+        self.task_loader = TaskLoader(context=ds, target=ds)
         self.model = ConvNP(
             self.data_processor,
             self.task_loader,
             unet_channels=(5, 5, 5),
             verbose=False,
         )
-        self.task = self.task_loader("2014-12-31")
 
     def test_concat_obs_to_task_shapes(self):
         ctx_idx = 0  # Context set index to add new observations to
@@ -112,6 +111,7 @@ class TestConcatTasks(unittest.TestCase):
 class TestActiveLearning(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         # It's safe to share data between tests because the TaskLoader does not modify data
         ds_raw = xr.tutorial.open_dataset("air_temperature")
         self.ds_raw = ds_raw
@@ -121,15 +121,26 @@ class TestActiveLearning(unittest.TestCase):
             x1_map=(ds_raw["lat"].min(), ds_raw["lat"].max()),
             x2_map=(ds_raw["lon"].min(), ds_raw["lon"].max()),
         )
-        ds = self.data_processor(ds_raw)
-        self.task_loader = TaskLoader(ds, ds)
+        self.ds = self.data_processor(ds_raw)
+        self.task_loader = TaskLoader(context=self.ds, target=self.ds)
         self.model = ConvNP(
             self.data_processor,
             self.task_loader,
             unet_channels=(5, 5, 5),
             verbose=False,
         )
-        self.task = self.task_loader("2014-12-31")
+
+        # Set up model with aux-at-target data
+        aux_at_targets = self.ds.isel(time=0).drop_vars("time")
+        self.task_loader_with_aux = TaskLoader(
+            context=self.ds, target=self.ds, aux_at_targets=aux_at_targets
+        )
+        self.model_with_aux = ConvNP(
+            self.data_processor,
+            self.task_loader_with_aux,
+            unet_channels=(5, 5, 5),
+            verbose=False,
+        )
 
     def test_wrong_n_new_sensors(self):
         with self.assertRaises(ValueError):
@@ -204,6 +215,30 @@ class TestActiveLearning(unittest.TestCase):
         for acquisition_fn in acquisition_fns:
             X_new_df, acquisition_fn_ds = alg(acquisition_fn, task)
 
+    def test_greedy_alg_with_aux_at_targets(self):
+        """Run the greedy algorithm to check that it runs without error"""
+        # Both a sequential and parallel acquisition function
+        acquisition_fns = [
+            MeanStddev(self.model_with_aux),
+            Stddev(self.model_with_aux),
+        ]
+
+        # Coarsen search points to speed up computation
+        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+
+        alg = GreedyAlgorithm(
+            model=self.model_with_aux,
+            X_t=X_s,
+            X_s=X_s,
+            N_new_context=2,
+            task_loader=self.task_loader_with_aux,
+        )
+
+        task = self.task_loader_with_aux("2014-12-31", context_sampling=10)
+
+        for acquisition_fn in acquisition_fns:
+            X_new_df, acquisition_fn_ds = alg(acquisition_fn, task)
+
     def test_greedy_alg_with_oracle_acquisition_fn(self):
         acquisition_fn = OracleMAE(self.model)
 
@@ -225,20 +260,39 @@ class TestActiveLearning(unittest.TestCase):
     def test_greedy_alg_with_sequential_acquisition_fn(self):
         acquisition_fn = Stddev(self.model)
 
-        # Coarsen search points to speed up computation
-        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+        X_s = self.ds_raw.air
 
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
             X_s=X_s,
-            N_new_context=2,
+            N_new_context=1,
             task_loader=self.task_loader,
         )
 
         task = self.task_loader("2014-12-31", context_sampling=10)
 
         _ = alg(acquisition_fn, task)
+
+    def test_greedy_alg_with_aux_at_targets_without_task_loader_raises_value_error(
+        self,
+    ):
+        acquisition_fn = MeanStddev(self.model)
+
+        X_s = self.ds_raw.air
+
+        alg = GreedyAlgorithm(
+            model=self.model_with_aux,
+            X_t=X_s,
+            X_s=X_s,
+            N_new_context=1,
+            task_loader=None,  # don't pass task_loader (to raise error)
+        )
+
+        task = self.task_loader_with_aux("2014-12-31", context_sampling=10)
+
+        with self.assertRaises(ValueError):
+            _ = alg(acquisition_fn, task)
 
     def test_greedy_alg_with_oracle_acquisition_fn_without_task_loader_raises_value_error(
         self,
@@ -253,6 +307,7 @@ class TestActiveLearning(unittest.TestCase):
             X_t=X_s,
             X_s=X_s,
             N_new_context=2,
+            task_loader=None,  # don't pass task_loader (to raise error)
         )
 
         task = self.task_loader("2014-12-31", context_sampling=10)

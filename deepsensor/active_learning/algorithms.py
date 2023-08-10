@@ -436,6 +436,13 @@ class GreedyAlgorithm:
                 )
                 tasks[i]["Y_t"] = task_with_Y_t["Y_t"]
 
+            if self.task_loader is not None and self.task_loader.aux_at_target_dims > 0:
+                tasks[i]["Y_t_aux"] = self.task_loader.sample_aux_t(self.X_t_arr)
+            elif "Y_t_aux" in tasks[i] and self.task_loader is None:
+                raise ValueError(
+                    "Model expects Y_t_aux data but a TaskLoader isn't provided to GreedyAlgorithm."
+                )
+
         self.tasks = tasks
 
         # Generate infill values at search points if not overridden

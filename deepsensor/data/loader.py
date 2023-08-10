@@ -142,7 +142,7 @@ class TaskLoader:
         return context, target, aux_at_targets
 
     def _check_aux_at_targets(self, aux_at_targets):
-        if aux_at_targets is not None and "time" in aux_at_targets.coords:
+        if aux_at_targets is not None and "time" in aux_at_targets.dims:
             raise ValueError(
                 "The auxiliary data at target locations should not have a time dimension."
             )
@@ -467,6 +467,8 @@ class TaskLoader:
     def sample_aux_t(self, X_t: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]):
         if isinstance(X_t, tuple):
             xt1, xt2 = X_t
+            xt1 = xt1.ravel()
+            xt2 = xt2.ravel()
         else:
             xt1, xt2 = xr.DataArray(X_t[0]), xr.DataArray(X_t[1])
         Y_t_aux = self.aux_at_targets.sel(x1=xt1, x2=xt2, method="nearest")
