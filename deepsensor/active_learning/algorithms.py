@@ -197,13 +197,6 @@ class GreedyAlgorithm:
         Also adds a sample dimension to the context station observations, which will
         be looped over for MCMC sampling of the acquisition function importance
         values of the placement criterion.
-
-        TODO
-        - update name
-        - double-check this, but I think the way this works is to run the model forwards once
-        over all possible placement locations, for efficiency. the infill values are then only
-        passed back in to the model at the chosen placement locations in the order of greedy
-        placement.  - Yes this is correct. TODO integrate in docstring.
         """
         if self.model_infill_method == "mean":
             infill_ds, _ = self.model.predict(
@@ -382,7 +375,6 @@ class GreedyAlgorithm:
         best_x_query = self._select_best(importances, self.X_s_arr)
 
         self.X_new.append(best_x_query)
-        self.iteration += 1
 
         return best_x_query
 
@@ -448,10 +440,9 @@ class GreedyAlgorithm:
         # Instantiate empty acquisition function object
         self._init_acquisition_fn_ds(self.X_s)
 
-        self.iteration = 0
-
-        # List of new proposed sensor locations
-        self.X_new = []
+        # Dataframe for storing proposed context locations
+        self.X_new_df = pd.DataFrame(columns=["x1", "x2"])
+        self.X_new_df.index.name = "iteration"
 
         # List to track indexes into original search grid of chosen sensor locations
         #   as optimisation progresses. Used for filling y-values at chosen
@@ -463,28 +454,31 @@ class GreedyAlgorithm:
         total_iterations = self.N_new_context * len(self.tasks)
         if not isinstance(acquisition_fn, AcquisitionFunctionParallel):
             total_iterations *= self.X_s_arr.shape[-1]
-        if self.model_infill_method == "sample":  # TODO make class attribute for list of sample methods
+        # TODO make class attribute for list of sample methods
+        if self.model_infill_method == "sample":
             total_iterations *= self.n_samples
 
         with tqdm(total=total_iterations, disable=not self.progress_bar) as self.pbar:
-            for _ in range(self.N_new_context):
+            for iteration in range(self.N_new_context):
+                self.iteration = iteration
                 x_new = self._single_greedy_iteration(acquisition_fn)
 
                 # Append new proposed context points to each task
                 for i, task in enumerate(self.tasks):
                     y_new = self._sample_y_infill(
-                        self.proposed_infill, time=task["time"], x1=x_new[0], x2=x_new[1]
+                        self.proposed_infill,
+                        time=task["time"],
+                        x1=x_new[0],
+                        x2=x_new[1],
                     )
                     self.tasks[i] = append_obs_to_task(
                         task, x_new, y_new, self.context_set_idx
                     )
 
-        X_new = np.concatenate(self.X_new, axis=1)
+                # Append new proposed context points to dataframe
+                x_new_unnorm = self.model.data_processor.map_coord_array(
+                    x_new, unnorm=True
+                )
+                self.X_new_df.loc[self.iteration] = x_new_unnorm.ravel()
 
-        X_new_df = pd.DataFrame(X_new.T, columns=["x1", "x2"])
-        X_new_df.index.name = "iteration"
-        X_new_df = X_new_df.reset_index().set_index(["iteration", "x1", "x2"])
-        X_new_df = self.model.data_processor.map_coords(X_new_df, unnorm=True)
-        X_new_df = X_new_df.reset_index().set_index("iteration")
-
-        return X_new_df, self.acquisition_fn_ds
+        return self.X_new_df, self.acquisition_fn_ds
