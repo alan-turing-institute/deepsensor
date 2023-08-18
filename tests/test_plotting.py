@@ -30,7 +30,8 @@ class TestPlotting(unittest.TestCase):
             unet_channels=(5, 5, 5),
             verbose=False,
         )
-        self.task = self.task_loader("2014-12-31")
+        # Sample a task with 10 random context points
+        self.task = self.task_loader("2014-12-31", context_sampling=10)
 
     def test_context_encoding(self):
         fig = deepsensor.plot.context_encoding(self.model, self.task, self.task_loader)
@@ -43,4 +44,18 @@ class TestPlotting(unittest.TestCase):
         fig = mean_ds.isel(time=0).air.plot(cmap="seismic")
         deepsensor.plot.offgrid_context(
             fig.axes, self.task, self.data_processor, self.task_loader
+        )
+
+    def test_offgrid_context_observations(self):
+        mean_ds, std_ds = self.model.predict(self.task, X_t=self.ds_raw)
+        fig = mean_ds.isel(time=0).air.plot(cmap="seismic")
+        deepsensor.plot.offgrid_context_observations(
+            fig.axes,
+            self.task,
+            self.data_processor,
+            self.task_loader,
+            context_set_idx=0,
+            format_str=None,
+            extent=None,
+            color="black",
         )

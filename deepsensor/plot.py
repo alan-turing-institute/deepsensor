@@ -184,6 +184,54 @@ def offgrid_context(
         axes[0].legend(loc="best")
 
 
+def offgrid_context_observations(
+    axes,
+    task,
+    data_processor,
+    task_loader,
+    context_set_idx,
+    format_str=None,
+    extent=None,
+    color="black",
+):
+    """Plot unnormalised context observation values"""
+    if type(axes) is np.ndarray:
+        axes = axes.ravel()
+    elif not isinstance(axes, (list, tuple)):
+        axes = [axes]
+
+    if format_str is None:
+        format_str = ""
+
+    var_ID = task_loader.context_var_IDs[
+        context_set_idx
+    ]  # Tuple of variable IDs for the context set
+    assert (
+        len(var_ID) == 1
+    ), "Plotting context observations only supported for single-variable (1D) context sets"
+    var_ID = var_ID[0]
+
+    X_c = task["X_c"][context_set_idx]
+    assert not isinstance(
+        X_c, tuple
+    ), f"The context set must not be gridded but is of type {type(X_c)} for context set at index {context_set_idx}"
+    X_c = data_processor.map_coord_array(X_c, unnorm=True)
+
+    Y_c = task["Y_c"][context_set_idx]
+    assert Y_c.ndim == 2
+    assert Y_c.shape[0] == 1
+    Y_c = data_processor.map_array(Y_c, var_ID, unnorm=True).ravel()
+
+    for x_c, y_c in zip(X_c.T, Y_c):
+        if extent is not None:
+            if not (
+                extent[0] <= x_c[0] <= extent[1] and extent[2] <= x_c[1] <= extent[3]
+            ):
+                continue
+        for ax in axes:
+            ax.text(*x_c[::-1], format_str.format(float(y_c)), color=color)
+
+
 def receptive_field(receptive_field, data_processor, crs, extent="global"):
     fig, ax = plt.subplots(subplot_kw=dict(projection=crs))
 
