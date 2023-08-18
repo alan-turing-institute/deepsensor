@@ -56,7 +56,7 @@ def context_encoding(
     if isinstance(context_set_idxs, int):
         context_set_idxs = [context_set_idxs]
     if context_set_idxs is None:
-        context_set_idxs = np.array(range(len(task_loader.context)))
+        context_set_idxs = np.array(range(len(task_loader.context_dims)))
 
     context_var_ID_set_sizes = [
         ndim + 1 for ndim in np.array(task_loader.context_dims)[context_set_idxs]
@@ -129,14 +129,22 @@ def offgrid_context(
     task_loader=None,
     plot_target=False,
     add_legend=True,
+    context_set_idxs=None,
+    markers=None,
+    colors=None,
     **scatter_kwargs,
 ):
     """Plot the off-grid context points on `axes`
 
     Uses `data_processor` to unnormalise the context coordinates if provided.
     """
-    markers = "ovs^D"
-    colors = "kbrgy"
+    if markers is None:
+        markers = "ovs^D"
+    if colors is None:
+        colors = "kbrgy"
+
+    if isinstance(context_set_idxs, int):
+        context_set_idxs = [context_set_idxs]
 
     if type(axes) is np.ndarray:
         axes = axes.ravel()
@@ -149,6 +157,9 @@ def offgrid_context(
         X = task["X_c"]
 
     for set_i, X in enumerate(X):
+        if context_set_idxs is not None and set_i not in context_set_idxs:
+            continue
+
         if isinstance(X, tuple):
             continue  # Don't plot gridded context data locations
         if X.ndim == 3:
@@ -385,8 +396,13 @@ def feature_maps(
     return figs
 
 
-def placements(task, X_new_df, data_processor, crs, extent=None, figsize=3):
+def placements(
+    task, X_new_df, data_processor, crs, extent=None, figsize=3, **scatter_kwargs
+):
     fig, ax = plt.subplots(subplot_kw={"projection": crs}, figsize=(figsize, figsize))
+    ax.scatter(*X_new_df.values.T[::-1], c="r", linewidths=0.5, **scatter_kwargs)
+    offgrid_context(ax, task, data_processor, linewidths=0.5, **scatter_kwargs)
+
     ax.coastlines()
     if extent is None:
         pass
@@ -394,8 +410,6 @@ def placements(task, X_new_df, data_processor, crs, extent=None, figsize=3):
         ax.set_global()
     else:
         ax.set_extent(extent, crs=crs)
-    ax.scatter(*X_new_df.values.T[::-1], s=3**2, c="r", linewidths=0.5)
-    offgrid_context(ax, task, data_processor, s=3**2, linewidths=0.5)
 
     return fig
 
@@ -481,12 +495,11 @@ def acquisition_fn(
             X_new_df_plot = X_new_df.loc[slice(0, iter.item())].values.T[::-1]
         ax.scatter(
             *X_new_df_plot,
-            s=3**2,
             c="r",
             linewidths=0.5,
         )
 
-    offgrid_context(axes, task, data_processor, s=3**2, linewidths=0.5)
+    offgrid_context(axes, task, data_processor, linewidths=0.5)
 
     # Remove any unused axes
     for ax in axes[len(col_vals) :]:
