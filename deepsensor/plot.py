@@ -408,7 +408,7 @@ def acquisition_fn(
         min, max = None, None
     for i, col_val in enumerate(col_vals):
         ax = axes[i]
-        if i == len(col_vals):
+        if i == len(col_vals) - 1:
             final_axis = True
         else:
             final_axis = False
