@@ -1,6 +1,7 @@
 -e .
 pandas
 xarray
+rioxarray
 numpy
 dask
 distributed
