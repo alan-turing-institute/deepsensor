@@ -67,4 +67,9 @@ def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> list:
             raise ValueError(f"Unknown context input type: {type(var)}")
         encoder_scales.append(encoder_scale)
 
+    if task_loader.aux_at_contexts:
+        # Add encoder scale for the final auxiliary-at-contexts context set: use smallest possible
+        # scale within model discretisation
+        encoder_scales.append(0.5 / model_ppu)
+
     return encoder_scales

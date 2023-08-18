@@ -313,6 +313,19 @@ class GreedyAlgorithm:
                     task_with_new = append_obs_to_task(
                         task, x_query, y_query, self.context_set_idx
                     )
+                    # TODO this is a hack to add the auxiliary variable to the context set
+                    if (
+                        self.task_loader is not None
+                        and self.task_loader.aux_at_contexts
+                    ):
+                        # Add auxiliary variable sampled at context set as a new context variable
+                        X_c = task_with_new["X_c"][self.task_loader.aux_at_contexts[0]]
+                        Y_c_aux = self.task_loader.sample_offgrid_aux(
+                            X_c, self.task_loader.aux_at_contexts[1]
+                        )
+                        task_with_new["X_c"][-1] = X_c
+                        task_with_new["Y_c"][-1] = Y_c_aux
+
                     importance = acquisition_fn(task_with_new)
 
                     # TODO make computing the difference a bool
@@ -420,11 +433,13 @@ class GreedyAlgorithm:
                 )
                 tasks[i]["Y_t"] = task_with_Y_t["Y_t"]
 
-            if self.task_loader is not None and self.task_loader.aux_at_target_dims > 0:
-                tasks[i]["Y_t_aux"] = self.task_loader.sample_aux_t(self.X_t_arr)
-            elif "Y_t_aux" in tasks[i] and self.task_loader is None:
+            if "Y_t_aux" in tasks[i] and self.task_loader is None:
                 raise ValueError(
                     "Model expects Y_t_aux data but a TaskLoader isn't provided to GreedyAlgorithm."
+                )
+            if self.task_loader is not None and self.task_loader.aux_at_target_dims > 0:
+                tasks[i]["Y_t_aux"] = self.task_loader.sample_offgrid_aux(
+                    self.X_t_arr, self.task_loader.aux_at_targets
                 )
 
         self.tasks = tasks

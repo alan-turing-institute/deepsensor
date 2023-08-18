@@ -391,7 +391,9 @@ class DeepSensorModel(ProbabilisticModel):
 
             # If passing auxiliary data, need to sample it at target locations
             if "Y_t_aux" in task.keys():
-                task["Y_t_aux"] = self.task_loader.sample_aux_t(X_t_arr)
+                task["Y_t_aux"] = self.task_loader.sample_offgrid_aux(
+                    X_t_arr, self.task_loader.aux_at_targets
+                )
 
             # If `DeepSensor` model child has been sub-classed with a `__call__` method,
             # we assume this is a distribution-like object that can be used to compute
