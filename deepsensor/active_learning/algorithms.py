@@ -40,7 +40,7 @@ class GreedyAlgorithm:
         proposed_infill: xr.DataArray = None,
         context_set_idx: int = 0,
         target_set_idx: int = 0,
-        progress_bar: int = 0,
+        progress_bar: bool = False,
         min_or_max: str = "min",
         task_loader: TaskLoader = None,  # OPTIONAL for oracle acquisition functions only
         verbose: bool = False,
@@ -69,6 +69,7 @@ class GreedyAlgorithm:
         self.target_set_idx = target_set_idx
         self.min_or_max = min_or_max
         self.task_loader = task_loader
+        self.pbar = None
 
         self.X_s_mask = X_s_mask
         self.X_t_mask = X_t_mask
@@ -210,14 +211,12 @@ class GreedyAlgorithm:
                 X_s,
                 X_t_is_normalised=True,
                 unnormalise=False,
-                progress_bar=self.progress_bar >= 4,
             )
 
         elif self.model_infill_method == "sample":
             # _, _, infill_ds = self.model.predict(
             #     self.tasks, X_s, X_t_normalised=True, unnormalise=False,
             #     n_samples=self.model_infill_samples,
-            #     progress_bar=self.progress_bar >= 4,
             # )
             raise NotImplementedError("TODO")
 
@@ -295,33 +294,23 @@ class GreedyAlgorithm:
         """
         importances_list = []
 
-        for task in tqdm(
-            self.tasks,
-            desc="Task",
-            position=4,
-            leave=True,
-            disable=self.progress_bar < 4,
-        ):
+        for task in self.tasks:
             # Parallel computation
             if isinstance(acquisition_fn, AcquisitionFunctionParallel):
                 importances = acquisition_fn(task, self.X_s_arr)
+                if self.pbar:
+                    self.pbar.update(1)
 
             # Sequential computation
             elif isinstance(acquisition_fn, AcquisitionFunction):
                 importances = []
 
                 # TODO make computing the difference a bool
-                importance_bef = acquisition_fn(task)
+                # importance_bef = acquisition_fn(task)
 
-                for x_query in tqdm(
-                    # Add size-1 dim after row dim to preserve row dim for passing to
-                    #   acquisition_fn. Also roll final axis to first axis for looping over search points.
-                    np.rollaxis(self.X_s_arr[:, np.newaxis], 2),
-                    desc="Search",
-                    position=6,
-                    leave=True,
-                    disable=self.progress_bar < 5,
-                ):
+                # Add size-1 dim after row dim to preserve row dim for passing to
+                #   acquisition_fn. Also roll final axis to first axis for looping over search points.
+                for x_query in np.rollaxis(self.X_s_arr[:, np.newaxis], 2):
                     y_query = self._sample_y_infill(
                         self.query_infill,
                         time=task["time"],
@@ -334,9 +323,12 @@ class GreedyAlgorithm:
                     importance = acquisition_fn(task_with_new)
 
                     # TODO make computing the difference a bool
-                    importance = importance - importance_bef
+                    # importance = importance - importance_bef
 
                     importances.append(importance)
+
+                    if self.pbar:
+                        self.pbar.update(1)
 
             else:
                 allowed_classes = [
@@ -466,23 +458,26 @@ class GreedyAlgorithm:
         #   sensor locations, `self.X_new`
         self.best_idxs_all = []
 
-        for _ in tqdm(
-            range(self.N_new_context),
-            desc="Placement",
-            position=2,
-            leave=True,
-            disable=self.progress_bar < 3,
-        ):
-            x_new = self._single_greedy_iteration(acquisition_fn)
+        # Total iterations are number of new context points * number of tasks * number of search
+        #   points (if not parallel) * number of Monte Carlo samples (if using MC)
+        total_iterations = self.N_new_context * len(self.tasks)
+        if not isinstance(acquisition_fn, AcquisitionFunctionParallel):
+            total_iterations *= self.X_s_arr.shape[-1]
+        if self.model_infill_method == "sample":  # TODO make class attribute for list of sample methods
+            total_iterations *= self.n_samples
 
-            # Append new proposed context points to each task
-            for i, task in enumerate(self.tasks):
-                y_new = self._sample_y_infill(
-                    self.proposed_infill, time=task["time"], x1=x_new[0], x2=x_new[1]
-                )
-                self.tasks[i] = append_obs_to_task(
-                    task, x_new, y_new, self.context_set_idx
-                )
+        with tqdm(total=total_iterations, disable=not self.progress_bar) as self.pbar:
+            for _ in range(self.N_new_context):
+                x_new = self._single_greedy_iteration(acquisition_fn)
+
+                # Append new proposed context points to each task
+                for i, task in enumerate(self.tasks):
+                    y_new = self._sample_y_infill(
+                        self.proposed_infill, time=task["time"], x1=x_new[0], x2=x_new[1]
+                    )
+                    self.tasks[i] = append_obs_to_task(
+                        task, x_new, y_new, self.context_set_idx
+                    )
 
         X_new = np.concatenate(self.X_new, axis=1)
 
