@@ -38,7 +38,7 @@ class DataProcessor:
                 not changed by reference when normalising. Defaults to True.
             verbose (bool, optional): Whether to print verbose output. Defaults to False.
         """
-        x1_map, x2_map = self._validate_maps(x1_map, x2_map)
+        x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
 
         if norm_params is None:
             norm_params = {}
@@ -56,15 +56,16 @@ class DataProcessor:
         self.deepcopy = deepcopy
         self.verbose = verbose
 
+        # List of valid normalisation method names
         self.valid_methods = ["mean_std", "min_max"]
 
-    def _validate_maps(self, x1_map, x2_map):
+    def _validate_coord_mappings(self, x1_map, x2_map):
         """Ensure the maps are valid and of appropriate types."""
         try:
             x1_map = (float(x1_map[0]), float(x1_map[1]))
             x2_map = (float(x2_map[0]), float(x2_map[1]))
         except:
-            raise TypeError("Provided maps can't be cast to 2D Tuple[float]")
+            raise TypeError("Provided coordinate mappings can't be cast to 2D Tuple[float]")
 
         # Check that map is not two of the same number
         if np.diff(x1_map) == 0:
@@ -142,40 +143,35 @@ class DataProcessor:
         self.norm_params["coords"]["x2"]["name"] = x2_name
         self.norm_params["coords"]["x2"]["map"] = x2_map
 
-    def check_params_computed(self, var_ID, param1_ID, param2_ID):
+    def check_params_computed(self, var_ID, method):
         """Check if normalisation params computed for a given variable"""
         if (
             var_ID in self.norm_params
-            and param1_ID in self.norm_params[var_ID]
-            and param2_ID in self.norm_params[var_ID]
+            and self.norm_params[var_ID]["method"] == method
+            and "param1" in self.norm_params[var_ID]
+            and "param2" in self.norm_params[var_ID]
         ):
             return True
         else:
             return False
 
     def add_to_norm_params(self, var_ID, **kwargs):
-        """Add to `norm_params` dict for variable `var_ID`"""
+        """Add `kwargs` to `norm_params` dict for variable `var_ID`"""
         self.norm_params[var_ID] = kwargs
 
-    def get_norm_params(self, var_ID, data, method="mean_std", unnorm=False):
-        """Get pre-computed normalisation params or compute them for variable `var_ID`
-
-        If `unnorm` is True, raises a ValueError if normalisation params have not been computed.
-        """
-        if method == "mean_std":
-            param1_ID, param2_ID = "mean", "std"
-        elif method == "min_max":
-            param1_ID, param2_ID = "min", "max"
-        else:
+    def get_norm_params(self, var_ID, data, method=None):
+        """Get pre-computed normalisation params or compute them for variable `var_ID`"""
+        if method not in self.valid_methods:
             raise ValueError(
                 f"Method {method} not recognised. Must be one of {self.valid_methods}"
             )
 
-        if not self.check_params_computed(var_ID, param1_ID, param2_ID):
-            if unnorm:
-                raise ValueError(
-                    f"Normalisation params for {var_ID} not computed. Cannot unnormalise."
-                )
+        if self.check_params_computed(var_ID, method):
+            # Already have "param1" and "param2" in norm_params with `"method": method` - load them
+            param1 = self.norm_params[var_ID]["param1"]
+            param2 = self.norm_params[var_ID]["param2"]
+        else:
+            # Params not computed - compute them now
             if self.verbose:
                 print(
                     f"Normalisation params for {var_ID} not computed. Computing now... ",
@@ -191,12 +187,11 @@ class DataProcessor:
                 param2 = float(data.max())
             if self.verbose:
                 print(
-                    f"Done. {var_ID} {param1_ID}={param1:.3f}, {param2_ID}={param2:.3f}"
+                    f"Done. {var_ID} {method} param1={param1:.3f}, param2={param2:.3f}"
                 )
-            self.add_to_norm_params(var_ID, **{param1_ID: param1, param2_ID: param2})
-        else:
-            param1 = self.norm_params[var_ID][param1_ID]
-            param2 = self.norm_params[var_ID][param2_ID]
+            self.add_to_norm_params(
+                var_ID, **{"method": method, "param1": param1, "param2": param2}
+            )
         return param1, param2
 
     def map_coord_array(self, coord_array: np.ndarray, unnorm: bool = False):
@@ -240,18 +235,18 @@ class DataProcessor:
             indexes = list(data.index.names)
             data = data.reset_index()
 
-        if not unnorm:
-            new_coord_IDs = ["time", "x1", "x2"]
-            old_coord_IDs = [
-                self.norm_params["coords"][coord_ID]["name"]
-                for coord_ID in ["time", "x1", "x2"]
-            ]
-        else:
+        if unnorm:
             new_coord_IDs = [
                 self.norm_params["coords"][coord_ID]["name"]
                 for coord_ID in ["time", "x1", "x2"]
             ]
             old_coord_IDs = ["time", "x1", "x2"]
+        else:
+            new_coord_IDs = ["time", "x1", "x2"]
+            old_coord_IDs = [
+                self.norm_params["coords"][coord_ID]["name"]
+                for coord_ID in ["time", "x1", "x2"]
+            ]
 
         new_x1, new_x2 = self.map_x1_and_x2(
             data[old_coord_IDs[1]], data[old_coord_IDs[2]], unnorm=unnorm
@@ -295,45 +290,58 @@ class DataProcessor:
             [indexes.remove(old_coord_ID) for old_coord_ID in old_coord_IDs]
             indexes = new_coord_IDs + indexes  # Put dims first
             data = data.set_index(indexes)
+
         return data
 
     def map_array(
         self,
         data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, np.ndarray],
         var_ID: str,
-        method: str = "mean_std",
+        method: str = None,
         unnorm: bool = False,
         add_offset=True,
     ):
         """Normalise or unnormalise the data values in an xarray, pandas, or numpy object"""
-        param1, param2 = self.get_norm_params(var_ID, data, method, unnorm)
+        if method is None and not unnorm:
+            raise ValueError("Must provide `method` if normalising data.")
+        if method is None and unnorm:
+            # Get normalisation method from norm_params for unnormalising
+            method = self.norm_params[var_ID]["method"]
+        elif method not in self.valid_methods:
+            raise ValueError(
+                f"Method {method} not recognised. Use one of {self.valid_methods}"
+            )
+
+        param1, param2 = self.get_norm_params(var_ID, data, method)
+
         if method == "mean_std":
-            if not unnorm:
-                scale = 1 / param2
-                offset = -param1 / param2
-            else:
+            if unnorm:
                 scale = param2
                 offset = param1
-        elif method == "min_max":
-            if not unnorm:
-                scale = 2 / (param2 - param1)
-                offset = -(param2 + param1) / (param2 - param1)
             else:
+                scale = 1 / param2
+                offset = -param1 / param2
+            data = data * scale
+            if add_offset:
+                data = data + offset
+            return data
+
+        elif method == "min_max":
+            if unnorm:
                 scale = (param2 - param1) / 2
                 offset = (param2 + param1) / 2
-        else:
-            raise ValueError(
-                f"Method {method} not recognised. Use 'mean_std' or 'min_max'."
-            )
-        data = data * scale
-        if add_offset:
-            data = data + offset
-        return data
+            else:
+                scale = 2 / (param2 - param1)
+                offset = -(param2 + param1) / (param2 - param1)
+            data = data * scale
+            if add_offset:
+                data = data + offset
+            return data
 
     def map(
         self,
         data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series],
-        method: str = "mean_std",
+        method: str = None,
         add_offset: bool = True,
         unnorm: bool = False,
     ):
@@ -352,9 +360,7 @@ class DataProcessor:
         elif isinstance(data, (xr.Dataset, pd.DataFrame)):
             # Multiple vars
             for var_ID in data:
-                data[var_ID] = self.map_array(
-                    data[var_ID], var_ID, method, unnorm, add_offset
-                )
+                data[var_ID] = self.map_array(data[var_ID], var_ID, method, unnorm, add_offset)
 
         data = self.map_coords(data, unnorm=unnorm)
 
@@ -369,7 +375,7 @@ class DataProcessor:
 
         Args:
             data (Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]): Data to normalise
-            method (str, optional): Normalisation method. Options:
+            method (str, optional): Normalisation method. Defaults to "mean_std". Options:
                 - "mean_std": Normalise to mean=0 and std=1
                 - "min_max": Normalise to min=-1 and max=1
         """
@@ -382,22 +388,18 @@ class DataProcessor:
         self,
         data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, list],
         add_offset: bool = True,
-        method: str = "mean_std",
     ) -> Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]:
         """Unnormalise data
 
         Args:
             data (Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]): Data to unnormalise
-            method (str, optional): Normalisation method. Options:
-                - "mean_std": Normalise to mean=0 and std=1
-                - "min_max": Normalise to min=-1 and max=1
             add_offset (bool, optional): Whether to add the offset to the data when unnormalising.
                 Set to False to unnormalise uncertainty values (e.g. std dev). Defaults to True.
         """
         if isinstance(data, list):
-            return [self.map(d, method, add_offset, unnorm=True) for d in data]
+            return [self.map(d, add_offset=add_offset, unnorm=True) for d in data]
         else:
-            return self.map(data, method, add_offset, unnorm=True)
+            return self.map(data, add_offset=add_offset, unnorm=True)
 
 
 def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]):
