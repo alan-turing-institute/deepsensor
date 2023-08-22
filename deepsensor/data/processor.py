@@ -65,7 +65,9 @@ class DataProcessor:
             x1_map = (float(x1_map[0]), float(x1_map[1]))
             x2_map = (float(x2_map[0]), float(x2_map[1]))
         except:
-            raise TypeError("Provided coordinate mappings can't be cast to 2D Tuple[float]")
+            raise TypeError(
+                "Provided coordinate mappings can't be cast to 2D Tuple[float]"
+            )
 
         # Check that map is not two of the same number
         if np.diff(x1_map) == 0:
@@ -360,7 +362,9 @@ class DataProcessor:
         elif isinstance(data, (xr.Dataset, pd.DataFrame)):
             # Multiple vars
             for var_ID in data:
-                data[var_ID] = self.map_array(data[var_ID], var_ID, method, unnorm, add_offset)
+                data[var_ID] = self.map_array(
+                    data[var_ID], var_ID, method, unnorm, add_offset
+                )
 
         data = self.map_coords(data, unnorm=unnorm)
 
