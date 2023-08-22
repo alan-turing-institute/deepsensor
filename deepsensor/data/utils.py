@@ -1,4 +1,8 @@
+from typing import Union
+
 import numpy as np
+import pandas as pd
+import scipy
 import xarray as xr
 
 
@@ -48,3 +52,66 @@ def construct_circ_time_ds(dates, freq):
         },
     )
     return ds
+
+
+def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float:
+    """Computes the resolution of an xarray object with coordinates x1 and x2
+
+    The data resolution is the finer of the two coordinate resolutions (x1 and x2). For example, if
+    x1 has a resolution of 0.1 degrees and x2 has a resolution of 0.2 degrees, the data resolution
+    returned will be 0.1 degrees.
+
+    Args:
+        ds (Union[xr.DataArray, xr.Dataset]): Xarray object with coordinates x1 and x2.
+
+    Returns:
+        data_resolution (float): Resolution of the data (in spatial units, e.g. 0.1 degrees).
+    """
+    x1_res = np.abs(np.mean(np.diff(ds["x1"])))
+    x2_res = np.abs(np.mean(np.diff(ds["x2"])))
+    data_resolution = np.min([x1_res, x2_res])
+    return data_resolution
+
+
+def compute_pandas_data_resolution(
+    df: Union[pd.DataFrame, pd.Series], n_times: int = 1000, percentile: int = 5
+) -> float:
+    """Approximates the resolution of non-gridded pandas data with indexes time, x1, and x2.
+
+    The resolution is approximated as the Nth percentile of the distances between neighbouring
+    observations, possibly using a subset of the dates in the data. The default is to use 1000
+    dates (or all dates if there are fewer than 1000) and to use the 5th percentile. This means
+    that the resolution is the distance between the closest 5% of neighbouring observations.
+
+    Args:
+        df (Union[pd.DataFrame, pd.Series]): Dataframe or series with indexes time, x1, and x2.
+        n_times (int, optional): Number of dates to sample. Defaults to 1000. If "all", all dates
+            are used.
+        percentile (int, optional): Percentile of pairwise distances for computing the resolution.
+            Defaults to 5.
+
+    Returns:
+        data_resolution (float): Resolution of the data (in spatial units, e.g. 0.1 degrees).
+    """
+    dates = df.index.get_level_values("time").unique()
+
+    if n_times != "all" and len(dates) > n_times:
+        rng = np.random.default_rng(42)
+        dates = rng.choice(dates, size=n_times, replace=False)
+
+    closest_distances = []
+    df = df.reset_index().set_index("time")
+    for time in dates:
+        df_t = df.loc[time]
+        X = df_t[["x1", "x2"]].values  # (N, 2) array of coordinates
+        X_unique = np.unique(X, axis=0)  # (N_unique, 2) array of unique coordinates
+
+        pairwise_distances = scipy.spatial.distance.cdist(X_unique, X_unique)
+        percentile_distances_without_self = np.ma.masked_equal(pairwise_distances, 0)
+
+        # Compute the closest distance from each station to each other station
+        closest_distances_t = np.min(percentile_distances_without_self, axis=1)
+        closest_distances.extend(closest_distances_t)
+
+    data_resolution = np.percentile(closest_distances, percentile)
+    return data_resolution
