@@ -306,7 +306,11 @@ class DataProcessor:
         """Normalise or unnormalise the data values in an xarray, pandas, or numpy object"""
         if not unnorm and method is None:
             raise ValueError("Must provide `method` if normalising data.")
-        elif unnorm and method is not None and self.norm_params[var_ID]["method"] != method:
+        elif (
+            unnorm
+            and method is not None
+            and self.norm_params[var_ID]["method"] != method
+        ):
             # User has provided a different method to the one used for normalising
             raise ValueError(
                 f"Variable '{var_ID}' has been normalised with method '{self.norm_params[var_ID]['method']}', "
