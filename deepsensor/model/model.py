@@ -379,7 +379,11 @@ class DeepSensorModel(ProbabilisticModel):
             assert arr.shape[0] == len(var_IDs_flattened)
             for i, var_ID in enumerate(var_IDs_flattened):
                 arr[i] = self.data_processor.map_array(
-                    arr[i], var_ID, method="mean_std", unnorm=True, **kwargs
+                    arr[i],
+                    var_ID,
+                    method=self.data_processor.norm_params[var_ID]["method"],
+                    unnorm=True,
+                    **kwargs,
                 )
             return arr
 
