@@ -1,9 +1,11 @@
 from deepsensor.data.loader import TaskLoader
+from typing import Union
+from scipy.spatial.distance import pdist
 
 import numpy as np
 import pandas as pd
 import xarray as xr
-
+import warnings
 
 def gen_ppu(task_loader: TaskLoader) -> int:
     """Computes data-informed settings for the model's internal discretisation density (ppu, points per unit)
@@ -23,10 +25,13 @@ def gen_ppu(task_loader: TaskLoader) -> int:
             data_ppu = 1 / np.mean([x1_res, x2_res])
             max_ppu = max(max_ppu, data_ppu * 1.2)  # Add 20% margin
         elif isinstance(var, (pd.DataFrame, pd.Series)):
-            # Point-based variable: make ppu as large as possible
-            # TODO: Consider choosing based on shortest distance between points, perhaps with some
-            # check for outliers causing excessively large ppu
-            max_ppu = 300
+            # Point-based variable: calculate ppu based on pairwise distances
+            coordinates = var[['x1', 'x2']].values if isinstance(var, pd.DataFrame) else var.values  # Adjust based on data format
+            distances = pdist(coordinates)
+            quantile_distance = np.percentile(distances, 5)  # 5th percentile distance
+            point_ppu = 1 / quantile_distance
+            max_ppu = min(max_ppu, point_ppu, 500)  # Introducing an upper bound
+            warnings.warn(f"Point-based data detected. ppu set to {max_ppu}. Consider choosing a suitable value based on the data.")
         else:
             raise ValueError(f"Unknown context input type: {type(var)}")
 
