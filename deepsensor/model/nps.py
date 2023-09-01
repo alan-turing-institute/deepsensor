@@ -4,6 +4,7 @@ import lab as B
 from deepsensor.data.task import Task
 from typing import Tuple, Optional, Literal
 
+
 def convert_task_to_nps_args(task: Task):
     """
     Infer & build model call signature from `task` dict.

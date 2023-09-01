@@ -48,6 +48,7 @@ class TestModel(unittest.TestCase):
     """
     A test class for the `ConvNP` model.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # It's safe to share data between tests because the TaskLoader does not modify data

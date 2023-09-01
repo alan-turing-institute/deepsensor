@@ -25,10 +25,12 @@ class TaskLoader:
             List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
         ],
         aux_at_contexts: Optional[Tuple[int, Union[xr.DataArray, xr.Dataset]]] = None,
-        aux_at_targets: Optional[Union[
-            xr.DataArray,
-            xr.Dataset,
-        ]] = None,
+        aux_at_targets: Optional[
+            Union[
+                xr.DataArray,
+                xr.Dataset,
+            ]
+        ] = None,
         links: Optional[Union[Tuple, List[Tuple[int, int]]]] = None,
         context_delta_t: Union[int, List[int]] = 0,
         target_delta_t: Union[int, List[int]] = 0,
@@ -842,10 +844,7 @@ class TaskLoader:
             elif isinstance(var, (pd.DataFrame, pd.Series)):
                 X, Y = self.sample_df(var, sampling_strat, seed)
             else:
-                raise ValueError(
-                    f"Unknown type {type(var)} for context set "
-                    f"{var}"
-                )
+                raise ValueError(f"Unknown type {type(var)} for context set " f"{var}")
             return X, Y
 
         # Check that the sampling strategies are valid
@@ -853,8 +852,7 @@ class TaskLoader:
         target_sampling = check_sampling_strat(target_sampling, self.target)
         # Check `split_frac
         if split_frac < 0 or split_frac > 1:
-            raise ValueError(
-                f"split_frac must be between 0 and 1, got {split_frac}")
+            raise ValueError(f"split_frac must be between 0 and 1, got {split_frac}")
         if (
             self.links is not None
             and "split" in context_sampling

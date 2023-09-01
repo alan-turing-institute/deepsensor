@@ -539,7 +539,9 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         self.context_set_idx = context_set_idx
         self.min_or_max = "max"
 
-    def __call__(self, task: Task, X_s: np.ndarray, target_set_idx: int = 0) -> np.ndarray:
+    def __call__(
+        self, task: Task, X_s: np.ndarray, target_set_idx: int = 0
+    ) -> np.ndarray:
         """
         Parameters
         ----------

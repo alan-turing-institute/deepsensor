@@ -661,7 +661,13 @@ class ConvNP(DeepSensorModel):
         dist = self(task)
         return self.logpdf(dist, task)
 
-    def loss_fn(self, task: Task, fix_noise=None, num_lv_samples: int = 8, normalise: bool = False):
+    def loss_fn(
+        self,
+        task: Task,
+        fix_noise=None,
+        num_lv_samples: int = 8,
+        normalise: bool = False,
+    ):
         """
         Compute the loss of a task.
 
@@ -716,7 +722,7 @@ class ConvNP(DeepSensorModel):
         self,
         task: Task,
         n_samples: int = 1,
-        X_target_AR: Optional[np.ndarray]=None,
+        X_target_AR: Optional[np.ndarray] = None,
         ar_subsample_factor: int = 1,
         fill_type: Literal["mean", "sample"] = "mean",
     ):
