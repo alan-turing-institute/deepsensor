@@ -24,19 +24,28 @@ class DataProcessor:
         deepcopy: bool = True,
         verbose: bool = False,
     ) -> None:
-        """Initialise DataProcessor
+        """
+        Initialise a DataProcessor object.
 
-        Args:
-            norm_params (dict, optional): Normalisation params. Defaults to {}.
-            x1_name (str, optional): Name of first spatial coord (e.g. "lat"). Defaults to "x1".
-            x2_name (str, optional): Name of second spatial coord (e.g. "lon"). Defaults to "x2".
-            x1_map (tuple, optional): 2-tuple of raw x1 coords to linearly map to (0, 1), respectively.
-                Defaults to (0, 1) (i.e. no normalisation).
-            x2_map (tuple, optional): 2-tuple of raw x2 coords to linearly map to (0, 1), respectively.
-                Defaults to (0, 1) (i.e. no normalisation).
-            deepcopy (bool, optional): Whether to make a deepcopy of raw data to ensure it is
-                not changed by reference when normalising. Defaults to True.
-            verbose (bool, optional): Whether to print verbose output. Defaults to False.
+        Parameters
+        ----------
+        norm_params : dict, optional
+            Normalisation params. Defaults to {}.
+        x1_name : str, optional)
+            Name of first spatial coord (e.g. "lat"). Defaults to "x1".
+        x2_name : str, optional)
+            Name of second spatial coord (e.g. "lon"). Defaults to "x2".
+        x1_map : tuple, optional)
+            2-tuple of raw x1 coords to linearly map to (0, 1), respectively.
+            Defaults to (0, 1) (i.e. no normalisation).
+        x2_map : tuple, optional)
+            2-tuple of raw x2 coords to linearly map to (0, 1), respectively.
+            Defaults to (0, 1) (i.e. no normalisation).
+        deepcopy : bool, optional)
+            Whether to make a deepcopy of raw data to ensure it is not changed
+            by reference when normalising. Defaults to True.
+        verbose : bool, optional)
+            Whether to print verbose output. Defaults to False.
         """
         x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
 
@@ -134,8 +143,27 @@ class DataProcessor:
             data.load()
         return data
 
-    def set_coord_params(self, time_name, x1_name, x1_map, x2_name, x2_map):
-        """Set coordinate normalisation params"""
+    def set_coord_params(self, time_name, x1_name, x1_map, x2_name, x2_map) -> None:
+        """
+        Set coordinate normalisation params.
+
+        Parameters
+        ----------
+        time_name : ...
+            ...
+        x1_name : ...
+            ...
+        x1_map : ...
+            ...
+        x2_name : ...
+            ...
+        x2_map : ...
+            ...
+
+        Returns
+        -------
+        None.
+        """
         self.norm_params["coords"] = {}
         self.norm_params["coords"]["time"] = {"name": time_name}
         self.norm_params["coords"]["x1"] = {}
@@ -145,8 +173,22 @@ class DataProcessor:
         self.norm_params["coords"]["x2"]["name"] = x2_name
         self.norm_params["coords"]["x2"]["map"] = x2_map
 
-    def check_params_computed(self, var_ID, method):
-        """Check if normalisation params computed for a given variable"""
+    def check_params_computed(self, var_ID, method) -> bool:
+        """
+        Check if normalisation params computed for a given variable.
+
+        Parameters
+        ----------
+        var_ID : ...
+            ...
+        method : ...
+            ...
+
+        Returns
+        -------
+        bool
+            ...
+        """
         if (
             var_ID in self.norm_params
             and self.norm_params[var_ID]["method"] == method
@@ -154,15 +196,38 @@ class DataProcessor:
             and "param2" in self.norm_params[var_ID]
         ):
             return True
-        else:
-            return False
 
-    def add_to_norm_params(self, var_ID, **kwargs):
-        """Add `kwargs` to `norm_params` dict for variable `var_ID`"""
+        return False
+
+    def add_to_norm_params(self, var_ID, **kwargs) -> None:
+        """
+        Add `kwargs` to `norm_params` dict for variable `var_ID`.
+
+        Parameters
+        ----------
+        var_ID : ...
+            ...
+
+        Returns
+        -------
+        None.
+        """
         self.norm_params[var_ID] = kwargs
 
     def get_norm_params(self, var_ID, data, method=None):
-        """Get pre-computed normalisation params or compute them for variable `var_ID`"""
+        """
+        Get pre-computed normalisation params or compute them for variable
+        `var_ID`.
+
+        Parameters
+        ----------
+        var_ID : ...
+            ...
+        data : ...
+            ...
+        method : ..., optional
+            ..., by default None.
+        """
         if method not in self.valid_methods:
             raise ValueError(
                 f"Method {method} not recognised. Must be one of {self.valid_methods}"
@@ -197,22 +262,40 @@ class DataProcessor:
         return param1, param2
 
     def map_coord_array(self, coord_array: np.ndarray, unnorm: bool = False):
-        """Normalise or unnormalise a coordinate array
+        """
+        Normalise or unnormalise a coordinate array.
 
-        Args:
-            coord_array (np.ndarray): Array of shape (2, N) containing coords
-            unnorm (bool, optional): Whether to unnormalise. Defaults to False.
+        Parameters
+        ----------
+        coord_array : np.ndarray
+            Array of shape (2, N) containing coords
+        unnorm : bool, optional
+            Whether to unnormalise. Defaults to False.
+
+        Returns
+        -------
+        ...
+            ...
         """
         x1, x2 = self.map_x1_and_x2(coord_array[0], coord_array[1], unnorm=unnorm)
         new_coords = np.stack([x1, x2], axis=0)
         return new_coords
 
     def map_x1_and_x2(self, x1: np.ndarray, x2: np.ndarray, unnorm: bool = False):
-        """Normalise or unnormalise spatial coords in a array
+        """
+        Normalise or unnormalise spatial coords in a array.
 
-        Args:
-            x1 (np.ndarray): Array of shape (N_x1,) containing spatial coords of x1
-            unnorm (bool, optional): Whether to unnormalise. Defaults to False.
+        Parameters
+        ----------
+        x1 : np.ndarray
+            Array of shape (N_x1,) containing spatial coords of x1.
+        unnorm : bool, optional
+            Whether to unnormalise. Defaults to False.
+
+        Returns
+        -------
+        ...
+            ...
         """
         x11, x12 = self.norm_params["coords"]["x1"]["map"]
         x21, x22 = self.norm_params["coords"]["x2"]["map"]
@@ -231,7 +314,21 @@ class DataProcessor:
         data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series],
         unnorm=False,
     ):
-        """Normalise spatial coords in a pandas or xarray object"""
+        """
+        Normalise spatial coords in a pandas or xarray object.
+
+        Parameters
+        ----------
+        data : Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series]
+            ...
+        unnorm : bool, optional
+            ...
+
+        Returns
+        -------
+        ...
+            ...
+        """
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Reset index to get coords as columns
             indexes = list(data.index.names)
@@ -303,7 +400,28 @@ class DataProcessor:
         unnorm: bool = False,
         add_offset=True,
     ):
-        """Normalise or unnormalise the data values in an xarray, pandas, or numpy object"""
+        """
+        Normalise or unnormalise the data values in an xarray, pandas, or
+        numpy object.
+
+        Parameters
+        ----------
+        data : Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, np.ndarray]
+            ...
+        var_ID : str
+            ...
+        method : str, optional
+            ..., by default None.
+        unnorm : bool, optional
+            ..., by default False.
+        add_offset : bool, optional
+            ..., by default True.
+
+        Returns
+        -------
+        ...
+            ...
+        """
         if not unnorm and method is None:
             raise ValueError("Must provide `method` if normalising data.")
         elif (
@@ -358,7 +476,26 @@ class DataProcessor:
         add_offset: bool = True,
         unnorm: bool = False,
     ):
-        """Normalise or unnormalise the data values and coords in an xarray or pandas object"""
+        """
+        Normalise or unnormalise the data values and coords in an xarray or
+        pandas object.
+
+        Parameters
+        ----------
+        data : Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series]
+            ...
+        method : str, optional
+            ..., by default None.
+        add_offset : bool, optional
+            ..., by default True.
+        unnorm : bool, optional
+            ..., by default False.
+
+        Returns
+        -------
+        ...
+            ...
+        """
         if self.deepcopy:
             data = deepcopy(data)
 
@@ -386,13 +523,22 @@ class DataProcessor:
         data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, list],
         method: str = "mean_std",
     ) -> Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]:
-        """Normalise data
+        """
+        Normalise data.
 
-        Args:
-            data (Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]): Data to normalise
-            method (str, optional): Normalisation method. Defaults to "mean_std". Options:
+        Parameters
+        ----------
+        data : Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]
+            Data to normalise.
+        method : str, optional
+            Normalisation method. Defaults to "mean_std". Options:
                 - "mean_std": Normalise to mean=0 and std=1
                 - "min_max": Normalise to min=-1 and max=1
+
+        Returns
+        -------
+        Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]
+            Normalised data.
         """
         if isinstance(data, list):
             return [self.map(d, method, unnorm=False) for d in data]
@@ -404,12 +550,22 @@ class DataProcessor:
         data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, list],
         add_offset: bool = True,
     ) -> Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]:
-        """Unnormalise data
+        """
+        Unnormalise data.
 
-        Args:
-            data (Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]): Data to unnormalise
-            add_offset (bool, optional): Whether to add the offset to the data when unnormalising.
-                Set to False to unnormalise uncertainty values (e.g. std dev). Defaults to True.
+        Parameters
+        ----------
+        data : Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]
+            Data to unnormalise.
+        add_offset : bool, optional
+            Whether to add the offset to the data when unnormalising. Set to
+            False to unnormalise uncertainty values (e.g. std dev). Defaults to
+            True.
+
+        Returns
+        -------
+        Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]
+            Unnormalised data.
         """
         if isinstance(data, list):
             return [self.map(d, add_offset=add_offset, unnorm=True) for d in data]
@@ -418,12 +574,40 @@ class DataProcessor:
 
 
 def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]):
+    """
+    Convert xarray to normalised coordinate array.
+
+    Parameters
+    ----------
+    da : Union[xr.Dataset, xr.DataArray]
+        ...
+
+    Returns
+    -------
+    ...
+        ...
+    """
     x1, x2 = da["x1"].values, da["x2"].values
     X1, X2 = np.meshgrid(x1, x2, indexing="ij")
     return np.stack([X1.ravel(), X2.ravel()], axis=0)
 
 
 def mask_coord_array_normalised(coord_arr, mask_da):
+    """
+    ...
+
+    Parameters
+    ----------
+    coord_arr : ...
+        ...
+    mask_da : ...
+        ...
+
+    Returns
+    -------
+    ...
+        ...
+    """
     if mask_da is None:
         return coord_arr
     mask_da = mask_da.astype(float)  # Temporarily convert to float for interpolation
@@ -438,9 +622,23 @@ def mask_coord_array_normalised(coord_arr, mask_da):
 
 
 def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
-    """Check if da1 and da2 are on the same grid
+    """
+    Check if da1 and da2 are on the same grid.
 
-    Note: da1 and da2 are assumed normalised by DataProcessor.
+    .. note::
+        `da1` and `da2` are assumed normalised by `DataProcessor`.
+
+    Parameters
+    ----------
+    da1 : xr.DataArray
+        ...
+    da2 : xr.DataArray
+        ...
+
+    Returns
+    -------
+    bool
+        Whether `da1` and `da2` are on the same grid.
     """
     x1equal = np.array_equal(da1["x1"].values, da2["x1"].values)
     x2equal = np.array_equal(da1["x2"].values, da2["x2"].values)
@@ -448,8 +646,22 @@ def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
 
 
 def interp_da1_to_da2(da1: xr.DataArray, da2: xr.DataArray) -> xr.DataArray:
-    """Interpolate da1 to da2
+    """
+    Interpolate da1 to da2.
 
-    Note: da1 and da2 are assumed normalised by DataProcessor.
+    .. note::
+        `da1` and `da2` are assumed normalised by `DataProcessor`.
+
+    Parameters
+    ----------
+    da1 : xr.DataArray
+        ...
+    da2 : xr.DataArray
+        ...
+
+    Returns
+    -------
+    xr.DataArray
+        Interpolated xarray.
     """
     return da1.interp(x1=da2["x1"], x2=da2["x2"], method="nearest")

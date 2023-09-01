@@ -46,13 +46,43 @@ class GreedyAlgorithm:
         verbose: bool = False,
     ):
         """
+        ...
 
-        Arguments:
-            model {DeepSensorModel} -- Trained model to use for proposing new context points.
-            X_s {Union[xr.Dataset, xr.DataArray} -- Search coordinates.
-            X_t {Union[xr.Dataset, xr.DataArray} -- Target coordinates.
-            X_s_mask {Union[xr.Dataset, xr.DataArray], optional} -- Mask for search coordinates.
-                If provided, only points where mask is True will be considered. Defaults to None.
+        Parameters
+        ----------
+        model : DeepSensorModel
+            Trained model to use for proposing new context points.
+        X_s : Union[xr.Dataset, xr.DataArray)
+            Search coordinates.
+        X_t : Union[xr.Dataset, xr.DataArray
+            Target coordinates.
+        X_s_mask : Union[xr.Dataset, xr.DataArray], optional
+            Mask for search coordinates. If provided, only points where mask
+            is True will be considered. Defaults to None.
+        X_t_mask : Union[xr.Dataset, xr.DataArray], optional)
+            ...
+        N_new_context : int
+            ...
+        X_normalised : bool
+            ...
+        model_infill_method : str
+            ...
+        query_infill : xr
+            ...
+        proposed_infill : xr
+            ...
+        context_set_idx : int
+            ...
+        target_set_idx : int
+            ...
+        progress_bar : bool
+            ...
+        min_or_max : str
+            ...
+        task_loader : TaskLoader
+            ...
+        verbose : bool
+            ...
         """
         if not isinstance(model, DeepSensorModel):
             raise ValueError(
@@ -395,12 +425,19 @@ class GreedyAlgorithm:
         self,
         acquisition_fn: AcquisitionFunction,
         tasks: Union[List[Task], Task],
-    ) -> Tuple[pd.DataFrame, xr.Dataset]:  # TODO is this correct use of typing?
+    ) -> Tuple[pd.DataFrame, xr.Dataset]:
         """
         Iteratively... docstring TODO
 
         Returns a tensor of proposed new sensor locations (in greedy iteration/priority order)
             and their corresponding list of indexes in the search space.
+
+        Parameters
+        ----------
+        acquisition_fn: AcquisitionFunction
+            ...
+        tasks: Union[List[Task], Task]
+            ...
         """
         if (
             isinstance(acquisition_fn, AcquisitionFunctionOracle)

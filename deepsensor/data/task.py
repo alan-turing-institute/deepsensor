@@ -16,10 +16,13 @@ class Task(dict):
     """
 
     def __init__(self, task_dict: dict) -> None:
-        """Initialise a Task object.
+        """
+        Initialise a Task object.
 
-        Args:
-            task_dict (dict): Dictionary containing the task.
+        Parameters
+        ----------
+        task_dict : dict
+            Dictionary containing the task.
         """
         super().__init__(task_dict)
 
@@ -49,7 +52,8 @@ class Task(dict):
             return f"{type(v).__name__}/{v}"
 
     def __str__(self):
-        """Print a convenient summary of the task dictionary
+        """
+        Print a convenient summary of the task dictionary.
 
         For array entries, print their shape, otherwise print the value.
         """
@@ -59,10 +63,11 @@ class Task(dict):
         return s
 
     def __repr__(self):
-        """Print a convenient summary of the task dictionary
+        """
+        Print a convenient summary of the task dictionary.
 
-        Print the type of each entry and if it is an array, print its shape, otherwise print the value.
-        Print the type of each entry and if it is an array, print its shape, otherwise print the value.
+        Print the type of each entry and if it is an array, print its shape,
+        otherwise print the value.
         """
         s = ""
         for k, v in self.items():
@@ -72,18 +77,23 @@ class Task(dict):
     def modify(self, f, modify_flag=None):
         """Apply function f to the array elements of a task dictionary.
 
-        Useful for recasting to a different dtype or reshaping (e.g. adding a batch dimension).
+        Useful for recasting to a different dtype or reshaping (e.g. adding a
+        batch dimension).
 
         Parameters
         ----------
-        f : function. Function to apply to the array elements of the task.
-        task : dict. Task dictionary.
-        modify_flag : str. Flag to set in the task dictionary's `modify` key.
+        f : function
+            Function to apply to the array elements of the task.
+        task : dict
+            Task dictionary.
+        modify_flag : str
+            Flag to set in the task dictionary's `modify` key.
 
         Returns
         -------
-        task : dict. Task dictionary with f applied to the array elements and modify_flag set
-            in the `modify` key.
+        task : dict
+            Task dictionary with f applied to the array elements and
+            modify_flag set in the `modify` key.
         """
 
         def modify(k, v):
@@ -116,13 +126,15 @@ def append_obs_to_task(
     Y_new: B.Numeric,
     context_set_idx: int,
 ):
-    """Append a single observation to a context set in `task`
+    """
+    Append a single observation to a context set in `task`.
 
-    Makes a deep copy of the data structure to avoid affecting the
-    original object.
+    Makes a deep copy of the data structure to avoid affecting the original
+    object.
 
-    TODO for speed during active learning algs, consider a shallow copy option plus
-    ability to remove observations.
+    ..
+        TODO: for speed during active learning algs, consider a shallow copy
+        option plus ability to remove observations.
     """
     if not 0 <= context_set_idx <= len(task["X_c"]) - 1:
         raise TaskSetIndexError(context_set_idx, len(task["X_c"]), "context")
@@ -156,7 +168,19 @@ def append_obs_to_task(
 
 
 def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
-    """Convert tuple of gridded coords to (2, N) array if necessary"""
+    """
+    Convert tuple of gridded coords to (2, N) array if necessary.
+
+    Parameters
+    ----------
+    X : Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]
+        ...
+
+    Returns
+    ----------
+    np.ndarray
+        ...
+    """
     if type(X) is tuple:
         X1, X2 = np.meshgrid(X[0], X[1], indexing="ij")
         X = np.stack([X1.ravel(), X2.ravel()], axis=0)
@@ -164,16 +188,40 @@ def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
 
 
 def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
-    """Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2) array if necessary"""
+    """
+    Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2)
+    array if necessary.
+
+    Parameters
+    ----------
+    Y : Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]
+        ...
+
+    Returns
+    -------
+    np.ndarray
+        ...
+    """
     if Y.ndim == 3:
         Y = Y.reshape(*Y.shape[:-2], -1)
     return Y
 
 
 def flatten_gridded_data_in_task(task: Task) -> Task:
-    """Convert any gridded data in `Task` to flattened arrays
+    """
+    Convert any gridded data in `Task` to flattened arrays.
 
-    Necessary for AR sampling, which doesn't yet permit gridded context sets
+    Necessary for AR sampling, which doesn't yet permit gridded context sets.
+
+    Parameters
+    ----------
+    task : deepsensor.data.task.Task
+        ...
+
+    Returns
+    -------
+    Task
+        ...
     """
     task_flattened = copy.deepcopy(task)
 

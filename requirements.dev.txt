@@ -5,3 +5,5 @@ parameterized
 tox
 tox-gh-actions
 coveralls
+Sphinx
+sphinx-rtd-theme

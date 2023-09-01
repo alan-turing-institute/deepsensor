@@ -4,7 +4,7 @@ import numpy as np
 import xarray as xr
 import pandas as pd
 
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 
 from deepsensor.errors import InvalidSamplingStrategyError
 
@@ -24,12 +24,12 @@ class TaskLoader:
             pd.DataFrame,
             List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
         ],
-        aux_at_contexts: Tuple[int, Union[xr.DataArray, xr.Dataset]] = None,
-        aux_at_targets: Union[
+        aux_at_contexts: Optional[Tuple[int, Union[xr.DataArray, xr.Dataset]]] = None,
+        aux_at_targets: Optional[Union[
             xr.DataArray,
             xr.Dataset,
-        ] = None,
-        links: Union[Tuple, List[Tuple[int, int]], None] = None,
+        ]] = None,
+        links: Optional[Union[Tuple, List[Tuple[int, int]]]] = None,
         context_delta_t: Union[int, List[int]] = 0,
         target_delta_t: Union[int, List[int]] = 0,
         time_freq: str = "D",
@@ -37,34 +37,52 @@ class TaskLoader:
         discrete_xarray_sampling: bool = False,
         dtype: object = "float32",
     ) -> None:
-        """Initialise a TaskLoader object
+        """
+        Initialise a TaskLoader object.
 
-        Args:
-            context: Context data. Can be a single xr.DataArray, xr.Dataset or pd.DataFrame,
-                or a list/tuple of these.
-            target: Target data. Can be a single xr.DataArray, xr.Dataset or pd.DataFrame,
-                or a list/tuple of these.
-            aux_at_contexts: Auxiliary data at context locations. Tuple of two elements, where
-                the first element is the index of the context set for which the auxiliary data
-                will be sampled at, and the second element is the auxiliary data, which can be a
-                single xr.DataArray or xr.Dataset. Default: None.
-            aux_at_targets: Auxiliary data at target locations. Can be a single xr.DataArray or
-                xr.Dataset. Default: None.
-            links: Specifies links between context and target data. Each link is a tuple of
-                two integers, where the first integer is the index of the context data and the second
-                integer is the index of the target data. Can be a single tuple in the case of a single
-                link. If None, no links are specified. Default: None.
-            context_delta_t: Time difference between context data and t=0 (task init time).
-                Can be a single int (same for all context data) or a list/tuple of ints.
-            target_delta_t: Time difference between target data and t=0 (task init time).
-                Can be a single int (same for all target data) or a list/tuple of ints.
-            time_freq: Time frequency of the data. Default: 'D' (daily).
-            xarray_interp_method: Interpolation method to use when interpolating xr.DataArray
-            discrete_xarray_sampling: When randomly sampling xarray variables, whether to sample
-                at discrete points defined at grid cell centres, or at continuous points within the grid.
-                Default is False.
-            dtype: Data type of the data. Used to cast the data to the specified dtype.
-                Default: 'float32'.
+        Parameters
+        ----------
+        context : Union[xr.DataArray, xr.Dataset, pd.DataFrame, List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]]]
+            Context data. Can be a single xr.DataArray, xr.Dataset or
+            pd.DataFrame, or a list/tuple of these.
+        target : Union[xr.DataArray, xr.Dataset, pd.DataFrame, List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]]]
+            Target data. Can be a single xr.DataArray, xr.Dataset or
+            pd.DataFrame, or a list/tuple of these.
+        aux_at_contexts : Tuple[int, Union[xr.DataArray, xr.Dataset]], optional
+            Auxiliary data at context locations. Tuple of two elements, where
+            the first element is the index of the context set for which the
+            auxiliary data will be sampled at, and the second element is the
+            auxiliary data, which can be a single xr.DataArray or xr.Dataset.
+            Default: None.
+        aux_at_targets : Union[xr.DataArray, xr.Dataset], optional
+            Auxiliary data at target locations. Can be a single xr.DataArray
+            or xr.Dataset. Default: None.
+        links : Union[Tuple, List[Tuple[int, int]]], optional
+            Specifies links between context and target data. Each link is a
+            tuple of two integers, where the first integer is the index of the
+            context data and the second integer is the index of the target
+            data. Can be a single tuple in the case of a single link. If None,
+            no links are specified. Default: None.
+        context_delta_t : Union[int, List[int]], optional
+            Time difference between context data and t=0 (task init time). Can
+            be a single int (same for all context data) or a list/tuple of
+            ints. Default is 0.
+        target_delta_t : Union[int, List[int]], optional
+            Time difference between target data and t=0 (task init time). Can
+            be a single int (same for all target data) or a list/tuple of ints.
+            Default is 0.
+        time_freq : str, optional
+            Time frequency of the data. Default: 'D' (daily).
+        xarray_interp_method : str, optional
+            Interpolation method to use when interpolating xr.DataArray.
+            Default is 'linear'.
+        discrete_xarray_sampling : bool, optional
+            When randomly sampling xarray variables, whether to sample at
+            discrete points defined at grid cell centres, or at continuous
+            points within the grid. Default is False.
+        dtype : object, optional
+            Data type of the data. Used to cast the data to the specified
+            dtype. Default: 'float32'.
         """
         self.time_freq = time_freq
         self.xarray_interp_method = xarray_interp_method
@@ -123,10 +141,27 @@ class TaskLoader:
         self,
         context: List,
         target: List,
-        aux_at_contexts: Tuple[int, Union[xr.DataArray, xr.Dataset]] = None,
-        aux_at_targets: Union[xr.DataArray, xr.Dataset] = None,
+        aux_at_contexts: Optional[Tuple[int, Union[xr.DataArray, xr.Dataset]]] = None,
+        aux_at_targets: Optional[Union[xr.DataArray, xr.Dataset]] = None,
     ) -> (List, List):
-        """Cast context and target data to the default dtype.
+        """
+        Cast context and target data to the default dtype.
+
+        Parameters
+        ----------
+        context : List
+            List of context data.
+        target : List
+            List of target data.
+        aux_at_contexts : Tuple[int, Union[xr.DataArray, xr.Dataset]], optional
+            Auxiliary data at context locations. Tuple of two elements, where
+            the first element is the index of the context set for which the
+            auxiliary data will be sampled at, and the second element is the
+            auxiliary data, which can be a single xr.DataArray or xr.Dataset.
+            Default: None.
+        aux_at_targets : Union[xr.DataArray, xr.Dataset], optional
+            Auxiliary data at target locations. Can be a single xr.DataArray
+            or xr.Dataset. Default: None.
 
         Returns
         -------
@@ -170,7 +205,13 @@ class TaskLoader:
             )
 
     def load_dask(self) -> None:
-        """Load any `dask` data into memory"""
+        """
+        Load any `dask` data into memory.
+
+        Returns
+        -------
+        None.
+        """
 
         def load(datasets):
             if not datasets:
@@ -189,12 +230,19 @@ class TaskLoader:
         return None
 
     def count_context_and_target_data_dims(self):
-        """Count the number of data dimensions in the context and target data.
+        """
+        Count the number of data dimensions in the context and target data.
 
         Returns
         -------
         context_dims : tuple. Tuple of data dimensions in the context data.
         target_dims : tuple. Tuple of data dimensions in the target data.
+
+        Raises
+        ------
+        ValueError
+            If the context/target data is not a tuple/list of xr.DataArray,
+            xr.Dataset or pd.DataFrame.
         """
 
         def count_data_dims_of_tuple_of_sets(datasets):
@@ -231,12 +279,19 @@ class TaskLoader:
         return tuple(context_dims), tuple(target_dims), aux_at_target_dims
 
     def infer_context_and_target_var_IDs(self):
-        """Infer the variable IDs of the context and target data.
+        """
+        Infer the variable IDs of the context and target data.
 
         Returns
         -------
         context_var_IDs : tuple. Tuple of variable IDs in the context data.
         target_var_IDs : tuple. Tuple of variable IDs in the target data.
+
+        Raises
+        ------
+        ValueError
+            If the context/target data is not a tuple/list of xr.DataArray,
+            xr.Dataset or pd.DataFrame.
         """
 
         def infer_var_IDs_of_tuple_of_sets(datasets, delta_ts=None):
@@ -301,7 +356,28 @@ class TaskLoader:
         )
 
     def check_links(self, links):
-        """Check that the context-target links are valid."""
+        """
+        Check that the context-target links are valid.
+
+        Parameters
+        ----------
+        links : Union[Tuple, List[Tuple[int, int]]]
+            Specifies links between context and target data. Each link is a
+            tuple of two integers, where the first integer is the index of the
+            context data and the second integer is the index of the target
+            data. Can be a single tuple in the case of a single link. If None,
+            no links are specified. Default: None.
+
+        Returns
+        -------
+        links : Union[Tuple, List[Tuple[int, int]]]
+            The input links, if valid.
+
+        Raises
+        ------
+        ValueError
+            If the links are not valid.
+        """
         if links is None:
             return None
 
@@ -339,7 +415,9 @@ class TaskLoader:
         return links
 
     def __str__(self):
-        """String representation of the TaskLoader object (user-friendly)"""
+        """
+        String representation of the TaskLoader object (user-friendly).
+        """
         s = f"TaskLoader({len(self.context_dims)} context sets, {len(self.target_dims)} target sets)"
         s += f"\nContext variable IDs: {self.context_var_IDs}"
         s += f"\nTarget variable IDs: {self.target_var_IDs}"
@@ -348,9 +426,11 @@ class TaskLoader:
         return s
 
     def __repr__(self):
-        """Representation of the TaskLoader object (for developers)
+        """
+        Representation of the TaskLoader object (for developers).
 
-        TODO make this a more verbose version of __str__
+        ..
+            TODO make this a more verbose version of __str__
         """
         s = str(self)
         s += "\n"
@@ -364,14 +444,32 @@ class TaskLoader:
         self,
         da: Union[xr.DataArray, xr.Dataset],
         sampling_strat: Union[str, int, float, np.ndarray],
-        seed: int = None,
+        seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
-        """Sample a DataArray according to a given strategy
+        """
+        Sample a DataArray according to a given strategy.
 
-        :param da: DataArray to sample, assumed to be sliced for the task already
-        :param sampling_strat: Sampling strategy, either "all" or an integer for random grid cell sampling
-        :param seed: Seed for random sampling
-        :return: Sampled DataArray
+        Parameters
+        ----------
+        da : Union[xr.DataArray, xr.Dataset]
+            DataArray to sample, assumed to be sliced for the task already.
+        sampling_strat : Union[str, int, float, np.ndarray]
+            Sampling strategy, either "all" or an integer for random grid cell sampling
+        seed : int, optional
+            Seed for random sampling. Default: None.
+
+        Returns
+        -------
+        Data : Tuple[X_c, Y_c]
+            Tuple of Sampled target data and sampled context data.
+
+        Raises
+        ------
+        InvalidSamplingStrategyError
+            If the sampling strategy is not valid.
+        InvalidSamplingStrategyError
+            If a numpy coordinate array is passed to sample an xarray object,
+            but the coordinates are out of bounds.
         """
         da = da.load()  # Converts dask -> numpy if not already loaded
         if isinstance(da, xr.Dataset):
@@ -450,14 +548,34 @@ class TaskLoader:
         self,
         df: Union[pd.DataFrame, pd.Series],
         sampling_strat: Union[str, int, float, np.ndarray],
-        seed: int = None,
+        seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
-        """Sample a DataArray according to a given strategy
+        """
+        Sample a DataArray according to a given strategy.
 
-        :param da: DataArray to sample, assumed to be time-sliced for the task already
-        :param sampling_strat: Sampling strategy, either "all" or an integer for random grid cell sampling
-        :param seed: Seed for random sampling
-        :return: Sampled DataArray
+        Parameters
+        ----------
+        df : Union[pd.DataFrame, pd.Series]
+            DataArray to sample, assumed to be time-sliced for the task
+            already.
+        sampling_strat : Union[str, int, float, np.ndarray]
+            Sampling strategy, either "all" or an integer for random grid cell
+            sampling.
+        seed : int, optional
+            Seed for random sampling. Default: None.
+
+        Returns
+        -------
+        Data : Tuple[X_c, Y_c]
+            Tuple of sampled target data and sampled context data.
+
+        Raises
+        ------
+        InvalidSamplingStrategyError
+            If the sampling strategy is not valid.
+        InvalidSamplingStrategyError
+            If a numpy coordinate array is passed to sample a pandas object,
+            but the DataFrame does not contain all the requested samples.
         """
         df = df.dropna(how="any")  # If any obs are NaN, drop them
 
@@ -502,6 +620,22 @@ class TaskLoader:
         X_t: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]],
         offgrid_aux: Union[xr.DataArray, xr.Dataset],
     ) -> np.ndarray:
+        """
+        Sample auxiliary data at off-grid locations.
+
+        Parameters
+        ----------
+        X_t : Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]
+            Off-grid locations at which to sample the auxiliary data. Can be a
+            tuple of two numpy arrays, or a single numpy array.
+        offgrid_aux : Union[xr.DataArray, xr.Dataset]
+            Auxiliary data at off-grid locations.
+
+        Returns
+        -------
+        np.ndarray
+            ...
+        """
         if isinstance(X_t, tuple):
             xt1, xt2 = X_t
             xt1 = xt1.ravel()
@@ -530,37 +664,85 @@ class TaskLoader:
         ] = "all",
         split_frac: float = 0.5,
         datewise_deterministic: bool = False,
-        seed_override=None,
+        seed_override: Optional[int] = None,
     ) -> Task:
-        """Generate a task for a given date
+        """
+        Generate a task for a given date.
 
-        There are several sampling strategies available for the context and target data:
+        There are several sampling strategies available for the context and
+        target data:
         - "all": Sample all observations.
         - int: Sample N observations uniformly at random.
         - float: Sample a fraction of observations uniformly at random.
-        - np.ndarray, shape (2, N): Sample N observations at the given x1, x2 coordinates.
-            Coords are assumed to be unnormalised.
+        - np.ndarray, shape (2, N): Sample N observations at the given x1, x2
+          coordinates. Coords are assumed to be unnormalised.
 
-        :param date: Date for which to generate the task
-        :param context_sampling: Sampling strategy for the context data, either a list of
-            sampling strategies for each context set, or a single strategy applied to all context sets
-        :param target_sampling: Sampling strategy for the target data, either a list of
-            sampling strategies for each target set, or a single strategy applied to all target sets
-        :param split_frac: The fraction of observations to use for the context set with the "split"
-            sampling strategy for linked context and target set pairs. The remaining observations
-            are used for the target set. Default is 0.5.
-        :param: datewise_deterministic: Whether random sampling is datewise_deterministic based on the date. Default is False.
-        :param seed_override: Override the seed for random sampling. This can be used to use the same
-            random sampling at different `date`s. Default is None.
-        :return: Task object containing the context and target data
+        Parameters
+        ----------
+        date : pandas.Timestamp
+            Date for which to generate the task.
+        context_sampling : Union[str, int, float, np.ndarray, List[Union[str, int, float, np.ndarray]]
+            Sampling strategy for the context data, either a list of sampling
+            strategies for each context set, or a single strategy applied to
+            all context sets. Default is "all".
+        target_sampling : Union[str, int, float, np.ndarray, List[Union[str, int, float, np.ndarray]]]
+            Sampling strategy for the target data, either a list of sampling
+            strategies for each target set, or a single strategy applied to all
+            target sets. Default is "all".
+        split_frac : float
+            The fraction of observations to use for the context set with the
+            "split" sampling strategy for linked context and target set pairs.
+            The remaining observations are used for the target set. Default is
+            0.5.
+        datewise_deterministic : bool
+            Whether random sampling is datewise_deterministic based on the
+            date. Default is False.
+        seed_override : Optional[int]
+            Override the seed for random sampling. This can be used to use the
+            same random sampling at different `date`s. Default is None.
+
+        Returns
+        -------
+        task: Task
+            Task object containing the context and target data.
         """
 
         def check_sampling_strat(sampling_strat, set):
-            """Check the sampling strategy
+            """
+            Check the sampling strategy
 
-            Ensure `sampling_strat` is either a single strategy (broadcast to all sets) or a list
-            of length equal to the number of sets. Convert to a tuple of length equal to the number
-            of sets and return.
+            Ensure `sampling_strat` is either a single strategy (broadcast to
+            all sets) or a list of length equal to the number of sets. Convert
+            to a tuple of length equal to the number of sets and return.
+
+            Parameters
+            ----------
+            sampling_strat : ...
+                Sampling strategy to check.
+            set : ...
+                Context or target set to check.
+
+            Returns
+            -------
+            sampling_strat : tuple
+                Tuple of sampling strategies, one for each set.
+
+            Raises
+            ------
+            InvalidSamplingStrategyError
+                If the sampling strategy is invalid.
+            InvalidSamplingStrategyError
+                If the length of the sampling strategy does not match the
+                number of sets.
+            InvalidSamplingStrategyError
+                If the sampling strategy is not a valid type.
+            InvalidSamplingStrategyError
+                If the sampling strategy is a float but not in [0, 1].
+            InvalidSamplingStrategyError
+                If the sampling strategy is an int but not positive.
+            InvalidSamplingStrategyError
+                If the sampling strategy is a numpy array but not of shape
+                (2, N).
             """
             if not isinstance(sampling_strat, (list, tuple)):
                 sampling_strat = tuple([sampling_strat] * len(set))
@@ -568,8 +750,8 @@ class TaskLoader:
                 sampling_strat
             ) != len(set):
                 raise InvalidSamplingStrategyError(
-                    f"Length of sampling_strat ({len(sampling_strat)}) must match number of "
-                    f"context sets ({len(set)})"
+                    f"Length of sampling_strat ({len(sampling_strat)}) must "
+                    f"match number of context sets ({len(set)})"
                 )
 
             for strat in sampling_strat:
@@ -583,7 +765,8 @@ class TaskLoader:
                     )
                 elif isinstance(strat, float) and not 0 <= strat <= 1:
                     raise InvalidSamplingStrategyError(
-                        f"If sampling strategy is a float, must be fraction must be in [0, 1], got {strat}"
+                        f"If sampling strategy is a float, must be fraction "
+                        f"must be in [0, 1], got {strat}"
                     )
                 elif isinstance(strat, int) and strat < 0:
                     raise InvalidSamplingStrategyError(
@@ -591,13 +774,33 @@ class TaskLoader:
                     )
                 elif isinstance(strat, np.ndarray) and strat.shape[0] != 2:
                     raise InvalidSamplingStrategyError(
-                        f"Sampling coordinates must be of shape (2, N), got {strat.shape}"
+                        "Sampling coordinates must be of shape (2, N), got "
+                        f"{strat.shape}"
                     )
 
             return sampling_strat
 
         def time_slice_variable(var, delta_t):
-            """Slice a variable by a given time delta"""
+            """
+            Slice a variable by a given time delta.
+
+            Parameters
+            ----------
+            var : ...
+                Variable to slice.
+            delta_t : ...
+                Time delta to slice by.
+
+            Returns
+            -------
+            var : ...
+                Sliced variable.
+
+            Raises
+            ------
+            ValueError
+                If the variable is of an unknown type.
+            """
             # TODO: Does this work with instantaneous time?
             delta_t = pd.Timedelta(delta_t, unit=self.time_freq)
             if isinstance(var, (xr.Dataset, xr.DataArray)):
@@ -611,13 +814,38 @@ class TaskLoader:
             return var
 
         def sample_variable(var, sampling_strat, seed):
-            """Sample a variable by a given sampling strategy to get input and output data"""
+            """
+            Sample a variable by a given sampling strategy to get input and
+            output data.
+
+            Parameters
+            ----------
+            var : ...
+                Variable to sample.
+            sampling_strat : ...
+                Sampling strategy to use.
+            seed : ...
+                Seed for random sampling.
+
+            Returns
+            -------
+            ... : Tuple[X, Y]
+                Tuple of input and output data.
+
+            Raises
+            ------
+            ValueError
+                If the variable is of an unknown type.
+            """
             if isinstance(var, (xr.Dataset, xr.DataArray)):
                 X, Y = self.sample_da(var, sampling_strat, seed)
             elif isinstance(var, (pd.DataFrame, pd.Series)):
                 X, Y = self.sample_df(var, sampling_strat, seed)
             else:
-                raise ValueError(f"Unknown type {type(var)} for context set {var}")
+                raise ValueError(
+                    f"Unknown type {type(var)} for context set "
+                    f"{var}"
+                )
             return X, Y
 
         # Check that the sampling strategies are valid
@@ -625,14 +853,16 @@ class TaskLoader:
         target_sampling = check_sampling_strat(target_sampling, self.target)
         # Check `split_frac
         if split_frac < 0 or split_frac > 1:
-            raise ValueError(f"split_frac must be between 0 and 1, got {split_frac}")
+            raise ValueError(
+                f"split_frac must be between 0 and 1, got {split_frac}")
         if (
             self.links is not None
             and "split" in context_sampling
             and "split" not in target_sampling
         ):
             raise ValueError(
-                "Cannot use 'split' sampling strategy for context set and not target set"
+                "Cannot use 'split' sampling strategy for context set and not "
+                "target set"
             )
         elif (
             self.links is not None
@@ -640,7 +870,8 @@ class TaskLoader:
             and "split" in target_sampling
         ):
             raise ValueError(
-                "Cannot use 'split' sampling strategy for target set and not context set"
+                "Cannot use 'split' sampling strategy for target set and not "
+                "context set"
             )
 
         if not isinstance(date, pd.Timestamp):
@@ -680,14 +911,16 @@ class TaskLoader:
             and "split" in context_sampling
             and "split" in target_sampling
         ):
-            # Perform the split sampling strategy for linked context and target sets at this point
-            # while we have the full context and target data in scope
+            # Perform the split sampling strategy for linked context and target
+            # sets at this point while we have the full context and target data
+            # in scope
             for link_i, link in enumerate(self.links):
                 N_obs = len(context_slices[link[0]])
                 N_obs_target_check = len(target_slices[link[1]])
                 if N_obs != N_obs_target_check:
                     raise ValueError(
-                        f"Context set {link[0]} has {N_obs} observations, but target set {link[1]}"
+                        f"Context set {link[0]} has {N_obs} observations, but "
+                        f"target set {link[1]} "
                         f"has {N_obs_target_check} observations"
                     )
 
@@ -724,7 +957,8 @@ class TaskLoader:
             # Add auxiliary variable to target set
             if len(task["X_t"]) > 1:
                 raise ValueError(
-                    "Cannot add auxiliary variable to target set when there are multiple target variables"
+                    "Cannot add auxiliary variable to target set when there "
+                    "are multiple target variables"
                 )
             task["Y_t_aux"] = self.sample_offgrid_aux(
                 task["X_t"][0], self.aux_at_targets
@@ -733,6 +967,20 @@ class TaskLoader:
         return Task(task)
 
     def __call__(self, date, *args, **kwargs):
+        """
+        Generate a task for a given date.
+
+        Parameters
+        ----------
+        date : ...
+            Date for which to generate the task.
+
+        Returns
+        -------
+        task: Task | List[Task]
+            Task object or list of task objects for each date containing the
+            context and target data.
+        """
         if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
             return [self.task_generation(d, *args, **kwargs) for d in date]
         else:

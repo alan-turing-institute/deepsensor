@@ -62,11 +62,17 @@ class TestTaskLoader(unittest.TestCase):
         - "all": All samples
         - (np.ndarray): Array of coordinates to sample from the dataset (WIP)
 
-        Args:
-            n_context_sets (int): Number of context samples
-            n_target_sets (int): Number of target samples
-        Returns:
-            (tuple): Arguments for TaskLoader.__call__
+        Parameters
+        ----------
+            n_context_sets : int
+                Number of context samples.
+            n_target_sets : int
+                Number of target samples.
+
+        Returns
+        -------
+        tuple
+            Arguments for TaskLoader.__call__
         """
         for sampling_method in [
             0.0,
@@ -80,13 +86,23 @@ class TestTaskLoader(unittest.TestCase):
 
     @parameterized.expand(range(1, 4))
     def test_loader_call(self, n_context_and_target):
-        """Test TaskLoader.__call__ for all possible combinations of context/target sampling methods
+        """
+        Test TaskLoader.__call__ for all possible combinations of context/
+        target sampling methods.
 
-        Generates all possible combinations of xarray and pandas context/target sets
-        of length n_context_and_target and calls TaskLoader.__call__ with all possible sampling methods.
+        Generates all possible combinations of xarray and pandas context/target
+        sets of length n_context_and_target and calls TaskLoader.__call__ with
+        all possible sampling methods.
 
-        Args:
-            n_context_and_target (int): Number of context and target sets
+        Parameters
+        ----------
+        n_context_and_target : int
+            Number of context and target sets.
+
+        Returns
+        -------
+        ...
+            ...
         """
         # Convert to list of strings containing every possible combination of "xr" and "pd"
         context_ID_list = list(
@@ -97,10 +113,22 @@ class TestTaskLoader(unittest.TestCase):
         )
 
         def data_type_ID_to_data(set_list):
-            """Converts a list of data type IDs ("pd" or "xr") to a list of data objects of that type
+            """
+            Converts a list of data type IDs ("pd" or "xr") to a list of data
+            objects of that type
 
             E.g. ["xr", "pd", "xr"] -> [self.da, self.df, self.da]
             E.g. "xr" -> self.da
+
+            Parameters
+            ----------
+            set_list : list[str] | str
+                List of data type IDs or single data type ID.
+
+            Returns
+            -------
+            list[xr.DataArray] | list[pd.DataFrame] | xr.DataArray | pd.DataFrame
+                List of data objects or single data object.
             """
             if set_list == "xr":
                 return self.da
@@ -122,10 +150,17 @@ class TestTaskLoader(unittest.TestCase):
         return None
 
     def test_invalid_sampling_strat(self):
-        """Test invalid sampling strategy in `TaskLoader.__call__`
+        """
+        Test invalid sampling strategy in `TaskLoader.__call__`.
 
-        Here we only need to test context sampling strategies because the same code to check
-        the validity of the sampling strategy is used for context and target sampling.
+        Here we only need to test context sampling strategies because the same
+        code to check the validity of the sampling strategy is used for context
+        and target sampling.
+
+        Returns
+        -------
+        ...
+            ...
         """
         invalid_context_sampling_strategies = [
             # Sampling strategy must be same length as context/target
@@ -160,19 +195,48 @@ class TestTaskLoader(unittest.TestCase):
                 with self.assertRaises(InvalidSamplingStrategyError):
                     task = tl("2020-01-01", invalid_sampling_strategy)
 
-    def test_split_fails_if_not_df(self):
-        """The "split" sampling strategy only works with pandas objects (currently)"""
+    def test_split_fails_if_not_df(self) -> None:
+        """
+        The "split" sampling strategy only works with pandas objects
+        (currently).
+
+        Returns
+        -------
+        None
+        """
         with self.assertRaises(ValueError):
             # Indexes don't connect two pandas objects
             tl = TaskLoader(context=self.df, target=self.da, links=[(0, 0)])
 
-    def test_wrong_links(self):
-        """Test link indexes out of range"""
+    def test_wrong_links(self) -> None:
+        """
+        Test link indexes out of range.
+
+        Raises
+        ------
+        ValueError
+            If link indexes are out of range.
+
+        Returns
+        -------
+        None
+        """
         with self.assertRaises(ValueError):
             tl = TaskLoader(context=self.df, target=self.df, links=[(0, 1)])
 
-    def test_links(self):
-        """Test sampling from linked dataframes works as expected"""
+    def test_links(self) -> None:
+        """
+        Test sampling from linked dataframes works as expected.
+
+        Raises
+        ------
+        ValueError
+            If link indexes are out of range.
+
+        Returns
+        -------
+        None
+        """
         tl = TaskLoader(context=self.df, target=self.df, links=[(0, 0)])
         task = tl("2020-01-01", "split", "split", split_frac=0.0)
         self.assertEqual(task["Y_c"][0].size, 0)  # Should be no context data

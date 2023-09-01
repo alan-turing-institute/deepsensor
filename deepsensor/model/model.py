@@ -2,7 +2,7 @@ from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.task import Task, flatten_X
 
-from typing import List, Union
+from typing import List, Union, Optional
 import copy
 
 import time
@@ -22,10 +22,44 @@ def create_empty_spatiotemporal_xarray(
     X: Union[xr.Dataset, xr.DataArray],
     dates: List,
     coord_names: dict = {"x1": "x1", "x2": "x2"},
-    data_vars: List = ["var"],
-    prepend_dims: List[str] = None,
-    prepend_coords: dict = None,
+    data_vars: List[str] = ["var"],
+    prepend_dims: Optional[List[str]] = None,
+    prepend_coords: Optional[dict] = None,
 ):
+    """
+    ...
+
+    Parameters
+    ----------
+    X : Union[xr.Dataset, xr.DataArray]
+        ...
+    dates : List[...]
+        ...
+    coord_names : dict, optional
+        ..., by default {"x1": "x1", "x2": "x2"}
+    data_vars : List[str], optional
+        ..., by default ["var"]
+    prepend_dims : List[str], optional
+        ..., by default None
+    prepend_coords : dict, optional
+        ..., by default None
+
+    Returns
+    -------
+    ...
+        ...
+
+    Raises
+    ------
+    ValueError
+        If `data_vars` contains duplicate values.
+    ValueError
+        If `coord_names["x1"]` is not uniformly spaced.
+    ValueError
+        If `coord_names["x2"]` is not uniformly spaced.
+    ValueError
+        If `prepend_dims` and `prepend_coords` are not the same length.
+    """
     if prepend_dims is None:
         prepend_dims = []
     if prepend_coords is None:
@@ -79,7 +113,26 @@ def create_empty_spatiotemporal_xarray(
 def increase_spatial_resolution(
     X_t_normalised, resolution_factor, coord_names: dict = {"x1": "x1", "x2": "x2"}
 ):
-    # TODO wasteful to interpolate X_t_normalised
+    """
+    ...
+
+    ..
+        # TODO wasteful to interpolate X_t_normalised
+
+    Parameters
+    ----------
+    X_t_normalised : ...
+        ...
+    resolution_factor : ...
+        ...
+    coord_names : dict, optional
+        ..., by default {"x1": "x1", "x2": "x2"}
+
+    Returns
+    -------
+    ...
+        ...
+    """
     assert isinstance(resolution_factor, (float, int))
     assert isinstance(X_t_normalised, (xr.DataArray, xr.Dataset))
     x1_name, x2_name = coord_names["x1"], coord_names["x2"]
@@ -93,7 +146,6 @@ def increase_spatial_resolution(
 
 
 class ProbabilisticModel:
-
     """
     Base class for probabilistic model used for DeepSensor.
     Ensures a set of methods required for DeepSensor
@@ -104,6 +156,21 @@ class ProbabilisticModel:
         """
         Computes the model mean prediction over target points based on given context
         data.
+
+        Parameters
+        ----------
+        task : Task
+            Task containing context data.
+
+        Returns
+        -------
+        mean : np.ndarray
+            Should return mean prediction over target points.
+
+        Raises
+        ------
+        NotImplementedError
+            If not implemented by child class.
         """
         raise NotImplementedError()
 
@@ -111,58 +178,175 @@ class ProbabilisticModel:
         """
         Model marginal variance over target points given context points.
         Shape (N,).
+
+        Parameters
+        ----------
+        task : Task
+            Task containing context data.
+
+        Returns
+        -------
+        var : np.ndarray
+            Should return marginal variance over target points.
+
+        Raises
+        ------
+        NotImplementedError
+            If not implemented by child class.
         """
         raise NotImplementedError()
 
     def stddev(self, task: Task):
         """
-        Model marginal standard deviation over target points given context points.
-        Shape (N,).
+        Model marginal standard deviation over target points given context
+        points. Shape (N,).
+
+        Parameters
+        ----------
+        task : Task
+            Task containing context data.
+
+        Returns
+        -------
+        std : np.ndarray
+            Should return marginal standard deviation over target points.
         """
         var = self.variance(task)
         return var**0.5
 
     def covariance(self, task: Task, *args, **kwargs):
         """
-        Computes the model covariance matrix over target points based on given context
-        data. Shape (N, N).
+        Computes the model covariance matrix over target points based on given
+        context data. Shape (N, N).
+
+        Parameters
+        ----------
+        task : Task
+            Task containing context data.
+
+        Returns
+        -------
+        cov : np.ndarray
+            Should return covariance matrix over target points.
+
+        Raises
+        ------
+        NotImplementedError
+            If not implemented by child class.
         """
         raise NotImplementedError()
 
     def mean_marginal_entropy(self, task: Task, *args, **kwargs):
         """
-        Computes the mean marginal entropy over target points based on given context
-        data.
+        Computes the mean marginal entropy over target points based on given
+        context data.
 
-        Note: Getting a vector of marginal entropies would be useful too.
+        .. note::
+            Note: Getting a vector of marginal entropies would be useful too.
+
+        Parameters
+        ----------
+        task : Task
+            Task containing context data.
+
+        Returns
+        -------
+        mean_marginal_entropy : float
+            Should return mean marginal entropy over target points.
+
+        Raises
+        ------
+        NotImplementedError
+            If not implemented by child class.
         """
         raise NotImplementedError()
 
     def joint_entropy(self, task: Task, *args, **kwargs):
         """
-        Computes the model joint entropy over target points based on given context
-        data.
+        Computes the model joint entropy over target points based on given
+        context data.
+
+        Parameters
+        ----------
+        task : Task
+            Task containing context data.
+
+        Returns
+        -------
+        joint_entropy : float
+            Should return joint entropy over target points.
+
+        Raises
+        ------
+        NotImplementedError
+            If not implemented by child class.
         """
         raise NotImplementedError()
 
     def logpdf(self, task: Task, *args, **kwargs):
         """
-        Computes the joint model logpdf over target points based on given context
-        data.
+        Computes the joint model logpdf over target points based on given
+        context data.
+
+        Parameters
+        ----------
+        task : Task
+            Task containing context data.
+
+        Returns
+        -------
+        logpdf : float
+            Should return joint logpdf over target points.
+
+        Raises
+        ------
+        NotImplementedError
+            If not implemented by child class.
         """
         raise NotImplementedError()
 
     def loss(self, task: Task, *args, **kwargs):
         """
         Computes the model loss over target points based on given context data.
+
+        Parameters
+        ----------
+        task : Task
+            Task containing context data.
+
+        Returns
+        -------
+        loss : float
+            Should return loss over target points.
+
+        Raises
+        ------
+        NotImplementedError
+            If not implemented by child class.
         """
         raise NotImplementedError()
 
     def sample(self, task: Task, n_samples=1, *args, **kwargs):
         """
-        Draws `n_samples` joint samples over target points based on given context
-        data.
-        returned shape is (n_samples, n_target).
+        Draws `n_samples` joint samples over target points based on given
+        context data. Returned shape is (n_samples, n_target).
+
+        Parameters
+        ----------
+        task : Task
+            Task containing context data.
+        n_samples : int
+            Number of samples to draw.
+
+        Returns
+        -------
+        samples : Tuple[np.ndarray, nd.ndarray]
+            Should return joint samples over target points.
+
+        Raises
+        ------
+        NotImplementedError
+            If not implemented by child class.
         """
         raise NotImplementedError()
 
@@ -178,10 +362,16 @@ class DeepSensorModel(ProbabilisticModel):
     def __init__(
         self, data_processor: DataProcessor = None, task_loader: TaskLoader = None
     ):
-        """Initialise DeepSensorModel
+        """
+        Initialise DeepSensorModel.
 
-        :param task_loader: TaskLoader object, used to determine target variables for unnormalising
-        :param data_processor: DataProcessor object, used to unnormalise predictions
+        Parameters
+        ----------
+        data_processor : DataProcessor
+            DataProcessor object, used to unnormalise predictions.
+        task_loader : TaskLoader
+            TaskLoader object, used to determine target variables for
+            unnormalising.
         """
         self.task_loader = task_loader
         self.data_processor = data_processor
@@ -193,46 +383,67 @@ class DeepSensorModel(ProbabilisticModel):
             xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index, np.ndarray
         ],
         X_t_is_normalised: bool = False,
-        resolution_factor=1,
-        n_samples=0,
-        ar_sample=False,
-        ar_subsample_factor=1,
-        unnormalise=True,
-        seed=0,
+        resolution_factor: int = 1,
+        n_samples: int = 0,
+        ar_sample: bool = False,
+        ar_subsample_factor: int = 1,
+        unnormalise: bool = True,
+        seed: int = 0,
         append_indexes: dict = None,
-        progress_bar=0,
-        verbose=False,
+        progress_bar: int = 0,
+        verbose: bool = False,
     ):
-        """Predict on a regular grid or at off-grid locations.
+        """
+        Predict on a regular grid or at off-grid locations.
 
-        TODO:
-        - Test with multiple targets model
+        ..
+            TODO:
+            - Test with multiple targets model
 
-        Args:
-            tasks: List of tasks containing context data.
-            X_t: Target locations to predict at. Can be an xarray object containing
-                on-grid locations or a pandas object containing off-grid locations.
-            X_t_is_normalised: Whether the `X_t` coords are normalised.
-                If False, will normalise the coords before passing to model. Default False.
-            resolution_factor: Optional factor to increase the resolution of the
-                target grid by. E.g. 2 will double the target resolution, 0.5 will halve it.
-                Applies to on-grid predictions only. Default 1.
-            n_samples: Number of joint samples to draw from the model.
-                If 0, will not draw samples. Default 0.
-            ar_sample: Whether to use autoregressive sampling. Default False.
-            unnormalise: Whether to unnormalise the predictions. Only works if
-                `self` has a `data_processor` and `task_loader` attribute. Default True.
-            seed: Random seed for deterministic sampling. Default 0.
-            append_indexes: Dictionary of index metadata to append to pandas indexes
-                in the off-grid case. Default None.
-            progress_bar: Whether to display a progress bar over tasks. Default 0.
-            verbose: Whether to print time taken for prediction. Default False.
+        Parameters
+        ----------
+        tasks : Union[List[Task], Task]
+            List of tasks containing context data.
+        X_t : Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index, np.ndarray]
+            Target locations to predict at. Can be an xarray object containing
+            on-grid locations or a pandas object containing off-grid locations.
+        X_t_is_normalised : bool
+            Whether the `X_t` coords are normalised. If False, will normalise
+            the coords before passing to model. Default False.
+        resolution_factor : float
+            Optional factor to increase the resolution of the target grid by.
+            E.g. 2 will double the target resolution, 0.5 will halve it.
+            Applies to on-grid predictions only. Default 1.
+        n_samples : int
+            Number of joint samples to draw from the model. If 0, will not
+            draw samples. Default 0.
+        ar_sample : bool
+            Whether to use autoregressive sampling. Default False.
+        unnormalise : bool
+            Whether to unnormalise the predictions. Only works if `self` has a
+            `data_processor` and `task_loader` attribute. Default True.
+        seed : int
+            Random seed for deterministic sampling. Default 0.
+        append_indexes : dict
+            Dictionary of index metadata to append to pandas indexes in the
+            off-grid case. Default None.
+        progress_bar : int
+            Whether to display a progress bar over tasks. Default 0.
+        verbose : bool
+            Whether to print time taken for prediction. Default False.
 
-        Returns:
-            - If X_t is a pandas object, returns pandas objects containing off-grid predictions.
-            - If X_t is an xarray object, returns xarray object containing on-grid predictions.
-            - If n_samples == 0, returns only mean and std predictions.
-            - If n_samples > 0, returns mean, std and samples predictions.
+        Returns
+        -------
+        predictions : Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index]
+            If X_t is a pandas object, returns pandas objects containing
+            off-grid predictions.
+
+            If X_t is an xarray object, returns xarray object containing
+            on-grid predictions.
+
+            If n_samples == 0, returns only mean and std predictions.
+
+            If n_samples > 0, returns mean, std and samples predictions.
         """
         tic = time.time()
 

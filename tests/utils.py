@@ -4,14 +4,26 @@ import xarray as xr
 
 
 def gen_random_data_xr(coords: dict, dims: list = None, data_vars: list = None):
-    """Generate random xarray data
+    """
+    Generate random xarray data.
 
-    Args:
-        coords (dict): coordinates of the data
-        dims (list, optional): dimensions of the data. Defaults to None. If None, dims is
-            inferred from coords. This arg can be used to change the order of the dimensions.
-        data_vars (list, optional): data variables. Defaults to None. If None, variable is
-            an xr.DataArray. If not None, variable is an xr.Dataset containing the data_vars.
+    Parameters
+    ----------
+    coords : dict
+        Coordinates of the data.
+    dims : list, optional
+        Dimensions of the data. Defaults to None. If None, dims is inferred
+        from coords. This arg can be used to change the order of the
+        dimensions.
+    data_vars : list, optional
+        Data variables. Defaults to None. If None, variable is an
+        xr.DataArray. If not None, variable is an xr.Dataset containing the
+        data_vars.
+
+    Returns
+    -------
+    da : Union[xr.DataArray, xr.Dataset]
+        Random xarray data.
     """
     if dims is None:
         shape = tuple([len(coords[dim]) for dim in coords])
@@ -28,15 +40,26 @@ def gen_random_data_xr(coords: dict, dims: list = None, data_vars: list = None):
 
 
 def gen_random_data_pandas(coords: dict, dims: list = None, cols: list = None):
-    """Generate random pandas data
+    """
+    Generate random pandas data.
 
-    Args:
-        coords (dict): coordinates of the data. This will be used to construct a MultiIndex
-            using pd.MultiIndex.from_product.
-        dims (list, optional): dimensions of the data. Defaults to None. If None, dims is
-            inferred from coords. This arg can be used to change the order of the MultiIndex.
-        cols (list, optional): columns of the data. Defaults to None. If None, generate a
-            pd.Series with an arbitrary name. If not None, cols is used to construct a pd.DataFrame.
+    Parameters
+    ----------
+    coords : dict
+        Coordinates of the data. This will be used to construct a MultiIndex
+        using pd.MultiIndex.from_product.
+    dims : list, optional
+        Dimensions of the data. Defaults to None. If None, dims is inferred
+        from coords. This arg can be used to change the order of the MultiIndex.
+    cols : list, optional
+        Columns of the data. Defaults to None. If None, generate a pd.Series
+        with an arbitrary name. If not None, cols is used to construct a
+        pd.DataFrame.
+
+    Returns
+    -------
+    df : Union[pd.Series, pd.DataFrame]
+        Random pandas data.
     """
     if dims is None:
         dims = list(coords.keys())

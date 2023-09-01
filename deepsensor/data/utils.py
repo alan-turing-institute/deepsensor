@@ -8,8 +8,19 @@ import xarray as xr
 
 def construct_x1x2_ds(gridded_ds):
     """
-    Construct an xr.Dataset containing two vars, where each var is a 2D gridded channel whose
-    values contain the x_1 and x_2 coordinate values, respectively.
+    Construct an xr.Dataset containing two vars, where each var is a 2D
+    gridded channel whose values contain the x_1 and x_2 coordinate values,
+    respectively.
+
+    Parameters
+    ----------
+    gridded_ds : xr.Dataset
+        ...
+
+    Returns
+    -------
+    xr.Dataset
+        ...
     """
     X1, X2 = np.meshgrid(gridded_ds.x1, gridded_ds.x2, indexing="ij")
     ds = xr.Dataset(
@@ -26,6 +37,18 @@ def construct_circ_time_ds(dates, freq):
         - 'H': cycles once per day at hourly intervals
         - 'D': cycles once per year at daily intervals
         - 'M': cycles once per year at monthly intervals
+
+    Parameters
+    ----------
+    dates: ...
+        ...
+    freq : ...
+        ...
+
+    Returns
+    -------
+    xr.Dataset
+        ...
     """
     if freq == "D":
         time_var = dates.dayofyear
@@ -61,11 +84,15 @@ def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float
     x1 has a resolution of 0.1 degrees and x2 has a resolution of 0.2 degrees, the data resolution
     returned will be 0.1 degrees.
 
-    Args:
-        ds (Union[xr.DataArray, xr.Dataset]): Xarray object with coordinates x1 and x2.
+    Parameters
+    ----------
+    ds : Union[xr.DataArray, xr.Dataset]
+        Xarray object with coordinates x1 and x2.
 
-    Returns:
-        data_resolution (float): Resolution of the data (in spatial units, e.g. 0.1 degrees).
+    Returns
+    -------
+    data_resolution : float
+        Resolution of the data (in spatial units, e.g. 0.1 degrees).
     """
     x1_res = np.abs(np.mean(np.diff(ds["x1"])))
     x2_res = np.abs(np.mean(np.diff(ds["x2"])))
@@ -76,22 +103,31 @@ def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float
 def compute_pandas_data_resolution(
     df: Union[pd.DataFrame, pd.Series], n_times: int = 1000, percentile: int = 5
 ) -> float:
-    """Approximates the resolution of non-gridded pandas data with indexes time, x1, and x2.
+    """
+    Approximates the resolution of non-gridded pandas data with indexes time,
+    x1, and x2.
 
-    The resolution is approximated as the Nth percentile of the distances between neighbouring
-    observations, possibly using a subset of the dates in the data. The default is to use 1000
-    dates (or all dates if there are fewer than 1000) and to use the 5th percentile. This means
-    that the resolution is the distance between the closest 5% of neighbouring observations.
+    The resolution is approximated as the Nth percentile of the distances
+    between neighbouring observations, possibly using a subset of the dates in
+    the data. The default is to use 1000 dates (or all dates if there are fewer
+    than 1000) and to use the 5th percentile. This means that the resolution is
+    the distance between the closest 5% of neighbouring observations.
 
-    Args:
-        df (Union[pd.DataFrame, pd.Series]): Dataframe or series with indexes time, x1, and x2.
-        n_times (int, optional): Number of dates to sample. Defaults to 1000. If "all", all dates
-            are used.
-        percentile (int, optional): Percentile of pairwise distances for computing the resolution.
-            Defaults to 5.
+    Parameters
+    ----------
+    df : Union[pd.DataFrame, pd.Series]
+        Dataframe or series with indexes time, x1, and x2.
+    n_times : int, optional
+        Number of dates to sample. Defaults to 1000. If "all", all dates are
+        used.
+    percentile : int, optional
+        Percentile of pairwise distances for computing the resolution.
+        Defaults to 5.
 
-    Returns:
-        data_resolution (float): Resolution of the data (in spatial units, e.g. 0.1 degrees).
+    Returns
+    -------
+    data_resolution : float
+        Resolution of the data (in spatial units, e.g. 0.1 degrees).
     """
     dates = df.index.get_level_values("time").unique()
 
