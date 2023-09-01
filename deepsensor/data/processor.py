@@ -150,8 +150,7 @@ class DataProcessor:
         if (
             var_ID in self.norm_params
             and self.norm_params[var_ID]["method"] == method
-            and "param1" in self.norm_params[var_ID]
-            and "param2" in self.norm_params[var_ID]
+            and "params" in self.norm_params[var_ID]
         ):
             return True
         else:
@@ -169,9 +168,8 @@ class DataProcessor:
             )
 
         if self.check_params_computed(var_ID, method):
-            # Already have "param1" and "param2" in norm_params with `"method": method` - load them
-            param1 = self.norm_params[var_ID]["param1"]
-            param2 = self.norm_params[var_ID]["param2"]
+            # Already have "params" in norm_params with `"method": method` - load them
+            params = self.norm_params[var_ID]["params"]
         else:
             # Params not computed - compute them now
             if self.verbose:
@@ -182,19 +180,16 @@ class DataProcessor:
                 )
             DataProcessor.load_dask(data)
             if method == "mean_std":
-                param1 = float(data.mean())
-                param2 = float(data.std())
+                params = {"mean": float(data.mean()), "std": float(data.std())}
             elif method == "min_max":
-                param1 = float(data.min())
-                param2 = float(data.max())
+                params = {"min": float(data.min()), "max": float(data.max())}
             if self.verbose:
-                print(
-                    f"Done. {var_ID} {method} param1={param1:.3f}, param2={param2:.3f}"
-                )
+                print(f"Done. {var_ID} {method} params={params}")
             self.add_to_norm_params(
-                var_ID, **{"method": method, "param1": param1, "param2": param2}
+                var_ID,
+                **{"method": method, "params": params},
             )
-        return param1, param2
+        return params
 
     def map_coord_array(self, coord_array: np.ndarray, unnorm: bool = False):
         """Normalise or unnormalise a coordinate array
@@ -325,30 +320,28 @@ class DataProcessor:
                 f"Method {method} not recognised. Use one of {self.valid_methods}"
             )
 
-        param1, param2 = self.get_norm_params(var_ID, data, method)
+        params = self.get_norm_params(var_ID, data, method)
 
         if method == "mean_std":
             if unnorm:
-                scale = param2
-                offset = param1
+                data = data * params["std"]
+                if add_offset:
+                    data = data + params["mean"]
             else:
-                scale = 1 / param2
-                offset = -param1 / param2
-            data = data * scale
-            if add_offset:
-                data = data + offset
+                if add_offset:
+                    data = data - params["mean"]
+                data = data / params["std"]
             return data
 
         elif method == "min_max":
             if unnorm:
-                scale = (param2 - param1) / 2
-                offset = (param2 + param1) / 2
+                data = data * (params["max"] - params["min"])
+                if add_offset:
+                    data = data + params["min"]
             else:
-                scale = 2 / (param2 - param1)
-                offset = -(param2 + param1) / (param2 - param1)
-            data = data * scale
-            if add_offset:
-                data = data + offset
+                if add_offset:
+                    data = data - params["min"]
+                data = data / (params["max"] - params["min"])
             return data
 
     def map(
