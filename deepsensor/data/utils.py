@@ -8,18 +8,18 @@ import xarray as xr
 
 def construct_x1x2_ds(gridded_ds):
     """
-    Construct an xr.Dataset containing two vars, where each var is a 2D
+    Construct an xarray.Dataset containing two vars, where each var is a 2D
     gridded channel whose values contain the x_1 and x_2 coordinate values,
     respectively.
 
     Parameters
     ----------
-    gridded_ds : xr.Dataset
+    gridded_ds : xarray.Dataset
         ...
 
     Returns
     -------
-    xr.Dataset
+    xarray.Dataset
         ...
     """
     X1, X2 = np.meshgrid(gridded_ds.x1, gridded_ds.x2, indexing="ij")
@@ -32,11 +32,13 @@ def construct_x1x2_ds(gridded_ds):
 
 def construct_circ_time_ds(dates, freq):
     """
-    Return an xr.Dataset containing a circular variable for time. The `freq`
-    entry dictates the frequency of cycling of the circular variable. E.g.:
-        - 'H': cycles once per day at hourly intervals
-        - 'D': cycles once per year at daily intervals
-        - 'M': cycles once per year at monthly intervals
+    Return an xarray.Dataset containing a circular variable for time. The
+    ``freq`` entry dictates the frequency of cycling of the circular variable.
+    E.g.:
+
+        - ``'H'``: cycles once per day at hourly intervals
+        - ``'D'``: cycles once per year at daily intervals
+        - ``'M'``: cycles once per year at monthly intervals
 
     Parameters
     ----------
@@ -47,7 +49,7 @@ def construct_circ_time_ds(dates, freq):
 
     Returns
     -------
-    xr.Dataset
+    xarray.Dataset
         ...
     """
     if freq == "D":
@@ -78,15 +80,17 @@ def construct_circ_time_ds(dates, freq):
 
 
 def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float:
-    """Computes the resolution of an xarray object with coordinates x1 and x2
+    """
+    Computes the resolution of an xarray object with coordinates x1 and x2.
 
-    The data resolution is the finer of the two coordinate resolutions (x1 and x2). For example, if
-    x1 has a resolution of 0.1 degrees and x2 has a resolution of 0.2 degrees, the data resolution
-    returned will be 0.1 degrees.
+    The data resolution is the finer of the two coordinate resolutions (x1 and
+    x2). For example, if x1 has a resolution of 0.1 degrees and x2 has a
+    resolution of 0.2 degrees, the data resolution returned will be 0.1
+    degrees.
 
     Parameters
     ----------
-    ds : Union[xr.DataArray, xr.Dataset]
+    ds : xarray.DataArray | xarray.Dataset
         Xarray object with coordinates x1 and x2.
 
     Returns
@@ -115,7 +119,7 @@ def compute_pandas_data_resolution(
 
     Parameters
     ----------
-    df : Union[pd.DataFrame, pd.Series]
+    df : pandas.DataFrame | pandas.Series
         Dataframe or series with indexes time, x1, and x2.
     n_times : int, optional
         Number of dates to sample. Defaults to 1000. If "all", all dates are

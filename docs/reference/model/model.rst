@@ -1,6 +1,13 @@
 ``deepsensor.model.model``
 ==========================
 
+.. autoclass:: deepsensor.model.model.DeepSensorModel
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :inherited-members:
+    :special-members: __init__
+
 .. autoclass:: deepsensor.model.model.ProbabilisticModel
     :members:
     :undoc-members:

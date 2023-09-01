@@ -37,7 +37,7 @@ class AcquisitionFunction:
 
         Returns
         -------
-        np.ndarray
+        numpy.ndarray
             Acquisition function value/s. Shape ().
 
         Raises
@@ -70,12 +70,12 @@ class AcquisitionFunctionParallel(AcquisitionFunction):
         ----------
         task : deepsensor.data.task.Task
             Task object containing context and target sets.
-        X_s : np.ndarray
+        X_s : numpy.ndarray
             Search points. Shape (2, N_search).
 
         Returns
         -------
-        np.ndarray
+        numpy.ndarray
             Should return acquisition function value/s. Shape (N_search,).
 
         Raises
@@ -414,7 +414,7 @@ class Random(AcquisitionFunctionParallel):
         ----------
         task : deepsensor.data.task.Task
             ...
-        X_s : np.ndarray
+        X_s : numpy.ndarray
             ...
 
         Returns
@@ -448,7 +448,7 @@ class ContextDist(AcquisitionFunctionParallel):
         ----------
         task : deepsensor.data.task.Task
             ...
-        X_s : np.ndarray
+        X_s : numpy.ndarray
             ...
 
         Returns
@@ -498,7 +498,7 @@ class Stddev(AcquisitionFunctionParallel):
         ----------
         task : deepsensor.data.task.Task
             ...
-        X_s : np.ndarray
+        X_s : numpy.ndarray
             ...
         target_set_idx : int, optional
             ..., by default 0
@@ -547,14 +547,14 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         ----------
         task : deepsensor.data.task.Task
             Task object containing context and target sets.
-        X_s : np.ndarray
+        X_s : numpy.ndarray
             Search points. Shape (2, N_search).
         target_set_idx : int
             Index of target set to compute acquisition function for.
 
         Returns
         -------
-        np.ndarray
+        numpy.ndarray
             Acquisition function value/s. Shape (N_search,).
         """
         # Set the target points to the search points

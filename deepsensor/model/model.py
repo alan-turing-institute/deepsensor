@@ -31,7 +31,7 @@ def create_empty_spatiotemporal_xarray(
 
     Parameters
     ----------
-    X : Union[xr.Dataset, xr.DataArray]
+    X : xarray.Dataset | xarray.DataArray
         ...
     dates : List[...]
         ...
@@ -52,13 +52,13 @@ def create_empty_spatiotemporal_xarray(
     Raises
     ------
     ValueError
-        If `data_vars` contains duplicate values.
+        If ``data_vars`` contains duplicate values.
     ValueError
-        If `coord_names["x1"]` is not uniformly spaced.
+        If ``coord_names["x1"]`` is not uniformly spaced.
     ValueError
-        If `coord_names["x2"]` is not uniformly spaced.
+        If ``coord_names["x2"]`` is not uniformly spaced.
     ValueError
-        If `prepend_dims` and `prepend_coords` are not the same length.
+        If ``prepend_dims`` and ``prepend_coords`` are not the same length.
     """
     if prepend_dims is None:
         prepend_dims = []
@@ -164,7 +164,7 @@ class ProbabilisticModel:
 
         Returns
         -------
-        mean : np.ndarray
+        mean : numpy.ndarray
             Should return mean prediction over target points.
 
         Raises
@@ -186,7 +186,7 @@ class ProbabilisticModel:
 
         Returns
         -------
-        var : np.ndarray
+        var : numpy.ndarray
             Should return marginal variance over target points.
 
         Raises
@@ -208,7 +208,7 @@ class ProbabilisticModel:
 
         Returns
         -------
-        std : np.ndarray
+        std : numpy.ndarray
             Should return marginal standard deviation over target points.
         """
         var = self.variance(task)
@@ -226,7 +226,7 @@ class ProbabilisticModel:
 
         Returns
         -------
-        cov : np.ndarray
+        cov : numpy.ndarray
             Should return covariance matrix over target points.
 
         Raises
@@ -328,8 +328,8 @@ class ProbabilisticModel:
 
     def sample(self, task: Task, n_samples=1, *args, **kwargs):
         """
-        Draws `n_samples` joint samples over target points based on given
-        context data. Returned shape is (n_samples, n_target).
+        Draws ``n_samples`` joint samples over target points based on given
+        context data. Returned shape is ``(n_samples, n_target)``.
 
         Parameters
         ----------
@@ -340,7 +340,7 @@ class ProbabilisticModel:
 
         Returns
         -------
-        samples : Tuple[np.ndarray, nd.ndarray]
+        samples : Tuple[numpy.ndarray, numpy.ndarray]
             Should return joint samples over target points.
 
         Raises
@@ -352,24 +352,23 @@ class ProbabilisticModel:
 
 
 class DeepSensorModel(ProbabilisticModel):
-
     """
     Implements DeepSensor prediction functionality of a ProbabilisticModel.
-    Allows for outputting an xarray object containing on-grid predictions or a pandas
-    object containing off-grid predictions.
+    Allows for outputting an xarray object containing on-grid predictions or a
+    pandas object containing off-grid predictions.
     """
 
     def __init__(
-        self, data_processor: DataProcessor = None, task_loader: TaskLoader = None
+        self, data_processor: Optional[DataProcessor] = None, task_loader: Optional[TaskLoader] = None
     ):
         """
         Initialise DeepSensorModel.
 
         Parameters
         ----------
-        data_processor : DataProcessor
+        data_processor : deepsensor.data.processor.DataProcessor
             DataProcessor object, used to unnormalise predictions.
-        task_loader : TaskLoader
+        task_loader : deepsensor.data.loader.TaskLoader
             TaskLoader object, used to determine target variables for
             unnormalising.
         """
@@ -402,14 +401,14 @@ class DeepSensorModel(ProbabilisticModel):
 
         Parameters
         ----------
-        tasks : Union[List[Task], Task]
+        tasks : List[Task] | Task
             List of tasks containing context data.
-        X_t : Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index, np.ndarray]
+        X_t : xarray.Dataset | xarray.DataArray | pandas.DataFrame | pandas.Series | pandas.Index | numpy.ndarray
             Target locations to predict at. Can be an xarray object containing
             on-grid locations or a pandas object containing off-grid locations.
         X_t_is_normalised : bool
-            Whether the `X_t` coords are normalised. If False, will normalise
-            the coords before passing to model. Default False.
+            Whether the ``X_t`` coords are normalised. If False, will normalise
+            the coords before passing to model. Default ``False``.
         resolution_factor : float
             Optional factor to increase the resolution of the target grid by.
             E.g. 2 will double the target resolution, 0.5 will halve it.
@@ -418,32 +417,46 @@ class DeepSensorModel(ProbabilisticModel):
             Number of joint samples to draw from the model. If 0, will not
             draw samples. Default 0.
         ar_sample : bool
-            Whether to use autoregressive sampling. Default False.
+            Whether to use autoregressive sampling. Default ``False``.
         unnormalise : bool
-            Whether to unnormalise the predictions. Only works if `self` has a
-            `data_processor` and `task_loader` attribute. Default True.
+            Whether to unnormalise the predictions. Only works if ``self`` has
+            a ``data_processor`` and ``task_loader`` attribute. Default
+            ``True``.
         seed : int
             Random seed for deterministic sampling. Default 0.
         append_indexes : dict
             Dictionary of index metadata to append to pandas indexes in the
-            off-grid case. Default None.
+            off-grid case. Default ``None``.
         progress_bar : int
             Whether to display a progress bar over tasks. Default 0.
         verbose : bool
-            Whether to print time taken for prediction. Default False.
+            Whether to print time taken for prediction. Default ``False``.
 
         Returns
         -------
-        predictions : Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index]
-            If X_t is a pandas object, returns pandas objects containing
+        predictions : xarray.Dataset | xarray.DataArray | pandas.DataFrame | pandas.Series | pandas.Index
+            If ``X_t`` is a pandas object, returns pandas objects containing
             off-grid predictions.
 
-            If X_t is an xarray object, returns xarray object containing
+            If ``X_t`` is an xarray object, returns xarray object containing
             on-grid predictions.
 
-            If n_samples == 0, returns only mean and std predictions.
+            If ``n_samples`` == 0, returns only mean and std predictions.
 
-            If n_samples > 0, returns mean, std and samples predictions.
+            If ``n_samples`` > 0, returns mean, std and samples predictions.
+
+        Raises
+        ------
+        ValueError
+            If ``X_t`` is not an xarray object and
+            ``resolution_factor`` is not 1 or ``ar_subsample_factor`` is not 1.
+        ValueError
+            If ``X_t`` is not a pandas object and ``append_indexes`` is not
+            ``None``.
+        ValueError
+            If ``X_t`` is not an xarray, pandas or numpy object.
+        ValueError
+            If ``append_indexes`` are not all the same length as ``X_t``.
         """
         tic = time.time()
 

@@ -52,27 +52,30 @@ class TestTaskLoader(unittest.TestCase):
         self.df = _gen_data_pandas()
 
     def _gen_task_loader_call_args(self, n_context_sets, n_target_sets):
-        """Generate arguments for TaskLoader.__call__
+        """
+        Generate arguments for ``TaskLoader.__call__``.
 
         Loops over all possible combinations of context/target sampling methods
-        and returns a list of arguments for TaskLoader.__call__.
+        and returns a list of arguments for ``TaskLoader.__call__``.
         Options tested include:
-        - (int): Random number of samples
-        - (float): Fraction of samples
-        - "all": All samples
-        - (np.ndarray): Array of coordinates to sample from the dataset (WIP)
+
+            - (int): Random number of samples
+            - (float): Fraction of samples
+            - "all": All samples
+            - (numpy.ndarray): Array of coordinates to sample from the dataset
+              (WIP)
 
         Parameters
         ----------
-            n_context_sets : int
-                Number of context samples.
-            n_target_sets : int
-                Number of target samples.
+        n_context_sets : int
+            Number of context samples.
+        n_target_sets : int
+            Number of target samples.
 
         Returns
         -------
         tuple
-            Arguments for TaskLoader.__call__
+            Arguments for ``TaskLoader.__call__``
         """
         for sampling_method in [
             0.0,
@@ -151,7 +154,7 @@ class TestTaskLoader(unittest.TestCase):
 
     def test_invalid_sampling_strat(self):
         """
-        Test invalid sampling strategy in `TaskLoader.__call__`.
+        Test invalid sampling strategy in ``TaskLoader.__call__``.
 
         Here we only need to test context sampling strategies because the same
         code to check the validity of the sampling strategy is used for context

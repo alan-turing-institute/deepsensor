@@ -10,9 +10,11 @@ from deepsensor.errors import TaskSetIndexError, GriddedDataError
 
 
 class Task(dict):
-    """Task dictionary class
+    """
+    Task dictionary class.
 
-    Inherits from `dict` and adds methods for printing and modifying the data.
+    Inherits from ``dict`` and adds methods for printing and modifying the
+    data.
     """
 
     def __init__(self, task_dict: dict) -> None:
@@ -87,13 +89,13 @@ class Task(dict):
         task : dict
             Task dictionary.
         modify_flag : str
-            Flag to set in the task dictionary's `modify` key.
+            Flag to set in the task dictionary's ``modify`` key.
 
         Returns
         -------
         task : dict
             Task dictionary with f applied to the array elements and
-            modify_flag set in the `modify` key.
+            modify_flag set in the ``modify`` key.
         """
 
         def modify(k, v):
@@ -127,7 +129,7 @@ def append_obs_to_task(
     context_set_idx: int,
 ):
     """
-    Append a single observation to a context set in `task`.
+    Append a single observation to a context set in ``task``.
 
     Makes a deep copy of the data structure to avoid affecting the original
     object.
@@ -173,12 +175,12 @@ def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
 
     Parameters
     ----------
-    X : Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]
+    X : numpy.ndarray | Tuple[numpy.ndarray, numpy.ndarray]
         ...
 
     Returns
     ----------
-    np.ndarray
+    numpy.ndarray
         ...
     """
     if type(X) is tuple:
@@ -194,12 +196,12 @@ def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
 
     Parameters
     ----------
-    Y : Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]
+    Y : numpy.ndarray | Tuple[numpy.ndarray, numpy.ndarray]
         ...
 
     Returns
     -------
-    np.ndarray
+    numpy.ndarray
         ...
     """
     if Y.ndim == 3:
@@ -209,7 +211,7 @@ def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
 
 def flatten_gridded_data_in_task(task: Task) -> Task:
     """
-    Convert any gridded data in `Task` to flattened arrays.
+    Convert any gridded data in ``Task`` to flattened arrays.
 
     Necessary for AR sampling, which doesn't yet permit gridded context sets.
 

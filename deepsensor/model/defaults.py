@@ -15,13 +15,13 @@ def gen_ppu(task_loader: TaskLoader) -> int:
     Computes data-informed settings for the model's internal grid density (ppu,
     points per unit)
 
-    Loops over all context and target variables in the `TaskLoader` and
+    Loops over all context and target variables in the ``TaskLoader`` and
     computes the data resolution for each. The model ppu is then set to the
     maximum data ppu.
 
     Parameters
     ----------
-    task_loader : TaskLoader
+    task_loader : deepsensor.data.loader.TaskLoader
         TaskLoader object containing context and target sets.
 
     Returns
@@ -98,7 +98,7 @@ def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> list[float]:
     model_ppu : int
         Model ppu (points per unit), i.e. the number of points per unit of
         input space.
-    task_loader : TaskLoader
+    task_loader : deepsensor.data.loader.TaskLoader
         TaskLoader object containing context and target sets.
 
     Returns

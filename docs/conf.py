@@ -39,9 +39,14 @@ html_static_path = ["_static"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "pandas": ("http://pandas.pydata.org/pandas-docs/dev", None),
+    "pandas": ('http://pandas.pydata.org/pandas-docs/stable/', None),
     "tensorflow": (
-        "https://www.tensorflow.org/api_docs/python",
-        "https://github.com/GPflow/tensorflow-intersphinx/raw/master/tf2_py_objects.inv",
+        "https://www.tensorflow.org/api_docs/python/",
+        "https://raw.githubusercontent.com/GPflow/tensorflow-intersphinx/master/tf2_py_objects.inv",
     ),
+    "numpy": ("https://numpy.org/doc/stable/reference/", "https://numpy.org/doc/stable/objects.inv"),
+    "matplotlib": ("http://matplotlib.org/stable/", "https://matplotlib.org/stable/objects.inv"),
+    "xarray": ("http://xarray.pydata.org/en/stable/", "https://docs.xarray.dev/en/stable/objects.inv"),
 }
+
+intersphinx_disabled_reftypes = ["*"]

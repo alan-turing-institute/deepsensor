@@ -7,7 +7,7 @@ from typing import Tuple, Optional, Literal
 
 def convert_task_to_nps_args(task: Task):
     """
-    Infer & build model call signature from `task` dict.
+    Infer & build model call signature from ``task`` dict.
 
     ..
         TODO move to ConvNP class?
@@ -49,9 +49,14 @@ def convert_task_to_nps_args(task: Task):
     return context_data, xt, yt, model_kwargs
 
 
-def run_nps_model(neural_process, task, n_samples=None, requires_grad=False):
+def run_nps_model(
+    neural_process,
+    task: Task,
+    n_samples: Optional[int] = None,
+    requires_grad: bool = False,
+):
     """
-    Run `neuralprocesses` model.
+    Run ``neuralprocesses`` model.
 
     Parameters
     ----------
@@ -60,10 +65,10 @@ def run_nps_model(neural_process, task, n_samples=None, requires_grad=False):
     task : deepsensor.data.task.Task
         Task object containing context and target sets.
     n_samples : int, optional
-        Number of samples to draw from the model. Defaults to `None` (single
+        Number of samples to draw from the model. Defaults to ``None`` (single
         sample).
     requires_grad : bool, optional
-        Whether to require gradients. Defaults to `False`.
+        Whether to require gradients. Defaults to ``False``.
 
     Returns
     -------
@@ -86,7 +91,7 @@ def run_nps_model(neural_process, task, n_samples=None, requires_grad=False):
 
 def run_nps_model_ar(neural_process, task: Task, num_samples: int = 1):
     """
-    Run `neural_process` in AR mode.
+    Run ``neural_process`` in AR mode.
 
     Parameters
     ----------
@@ -95,7 +100,7 @@ def run_nps_model_ar(neural_process, task: Task, num_samples: int = 1):
     task : deepsensor.data.task.Task
         Task object containing context and target sets.
     num_samples : int, optional
-        Number of samples to draw from the model. Defaults to `1`.
+        Number of samples to draw from the model. Defaults to 1.
 
     Returns
     -------
@@ -137,13 +142,13 @@ def construct_neural_process(
     epsilon: float = 1e-2,
 ):
     """
-    Construct a `neuralprocesses` ConvNP model.
+    Construct a ``neuralprocesses`` ConvNP model.
 
     See: https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py
 
-    Docstring below modified from `neuralprocesses`. If more kwargs are needed,
-    they must be explicitly passed to `neuralprocesses` constructor (not
-    currently safe to use `**kwargs` here).
+    Docstring below modified from ``neuralprocesses``. If more kwargs are
+    needed, they must be explicitly passed to ``neuralprocesses`` constructor
+    (not currently safe to use `**kwargs` here).
 
     Parameters
     ----------
@@ -167,12 +172,13 @@ def construct_neural_process(
     points_per_unit : int, optional
         Density of the internal discretisation. Defaults to 100.
     likelihood : str, optional
-        Likelihood. Must be one of `"cnp"` (equivalently `"het"`), `"gnp"`
-        (equivalently `"lowrank"`), or `"cnp-spikes-beta"` (equivalently
-        `"spikes-beta"`). Defaults to `"cnp"`.
+        Likelihood. Must be one of ``"cnp"`` (equivalently ``"het"``),
+        ``"gnp"`` (equivalently ``"lowrank"``), or ``"cnp-spikes-beta"``
+        (equivalently ``"spikes-beta"``). Defaults to ``"cnp"``.
     conv_arch : str, optional
-        Convolutional architecture to use. Must be one of `"unet[-res][-sep]"`
-        or `"conv[-res][-sep]"`. Defaults to `"unet"`.
+        Convolutional architecture to use. Must be one of
+        ``"unet[-res][-sep]"`` or ``"conv[-res][-sep]"``. Defaults to
+        ``"unet"``.
     unet_channels: tuple[int], optional
         Channels of every layer of the UNet. Defaults to six layers each with
         64 channels.
@@ -180,13 +186,13 @@ def construct_neural_process(
         Sizes of the kernels in the UNet. Defaults to 5.
     unet_resize_convs : bool, optional
         Use resize convolutions rather than transposed convolutions in the
-        UNet. Defaults to `False`.
+        UNet. Defaults to ``False``.
     unet_resize_conv_interp_method : str, optional
         Interpolation method for the resize convolutions in the UNet. Can be
-        set to `"bilinear"`. Defaults to "bilinear".
+        set to ``"bilinear"``. Defaults to "bilinear".
     num_basis_functions : int, optional
         Number of basis functions for the low-rank likelihood. Defaults to
-        `64`.
+        64.
     dim_lv : int, optional
         Dimensionality of the latent variable. Setting to >0 constructs a
         latent neural process. Defaults to 0.
@@ -194,22 +200,23 @@ def construct_neural_process(
         Initial value for the length scales of the set convolutions for the
         context sets embeddings. Set to a tuple equal to the number of context
         sets to use different values for each set. Set to a single value to use
-        the same value for all context sets. Defaults to `1 / points_per_unit`.
+        the same value for all context sets. Defaults to
+        ``1 / points_per_unit``.
     encoder_scales_learnable : bool, optional
         Whether the encoder SetConv length scale(s) are learnable. Defaults to
-        `False`.
+        ``False``.
     decoder_scale : float, optional
         Initial value for the length scale of the set convolution in the
-        decoder. Defaults to `1 / points_per_unit`.
+        decoder. Defaults to ``1 / points_per_unit``.
     decoder_scale_learnable : bool, optional
         Whether the decoder SetConv length scale(s) are learnable. Defaults to
-        `False`.
+        ``False``.
     aux_t_mlp_layers : tuple[int], optional
         Widths of the layers of the MLP for the target-specific auxiliary
         variable. Defaults to three layers of width 128.
     epsilon : float, optional
         Epsilon added by the set convolutions before dividing by the density
-        channel. Defaults to `1e-2`.
+        channel. Defaults to ``1e-2``.
 
     Returns
     -------
@@ -281,7 +288,7 @@ def compute_encoding_tensor(model, task: Task):
 
     Returns
     -------
-    encoding : np.ndarray
+    encoding : numpy.ndarray
         Encoding tensor? #TODO
     """
     neural_process_encoder = backend.nps.Model(model.model.encoder, lambda x: x)

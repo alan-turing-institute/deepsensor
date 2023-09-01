@@ -7,7 +7,7 @@ import pprint
 
 from copy import deepcopy
 
-from typing import Union
+from typing import Union, Optional, List
 
 
 class DataProcessor:
@@ -15,7 +15,7 @@ class DataProcessor:
 
     def __init__(
         self,
-        norm_params: dict = None,
+        norm_params: Optional[dict] = None,
         time_name: str = "time",
         x1_name: str = "x1",
         x2_name: str = "x2",
@@ -30,7 +30,7 @@ class DataProcessor:
         Parameters
         ----------
         norm_params : dict, optional
-            Normalisation params. Defaults to {}.
+            Normalisation params. Defaults to None.
         x1_name : str, optional)
             Name of first spatial coord (e.g. "lat"). Defaults to "x1".
         x2_name : str, optional)
@@ -135,8 +135,20 @@ class DataProcessor:
         return s
 
     @classmethod
-    def load_dask(cls, data):
-        """Load dask data into memory"""
+    def load_dask(cls, data: Union[xr.DataArray, xr.Dataset]):
+        """
+        Load dask data into memory.
+
+        Parameters
+        ----------
+        data : xarray.DataArray | xarray.Dataset
+            ...
+
+        Returns
+        -------
+        ...
+            ...
+        """
         if isinstance(data, xr.DataArray):
             data.load()
         elif isinstance(data, xr.Dataset):
@@ -187,7 +199,7 @@ class DataProcessor:
         Returns
         -------
         bool
-            ...
+            Whether normalisation params are computed for a given variable.
         """
         if (
             var_ID in self.norm_params
@@ -201,7 +213,7 @@ class DataProcessor:
 
     def add_to_norm_params(self, var_ID, **kwargs) -> None:
         """
-        Add `kwargs` to `norm_params` dict for variable `var_ID`.
+        Add ``kwargs`` to ``norm_params`` dict for variable ``var_ID``.
 
         Parameters
         ----------
@@ -217,7 +229,7 @@ class DataProcessor:
     def get_norm_params(self, var_ID, data, method=None):
         """
         Get pre-computed normalisation params or compute them for variable
-        `var_ID`.
+        ``var_ID``.
 
         Parameters
         ----------
@@ -227,6 +239,11 @@ class DataProcessor:
             ...
         method : ..., optional
             ..., by default None.
+
+        Returns
+        -------
+        ...
+            ...
         """
         if method not in self.valid_methods:
             raise ValueError(
@@ -267,10 +284,10 @@ class DataProcessor:
 
         Parameters
         ----------
-        coord_array : np.ndarray
-            Array of shape (2, N) containing coords
+        coord_array : numpy.ndarray
+            Array of shape ``(2, N)`` containing coords.
         unnorm : bool, optional
-            Whether to unnormalise. Defaults to False.
+            Whether to unnormalise. Defaults to ``False``.
 
         Returns
         -------
@@ -287,15 +304,17 @@ class DataProcessor:
 
         Parameters
         ----------
-        x1 : np.ndarray
-            Array of shape (N_x1,) containing spatial coords of x1.
+        x1 : numpy.ndarray
+            Array of shape ``(N_x1,)`` containing spatial coords of x1.
+        x2 : numpy.ndarray
+            Array of shape ``(N_x2,)`` containing spatial coords of x2.
         unnorm : bool, optional
-            Whether to unnormalise. Defaults to False.
+            Whether to unnormalise. Defaults to ``False``.
 
         Returns
         -------
-        ...
-            ...
+        Tuple[numpy.ndarray, numpy.ndarray]
+            Normalised or unnormalised spatial coords of x1 and x2.
         """
         x11, x12 = self.norm_params["coords"]["x1"]["map"]
         x21, x22 = self.norm_params["coords"]["x2"]["map"]
@@ -319,7 +338,7 @@ class DataProcessor:
 
         Parameters
         ----------
-        data : Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series]
+        data : xarray.DataArray | xarray.Dataset | pandas.DataFrame | pandas.Series
             ...
         unnorm : bool, optional
             ...
@@ -396,9 +415,9 @@ class DataProcessor:
         self,
         data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, np.ndarray],
         var_ID: str,
-        method: str = None,
+        method: Optional[str] = None,
         unnorm: bool = False,
-        add_offset=True,
+        add_offset: bool = True,
     ):
         """
         Normalise or unnormalise the data values in an xarray, pandas, or
@@ -406,7 +425,7 @@ class DataProcessor:
 
         Parameters
         ----------
-        data : Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, np.ndarray]
+        data : xarray.DataArray | xarray.Dataset | pandas.DataFrame | pandas.Series | numpy.ndarray
             ...
         var_ID : str
             ...
@@ -472,7 +491,7 @@ class DataProcessor:
     def map(
         self,
         data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series],
-        method: str = None,
+        method: Optional[str] = None,
         add_offset: bool = True,
         unnorm: bool = False,
     ):
@@ -482,14 +501,14 @@ class DataProcessor:
 
         Parameters
         ----------
-        data : Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series]
+        data : xarray.DataArray | xarray.Dataset | pandas.DataFrame | pandas.Series
             ...
         method : str, optional
-            ..., by default None.
+            ..., by default ``None``.
         add_offset : bool, optional
-            ..., by default True.
+            ..., by default ``True``.
         unnorm : bool, optional
-            ..., by default False.
+            ..., by default ``False``.
 
         Returns
         -------
@@ -520,15 +539,25 @@ class DataProcessor:
 
     def __call__(
         self,
-        data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, list],
+        data: Union[
+            xr.DataArray,
+            xr.Dataset,
+            pd.DataFrame,
+            List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
+        ],
         method: str = "mean_std",
-    ) -> Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]:
+    ) -> Union[
+        xr.DataArray,
+        xr.Dataset,
+        pd.DataFrame,
+        List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
+    ]:
         """
         Normalise data.
 
         Parameters
         ----------
-        data : Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]
+        data : xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]
             Data to normalise.
         method : str, optional
             Normalisation method. Defaults to "mean_std". Options:
@@ -537,7 +566,7 @@ class DataProcessor:
 
         Returns
         -------
-        Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]
+        xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]
             Normalised data.
         """
         if isinstance(data, list):
@@ -547,15 +576,25 @@ class DataProcessor:
 
     def unnormalise(
         self,
-        data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, list],
+        data: Union[
+            xr.DataArray,
+            xr.Dataset,
+            pd.DataFrame,
+            List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
+        ],
         add_offset: bool = True,
-    ) -> Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]:
+    ) -> Union[
+        xr.DataArray,
+        xr.Dataset,
+        pd.DataFrame,
+        List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
+    ]:
         """
         Unnormalise data.
 
         Parameters
         ----------
-        data : Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]
+        data : xarray.DataArray | xr.Dataset | pd.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]
             Data to unnormalise.
         add_offset : bool, optional
             Whether to add the offset to the data when unnormalising. Set to
@@ -564,7 +603,7 @@ class DataProcessor:
 
         Returns
         -------
-        Union[xr.DataArray, xr.Dataset, pd.DataFrame, list]
+        xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]
             Unnormalised data.
         """
         if isinstance(data, list):
@@ -579,13 +618,13 @@ def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]):
 
     Parameters
     ----------
-    da : Union[xr.Dataset, xr.DataArray]
+    da : xarray.Dataset | xarray.DataArray
         ...
 
     Returns
     -------
-    ...
-        ...
+    numpy.ndarray
+        A normalised coordinate array of shape ``(2, N)``.
     """
     x1, x2 = da["x1"].values, da["x2"].values
     X1, X2 = np.meshgrid(x1, x2, indexing="ij")
@@ -623,22 +662,22 @@ def mask_coord_array_normalised(coord_arr, mask_da):
 
 def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
     """
-    Check if da1 and da2 are on the same grid.
+    Check if ``da1`` and ``da2`` are on the same grid.
 
     .. note::
-        `da1` and `da2` are assumed normalised by `DataProcessor`.
+        ``da1`` and ``da2`` are assumed normalised by ``DataProcessor``.
 
     Parameters
     ----------
-    da1 : xr.DataArray
+    da1 : xarray.DataArray
         ...
-    da2 : xr.DataArray
+    da2 : xarray.DataArray
         ...
 
     Returns
     -------
     bool
-        Whether `da1` and `da2` are on the same grid.
+        Whether ``da1`` and ``da2`` are on the same grid.
     """
     x1equal = np.array_equal(da1["x1"].values, da2["x1"].values)
     x2equal = np.array_equal(da1["x2"].values, da2["x2"].values)
@@ -647,16 +686,16 @@ def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
 
 def interp_da1_to_da2(da1: xr.DataArray, da2: xr.DataArray) -> xr.DataArray:
     """
-    Interpolate da1 to da2.
+    Interpolate ``da1`` to ``da2``.
 
     .. note::
-        `da1` and `da2` are assumed normalised by `DataProcessor`.
+        ``da1`` and ``da2`` are assumed normalised by ``DataProcessor``.
 
     Parameters
     ----------
-    da1 : xr.DataArray
+    da1 : xarray.DataArray
         ...
-    da2 : xr.DataArray
+    da2 : xarray.DataArray
         ...
 
     Returns

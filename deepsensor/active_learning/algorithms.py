@@ -20,7 +20,7 @@ import xarray as xr
 import pandas as pd
 from tqdm import tqdm
 
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Optional
 
 
 class GreedyAlgorithm:
@@ -31,18 +31,20 @@ class GreedyAlgorithm:
         model: DeepSensorModel,
         X_s: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
         X_t: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
-        X_s_mask: Union[xr.Dataset, xr.DataArray] = None,
-        X_t_mask: Union[xr.Dataset, xr.DataArray] = None,
+        X_s_mask: Optional[Union[xr.Dataset, xr.DataArray]] = None,
+        X_t_mask: Optional[Union[xr.Dataset, xr.DataArray]] = None,
         N_new_context: int = 1,
         X_normalised: bool = False,
         model_infill_method: str = "mean",
-        query_infill: xr.DataArray = None,
-        proposed_infill: xr.DataArray = None,
+        query_infill: Optional[xr.DataArray] = None,
+        proposed_infill: Optional[xr.DataArray] = None,
         context_set_idx: int = 0,
         target_set_idx: int = 0,
         progress_bar: bool = False,
         min_or_max: str = "min",
-        task_loader: TaskLoader = None,  # OPTIONAL for oracle acquisition functions only
+        task_loader: Optional[
+            TaskLoader
+        ] = None,  # OPTIONAL for oracle acquisition functions only
         verbose: bool = False,
     ):
         """
@@ -50,43 +52,50 @@ class GreedyAlgorithm:
 
         Parameters
         ----------
-        model : DeepSensorModel
+        model : deepsensor.model.model.DeepSensorModel
             Trained model to use for proposing new context points.
-        X_s : Union[xr.Dataset, xr.DataArray)
+        X_s : xarray.Dataset | xarray.DataArray | pandas.DataFrame | pandas.Series | pandas.Index
             Search coordinates.
-        X_t : Union[xr.Dataset, xr.DataArray
+        X_t : xarray.Dataset | xarray.DataArray
             Target coordinates.
-        X_s_mask : Union[xr.Dataset, xr.DataArray], optional
+        X_s_mask : xarray.Dataset | xarray.DataArray, optional
             Mask for search coordinates. If provided, only points where mask
             is True will be considered. Defaults to None.
-        X_t_mask : Union[xr.Dataset, xr.DataArray], optional)
-            ...
-        N_new_context : int
-            ...
-        X_normalised : bool
-            ...
-        model_infill_method : str
-            ...
-        query_infill : xr
-            ...
-        proposed_infill : xr
-            ...
-        context_set_idx : int
-            ...
-        target_set_idx : int
-            ...
-        progress_bar : bool
-            ...
-        min_or_max : str
-            ...
-        task_loader : TaskLoader
-            ...
-        verbose : bool
-            ...
+        X_t_mask : xarray.Dataset | xarray.DataArray, optional
+            ..., by default None.
+        N_new_context : int, optional
+            ..., by default 1.
+        X_normalised : bool, optional
+            ..., by default False.
+        model_infill_method : str, optional
+            ..., by default "mean".
+        query_infill : xarray.DataArray, optional
+            ..., by default None.
+        proposed_infill : xarray.DataArray, optional
+            ..., by default None.
+        context_set_idx : int, optional
+            ..., by default 0.
+        target_set_idx : int, optional
+            ..., by default 0.
+        progress_bar : bool, optional
+            ..., by default False.
+        min_or_max : str, optional
+            ..., by default "min".
+        task_loader : deepsensor.data.loader.TaskLoader, optional
+            ..., by default None.
+        verbose : bool, optional
+            ..., by default False.
+
+        Raises
+        ------
+        ValueError
+            If the ``model`` passed does not inherit from
+            :class:`~deepsensor.model.model.DeepSensorModel`.
         """
         if not isinstance(model, DeepSensorModel):
             raise ValueError(
-                f"`model` must inherit from DeepSensorModel, but parent classes are {model.__class__.__bases__}"
+                f"`model` must inherit from DeepSensorModel, but parent "
+                "classes are {model.__class__.__bases__}"
             )
 
         self._validate_n_new_context(X_s, N_new_context)
@@ -174,8 +183,8 @@ class GreedyAlgorithm:
 
         if not 0 < N_new_context < N_s:
             raise ValueError(
-                f"Number of new context ({N_new_context}) must be greater than zero "
-                f"and less than the number of search points ({N_s})"
+                f"Number of new context ({N_new_context}) must be greater "
+                f"than zero and less than the number of search points ({N_s})"
             )
 
     @classmethod
@@ -215,18 +224,20 @@ class GreedyAlgorithm:
     ):
         """
         Computes and sets the model infill y-values over whole search grid
-        before running greedy optimisation. Results are returned with additional
-        first axis, with size > 1 if model_infill_method == 'sample' or 'ar_sample_*', and
-        acquisition function will be averaged over the samples in the first axis.
-        If model_infill_method != 'sample', first axis size is 1 and the averaging
-        is only over one value (i.e. no averaging).
+        before running greedy optimisation. Results are returned with
+        additional first axis, with ``size > 1`` if
+        ``model_infill_method == 'sample'`` or ``'ar_sample_*'``, and
+        acquisition function will be averaged over the samples in the first
+        axis. If ``model_infill_method != 'sample'``, first axis size is 1 and
+        the averaging is only over one value (i.e. no averaging).
 
-        Infilled y-values at all placement search locations are appended to each dataset
-        with the key (`'Y_model_infilled'`) for use during the placement search.
+        Infilled y-values at all placement search locations are appended to
+        each dataset with the key (`'Y_model_infilled'`) for use during the
+        placement search.
 
-        Also adds a sample dimension to the context station observations, which will
-        be looped over for MCMC sampling of the acquisition function importance
-        values of the placement criterion.
+        Also adds a sample dimension to the context station observations, which
+        will be looped over for MCMC sampling of the acquisition function
+        importance values of the placement criterion.
         """
         if self.model_infill_method == "mean":
             infill_ds, _ = self.model.predict(
@@ -270,7 +281,9 @@ class GreedyAlgorithm:
         return y
 
     def _build_acquisition_fn_ds(self, X_s: Union[xr.Dataset, xr.DataArray]):
-        """Initialise xr.DataArray for storing acquisition function values on search grid"""
+        """
+        Initialise xr.DataArray for storing acquisition function values on
+        search grid"""
         prepend_dims = ["iteration"]  # , "sample"]  # MC sample TODO
         prepend_coords = {
             "iteration": range(self.N_new_context),
@@ -297,23 +310,26 @@ class GreedyAlgorithm:
             self.acquisition_fn_ds = self._build_acquisition_fn_ds(X_s)
         elif isinstance(X_s, (pd.DataFrame, pd.Series, pd.Index)):
             raise NotImplementedError(
-                "Pandas support for active learning search points X_s not yet implemented."
+                "Pandas support for active learning search points X_s not yet "
+                "implemented."
             )
         else:
             raise TypeError(f"Unsupported type for X_s: {type(X_s)}")
 
     def _search(self, acquisition_fn: AcquisitionFunction):
         """
-        Run one greedy pass by looping over each point in `X_s` and
+        Run one greedy pass by looping over each point in ``X_s`` and
         computing the acquisition function.
 
         If the search algorithm can be run over all points in parallel,
-        this method should be overridden by the child class so that `self.run()`
-        uses the parallel implementation.
+        this method should be overridden by the child class so that
+        ``self.run()`` uses the parallel implementation.
 
-        TODO check if below is still valid in GreedyOptimal:
-        If the search method uses the y-values at search points (i.e. for
-        an optimal benchmark), its `acquisition_fn` should expect a y_query input.
+        ..
+            TODO check if below is still valid in GreedyOptimal:
+            If the search method uses the y-values at search points (i.e. for
+            an optimal benchmark), its ``acquisition_fn`` should expect a
+            ``y_query`` input.
         """
         importances_list = []
 
@@ -429,28 +445,46 @@ class GreedyAlgorithm:
         """
         Iteratively... docstring TODO
 
-        Returns a tensor of proposed new sensor locations (in greedy iteration/priority order)
-            and their corresponding list of indexes in the search space.
+        Returns a tensor of proposed new sensor locations (in greedy
+        iteration/priority order) and their corresponding list of indexes in
+        the search space.
 
         Parameters
         ----------
-        acquisition_fn: AcquisitionFunction
+        acquisition_fn: deepsensor.active_learning.acquisition_fns.AcquisitionFunction
             ...
-        tasks: Union[List[Task], Task]
+        tasks: List[deepsensor.data.task.Task] | deepsensor.data.task.Task
             ...
+
+        Returns
+        -------
+        X_new_df, acquisition_fn_ds: Tuple[pandas.DataFrame, xarray.Dataset]
+            ...
+
+        Raises
+        ------
+        ValueError
+            If ``acquisition_fn`` is an
+            ``deepsensor.active_learning.acquisition_fns.AcquisitionFunctionOracle``
+            and ``task_loader`` is None.
+        ValueError
+            If ``min_or_max`` is not ``"min"`` or ``"max"``.
+        ValueError
+            If ``Y_t_aux`` is in ``tasks`` but ``task_loader`` is None.
         """
         if (
             isinstance(acquisition_fn, AcquisitionFunctionOracle)
             and self.task_loader is None
         ):
             raise ValueError(
-                "AcquisitionFunctionOracle requires a task_loader function to be passed to the GreedyOptimal constructor."
+                "AcquisitionFunctionOracle requires a task_loader function to "
+                "be passed to the GreedyOptimal constructor."
             )
 
         self.min_or_max = acquisition_fn.min_or_max
         if self.min_or_max not in ["min", "max"]:
             raise ValueError(
-                f"min_or_max must be either 'min' or 'max', got {self.min_or_max}."
+                f"min_or_max must be either 'min' or 'max', got " f"{self.min_or_max}."
             )
 
         if isinstance(tasks, Task):
@@ -472,7 +506,8 @@ class GreedyAlgorithm:
 
             if "Y_t_aux" in tasks[i] and self.task_loader is None:
                 raise ValueError(
-                    "Model expects Y_t_aux data but a TaskLoader isn't provided to GreedyAlgorithm."
+                    "Model expects Y_t_aux data but a TaskLoader isn't "
+                    "provided to GreedyAlgorithm."
                 )
             if self.task_loader is not None and self.task_loader.aux_at_target_dims > 0:
                 tasks[i]["Y_t_aux"] = self.task_loader.sample_offgrid_aux(

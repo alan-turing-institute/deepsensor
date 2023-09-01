@@ -46,7 +46,7 @@ def _gen_data_pandas(coords=None, dims=None, cols=None):
 
 class TestModel(unittest.TestCase):
     """
-    A test class for the `ConvNP` model.
+    A test class for the ``ConvNP`` model.
     """
 
     def __init__(self, *args, **kwargs):
@@ -91,11 +91,11 @@ class TestModel(unittest.TestCase):
     @parameterized.expand(range(1, 2))
     def test_model_call(self, n_context_and_target):
         """
-        Check `ConvNP` runs with all possible combinations of context/target
+        Check ``ConvNP`` runs with all possible combinations of context/target
         sampling methods.
 
         Generates all possible combinations of xarray and pandas context/target
-        sets of length n_context_and_target runs `ConvNP` with all possible
+        sets of length n_context_and_target runs ``ConvNP`` with all possible
         combinations of context/target sampling methods.
 
         .. note::
@@ -233,7 +233,7 @@ class TestModel(unittest.TestCase):
     @parameterized.expand(range(1, 4))
     def test_nans_offgrid_context(self, ndim):
         """
-        Test that `ConvNP` can handle NaNs in offgrid context.
+        Test that ``ConvNP`` can handle ``NaN``s in offgrid context.
 
         Parameters
         ----------
@@ -266,7 +266,7 @@ class TestModel(unittest.TestCase):
     @parameterized.expand(range(1, 4))
     def test_nans_gridded_context(self, ndim):
         """
-        Test that `ConvNP` can handle NaNs in gridded context.
+        Test that ``ConvNP`` can handle ``NaN``s in gridded context.
 
         Parameters
         ----------
@@ -299,7 +299,7 @@ class TestModel(unittest.TestCase):
     @parameterized.expand(range(1, 4))
     def test_prediction_shapes_highlevel(self, target_dim):
         """
-        Test high-level `.predict` interface over a range of number of target
+        Test high-level ``.predict`` interface over a range of number of target
         sets.
 
         ..
@@ -489,14 +489,14 @@ class TestModel(unittest.TestCase):
 
 def assert_shape(x, shape: tuple):
     """
-    Assert that the shape of `x` matches `shape`.
+    Assert that the shape of ``x`` matches ``shape``.
 
     ..
         ex: assert_shape(conv_input_array, [8, 3, None, None])
 
     Parameters
     ----------
-    x : np.ndarray
+    x : numpy.ndarray
         ...
     shape : tuple
         The shape to check against.

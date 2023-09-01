@@ -1,6 +1,6 @@
 import copy
 import warnings
-from typing import Union, List, Literal, Tuple, Optional
+from typing import Union, List, Literal, Tuple, Optional, types
 
 import lab as B
 import numpy as np
@@ -25,6 +25,9 @@ from deepsensor.model.nps import (
     run_nps_model_ar,
 )
 
+from neuralprocesses.dist import AbstractMultiOutputDistribution
+
+
 TFModel = ModuleType("tensorflow.keras", "Model")
 TorchModel = ModuleType("torch.nn", "Module")
 
@@ -33,31 +36,33 @@ class ConvNP(DeepSensorModel):
     """
     A ConvNP regression probabilistic model.
 
-    Wraps around the `neuralprocesses` package to construct a ConvNP model.
+    Wraps around the ``neuralprocesses`` package to construct a ConvNP model.
     See: https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py
 
-    Multiple dispatch is implemented using `plum` to allow for re-using the
+    Multiple dispatch is implemented using ``plum`` to allow for re-using the
     model's forward prediction object when computing the logpdf, entropy, etc.
-    Alternatively, the model can be run forwards with a `Task` object of data
-    from the `TaskLoader`.
+    Alternatively, the model can be run forwards with a ``Task`` object of data
+    from the ``TaskLoader``.
 
-    The `ConvNP` can optionally be instantiated with:
-    - a `DataProcessor` object to auto-unnormalise the data at inference time
-      with the `.predict` method.
-    - a `TaskLoader` object to infer sensible default model parameters from the
-      data.
+    The ``ConvNP`` can optionally be instantiated with:
 
-    These additional parameters can be passed to the `__init__` method to
-    customise the model, which will override any defaults inferred from a `TaskLoader`.
+        - a ``DataProcessor`` object to auto-unnormalise the data at inference
+          time with the ``.predict`` method.
+        - a ``TaskLoader`` object to infer sensible default model parameters
+          from the data.
+
+    These additional parameters can be passed to the ``__init__`` method to
+    customise the model, which will override any defaults inferred from a
+    ``TaskLoader``.
 
     Parameters
     ----------
     points_per_unit : int, optional
         Density of the internal discretisation. Defaults to 100.
     likelihood : str, optional
-        Likelihood. Must be one of `"cnp"` (equivalently `"het"`), `"gnp"`
-        (equivalently `"lowrank"`), or `"cnp-spikes-beta"` (equivalently
-        `"spikes-beta"`). Defaults to `"cnp"`.
+        Likelihood. Must be one of ``"cnp"`` (equivalently ``"het"``),
+        ``"gnp"`` (equivalently ``"lowrank"``), or ``"cnp-spikes-beta"``
+        (equivalently ``"spikes-beta"``). Defaults to ``"cnp"``.
     dim_x : int, optional
         Dimensionality of the inputs. Defaults to 1.
     dim_y : int, optional
@@ -76,8 +81,9 @@ class ConvNP(DeepSensorModel):
     dim_aux_t : int, optional
         Dimensionality of target-specific auxiliary variables.
     conv_arch : str, optional
-        Convolutional architecture to use. Must be one of `"unet[-res][-sep]"`
-        or `"conv[-res][-sep]"`. Defaults to `"unet"`.
+        Convolutional architecture to use. Must be one of
+        ``"unet[-res][-sep]"`` or ``"conv[-res][-sep]"``. Defaults to
+        ``"unet"``.
     unet_channels : tuple[int], optional
         Channels of every layer of the UNet. Defaults to six layers each with
         64 channels.
@@ -85,13 +91,13 @@ class ConvNP(DeepSensorModel):
         Sizes of the kernels in the UNet. Defaults to 5.
     unet_resize_convs : bool, optional
         Use resize convolutions rather than transposed convolutions in the
-        UNet. Defaults to `False`.
+        UNet. Defaults to ``False``.
     unet_resize_conv_interp_method : str, optional
         Interpolation method for the resize convolutions in the UNet. Can be
-        set to `"bilinear"`. Defaults to "bilinear".
+        set to ``"bilinear"``. Defaults to "bilinear".
     num_basis_functions : int, optional
         Number of basis functions for the low-rank likelihood. Defaults to
-        `64`.
+        64.
     dim_lv : int, optional
         Dimensionality of the latent variable. Setting to >0 constructs a
         latent neural process. Defaults to 0.
@@ -99,22 +105,23 @@ class ConvNP(DeepSensorModel):
         Initial value for the length scales of the set convolutions for the
         context sets embeddings. Set to a tuple equal to the number of context
         sets to use different values for each set. Set to a single value to use
-        the same value for all context sets. Defaults to `1 / points_per_unit`.
+        the same value for all context sets. Defaults to
+        ``1 / points_per_unit``.
     encoder_scales_learnable : bool, optional
         Whether the encoder SetConv length scale(s) are learnable. Defaults to
-        `False`.
+        ``False``.
     decoder_scale : float, optional
         Initial value for the length scale of the set convolution in the
-        decoder. Defaults to `1 / points_per_unit`.
+        decoder. Defaults to ``1 / points_per_unit``.
     decoder_scale_learnable : bool, optional
         Whether the decoder SetConv length scale(s) are learnable. Defaults to
-        `False`.
+        ``False``.
     aux_t_mlp_layers : tuple[int], optional
         Widths of the layers of the MLP for the target-specific auxiliary
         variable. Defaults to three layers of width 128.
     epsilon : float, optional
         Epsilon added by the set convolutions before dividing by the density
-        channel. Defaults to `1e-2`.
+        channel. Defaults to ``1e-2``.
     dtype : dtype, optional
         Data type.
     """
@@ -122,11 +129,11 @@ class ConvNP(DeepSensorModel):
     @dispatch
     def __init__(self, *args, **kwargs):
         """
-        Generate a new model using `nps.construct_convgnp` with default or
+        Generate a new model using ``nps.construct_convgnp`` with default or
         specified parameters.
 
-        This method does not take a `TaskLoader` or `DataProcessor` object, so
-        the model will not auto-unnormalise predictions at inference time.
+        This method does not take a ``TaskLoader`` or ``DataProcessor`` object,
+        so the model will not auto-unnormalise predictions at inference time.
         """
         # The parent class will instantiate with `task_loader` and
         # `data_processor` set to None, so unnormalisation will not be
@@ -150,9 +157,9 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        data_processor : DataProcessor
+        data_processor : deepsensor.data.processor.DataProcessor
             DataProcessor object.
-        task_loader : TaskLoader
+        task_loader : deepsensor.data.loader.TaskLoader
             TaskLoader object.
         verbose : bool, optional
             Whether to print inferred model parameters, by default True.
@@ -208,11 +215,11 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        data_processor : DataProcessor
+        data_processor : deepsensor.data.processor.DataProcessor
             DataProcessor object.
-        task_loader : TaskLoader
+        task_loader : deepsensor.data.loader.TaskLoader
             TaskLoader object.
-        neural_process : Union[TFModel, TorchModel]
+        neural_process : TFModel | TorchModel
             Pre-defined neural process model.
         """
         super().__init__(data_processor, task_loader)
@@ -310,13 +317,13 @@ class ConvNP(DeepSensorModel):
         return dist
 
     @dispatch
-    def mean(self, dist: backend.nps.AbstractMultiOutputDistribution):
+    def mean(self, dist: AbstractMultiOutputDistribution):
         """
         ...
 
         Parameters
         ----------
-        dist : backend.nps.AbstractMultiOutputDistribution
+        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
             ...
 
         Returns
@@ -349,7 +356,20 @@ class ConvNP(DeepSensorModel):
         return self.mean(dist)
 
     @dispatch
-    def variance(self, dist: backend.nps.AbstractMultiOutputDistribution):
+    def variance(self, dist: AbstractMultiOutputDistribution):
+        """
+        ...
+
+        Parameters
+        ----------
+        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
+            ...
+
+        Returns
+        -------
+        ...
+            ...
+        """
         variance = dist.var
         if isinstance(variance, backend.nps.Aggregate):
             return [B.to_numpy(v)[0, 0] for v in variance]
@@ -375,13 +395,13 @@ class ConvNP(DeepSensorModel):
         return self.variance(dist)
 
     @dispatch
-    def stddev(self, dist: backend.nps.AbstractMultiOutputDistribution):
+    def stddev(self, dist: AbstractMultiOutputDistribution):
         """
         ...
 
         Parameters
         ----------
-        dist : backend.nps.AbstractMultiOutputDistribution
+        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
             ...
 
         Returns
@@ -414,13 +434,13 @@ class ConvNP(DeepSensorModel):
         return self.stddev(dist)
 
     @dispatch
-    def covariance(self, dist: backend.nps.AbstractMultiOutputDistribution):
+    def covariance(self, dist: AbstractMultiOutputDistribution):
         """
         ...
 
         Parameters
         ----------
-        dist : backend.nps.AbstractMultiOutputDistribution
+        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
             ...
 
         Returns
@@ -451,7 +471,7 @@ class ConvNP(DeepSensorModel):
     @dispatch
     def sample(
         self,
-        dist: backend.nps.AbstractMultiOutputDistribution,
+        dist: AbstractMultiOutputDistribution,
         n_samples: int = 1,
         noiseless: bool = True,
     ):
@@ -460,7 +480,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        dist : backend.nps.AbstractMultiOutputDistribution
+        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
             The distribution to sample from.
         n_samples : int, optional
             The number of samples to draw from the distribution, by default 1.
@@ -469,7 +489,7 @@ class ConvNP(DeepSensorModel):
 
         Returns
         -------
-        Union[np.ndarray, List[np.ndarray]]
+        numpy.ndarray | List[numpy.ndarray]
             The samples.
         """
         if noiseless:
@@ -498,7 +518,7 @@ class ConvNP(DeepSensorModel):
 
         Returns
         -------
-        Union[np.ndarray, List[np.ndarray]]
+        numpy.ndarray | List[numpy.ndarray]
             The samples.
         """
         dist = self(task)
@@ -529,13 +549,13 @@ class ConvNP(DeepSensorModel):
         return dist_diag
 
     @dispatch
-    def slice_diag(self, dist: backend.nps.AbstractMultiOutputDistribution):
+    def slice_diag(self, dist: AbstractMultiOutputDistribution):
         """
         Slice out the ConvCNP part of the ConvNP distribution.
 
         Parameters
         ----------
-        dist : backend.nps.AbstractMultiOutputDistribution
+        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
             The distribution to slice.
 
         Returns
@@ -552,13 +572,13 @@ class ConvNP(DeepSensorModel):
         return dist_diag
 
     @dispatch
-    def mean_marginal_entropy(self, dist: backend.nps.AbstractMultiOutputDistribution):
+    def mean_marginal_entropy(self, dist: AbstractMultiOutputDistribution):
         """
         Mean marginal entropy over target points given context points.
 
         Parameters
         ----------
-        dist : backend.nps.AbstractMultiOutputDistribution
+        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
             The distribution to compute the entropy of.
 
         Returns
@@ -588,13 +608,13 @@ class ConvNP(DeepSensorModel):
         return B.mean(B.to_numpy(dist_diag.entropy())[0, 0])
 
     @dispatch
-    def joint_entropy(self, dist: backend.nps.AbstractMultiOutputDistribution):
+    def joint_entropy(self, dist: AbstractMultiOutputDistribution):
         """
         Model entropy over target points given context points.
 
         Parameters
         ----------
-        dist : backend.nps.AbstractMultiOutputDistribution
+        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
             The distribution to compute the entropy of.
 
         Returns
@@ -622,14 +642,14 @@ class ConvNP(DeepSensorModel):
         return B.to_numpy(self(task).entropy())[0, 0]
 
     @dispatch
-    def logpdf(self, dist: backend.nps.AbstractMultiOutputDistribution, task: Task):
+    def logpdf(self, dist: AbstractMultiOutputDistribution, task: Task):
         """
         Model outputs joint distribution over all targets: Concat targets along
         observation dimension.
 
         Parameters
         ----------
-        dist : backend.nps.AbstractMultiOutputDistribution
+        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
             The distribution to compute the logpdf of.
         task : deepsensor.data.task.Task
             The task to compute the logpdf of.
@@ -742,7 +762,7 @@ class ConvNP(DeepSensorModel):
             The task to sample from.
         n_samples : int, optional
             The number of samples to draw from the distribution, by default 1.
-        X_target_AR : np.ndarray, optional
+        X_target_AR : numpy.ndarray, optional
             Locations to draw AR samples over. If None, AR samples will be drawn
             over the target locations in the task. Defaults to None.
         ar_subsample_factor : int, optional
@@ -753,7 +773,7 @@ class ConvNP(DeepSensorModel):
 
         Returns
         -------
-        np.ndarray
+        numpy.ndarray
             The samples.
         """
 
@@ -835,9 +855,9 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
 
     ..
         TODO:
-        - Consider moving to `nps.py` as this leverages `neuralprocesses`
+        - Consider moving to ``nps.py`` as this leverages ``neuralprocesses``
           functionality.
-        - Raise error if aux_t values passed (not supported I don't think)
+        - Raise error if ``aux_t`` values passed (not supported I don't think)
 
     Parameters
     ----------

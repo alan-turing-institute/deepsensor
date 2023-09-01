@@ -77,7 +77,7 @@ def train_epoch(
         Batch size. Defaults to None. If None, no batching is performed.
     opt : Optimizer, optional
         TF or Torch optimizer. Defaults to None. If None,
-        `~tensorflow.keras.optimizers.Adam` is used.
+        :class:`tensorflow.keras.optimizer.Adam` is used.
     progress_bar : bool, optional
         Whether to display a progress bar. Defaults to False.
     tqdm_notebook : bool, optional

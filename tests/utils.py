@@ -2,8 +2,12 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+from typing import Optional
 
-def gen_random_data_xr(coords: dict, dims: list = None, data_vars: list = None):
+
+def gen_random_data_xr(
+    coords: dict, dims: Optional[list] = None, data_vars: Optional[list] = None
+):
     """
     Generate random xarray data.
 
@@ -17,12 +21,12 @@ def gen_random_data_xr(coords: dict, dims: list = None, data_vars: list = None):
         dimensions.
     data_vars : list, optional
         Data variables. Defaults to None. If None, variable is an
-        xr.DataArray. If not None, variable is an xr.Dataset containing the
-        data_vars.
+        xarray.DataArray. If not None, variable is an xarray.Dataset containing
+        the data_vars.
 
     Returns
     -------
-    da : Union[xr.DataArray, xr.Dataset]
+    da : xarray.DataArray | xarray.Dataset
         Random xarray data.
     """
     if dims is None:
@@ -47,18 +51,19 @@ def gen_random_data_pandas(coords: dict, dims: list = None, cols: list = None):
     ----------
     coords : dict
         Coordinates of the data. This will be used to construct a MultiIndex
-        using pd.MultiIndex.from_product.
+        using pandas.MultiIndex.from_product.
     dims : list, optional
         Dimensions of the data. Defaults to None. If None, dims is inferred
-        from coords. This arg can be used to change the order of the MultiIndex.
+        from coords. This arg can be used to change the order of the
+        MultiIndex.
     cols : list, optional
-        Columns of the data. Defaults to None. If None, generate a pd.Series
-        with an arbitrary name. If not None, cols is used to construct a
-        pd.DataFrame.
+        Columns of the data. Defaults to None. If None, generate a
+        pandas.Series with an arbitrary name. If not None, cols is used to
+        construct a pandas.DataFrame.
 
     Returns
     -------
-    df : Union[pd.Series, pd.DataFrame]
+    df : pandas.Series | pandas.DataFrame
         Random pandas data.
     """
     if dims is None:
