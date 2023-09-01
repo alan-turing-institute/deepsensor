@@ -323,25 +323,31 @@ class DataProcessor:
         params = self.get_norm_params(var_ID, data, method)
 
         if method == "mean_std":
+            std = params["std"]
+            mean = params["mean"]
             if unnorm:
-                data = data * params["std"]
-                if add_offset:
-                    data = data + params["mean"]
+                scale = std
+                offset = mean
             else:
-                if add_offset:
-                    data = data - params["mean"]
-                data = data / params["std"]
+                scale = 1 / std
+                offset = -mean / std
+            data = data * scale
+            if add_offset:
+                data = data + offset
             return data
 
         elif method == "min_max":
+            minimum = params["min"]
+            maximum = params["max"]
             if unnorm:
-                data = data * (params["max"] - params["min"])
-                if add_offset:
-                    data = data + params["min"]
+                scale = (maximum - minimum) / 2
+                offset = (maximum + minimum) / 2
             else:
-                if add_offset:
-                    data = data - params["min"]
-                data = data / (params["max"] - params["min"])
+                scale = 2 / (maximum - minimum)
+                offset = -(maximum + minimum) / (maximum - minimum)
+            data = data * scale
+            if add_offset:
+                data = data + offset
             return data
 
     def map(
