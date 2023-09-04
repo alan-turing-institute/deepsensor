@@ -703,7 +703,7 @@ class TaskLoader:
             date. Default is ``False``.
         seed_override : Optional[int]
             Override the seed for random sampling. This can be used to use the
-            same random sampling at different ``date``s. Default is None.
+            same random sampling at different ``date``. Default is None.
 
         Returns
         -------
