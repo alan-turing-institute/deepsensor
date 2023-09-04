@@ -5,5 +5,5 @@ parameterized
 tox
 tox-gh-actions
 coveralls
-Sphinx
-sphinx-rtd-theme
+Sphinx==7.2.5
+sphinx-rtd-theme==1.3.0
