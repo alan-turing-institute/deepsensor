@@ -2,8 +2,8 @@ import itertools
 
 from parameterized import parameterized
 
-
 import xarray as xr
+import dask.array
 import numpy as np
 import pandas as pd
 import unittest
@@ -14,7 +14,7 @@ from tests.utils import gen_random_data_xr, gen_random_data_pandas
 from deepsensor.data.loader import TaskLoader
 
 
-def _gen_data_xr(coords=None, dims=None, data_vars=None):
+def _gen_data_xr(coords=None, dims=None, data_vars=None, use_dask=False):
     """Gen random normalised data"""
     if coords is None:
         coords = dict(
@@ -23,6 +23,8 @@ def _gen_data_xr(coords=None, dims=None, data_vars=None):
             x2=np.linspace(0, 1, 20),
         )
     da = gen_random_data_xr(coords, dims, data_vars)
+    if use_dask:
+        da.data = dask.array.from_array(da.data)
     return da
 
 
@@ -49,6 +51,7 @@ class TestTaskLoader(unittest.TestCase):
         super().__init__(*args, **kwargs)
         # It's safe to share data between tests because the TaskLoader does not modify data
         self.da = _gen_data_xr()
+        self.aux_da = self.da.isel(time=0)
         self.df = _gen_data_pandas()
 
     def _gen_task_loader_call_args(self, n_context_sets, n_target_sets):
@@ -60,7 +63,7 @@ class TestTaskLoader(unittest.TestCase):
         - (int): Random number of samples
         - (float): Fraction of samples
         - "all": All samples
-        - (np.ndarray): Array of coordinates to sample from the dataset (WIP)
+        - (np.ndarray): Array of coordinates to sample from the dataset
 
         Args:
             n_context_sets (int): Number of context samples
@@ -77,6 +80,15 @@ class TestTaskLoader(unittest.TestCase):
             np.zeros((2, 1)),
         ]:
             yield [sampling_method] * n_context_sets, [sampling_method] * n_target_sets
+
+    def test_load_dask(self):
+        """Test loading dask data"""
+        da = _gen_data_xr(use_dask=True)
+        aux_da = da.isel(time=0)
+        tl = TaskLoader(
+            context=da, target=da, aux_at_targets=aux_da, aux_at_contexts=aux_da
+        )
+        tl.load_dask()
 
     @parameterized.expand(range(1, 4))
     def test_loader_call(self, n_context_and_target):
@@ -120,6 +132,23 @@ class TestTaskLoader(unittest.TestCase):
                 task = tl("2020-01-01", context_sampling, target_sampling)
 
         return None
+
+    def test_aux_at_contexts_and_aux_at_targets(self):
+        """Test the `aux_at_contexts` and `aux_at_targets` arguments"""
+        context = [self.da, self.df]
+        target = self.df
+
+        tl = TaskLoader(
+            context=[self.da, self.df],  # gridded xarray and off-grid pandas contexts
+            target=self.df,  # off-grid pandas targets
+            aux_at_contexts=self.aux_da,  # gridded xarray to sample at off-grid context locations
+            aux_at_targets=self.aux_da,  # gridded xarray to sample at target locations
+        )
+
+        for context_sampling, target_sampling in self._gen_task_loader_call_args(
+            len(context), 1
+        ):
+            task = tl("2020-01-01", context_sampling, target_sampling)
 
     def test_invalid_sampling_strat(self):
         """Test invalid sampling strategy in `TaskLoader.__call__`
