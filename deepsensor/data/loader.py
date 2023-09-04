@@ -44,10 +44,14 @@ class TaskLoader:
                 or a list/tuple of these.
             target: Target data. Can be a single xr.DataArray, xr.Dataset or pd.DataFrame,
                 or a list/tuple of these.
-            aux_at_contexts: Auxiliary data to load at off-grid context locations. Can be a single
-                xr.DataArray or xr.Dataset. Default: None.
-            aux_at_targets: Auxiliary data to load at target locations. Can be a single xr.DataArray or
-                xr.Dataset. Default: None.
+            aux_at_contexts: Gridded auxiliary data to sample at off-grid context locations. Can bea single
+                xr.DataArray or xr.Dataset object. This xarray object is automatically sampled at the
+                locations of any off-grid context sets and these extra observations are passed via
+                an additional context set. Default: None.
+            aux_at_targets: Gridded auxiliary data to sample at target locations. Can be a single
+                xr.DataArray or xr.Dataset. This xarray object is automatically sampled at the
+                target locations and these extra observations are included as a separate `Y_t_aux`
+                entry in the Task object. Not supported for multiple target sets. Default: None.
             links: Specifies links between context and target data. Each link is a tuple of
                 two integers, where the first integer is the index of the context data and the second
                 integer is the index of the target data. Can be a single tuple in the case of a single
