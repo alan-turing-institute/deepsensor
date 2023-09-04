@@ -222,9 +222,7 @@ class TaskLoader:
         if self.aux_at_contexts is not None:
             context_dims += count_data_dims_of_tuple_of_sets(self.aux_at_contexts)
         if self.aux_at_targets is not None:
-            aux_at_target_dims = count_data_dims_of_tuple_of_sets(self.aux_at_targets)[
-                0
-            ]
+            aux_at_target_dims = count_data_dims_of_tuple_of_sets(self.aux_at_targets)[0]
         else:
             aux_at_target_dims = 0
 
@@ -344,7 +342,7 @@ class TaskLoader:
         s += f"\nContext variable IDs: {self.context_var_IDs}"
         s += f"\nTarget variable IDs: {self.target_var_IDs}"
         if self.aux_at_targets is not None:
-            s += f"\nAuxiliary-at-target data at targets: {self.aux_at_target_var_IDs}"
+            s += f"\nAuxiliary-at-target variable IDs: {self.aux_at_target_var_IDs}"
         return s
 
     def __repr__(self):
@@ -716,9 +714,13 @@ class TaskLoader:
         if self.aux_at_contexts is not None:
             # Add auxiliary variable sampled at context set as a new context variable
             X_c_offgrid = [X_c for X_c in task["X_c"] if not isinstance(X_c, tuple)]
-            X_c_offrid_all = np.concatenate(X_c_offgrid, axis=1)
+            if len(X_c_offgrid) == 0:
+                # No offgrid context sets
+                X_c_offrid_all = np.empty((2, 0), dtype=self.dtype)
+            else:
+                X_c_offrid_all = np.concatenate(X_c_offgrid, axis=1)
             Y_c_aux = self.sample_offgrid_aux(X_c_offrid_all, self.aux_at_contexts)
-            task["X_c"].append(X_c)
+            task["X_c"].append(X_c_offrid_all)
             task["Y_c"].append(Y_c_aux)
 
         if self.aux_at_targets is not None:
