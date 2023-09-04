@@ -62,8 +62,8 @@ class TestTaskLoader(unittest.TestCase):
             - (int): Random number of samples
             - (float): Fraction of samples
             - "all": All samples
-            - (numpy.ndarray): Array of coordinates to sample from the dataset
-              (WIP)
+            - (:class:`numpy:numpy.ndarray`): Array of coordinates to sample
+              from the dataset (WIP)
 
         Parameters
         ----------
@@ -145,7 +145,10 @@ class TestTaskLoader(unittest.TestCase):
             target = data_type_ID_to_data(target_IDs)
             tl = TaskLoader(context=context, target=target)
 
-            for context_sampling, target_sampling in self._gen_task_loader_call_args(
+            for (
+                context_sampling,
+                target_sampling,
+            ) in self._gen_task_loader_call_args(
                 n_context_and_target, n_context_and_target
             ):
                 task = tl("2020-01-01", context_sampling, target_sampling)

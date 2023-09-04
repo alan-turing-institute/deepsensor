@@ -31,7 +31,7 @@ def create_empty_spatiotemporal_xarray(
 
     Parameters
     ----------
-    X : xarray.Dataset | xarray.DataArray
+    X : :class:`xarray.Dataset` | :class:`xarray.DataArray`
         ...
     dates : List[...]
         ...
@@ -111,7 +111,9 @@ def create_empty_spatiotemporal_xarray(
 
 
 def increase_spatial_resolution(
-    X_t_normalised, resolution_factor, coord_names: dict = {"x1": "x1", "x2": "x2"}
+    X_t_normalised,
+    resolution_factor,
+    coord_names: dict = {"x1": "x1", "x2": "x2"},
 ):
     """
     ...
@@ -159,12 +161,12 @@ class ProbabilisticModel:
 
         Parameters
         ----------
-        task : Task
+        task : :class:`~.data.task.Task`
             Task containing context data.
 
         Returns
         -------
-        mean : numpy.ndarray
+        mean : :class:`numpy:numpy.ndarray`
             Should return mean prediction over target points.
 
         Raises
@@ -181,12 +183,12 @@ class ProbabilisticModel:
 
         Parameters
         ----------
-        task : Task
+        task : :class:`~.data.task.Task`
             Task containing context data.
 
         Returns
         -------
-        var : numpy.ndarray
+        var : :class:`numpy:numpy.ndarray`
             Should return marginal variance over target points.
 
         Raises
@@ -203,12 +205,12 @@ class ProbabilisticModel:
 
         Parameters
         ----------
-        task : Task
+        task : :class:`~.data.task.Task`
             Task containing context data.
 
         Returns
         -------
-        std : numpy.ndarray
+        std : :class:`numpy:numpy.ndarray`
             Should return marginal standard deviation over target points.
         """
         var = self.variance(task)
@@ -221,12 +223,12 @@ class ProbabilisticModel:
 
         Parameters
         ----------
-        task : Task
+        task : :class:`~.data.task.Task`
             Task containing context data.
 
         Returns
         -------
-        cov : numpy.ndarray
+        cov : :class:`numpy:numpy.ndarray`
             Should return covariance matrix over target points.
 
         Raises
@@ -246,7 +248,7 @@ class ProbabilisticModel:
 
         Parameters
         ----------
-        task : Task
+        task : :class:`~.data.task.Task`
             Task containing context data.
 
         Returns
@@ -268,7 +270,7 @@ class ProbabilisticModel:
 
         Parameters
         ----------
-        task : Task
+        task : :class:`~.data.task.Task`
             Task containing context data.
 
         Returns
@@ -290,7 +292,7 @@ class ProbabilisticModel:
 
         Parameters
         ----------
-        task : Task
+        task : :class:`~.data.task.Task`
             Task containing context data.
 
         Returns
@@ -311,7 +313,7 @@ class ProbabilisticModel:
 
         Parameters
         ----------
-        task : Task
+        task : :class:`~.data.task.Task`
             Task containing context data.
 
         Returns
@@ -333,14 +335,14 @@ class ProbabilisticModel:
 
         Parameters
         ----------
-        task : Task
+        task : :class:`~.data.task.Task`
             Task containing context data.
         n_samples : int
             Number of samples to draw.
 
         Returns
         -------
-        samples : Tuple[numpy.ndarray, numpy.ndarray]
+        samples : Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
             Should return joint samples over target points.
 
         Raises
@@ -368,9 +370,9 @@ class DeepSensorModel(ProbabilisticModel):
 
         Parameters
         ----------
-        data_processor : deepsensor.data.processor.DataProcessor
+        data_processor : :class:`~.data.processor.DataProcessor`
             DataProcessor object, used to unnormalise predictions.
-        task_loader : deepsensor.data.loader.TaskLoader
+        task_loader : :class:`~.data.loader.TaskLoader`
             TaskLoader object, used to determine target variables for
             unnormalising.
         """
@@ -381,7 +383,12 @@ class DeepSensorModel(ProbabilisticModel):
         self,
         tasks: Union[List[Task], Task],
         X_t: Union[
-            xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index, np.ndarray
+            xr.Dataset,
+            xr.DataArray,
+            pd.DataFrame,
+            pd.Series,
+            pd.Index,
+            np.ndarray,
         ],
         X_t_is_normalised: bool = False,
         resolution_factor: int = 1,
@@ -405,7 +412,7 @@ class DeepSensorModel(ProbabilisticModel):
         ----------
         tasks : List[Task] | Task
             List of tasks containing context data.
-        X_t : xarray.Dataset | xarray.DataArray | pandas.DataFrame | pandas.Series | pandas.Index | numpy.ndarray
+        X_t : :class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`
             Target locations to predict at. Can be an xarray object containing
             on-grid locations or a pandas object containing off-grid locations.
         X_t_is_normalised : bool
@@ -436,7 +443,7 @@ class DeepSensorModel(ProbabilisticModel):
 
         Returns
         -------
-        predictions : xarray.Dataset | xarray.DataArray | pandas.DataFrame | pandas.Series | pandas.Index
+        predictions : :class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index`
             If ``X_t`` is a pandas object, returns pandas objects containing
             off-grid predictions.
 
@@ -538,7 +545,10 @@ class DeepSensorModel(ProbabilisticModel):
                     X_t_normalised, resolution_factor
                 )
             # TODO rename from _arr because not an array here
-            X_t_arr = (X_t_normalised["x1"].values, X_t_normalised["x2"].values)
+            X_t_arr = (
+                X_t_normalised["x1"].values,
+                X_t_normalised["x2"].values,
+            )
         elif mode == "off-grid":
             X_t_arr = X_t_normalised.reset_index()[["x1", "x2"]].values.T
 

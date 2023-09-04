@@ -44,21 +44,24 @@ class TaskLoader:
 
         Parameters
         ----------
-        context : xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset, pandas.DataFrame]
-            Context data. Can be a single xarray.DataArray, xarray.Dataset or
-            pandas.DataFrame, or a list/tuple of these.
-        target : xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset, pandas.DataFrame]
-            Target data. Can be a single xarray.DataArray, xarray.Dataset or
-            pandas.DataFrame, or a list/tuple of these.
-        aux_at_contexts : Tuple[int, xarray.DataArray | xarray.Dataset], optional
+        context : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset`, :class:`pandas.DataFrame`]
+            Context data. Can be a single :class:`xarray.DataArray`,
+            :class:`xarray.Dataset` or :class:`pandas.DataFrame`, or a
+            list/tuple of these.
+        target : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset`, :class:`pandas.DataFrame`]
+            Target data. Can be a single :class:`xarray.DataArray`,
+            :class:`xarray.Dataset` or :class:`pandas.DataFrame`, or a
+            list/tuple of these.
+        aux_at_contexts : Tuple[int, :class:`xarray.DataArray` | :class:`xarray.Dataset`], optional
             Auxiliary data at context locations. Tuple of two elements, where
             the first element is the index of the context set for which the
             auxiliary data will be sampled at, and the second element is the
-            auxiliary data, which can be a single xarray.DataArray or
-            xarray.Dataset. Default: None.
-        aux_at_targets : xarray.DataArray | xarray.Dataset, optional
-            Auxiliary data at target locations. Can be a single xarray.DataArray
-            or xarray.Dataset. Default: None.
+            auxiliary data, which can be a single :class:`xarray.DataArray` or
+            :class:`xarray.Dataset`. Default: None.
+        aux_at_targets : :class:`xarray.DataArray` | :class:`xarray.Dataset`, optional
+            Auxiliary data at target locations. Can be a single
+            :class:`xarray.DataArray` or :class:`xarray.Dataset`. Default:
+            None.
         links : Tuple[int, int] | List[Tuple[int, int]], optional
             Specifies links between context and target data. Each link is a
             tuple of two integers, where the first integer is the index of the
@@ -76,8 +79,8 @@ class TaskLoader:
         time_freq : str, optional
             Time frequency of the data. Default: ``'D'`` (daily).
         xarray_interp_method : str, optional
-            Interpolation method to use when interpolating xarray.DataArray.
-            Default is ``'linear'``.
+            Interpolation method to use when interpolating
+            :class:`xarray.DataArray`. Default is ``'linear'``.
         discrete_xarray_sampling : bool, optional
             When randomly sampling xarray variables, whether to sample at
             discrete points defined at grid cell centres, or at continuous
@@ -155,15 +158,16 @@ class TaskLoader:
             List of context data.
         target : List
             List of target data.
-        aux_at_contexts : Tuple[int, xarray.DataArray | xarray.Dataset], optional
+        aux_at_contexts : Tuple[int, :class:`xarray.DataArray` | :class:`xarray.Dataset`], optional
             Auxiliary data at context locations. Tuple of two elements, where
             the first element is the index of the context set for which the
             auxiliary data will be sampled at, and the second element is the
-            auxiliary data, which can be a single xarray.DataArray or
-            xarray.Dataset. Default: None.
-        aux_at_targets : xarray.DataArray | xarray.Dataset], optional
+            auxiliary data, which can be a single :class:`xarray.DataArray` or
+            :class:`xarray.Dataset`. Default: None.
+        aux_at_targets : :class:`xarray.DataArray` | :class:`xarray.Dataset`], optional
             Auxiliary data at target locations. Can be a single
-            xarray.DataArray or xarray.Dataset. Default: None.
+            :class:`xarray.DataArray` or :class:`xarray.Dataset`. Default:
+            None.
 
         Returns
         -------
@@ -243,8 +247,9 @@ class TaskLoader:
         Raises
         ------
         ValueError
-            If the context/target data is not a tuple/list of xarray.DataArray,
-            xarray.Dataset or pandas.DataFrame.
+            If the context/target data is not a tuple/list of
+            :class:`xarray.DataArray`, :class:`xarray.Dataset` or
+            :class:`pandas.DataFrame`.
         """
 
         def count_data_dims_of_tuple_of_sets(datasets):
@@ -292,8 +297,9 @@ class TaskLoader:
         Raises
         ------
         ValueError
-            If the context/target data is not a tuple/list of xarray.DataArray,
-            xarray.Dataset or pandas.DataFrame.
+            If the context/target data is not a tuple/list of
+            :class:`xarray.DataArray`, :class:`xarray.Dataset` or
+            :class:`pandas.DataFrame`.
         """
 
         def infer_var_IDs_of_tuple_of_sets(datasets, delta_ts=None):
@@ -453,9 +459,9 @@ class TaskLoader:
 
         Parameters
         ----------
-        da : xarray.DataArray | xarray.Dataset
+        da : :class:`xarray.DataArray` | :class:`xarray.Dataset`
             DataArray to sample, assumed to be sliced for the task already.
-        sampling_strat : str | int | float | numpy.ndarray
+        sampling_strat : str | int | float | :class:`numpy:numpy.ndarray`
             Sampling strategy, either "all" or an integer for random grid cell
             sampling.
         seed : int, optional
@@ -463,7 +469,7 @@ class TaskLoader:
 
         Returns
         -------
-        Data : Tuple[numpy.ndarray, numpy.ndarray]
+        Data : Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
             Tuple of sampled target data and sampled context data.
 
         Raises
@@ -558,10 +564,10 @@ class TaskLoader:
 
         Parameters
         ----------
-        df : pandas.DataFrame | pandas.Series
+        df : :class:`pandas.DataFrame` | :class:`pandas.Series`
             DataArray to sample, assumed to be time-sliced for the task
             already.
-        sampling_strat : str | int | float | numpy.ndarray
+        sampling_strat : str | int | float | :class:`numpy:numpy.ndarray`
             Sampling strategy, either "all" or an integer for random grid cell
             sampling.
         seed : int, optional
@@ -628,15 +634,15 @@ class TaskLoader:
 
         Parameters
         ----------
-        X_t : numpy.ndarray | Tuple[numpy.ndarray, numpy.ndarray]
+        X_t : :class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
             Off-grid locations at which to sample the auxiliary data. Can be a
             tuple of two numpy arrays, or a single numpy array.
-        offgrid_aux : xarray.DataArray | xarray.Dataset
+        offgrid_aux : :class:`xarray.DataArray` | :class:`xarray.Dataset`
             Auxiliary data at off-grid locations.
 
         Returns
         -------
-        numpy.ndarray
+        :class:`numpy:numpy.ndarray`
             ...
         """
         if isinstance(X_t, tuple):
@@ -660,10 +666,18 @@ class TaskLoader:
         self,
         date: pd.Timestamp,
         context_sampling: Union[
-            str, int, float, np.ndarray, List[Union[str, int, float, np.ndarray]]
+            str,
+            int,
+            float,
+            np.ndarray,
+            List[Union[str, int, float, np.ndarray]],
         ] = "all",
         target_sampling: Union[
-            str, int, float, np.ndarray, List[Union[str, int, float, np.ndarray]]
+            str,
+            int,
+            float,
+            np.ndarray,
+            List[Union[str, int, float, np.ndarray]],
         ] = "all",
         split_frac: float = 0.5,
         datewise_deterministic: bool = False,
@@ -678,18 +692,19 @@ class TaskLoader:
             - "all": Sample all observations.
             - int: Sample N observations uniformly at random.
             - float: Sample a fraction of observations uniformly at random.
-            - numpy.ndarray, shape (2, N): Sample N observations at the given
-              x1, x2 coordinates. Coords are assumed to be unnormalised.
+            - :class:`numpy:numpy.ndarray`, shape (2, N): Sample N observations
+              at the given x1, x2 coordinates. Coords are assumed to be
+              unnormalised.
 
         Parameters
         ----------
-        date : pandas.Timestamp
+        date : :class:`pandas.Timestamp`
             Date for which to generate the task.
-        context_sampling : str | int | float | numpy.ndarray | List[str | int | float | numpy.ndarray]
+        context_sampling : str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`]
             Sampling strategy for the context data, either a list of sampling
             strategies for each context set, or a single strategy applied to
             all context sets. Default is ``"all"``.
-        target_sampling : str | int | float | numpy.ndarray | List[str | int | float | numpy.ndarray]
+        target_sampling : str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`]
             Sampling strategy for the target data, either a list of sampling
             strategies for each target set, or a single strategy applied to all
             target sets. Default is ``"all"``.
@@ -707,7 +722,7 @@ class TaskLoader:
 
         Returns
         -------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             Task object containing the context and target data.
         """
 

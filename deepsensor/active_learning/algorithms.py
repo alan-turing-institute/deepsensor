@@ -7,7 +7,10 @@ from deepsensor.data.processor import (
     da1_da2_same_grid,
     interp_da1_to_da2,
 )
-from deepsensor.model.model import DeepSensorModel, create_empty_spatiotemporal_xarray
+from deepsensor.model.model import (
+    DeepSensorModel,
+    create_empty_spatiotemporal_xarray,
+)
 from deepsensor.data.task import Task, append_obs_to_task
 from deepsensor.active_learning.acquisition_fns import (
     AcquisitionFunction,
@@ -52,16 +55,16 @@ class GreedyAlgorithm:
 
         Parameters
         ----------
-        model : deepsensor.model.model.DeepSensorModel
+        model : :class:`~.model.model.DeepSensorModel`
             Trained model to use for proposing new context points.
-        X_s : xarray.Dataset | xarray.DataArray | pandas.DataFrame | pandas.Series | pandas.Index
+        X_s : :class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index`
             Search coordinates.
-        X_t : xarray.Dataset | xarray.DataArray
+        X_t : :class:`xarray.Dataset` | :class:`xarray.DataArray`
             Target coordinates.
-        X_s_mask : xarray.Dataset | xarray.DataArray, optional
+        X_s_mask : :class:`xarray.Dataset` | :class:`xarray.DataArray`, optional
             Mask for search coordinates. If provided, only points where mask
             is True will be considered. Defaults to None.
-        X_t_mask : xarray.Dataset | xarray.DataArray, optional
+        X_t_mask : :class:`xarray.Dataset` | :class:`xarray.DataArray`, optional
             ..., by default None.
         N_new_context : int, optional
             ..., by default 1.
@@ -69,9 +72,9 @@ class GreedyAlgorithm:
             ..., by default False.
         model_infill_method : str, optional
             ..., by default "mean".
-        query_infill : xarray.DataArray, optional
+        query_infill : :class:`xarray.DataArray`, optional
             ..., by default None.
-        proposed_infill : xarray.DataArray, optional
+        proposed_infill : :class:`xarray.DataArray`, optional
             ..., by default None.
         context_set_idx : int, optional
             ..., by default 0.
@@ -81,7 +84,7 @@ class GreedyAlgorithm:
             ..., by default False.
         min_or_max : str, optional
             ..., by default "min".
-        task_loader : deepsensor.data.loader.TaskLoader, optional
+        task_loader : :class:`~.data.loader.TaskLoader`, optional
             ..., by default None.
         verbose : bool, optional
             ..., by default False.
@@ -90,12 +93,12 @@ class GreedyAlgorithm:
         ------
         ValueError
             If the ``model`` passed does not inherit from
-            :class:`~deepsensor.model.model.DeepSensorModel`.
+            :class:`~.model.model.DeepSensorModel`.
         """
         if not isinstance(model, DeepSensorModel):
             raise ValueError(
-                f"`model` must inherit from DeepSensorModel, but parent "
-                "classes are {model.__class__.__bases__}"
+                "`model` must inherit from DeepSensorModel, but parent "
+                f"classes are {model.__class__.__bases__}"
             )
 
         self._validate_n_new_context(X_s, N_new_context)
@@ -451,21 +454,21 @@ class GreedyAlgorithm:
 
         Parameters
         ----------
-        acquisition_fn: deepsensor.active_learning.acquisition_fns.AcquisitionFunction
+        acquisition_fn: :class:`~.active_learning.acquisition_fns.AcquisitionFunction`
             ...
-        tasks: List[deepsensor.data.task.Task] | deepsensor.data.task.Task
+        tasks: List[:class:`~.data.task.Task`] | :class:`~.data.task.Task`
             ...
 
         Returns
         -------
-        X_new_df, acquisition_fn_ds: Tuple[pandas.DataFrame, xarray.Dataset]
+        X_new_df, acquisition_fn_ds: Tuple[:class:`pandas.DataFrame`, :class:`xarray.Dataset`]
             ...
 
         Raises
         ------
         ValueError
             If ``acquisition_fn`` is an
-            ``deepsensor.active_learning.acquisition_fns.AcquisitionFunctionOracle``
+            :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`
             and ``task_loader`` is None.
         ValueError
             If ``min_or_max`` is not ``"min"`` or ``"max"``.

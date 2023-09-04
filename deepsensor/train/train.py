@@ -67,9 +67,9 @@ def train_epoch(
 
     Parameters
     ----------
-    model : ConvNP
+    model : :class:`~.model.convnp.ConvNP`
         Model to train.
-    tasks : List[Task]
+    tasks : List[:class:`~.data.task.Task`]
         List of tasks to train on.
     lr : float, optional
         Learning rate, by default 5e-5.
@@ -77,7 +77,7 @@ def train_epoch(
         Batch size. Defaults to None. If None, no batching is performed.
     opt : Optimizer, optional
         TF or Torch optimizer. Defaults to None. If None,
-        :class:`tensorflow.keras.optimizer.Adam` is used.
+        :class:`tensorflow:tensorflow.keras.optimizer.Adam` is used.
     progress_bar : bool, optional
         Whether to display a progress bar. Defaults to False.
     tqdm_notebook : bool, optional

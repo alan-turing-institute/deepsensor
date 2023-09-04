@@ -17,7 +17,7 @@ class AcquisitionFunction:
         """
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         context_set_idx : int
             Index of context set to add new observations to when computing the
@@ -32,12 +32,12 @@ class AcquisitionFunction:
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             Task object containing context and target sets.
 
         Returns
         -------
-        numpy.ndarray
+        :class:`numpy:numpy.ndarray`
             Acquisition function value/s. Shape ().
 
         Raises
@@ -68,14 +68,14 @@ class AcquisitionFunctionParallel(AcquisitionFunction):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             Task object containing context and target sets.
-        X_s : numpy.ndarray
+        X_s : :class:`numpy:numpy.ndarray`
             Search points. Shape (2, N_search).
 
         Returns
         -------
-        numpy.ndarray
+        :class:`numpy:numpy.ndarray`
             Should return acquisition function value/s. Shape (N_search,).
 
         Raises
@@ -96,7 +96,7 @@ class MeanStddev(AcquisitionFunction):
 
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         """
         super().__init__(model)
@@ -108,7 +108,7 @@ class MeanStddev(AcquisitionFunction):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
         target_set_idx : int, optional
             ..., by default 0
@@ -130,7 +130,7 @@ class MeanVariance(AcquisitionFunction):
 
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         """
         super().__init__(model)
@@ -142,7 +142,7 @@ class MeanVariance(AcquisitionFunction):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
         target_set_idx : int, optional
             ..., by default 0
@@ -177,7 +177,7 @@ class pNormStddev(AcquisitionFunction):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
         target_set_idx : int, optional
             ..., by default 0
@@ -201,7 +201,7 @@ class MeanMarginalEntropy(AcquisitionFunction):
 
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         """
         super().__init__(model)
@@ -213,7 +213,7 @@ class MeanMarginalEntropy(AcquisitionFunction):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -234,7 +234,7 @@ class JointEntropy(AcquisitionFunction):
 
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         """
         super().__init__(model)
@@ -246,7 +246,7 @@ class JointEntropy(AcquisitionFunction):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -266,7 +266,7 @@ class OracleMAE(AcquisitionFunctionOracle):
 
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         """
         super().__init__(model)
@@ -278,7 +278,7 @@ class OracleMAE(AcquisitionFunctionOracle):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -300,7 +300,7 @@ class OracleRMSE(AcquisitionFunctionOracle):
 
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         """
         super().__init__(model)
@@ -312,7 +312,7 @@ class OracleRMSE(AcquisitionFunctionOracle):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -334,7 +334,7 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
 
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         """
         super().__init__(model)
@@ -346,7 +346,7 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -368,7 +368,7 @@ class OracleJointNLL(AcquisitionFunctionOracle):
 
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         """
         super().__init__(model)
@@ -380,7 +380,7 @@ class OracleJointNLL(AcquisitionFunctionOracle):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -412,9 +412,9 @@ class Random(AcquisitionFunctionParallel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
-        X_s : numpy.ndarray
+        X_s : :class:`numpy:numpy.ndarray`
             ...
 
         Returns
@@ -446,9 +446,9 @@ class ContextDist(AcquisitionFunctionParallel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
-        X_s : numpy.ndarray
+        X_s : :class:`numpy:numpy.ndarray`
             ...
 
         Returns
@@ -484,7 +484,7 @@ class Stddev(AcquisitionFunctionParallel):
 
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         """
         super().__init__(model)
@@ -496,9 +496,9 @@ class Stddev(AcquisitionFunctionParallel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
-        X_s : numpy.ndarray
+        X_s : :class:`numpy:numpy.ndarray`
             ...
         target_set_idx : int, optional
             ..., by default 0
@@ -529,7 +529,7 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         """
         Parameters
         ----------
-        model : deepsensor.model.model.ProbabilisticModel
+        model : :class:`~.model.model.ProbabilisticModel`
             ...
         context_set_idx : int
             Index of context set to add new observations to when computing the
@@ -545,16 +545,16 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         """
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             Task object containing context and target sets.
-        X_s : numpy.ndarray
+        X_s : :class:`numpy:numpy.ndarray`
             Search points. Shape (2, N_search).
         target_set_idx : int
             Index of target set to compute acquisition function for.
 
         Returns
         -------
-        numpy.ndarray
+        :class:`numpy:numpy.ndarray`
             Acquisition function value/s. Shape (N_search,).
         """
         # Set the target points to the search points

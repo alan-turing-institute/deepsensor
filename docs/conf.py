@@ -46,10 +46,10 @@ intersphinx_mapping = {
     # ),
     "numpy": ("https://numpy.org/doc/stable/reference/", None),
     "matplotlib": ("http://matplotlib.org/stable/", None),
-    # "xarray": (
-    #     "http://xarray.pydata.org/en/stable/",
-    #     "https://docs.xarray.dev/en/stable/objects.inv",
-    # ),
+    "xarray": (
+        "http://xarray.pydata.org/en/stable/",
+        "https://docs.xarray.dev/en/stable/objects.inv",
+    ),
 }
 
 # intersphinx_disabled_reftypes = ["*"]

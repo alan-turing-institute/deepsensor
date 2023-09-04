@@ -175,12 +175,12 @@ def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
 
     Parameters
     ----------
-    X : numpy.ndarray | Tuple[numpy.ndarray, numpy.ndarray]
+    X : :class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
         ...
 
     Returns
     ----------
-    numpy.ndarray
+    :class:`numpy:numpy.ndarray`
         ...
     """
     if type(X) is tuple:
@@ -196,12 +196,12 @@ def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
 
     Parameters
     ----------
-    Y : numpy.ndarray | Tuple[numpy.ndarray, numpy.ndarray]
+    Y : :class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
         ...
 
     Returns
     -------
-    numpy.ndarray
+    :class:`numpy:numpy.ndarray`
         ...
     """
     if Y.ndim == 3:
@@ -217,7 +217,7 @@ def flatten_gridded_data_in_task(task: Task) -> Task:
 
     Parameters
     ----------
-    task : deepsensor.data.task.Task
+    task : :class:`~.data.task.Task`
         ...
 
     Returns

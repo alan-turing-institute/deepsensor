@@ -16,7 +16,11 @@ from deepsensor.data.task import (
     flatten_X,
     flatten_Y,
 )
-from deepsensor.model.defaults import gen_ppu, gen_encoder_scales, gen_decoder_scale
+from deepsensor.model.defaults import (
+    gen_ppu,
+    gen_encoder_scales,
+    gen_decoder_scale,
+)
 from deepsensor.model.model import DeepSensorModel
 from deepsensor.model.nps import (
     construct_neural_process,
@@ -157,9 +161,9 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        data_processor : deepsensor.data.processor.DataProcessor
+        data_processor : :class:`~.data.processor.DataProcessor`
             DataProcessor object.
-        task_loader : deepsensor.data.loader.TaskLoader
+        task_loader : :class:`~.data.loader.TaskLoader`
             TaskLoader object.
         verbose : bool, optional
             Whether to print inferred model parameters, by default True.
@@ -215,9 +219,9 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        data_processor : deepsensor.data.processor.DataProcessor
+        data_processor : :class:`~.data.processor.DataProcessor`
             DataProcessor object.
-        task_loader : deepsensor.data.loader.TaskLoader
+        task_loader : :class:`~.data.loader.TaskLoader`
             TaskLoader object.
         neural_process : TFModel | TorchModel
             Pre-defined neural process model.
@@ -234,7 +238,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -275,12 +279,12 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
         -------
-        deepsensor.data.task.Task
+        :class:`~.data.task.Task`
             ...
 
         Raises
@@ -300,7 +304,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
         n_samples : int, optional
             Number of samples to draw from the distribution, by default 10.
@@ -344,7 +348,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -383,7 +387,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -422,7 +426,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -457,7 +461,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             ...
 
         Returns
@@ -489,8 +493,8 @@ class ConvNP(DeepSensorModel):
 
         Returns
         -------
-        numpy.ndarray | List[numpy.ndarray]
-            The samples.
+        :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]
+            The samples as an array or list of arrays.
         """
         if noiseless:
             samples = dist.noiseless.sample(n_samples)
@@ -509,7 +513,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             The task to sample from.
         n_samples : int, optional
             The number of samples to draw from the distribution, by default 1.
@@ -518,8 +522,8 @@ class ConvNP(DeepSensorModel):
 
         Returns
         -------
-        numpy.ndarray | List[numpy.ndarray]
-            The samples.
+        :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]
+            The samples as an array or list of arrays.
         """
         dist = self(task)
         return self.sample(dist, n_samples, noiseless)
@@ -531,7 +535,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             The task to slice.
 
         Returns
@@ -596,7 +600,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             The task to compute the entropy of.
 
         Returns
@@ -631,7 +635,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             The task to compute the entropy of.
 
         Returns
@@ -651,7 +655,7 @@ class ConvNP(DeepSensorModel):
         ----------
         dist : neuralprocesses.dist.AbstractMultiOutputDistribution
             The distribution to compute the logpdf of.
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             The task to compute the logpdf of.
 
         Returns
@@ -670,7 +674,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             The task to compute the logpdf of.
 
         Returns
@@ -693,7 +697,7 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             The task to compute the loss of.
         fix_noise : ...
             Whether to fix the noise to the value specified in the model
@@ -758,13 +762,13 @@ class ConvNP(DeepSensorModel):
 
         Parameters
         ----------
-        task : deepsensor.data.task.Task
+        task : :class:`~.data.task.Task`
             The task to sample from.
         n_samples : int, optional
             The number of samples to draw from the distribution, by default 1.
-        X_target_AR : numpy.ndarray, optional
-            Locations to draw AR samples over. If None, AR samples will be drawn
-            over the target locations in the task. Defaults to None.
+        X_target_AR : :class:`numpy:numpy.ndarray`, optional
+            Locations to draw AR samples over. If None, AR samples will be
+            drawn over the target locations in the task. Defaults to None.
         ar_subsample_factor : int, optional
             Subsample target locations to draw AR samples over. Defaults to 1.
         fill_type : Literal["mean", "sample"], optional
@@ -773,7 +777,7 @@ class ConvNP(DeepSensorModel):
 
         Returns
         -------
-        numpy.ndarray
+        :class:`numpy:numpy.ndarray`
             The samples.
         """
 
@@ -810,13 +814,19 @@ class ConvNP(DeepSensorModel):
 
             # Run AR sampling with torch.no_grad() to avoid prohibitive backprop computation for AR
             with torch.no_grad():
-                mean, variance, noiseless_samples, noisy_samples = run_nps_model_ar(
-                    self.model, task_arsample, num_samples=n_samples
-                )
+                (
+                    mean,
+                    variance,
+                    noiseless_samples,
+                    noisy_samples,
+                ) = run_nps_model_ar(self.model, task_arsample, num_samples=n_samples)
         else:
-            mean, variance, noiseless_samples, noisy_samples = run_nps_model_ar(
-                self.model, task_arsample, num_samples=n_samples
-            )
+            (
+                mean,
+                variance,
+                noiseless_samples,
+                noisy_samples,
+            ) = run_nps_model_ar(self.model, task_arsample, num_samples=n_samples)
 
         # Slice out first (and assumed only) target entry in nps.Aggregate object
         noiseless_samples = B.to_numpy(noiseless_samples)
@@ -873,7 +883,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
 
     Returns
     -------
-    merged_task : deepsensor.data.task.Task
+    merged_task : :class:`~.data.task.Task`
         Task containing multiple batches.
 
     Raises
@@ -969,12 +979,12 @@ def remove_nans_from_task_Y_t_if_present(task: Task) -> Tuple[Task, bool]:
 
     Parameters
     ----------
-    task : deepsensor.data.task.Task
+    task : :class:`~.data.task.Task`
         The task to remove NaNs from.
 
     Returns
     -------
-    Tuple[deepsensor.data.task.Task, bool]
+    Tuple[:class:`~.data.task.Task`, bool]
         The task with NaNs removed (if present), and a boolean indicating
         whether NaNs were present in the task.
     """

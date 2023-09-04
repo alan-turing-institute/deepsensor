@@ -92,8 +92,7 @@ def context_encoding(
         context_set_idxs = np.array(range(len(task_loader.context_dims)))
 
     context_var_ID_set_sizes = [
-        ndim + 1
-        for ndim in np.array(task_loader.context_dims)[context_set_idxs]
+        ndim + 1 for ndim in np.array(task_loader.context_dims)[context_set_idxs]
     ]  # Add density channel to each set size
     max_context_set_size = max(context_var_ID_set_sizes)
     ncols = max_context_set_size
@@ -205,7 +204,7 @@ def offgrid_context(
             Colors to use for each context set, by default None.
         **scatter_kwargs:
             Additional keyword arguments to pass to the scatter plot, by
-            default {}.
+            default ``{}``.
 
     Returns:
         None.
@@ -251,9 +250,7 @@ def offgrid_context(
         elif plot_target and set_i >= len(task["X_c"]):
             label += f"Target set {set_i - len(task['X_c'])} "
             if task_loader is not None:
-                label += (
-                    f"({task_loader.target_var_IDs[set_i - len(task['X_c'])]})"
-                )
+                label += f"({task_loader.target_var_IDs[set_i - len(task['X_c'])]})"
 
         for ax in axes:
             ax.scatter(
@@ -345,8 +342,7 @@ def offgrid_context_observations(
     for x_c, y_c in zip(X_c.T, Y_c):
         if extent is not None:
             if not (
-                extent[0] <= x_c[0] <= extent[1]
-                and extent[2] <= x_c[1] <= extent[3]
+                extent[0] <= x_c[0] <= extent[1] and extent[2] <= x_c[1] <= extent[3]
             ):
                 continue
         for ax in axes:
@@ -531,9 +527,7 @@ def feature_maps(
     for layer_i, feature_map in enumerate(feature_maps):
         n_features = feature_map.shape[1]
         n_features_to_plot = min(n_features_per_layer, n_features)
-        feature_idxs = rng.choice(
-            n_features, n_features_to_plot, replace=False
-        )
+        feature_idxs = rng.choice(n_features, n_features_to_plot, replace=False)
 
         fig, axes = plt.subplots(
             nrows=1,
@@ -591,7 +585,7 @@ def placements(
         task (:class:`~.data.task.Task`):
             Task containing the context set used to compute the acquisition
             function.
-        X_new_df (:class:`pandas:pandas.DataFrame`):
+        X_new_df (:class:`pandas.DataFrame`):
             Dataframe containing the placement locations.
         data_processor (:class:`~.data.processor.DataProcessor`):
             Data processor used to unnormalise the context set and placement
@@ -607,12 +601,8 @@ def placements(
         :class:`matplotlib:matplotlib.figure.Figure`
             A figure containing the placement plots.
     """
-    fig, ax = plt.subplots(
-        subplot_kw={"projection": crs}, figsize=(figsize, figsize)
-    )
-    ax.scatter(
-        *X_new_df.values.T[::-1], c="r", linewidths=0.5, **scatter_kwargs
-    )
+    fig, ax = plt.subplots(subplot_kw={"projection": crs}, figsize=(figsize, figsize))
+    ax.scatter(*X_new_df.values.T[::-1], c="r", linewidths=0.5, **scatter_kwargs)
     offgrid_context(ax, task, data_processor, linewidths=0.5, **scatter_kwargs)
 
     ax.coastlines()
@@ -655,7 +645,7 @@ def acquisition_fn(
             function.
         acquisition_fn_ds (:class:`numpy:numpy.ndarray`):
             Acquisition function dataset.
-        X_new_df (:class:`pandas:pandas.DataFrame`):
+        X_new_df (:class:`pandas.DataFrame`):
             Dataframe containing the placement locations.
         data_processor (:class:`~.data.processor.DataProcessor`):
             Data processor used to unnormalise the context set and placement
@@ -687,9 +677,7 @@ def acquisition_fn(
     """
     # Remove spatial dims using data_processor.raw_spatial_coords_names
     plot_dims = [col_dim, *data_processor.raw_spatial_coord_names]
-    non_plot_dims = [
-        dim for dim in acquisition_fn_ds.dims if dim not in plot_dims
-    ]
+    non_plot_dims = [dim for dim in acquisition_fn_ds.dims if dim not in plot_dims]
     valid_avg_dims = ["time", "sample"]
     for dim in non_plot_dims:
         if dim not in valid_avg_dims:
@@ -701,8 +689,7 @@ def acquisition_fn(
     if len(non_plot_dims) > 0:
         # Average over non-plot dims
         print(
-            "Averaging acquisition function over dims for plotting: "
-            f"{non_plot_dims}"
+            "Averaging acquisition function over dims for plotting: " f"{non_plot_dims}"
         )
         acquisition_fn_ds = acquisition_fn_ds.mean(dim=non_plot_dims)
 
@@ -745,9 +732,7 @@ def acquisition_fn(
         if add_colorbar and final_axis:
             im = ax.get_children()[0]
             label = acquisition_fn_ds.name
-            cax = plt.axes(
-                [0.93, 0.035, 0.02, 0.91]
-            )  # add a small custom axis
+            cax = plt.axes([0.93, 0.035, 0.02, 0.91])  # add a small custom axis
             cbar = plt.colorbar(
                 im, cax=cax, label=label
             )  # specify axis for colorbar to occupy with cax

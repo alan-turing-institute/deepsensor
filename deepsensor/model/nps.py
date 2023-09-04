@@ -14,7 +14,7 @@ def convert_task_to_nps_args(task: Task):
 
     Parameters
     ----------
-    task : deepsensor.data.task.Task
+    task : :class:`~.data.task.Task`
         Task object containing context and target sets.
 
     Returns
@@ -62,7 +62,7 @@ def run_nps_model(
     ----------
     neural_process : neuralprocesses.Model
         Neural process model.
-    task : deepsensor.data.task.Task
+    task : :class:`~.data.task.Task`
         Task object containing context and target sets.
     n_samples : int, optional
         Number of samples to draw from the model. Defaults to ``None`` (single
@@ -97,7 +97,7 @@ def run_nps_model_ar(neural_process, task: Task, num_samples: int = 1):
     ----------
     neural_process : neuralprocesses.Model
         Neural process model.
-    task : deepsensor.data.task.Task
+    task : :class:`~.data.task.Task`
         Task object containing context and target sets.
     num_samples : int, optional
         Number of samples to draw from the model. Defaults to 1.
@@ -283,12 +283,12 @@ def compute_encoding_tensor(model, task: Task):
     ----------
     model : ...
         Model object.
-    task : deepsensor.data.task.Task
+    task : :class:`~.data.task.Task`
         Task object containing context and target sets.
 
     Returns
     -------
-    encoding : numpy.ndarray
+    encoding : :class:`numpy:numpy.ndarray`
         Encoding tensor? #TODO
     """
     neural_process_encoder = backend.nps.Model(model.model.encoder, lambda x: x)

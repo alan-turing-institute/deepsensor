@@ -136,7 +136,10 @@ class TestModel(unittest.TestCase):
 
             model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
 
-            for context_sampling, target_sampling in self._gen_task_loader_call_args(
+            for (
+                context_sampling,
+                target_sampling,
+            ) in self._gen_task_loader_call_args(
                 n_context_and_target, n_context_and_target
             ):
                 task = tl("2020-01-01", context_sampling, target_sampling)
@@ -356,7 +359,13 @@ class TestModel(unittest.TestCase):
         )
         assert_shape(
             samples_ds.to_array(),
-            (target_dim, n_samples, len(dates), self.da.x1.size, self.da.x2.size),
+            (
+                target_dim,
+                n_samples,
+                len(dates),
+                self.da.x1.size,
+                self.da.x2.size,
+            ),
         )
 
         # Offgrid predictions: test pandas `X_t` and numpy `X_t`
@@ -430,7 +439,10 @@ class TestModel(unittest.TestCase):
         )
 
         dp = DataProcessor(
-            x1_name="latitude", x1_map=lat_lims, x2_name="longitude", x2_map=lon_lims
+            x1_name="latitude",
+            x1_map=lat_lims,
+            x2_name="longitude",
+            x2_map=lon_lims,
         )
         da = dp(da_raw)
 
@@ -470,7 +482,10 @@ class TestModel(unittest.TestCase):
         )
 
         dp = DataProcessor(
-            x1_name="latitude", x1_map=lat_lims, x2_name="longitude", x2_map=lon_lims
+            x1_name="latitude",
+            x1_map=lat_lims,
+            x2_name="longitude",
+            x2_map=lon_lims,
         )
         df = dp(df_raw)
 
@@ -483,7 +498,8 @@ class TestModel(unittest.TestCase):
             mean_df.reset_index()["latitude"], df_raw.reset_index()["latitude"]
         )
         assert np.array_equal(
-            mean_df.reset_index()["longitude"], df_raw.reset_index()["longitude"]
+            mean_df.reset_index()["longitude"],
+            df_raw.reset_index()["longitude"],
         )
 
 
@@ -496,7 +512,7 @@ def assert_shape(x, shape: tuple):
 
     Parameters
     ----------
-    x : numpy.ndarray
+    x : :class:`numpy:numpy.ndarray`
         ...
     shape : tuple
         The shape to check against.

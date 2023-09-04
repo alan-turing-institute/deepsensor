@@ -141,7 +141,7 @@ class DataProcessor:
 
         Parameters
         ----------
-        data : xarray.DataArray | xarray.Dataset
+        data : :class:`xarray.DataArray` | :class:`xarray.Dataset`
             ...
 
         Returns
@@ -274,7 +274,8 @@ class DataProcessor:
                     f"Done. {var_ID} {method} param1={param1:.3f}, param2={param2:.3f}"
                 )
             self.add_to_norm_params(
-                var_ID, **{"method": method, "param1": param1, "param2": param2}
+                var_ID,
+                **{"method": method, "param1": param1, "param2": param2},
             )
         return param1, param2
 
@@ -284,7 +285,7 @@ class DataProcessor:
 
         Parameters
         ----------
-        coord_array : numpy.ndarray
+        coord_array : :class:`numpy:numpy.ndarray`
             Array of shape ``(2, N)`` containing coords.
         unnorm : bool, optional
             Whether to unnormalise. Defaults to ``False``.
@@ -304,16 +305,16 @@ class DataProcessor:
 
         Parameters
         ----------
-        x1 : numpy.ndarray
+        x1 : :class:`numpy:numpy.ndarray`
             Array of shape ``(N_x1,)`` containing spatial coords of x1.
-        x2 : numpy.ndarray
+        x2 : :class:`numpy:numpy.ndarray`
             Array of shape ``(N_x2,)`` containing spatial coords of x2.
         unnorm : bool, optional
             Whether to unnormalise. Defaults to ``False``.
 
         Returns
         -------
-        Tuple[numpy.ndarray, numpy.ndarray]
+        Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
             Normalised or unnormalised spatial coords of x1 and x2.
         """
         x11, x12 = self.norm_params["coords"]["x1"]["map"]
@@ -338,7 +339,7 @@ class DataProcessor:
 
         Parameters
         ----------
-        data : xarray.DataArray | xarray.Dataset | pandas.DataFrame | pandas.Series
+        data : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | :class:`pandas.Series`
             ...
         unnorm : bool, optional
             ...
@@ -425,7 +426,7 @@ class DataProcessor:
 
         Parameters
         ----------
-        data : xarray.DataArray | xarray.Dataset | pandas.DataFrame | pandas.Series | numpy.ndarray
+        data : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`numpy:numpy.ndarray`
             ...
         var_ID : str
             ...
@@ -501,7 +502,7 @@ class DataProcessor:
 
         Parameters
         ----------
-        data : xarray.DataArray | xarray.Dataset | pandas.DataFrame | pandas.Series
+        data : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | :class:`pandas.Series`
             ...
         method : str, optional
             ..., by default ``None``.
@@ -557,7 +558,7 @@ class DataProcessor:
 
         Parameters
         ----------
-        data : xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]
+        data : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]
             Data to normalise.
         method : str, optional
             Normalisation method. Defaults to "mean_std". Options:
@@ -566,7 +567,7 @@ class DataProcessor:
 
         Returns
         -------
-        xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]
+        :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]
             Normalised data.
         """
         if isinstance(data, list):
@@ -594,7 +595,7 @@ class DataProcessor:
 
         Parameters
         ----------
-        data : xarray.DataArray | xr.Dataset | pd.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]
+        data : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]
             Data to unnormalise.
         add_offset : bool, optional
             Whether to add the offset to the data when unnormalising. Set to
@@ -603,7 +604,7 @@ class DataProcessor:
 
         Returns
         -------
-        xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]
+        :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]
             Unnormalised data.
         """
         if isinstance(data, list):
@@ -612,18 +613,18 @@ class DataProcessor:
             return self.map(data, add_offset=add_offset, unnorm=True)
 
 
-def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]):
+def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]) -> np.ndarray:
     """
     Convert xarray to normalised coordinate array.
 
     Parameters
     ----------
-    da : xarray.Dataset | xarray.DataArray
+    da : :class:`xarray.Dataset` | :class:`xarray.DataArray`
         ...
 
     Returns
     -------
-    numpy.ndarray
+    :class:`numpy:numpy.ndarray`
         A normalised coordinate array of shape ``(2, N)``.
     """
     x1, x2 = da["x1"].values, da["x2"].values
@@ -669,9 +670,9 @@ def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
 
     Parameters
     ----------
-    da1 : xarray.DataArray
+    da1 : :class:`xarray.DataArray`
         ...
-    da2 : xarray.DataArray
+    da2 : :class:`xarray.DataArray`
         ...
 
     Returns
@@ -693,14 +694,14 @@ def interp_da1_to_da2(da1: xr.DataArray, da2: xr.DataArray) -> xr.DataArray:
 
     Parameters
     ----------
-    da1 : xarray.DataArray
+    da1 : :class:`xarray.DataArray`
         ...
-    da2 : xarray.DataArray
+    da2 : :class:`xarray.DataArray`
         ...
 
     Returns
     -------
-    xr.DataArray
+    :class:`xarray.DataArray`
         Interpolated xarray.
     """
     return da1.interp(x1=da2["x1"], x2=da2["x2"], method="nearest")

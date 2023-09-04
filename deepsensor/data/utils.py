@@ -8,18 +8,18 @@ import xarray as xr
 
 def construct_x1x2_ds(gridded_ds):
     """
-    Construct an xarray.Dataset containing two vars, where each var is a 2D
-    gridded channel whose values contain the x_1 and x_2 coordinate values,
-    respectively.
+    Construct an :class:`xarray.Dataset` containing two vars, where each var is
+    a 2D gridded channel whose values contain the x_1 and x_2 coordinate
+    values, respectively.
 
     Parameters
     ----------
-    gridded_ds : xarray.Dataset
+    gridded_ds : :class:`xarray.Dataset`
         ...
 
     Returns
     -------
-    xarray.Dataset
+    :class:`xarray.Dataset`
         ...
     """
     X1, X2 = np.meshgrid(gridded_ds.x1, gridded_ds.x2, indexing="ij")
@@ -32,9 +32,9 @@ def construct_x1x2_ds(gridded_ds):
 
 def construct_circ_time_ds(dates, freq):
     """
-    Return an xarray.Dataset containing a circular variable for time. The
-    ``freq`` entry dictates the frequency of cycling of the circular variable.
-    E.g.:
+    Return an :class:`xarray.Dataset` containing a circular variable for time.
+    The ``freq`` entry dictates the frequency of cycling of the circular
+    variable. E.g.:
 
         - ``'H'``: cycles once per day at hourly intervals
         - ``'D'``: cycles once per year at daily intervals
@@ -49,7 +49,7 @@ def construct_circ_time_ds(dates, freq):
 
     Returns
     -------
-    xarray.Dataset
+    :class:`xarray.Dataset`
         ...
     """
     if freq == "D":
@@ -90,7 +90,7 @@ def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float
 
     Parameters
     ----------
-    ds : xarray.DataArray | xarray.Dataset
+    ds : :class:`xarray.DataArray` | :class:`xarray.Dataset`
         Xarray object with coordinates x1 and x2.
 
     Returns
@@ -105,7 +105,9 @@ def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float
 
 
 def compute_pandas_data_resolution(
-    df: Union[pd.DataFrame, pd.Series], n_times: int = 1000, percentile: int = 5
+    df: Union[pd.DataFrame, pd.Series],
+    n_times: int = 1000,
+    percentile: int = 5,
 ) -> float:
     """
     Approximates the resolution of non-gridded pandas data with indexes time,
@@ -119,7 +121,7 @@ def compute_pandas_data_resolution(
 
     Parameters
     ----------
-    df : pandas.DataFrame | pandas.Series
+    df : :class:`pandas.DataFrame` | :class:`pandas.Series`
         Dataframe or series with indexes time, x1, and x2.
     n_times : int, optional
         Number of dates to sample. Defaults to 1000. If "all", all dates are
