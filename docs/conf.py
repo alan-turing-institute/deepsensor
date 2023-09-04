@@ -39,14 +39,17 @@ html_static_path = ["_static"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "pandas": ('http://pandas.pydata.org/pandas-docs/stable/', None),
-    "tensorflow": (
-        "https://www.tensorflow.org/api_docs/python/",
-        "https://raw.githubusercontent.com/GPflow/tensorflow-intersphinx/master/tf2_py_objects.inv",
-    ),
-    "numpy": ("https://numpy.org/doc/stable/reference/", "https://numpy.org/doc/stable/objects.inv"),
-    "matplotlib": ("http://matplotlib.org/stable/", "https://matplotlib.org/stable/objects.inv"),
-    "xarray": ("http://xarray.pydata.org/en/stable/", "https://docs.xarray.dev/en/stable/objects.inv"),
+    "pandas": ("http://pandas.pydata.org/pandas-docs/stable/", None),
+    # "tensorflow": (
+    #     "http://www.tensorflow.org/api_docs/python/",
+    #     "https://raw.githubusercontent.com/GPflow/tensorflow-intersphinx/master/tf2_py_objects.inv",
+    # ),
+    "numpy": ("https://numpy.org/doc/stable/reference/", None),
+    "matplotlib": ("http://matplotlib.org/stable/", None),
+    # "xarray": (
+    #     "http://xarray.pydata.org/en/stable/",
+    #     "https://docs.xarray.dev/en/stable/objects.inv",
+    # ),
 }
 
-intersphinx_disabled_reftypes = ["*"]
+# intersphinx_disabled_reftypes = ["*"]
