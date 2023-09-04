@@ -24,7 +24,7 @@ class TaskLoader:
             pd.DataFrame,
             List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
         ],
-        aux_at_contexts: Tuple[int, Union[xr.DataArray, xr.Dataset]] = None,
+        aux_at_contexts: Union[xr.DataArray, xr.Dataset] = None,
         aux_at_targets: Union[
             xr.DataArray,
             xr.Dataset,
@@ -44,11 +44,9 @@ class TaskLoader:
                 or a list/tuple of these.
             target: Target data. Can be a single xr.DataArray, xr.Dataset or pd.DataFrame,
                 or a list/tuple of these.
-            aux_at_contexts: Auxiliary data at context locations. Tuple of two elements, where
-                the first element is the index of the context set for which the auxiliary data
-                will be sampled at, and the second element is the auxiliary data, which can be a
-                single xr.DataArray or xr.Dataset. Default: None.
-            aux_at_targets: Auxiliary data at target locations. Can be a single xr.DataArray or
+            aux_at_contexts: Auxiliary data to load at off-grid context locations. Can be a single
+                xr.DataArray or xr.Dataset. Default: None.
+            aux_at_targets: Auxiliary data to load at target locations. Can be a single xr.DataArray or
                 xr.Dataset. Default: None.
             links: Specifies links between context and target data. Each link is a tuple of
                 two integers, where the first integer is the index of the context data and the second
@@ -72,7 +70,7 @@ class TaskLoader:
         self.dtype = dtype
 
         if aux_at_contexts is not None:
-            self._check_offgrid_aux(self._check_offgrid_aux(aux_at_contexts[1]))
+            self._check_offgrid_aux(self._check_offgrid_aux(aux_at_contexts))
         if aux_at_targets is not None:
             self._check_offgrid_aux(aux_at_targets)
 
@@ -123,7 +121,7 @@ class TaskLoader:
         self,
         context: List,
         target: List,
-        aux_at_contexts: Tuple[int, Union[xr.DataArray, xr.Dataset]] = None,
+        aux_at_contexts: Union[xr.DataArray, xr.Dataset] = None,
         aux_at_targets: Union[xr.DataArray, xr.Dataset] = None,
     ) -> (List, List):
         """Cast context and target data to the default dtype.
@@ -154,10 +152,7 @@ class TaskLoader:
         context = tuple([cast_to_dtype(var) for var in context])
         target = tuple([cast_to_dtype(var) for var in target])
         if aux_at_contexts is not None:
-            aux_at_contexts = (
-                aux_at_contexts[0],
-                cast_to_dtype(aux_at_contexts[1]),
-            )
+            aux_at_contexts = aux_at_contexts.astype(self.dtype)
         if aux_at_targets is not None:
             aux_at_targets = aux_at_targets.astype(self.dtype)
 
@@ -166,14 +161,15 @@ class TaskLoader:
     def _check_offgrid_aux(self, offgrid_aux):
         if offgrid_aux is not None and "time" in offgrid_aux.dims:
             raise ValueError(
-                "The auxiliary data at target locations should not have a time dimension."
+                "Auxiliary data has a time dimension. Spatiotemporal auxiliary data is not yet supported. "
+                "Please slice the auxiliary data to a single time step."
             )
 
     def load_dask(self) -> None:
         """Load any `dask` data into memory"""
 
         def load(datasets):
-            if not datasets:
+            if datasets is None:
                 return
             if not isinstance(datasets, (tuple, list)):
                 datasets = [datasets]
@@ -183,7 +179,7 @@ class TaskLoader:
 
         load(self.context)
         load(self.target)
-        load(self.aux_at_contexts[1])
+        load(self.aux_at_contexts)
         load(self.aux_at_targets)
 
         return None
@@ -220,7 +216,7 @@ class TaskLoader:
         context_dims = count_data_dims_of_tuple_of_sets(self.context)
         target_dims = count_data_dims_of_tuple_of_sets(self.target)
         if self.aux_at_contexts is not None:
-            context_dims += count_data_dims_of_tuple_of_sets(self.aux_at_contexts[1])
+            context_dims += count_data_dims_of_tuple_of_sets(self.aux_at_contexts)
         if self.aux_at_targets is not None:
             aux_at_target_dims = count_data_dims_of_tuple_of_sets(self.aux_at_targets)[
                 0
@@ -280,9 +276,9 @@ class TaskLoader:
         )
 
         if self.aux_at_contexts is not None:
-            context_var_IDs += infer_var_IDs_of_tuple_of_sets(self.aux_at_contexts[1])
+            context_var_IDs += infer_var_IDs_of_tuple_of_sets(self.aux_at_contexts)
             context_var_IDs_and_delta_t += infer_var_IDs_of_tuple_of_sets(
-                self.aux_at_contexts[1], [0]
+                self.aux_at_contexts, [0]
             )
 
         if self.aux_at_targets is not None:
@@ -715,8 +711,9 @@ class TaskLoader:
 
         if self.aux_at_contexts is not None:
             # Add auxiliary variable sampled at context set as a new context variable
-            X_c = task["X_c"][self.aux_at_contexts[0]]
-            Y_c_aux = self.sample_offgrid_aux(X_c, self.aux_at_contexts[1])
+            X_c_offgrid = [X_c for X_c in task["X_c"] if not isinstance(X_c, tuple)]
+            X_c_offrid_all = np.concatenate(X_c_offgrid, axis=1)
+            Y_c_aux = self.sample_offgrid_aux(X_c_offrid_all, self.aux_at_contexts)
             task["X_c"].append(X_c)
             task["Y_c"].append(Y_c_aux)
 
