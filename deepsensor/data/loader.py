@@ -222,7 +222,9 @@ class TaskLoader:
         if self.aux_at_contexts is not None:
             context_dims += count_data_dims_of_tuple_of_sets(self.aux_at_contexts)
         if self.aux_at_targets is not None:
-            aux_at_target_dims = count_data_dims_of_tuple_of_sets(self.aux_at_targets)[0]
+            aux_at_target_dims = count_data_dims_of_tuple_of_sets(self.aux_at_targets)[
+                0
+            ]
         else:
             aux_at_target_dims = 0
 

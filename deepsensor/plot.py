@@ -73,7 +73,9 @@ def context_encoding(
     ctx_channel_idxs = np.cumsum(np.array(task_loader.context_dims) + 1)
 
     for row_i, ctx_i in enumerate(context_set_idxs):
-        channel_i = ctx_channel_idxs[ctx_i - 1] if ctx_i > 0 else 0  # Starting channel index
+        channel_i = (
+            ctx_channel_idxs[ctx_i - 1] if ctx_i > 0 else 0
+        )  # Starting channel index
         if verbose_titles:
             var_IDs = task_loader.context_var_IDs_and_delta_t[ctx_i]
         else:
