@@ -11,14 +11,14 @@ data with neural processes</p>
 
 -----------
 
-[![release](https://img.shields.io/badge/release-v0.1.8-green?logo=github)](https://github.com/tom-andersson/deepsensor/releases)
+[![release](https://img.shields.io/badge/release-v0.1.9-green?logo=github)](https://github.com/tom-andersson/deepsensor/releases)
 ![Tests](https://github.com/tom-andersson/deepsensor/actions/workflows/tests.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/tom-andersson/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/tom-andersson/deepsensor?branch=main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/tom-andersson/deepsensor/blob/main/LICENSE)
 
-**NOTE**: This package is currently undergoing very active development. If you are interested in using
-DeepSensor, please get in touch first (tomand@bas.ac.uk).
+**NOTE**: This package is a work in progress and breaking changes are likely. If you are interested
+in using DeepSensor, please get in touch first (tomand@bas.ac.uk).
 
 For demonstrators, use cases, and videos showcasing the functionality of DeepSensor, check out the
 [DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_gallery)!
@@ -69,8 +69,8 @@ We can go from imports to predictions with a trained model in less than 30 lines
 
 ```python
 import deepsensor.torch
-from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
+from deepsensor.data.loader import TaskLoader
 from deepsensor.model.convnp import ConvNP
 from deepsensor.train.train import train_epoch
 
@@ -172,3 +172,6 @@ for more details.
 If you use DeepSensor in your research, please consider citing this repository.
 You can generate a BiBTeX entry by clicking the 'Cite this repository' button
 on the top right of this page.
+
+## Acknowledgements
+DeepSensor is funded by [The Alan Turing Institute](https://www.turing.ac.uk/).
