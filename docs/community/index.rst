@@ -9,7 +9,7 @@ If you are interested in joining the community, please join our Slack channel at
 We welcome contributions from the community. If you are interested in contributing to DeepSensor, please read the :doc:`contributing` guide.
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Table of contents:
 
     faq

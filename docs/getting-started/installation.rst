@@ -1,6 +1,8 @@
 Installation instructions
 =========================
 
+DeepSensor is a Python package that can be installed in a number of ways. In this section we will describe the two main ways to install the package.
+
 Install from `PyPI <https://pypi.org/project/deepsensor/>`_
 -----------------------------------------------------------
 

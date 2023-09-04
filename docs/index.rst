@@ -7,6 +7,10 @@ DeepSensor aims to faithfully match the flexibility of neural processes with a s
 
 DeepSensor is also compatible with both `PyTorch <https://pytorch.org/>`_ or `TensorFlow <https://www.tensorflow.org/>`_ for its machine learning abilities, thanks to the `backends package <https://github.com/wesselb/lab>`_. Simply ``import deepsensor.torch`` or ``import deepsensor.tensorflow`` to choose between them!
 
+.. note::
+
+   This package is currently undergoing active development. If you are interested in using DeepSensor in production, please :doc:`get in touch <contact>`.
+
 Citing DeepSensor
 -----------------
 
