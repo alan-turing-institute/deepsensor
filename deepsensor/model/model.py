@@ -359,7 +359,9 @@ class DeepSensorModel(ProbabilisticModel):
     """
 
     def __init__(
-        self, data_processor: Optional[DataProcessor] = None, task_loader: Optional[TaskLoader] = None
+        self,
+        data_processor: Optional[DataProcessor] = None,
+        task_loader: Optional[TaskLoader] = None,
     ):
         """
         Initialise DeepSensorModel.
