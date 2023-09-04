@@ -44,8 +44,8 @@ class TaskLoader:
                 or a list/tuple of these.
             target: Target data. Can be a single xr.DataArray, xr.Dataset or pd.DataFrame,
                 or a list/tuple of these.
-            aux_at_contexts: Gridded auxiliary data to sample at off-grid context locations. Can bea single
-                xr.DataArray or xr.Dataset object. This xarray object is automatically sampled at the
+            aux_at_contexts: Gridded auxiliary data to sample at off-grid context locations. Can be a
+                single xr.DataArray or xr.Dataset object. This xarray object is automatically sampled at the
                 locations of any off-grid context sets and these extra observations are passed via
                 an additional context set. Default: None.
             aux_at_targets: Gridded auxiliary data to sample at target locations. Can be a single
