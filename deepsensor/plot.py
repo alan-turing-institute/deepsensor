@@ -12,6 +12,16 @@ from deepsensor.data.task import Task
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
 from pandas import DataFrame
+from matplotlib.colors import Colormap
+from matplotlib.axes import Axes
+from matplotlib.projections import (
+    PolarAxes,
+    AitoffAxes,
+    HammerAxes,
+    LambertAxes,
+    MollweideAxes,
+    Axes3D,
+)
 
 
 def context_encoding(
@@ -23,55 +33,53 @@ def context_encoding(
     land_idx: Optional[int] = None,
     cbar: bool = True,
     clim: Optional[Tuple] = None,
-    cmap: str = "viridis",
+    cmap: Union[str, Colormap] = "viridis",
     verbose_titles: bool = True,
     titles: Optional[dict] = None,
     size: int = 3,
     return_axes: bool = False,
 ):
-    """
-    Plot the encoding of a context set in a task.
+    """Plot the encoding of a context set in a task.
 
-    Parameters
-    ----------
-    model : ...
-        DeepSensor model
-    task : deepsensor.data.task.Task
-        Task containing context set to plot encoding of ...
-    task_loader : deepsensor.data.loader.TaskLoader
-        DataLoader used to load the data, containing context set metadata used
-        for plotting.
-    batch_idx : int, optional
-        Batch index in encoding to plot, by default 0
-    context_set_idxs : List[int] | int, optional
-        Indices of context sets to plot, by default None (plots all context
-        sets).
-    land_idx : int, optional
-        Index of the land mask in the encoding (used to overlay land contour
-        on plots), by default None.
-    cbar : bool, optional
-        Whether to add a colorbar to the plots, by default True.
-    clim : tuple, optional
-        Colorbar limits, by default None.
-    cmap : str, optional
-        Color map to use for the plots, by default "viridis".
-    verbose_titles : bool, optional
-        Whether to include verbose titles for the variable IDs in the context
-        set (including the time index), by default True.
-    titles : list, optional
-        List of titles to override for each subplot, by default None.
-        If None, titles are generated from context set metadata.
-    size : int, optional
-        Size of the figure in inches, by default 3.
-    return_axes : bool, optional
-        Whether to return the axes of the figure, by default False.
+    Args:
+        model (:class:`~.model.model.DeepSensorModel`):
+            DeepSensor model.
+        task (:class:`~.data.task.Task`):
+            Task containing context set to plot encoding of ...
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            DataLoader used to load the data, containing context set metadata
+            used for plotting.
+        batch_idx (int, optional):
+            Batch index in encoding to plot, by default 0.
+        context_set_idxs (List[int] | int, optional):
+            Indices of context sets to plot, by default None (plots all context
+            sets).
+        land_idx (int, optional):
+            Index of the land mask in the encoding (used to overlay land
+            contour on plots), by default None.
+        cbar (bool, optional):
+            Whether to add a colorbar to the plots, by default True.
+        clim (tuple, optional):
+            Colorbar limits, by default None.
+        cmap (str | matplotlib.colors.Colormap, optional):
+            Color map to use for the plots, by default "viridis".
+        verbose_titles (bool, optional):
+            Whether to include verbose titles for the variable IDs in the
+            context set (including the time index), by default True.
+        titles (dict, optional):
+            Dict of titles to override for each subplot, by default None. If
+            None, titles are generated from context set metadata.
+        size (int, optional):
+            Size of the figure in inches, by default 3.
+        return_axes (bool, optional):
+            Whether to return the axes of the figure, by default False.
 
-    Returns
-    -------
-    matplotlib.pyplot.Figure | Tuple[matplotlib.pyplot.Figure, matplotlib.pyplot.Axes]
-        Either a figure containing the context set encoding plots, or a tuple
-        containing the figure and the axes of the figure (if ``return_axes``
-        was set to ``True``).
+    Returns:
+        :obj:`matplotlib.figure.Figure` | Tuple[:obj:`matplotlib.figure.Figure`, :obj:`matplotlib.pyplot.Axes`]:
+            Either a figure containing the context set encoding plots, or a
+            tuple containing the :obj:`figure <matplotlib.figure.Figure>` and
+            the :obj:`axes <matplotlib.axes.Axes>` of the figure (if
+            ``return_axes`` was set to ``True``).
     """
     from .model.nps import compute_encoding_tensor
 
@@ -84,7 +92,8 @@ def context_encoding(
         context_set_idxs = np.array(range(len(task_loader.context_dims)))
 
     context_var_ID_set_sizes = [
-        ndim + 1 for ndim in np.array(task_loader.context_dims)[context_set_idxs]
+        ndim + 1
+        for ndim in np.array(task_loader.context_dims)[context_set_idxs]
     ]  # Add density channel to each set size
     max_context_set_size = max(context_var_ID_set_sizes)
     ncols = max_context_set_size
@@ -108,7 +117,10 @@ def context_encoding(
             # top to bottom, whereas in visualisations we want `x1` increasing
             # from bottom to top.
             im = ax.imshow(
-                encoding_tensor[channel_i], origin="lower", clim=clim, cmap=cmap
+                encoding_tensor[channel_i],
+                origin="lower",
+                clim=clim,
+                cmap=cmap,
             )
             if titles is not None:
                 ax.set_title(titles[channel_i])
@@ -126,7 +138,10 @@ def context_encoding(
             ax.patch.set_linewidth(1)
             if land_idx is not None:
                 ax.contour(
-                    encoding_tensor[land_idx], colors="k", levels=[0.5], origin="lower"
+                    encoding_tensor[land_idx],
+                    colors="k",
+                    levels=[0.5],
+                    origin="lower",
                 )
             ax.tick_params(
                 which="both",
@@ -163,34 +178,37 @@ def offgrid_context(
     """
     Plot the off-grid context points on ``axes``.
 
-    Uses ``data_processor`` to unnormalise the context coordinates if provided.
+    Uses a provided :class:`~.data.processor.DataProcessor` to unnormalise the
+    context coordinates if provided.
 
-    Parameters
-    ----------
-    axes : numpy.ndarray | List[matplotlib.pyplot.Axes] | Tuple[matplotlib.pyplot.Axes
-        ...
-    task : deepsensor.data.task.Task
-        ...
-    data_processor : deepsensor.data.processor.DataProcessor, optional
-        ..., by default None.
-    task_loader : deepsensor.data.loader.TaskLoader, optional
-        ..., by default None.
-    plot_target : bool, optional
-        ..., by default False.
-    add_legend : bool, optional
-        ..., by default True.
-    context_set_idxs : List[int] | int, optional
-        ..., by default None.
-    markers : str, optional
-        ..., by default None.
-    colors : str, optional
-        ..., by default None.
-    scatter_kwargs : dict, optional
-        ..., by default {}.
+    Args:
+        axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]:
+            Axes to plot on.
+        task (:class:`~.data.task.Task`):
+            Task containing the context set to plot.
+        data_processor (:class:`~.data.processor.DataProcessor`, optional):
+            Data processor used to unnormalise the context set, by default
+            None.
+        task_loader (:class:`~.data.loader.TaskLoader`, optional):
+            Task loader used to load the data, containing context set metadata
+            used for plotting, by default None.
+        plot_target (bool, optional):
+            Whether to plot the target set, by default False.
+        add_legend (bool, optional):
+            Whether to add a legend to the plot, by default True.
+        context_set_idxs (List[int] | int, optional):
+            Indices of context sets to plot, by default None (plots all context
+            sets).
+        markers (str, optional):
+            Marker styles to use for each context set, by default None.
+        colors (str, optional):
+            Colors to use for each context set, by default None.
+        **scatter_kwargs:
+            Additional keyword arguments to pass to the scatter plot, by
+            default {}.
 
-    Returns
-    -------
-    None.
+    Returns:
+        None.
     """
     if markers is None:
         markers = "ovs^D"
@@ -233,7 +251,9 @@ def offgrid_context(
         elif plot_target and set_i >= len(task["X_c"]):
             label += f"Target set {set_i - len(task['X_c'])} "
             if task_loader is not None:
-                label += f"({task_loader.target_var_IDs[set_i - len(task['X_c'])]})"
+                label += (
+                    f"({task_loader.target_var_IDs[set_i - len(task['X_c'])]})"
+                )
 
         for ax in axes:
             ax.scatter(
@@ -262,28 +282,38 @@ def offgrid_context_observations(
     """
     Plot unnormalised context observation values.
 
-    Parameters
-    ----------
-    axes: numpy.ndarray | List[matplotlib.pyplot.Axes] | Tuple[matplotlib.pyplot.Axes
-        ...
-    task: deepsensor.data.task.Task
-        ...
-    data_processor: deepsensor.data.processor.DataProcessor
-        ...
-    task_loader: deepsensor.data.loader.TaskLoader
-        ...
-    context_set_idx: int
-        ...
-    format_str: str, optional
-        ..., by default None.
-    extent: Tuple[int, int, int, int], optional
-        ..., by default None.
-    color: str, optional
-        ..., by default "black".
+    Args:
+        axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]):
+            Axes to plot on.
+        task (:class:`~.data.task.Task`):
+            Task containing the context set to plot.
+        data_processor (:class:`~.data.processor.DataProcessor`):
+            Data processor used to unnormalise the context set.
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            Task loader used to load the data, containing context set metadata
+            used for plotting.
+        context_set_idx (int):
+            Index of the context set to plot.
+        format_str (str, optional):
+            Format string for the context observation values, by default None.
+        extent (Tuple[int, int, int, int], optional):
+            Extent of the plot, by default None.
+        color (str, optional):
+            Color of the text, by default "black".
 
-    Returns
-    -------
-    None.
+    Returns:
+        None.
+
+    Raises:
+        AssertionError:
+            If the context set is gridded.
+        AssertionError:
+            If the context set is not 1D.
+        AssertionError:
+            If the task's "Y_c" value for the context set ID is not 2D.
+        AssertionError:
+            If the task's "Y_c" value for the context set ID does not have
+            exactly one variable.
     """
     if type(axes) is np.ndarray:
         axes = axes.ravel()
@@ -315,7 +345,8 @@ def offgrid_context_observations(
     for x_c, y_c in zip(X_c.T, Y_c):
         if extent is not None:
             if not (
-                extent[0] <= x_c[0] <= extent[1] and extent[2] <= x_c[1] <= extent[3]
+                extent[0] <= x_c[0] <= extent[1]
+                and extent[2] <= x_c[1] <= extent[3]
             ):
                 continue
         for ax in axes:
@@ -323,25 +354,34 @@ def offgrid_context_observations(
 
 
 def receptive_field(
-    receptive_field, data_processor: DataProcessor, crs, extent: str = "global"
+    receptive_field,
+    data_processor: DataProcessor,
+    crs: Union[
+        Axes,
+        PolarAxes,
+        AitoffAxes,
+        HammerAxes,
+        LambertAxes,
+        MollweideAxes,
+        Axes3D,
+    ],
+    extent: str = "global",
 ) -> plt.Figure:
     """
     ...
 
-    Parameters
-    ----------
-    receptive_field : ...
-        ...
-    data_processor : deepsensor.data.processor.DataProcessor
-        ...
-    crs : ...
-        ...
-    extent : str, optional
-        ..., by default "global".
+    Args:
+        receptive_field (...):
+            Receptive field to plot.
+        data_processor (:class:`~.data.processor.DataProcessor`):
+            Data processor used to unnormalise the context set.
+        crs (:class:`matplotlib:matplotlib.axes.Axes` | :class:`matplotlib:matplotlib.projections.polar.PolarAxes` | :class:`matplotlib:matplotlib.projections.geo.AitoffAxes` | :class:`matplotlib:matplotlib.projections.geo.HammerAxes` | :class:`matplotlib:matplotlib.projections.geo.LambertAxes` | :class:`matplotlib:matplotlib.projections.geo.MollweideAxes` | :class:`mpl_toolkits.mplot3d.Axes3D`):
+            Coordinate reference system for the plots.
+        extent (str, optional):
+            Extent of the plot, by default "global".
 
-    Returns
-    -------
-    None.
+    Returns:
+        None.
     """
     fig, ax = plt.subplots(subplot_kw=dict(projection=crs))
 
@@ -393,7 +433,7 @@ def feature_maps(
     seed: Optional[int] = None,
     figsize: int = 3,
     add_colorbar: bool = False,
-    cmap: str = "Greys",
+    cmap: Union[str, Colormap] = "Greys",
 ) -> plt.Figure:
     """
     Plot the feature maps of a ``ConvNP`` model's decoder layers after a
@@ -405,32 +445,29 @@ def feature_maps(
         TODO: Work out how to construct partial U-Net including the upsample
         path.
 
-    Parameters
-    ----------
-    model : ...
-        ...
-    task : deepsensor.data.task.Task
-        ...
-    n_features_per_layer : int, optional
-        ..., by default 1.
-    seed : int, optional
-        ..., by default None.
-    figsize : int, optional
-        ..., by default 3.
-    add_colorbar : bool, optional
-        ..., by default False.
-    cmap : str, optional
-        ..., by default "Greys".
+    Args:
+        model (:class:`~.model.model.convnp.ConvNP`):
+            ...
+        task (:class:`~.data.task.Task`):
+            ...
+        n_features_per_layer (int, optional):
+            ..., by default 1.
+        seed (int, optional):
+            ..., by default None.
+        figsize (int, optional):
+            ..., by default 3.
+        add_colorbar (bool, optional):
+            ..., by default False.
+        cmap (str | matplotlib.colors.Colormap, optional):
+            ..., by default "Greys".
 
-    Returns
-    -------
-    matplotlib.pyplot.Figure
-        A figure containing the feature maps.
+    Returns:
+        matplotlib.figure.Figure:
+            A figure containing the feature maps.
 
-    Raises
-    ------
-    ValueError
-        If the backend is not recognised.
+    Raises:
+        ValueError:
+            If the backend is not recognised.
     """
     from .model.nps import compute_encoding_tensor
 
@@ -494,7 +531,9 @@ def feature_maps(
     for layer_i, feature_map in enumerate(feature_maps):
         n_features = feature_map.shape[1]
         n_features_to_plot = min(n_features_per_layer, n_features)
-        feature_idxs = rng.choice(n_features, n_features_to_plot, replace=False)
+        feature_idxs = rng.choice(
+            n_features, n_features_to_plot, replace=False
+        )
 
         fig, axes = plt.subplots(
             nrows=1,
@@ -532,7 +571,15 @@ def placements(
     task: Task,
     X_new_df: DataFrame,
     data_processor: DataProcessor,
-    crs,
+    crs: Union[
+        Axes,
+        PolarAxes,
+        AitoffAxes,
+        HammerAxes,
+        LambertAxes,
+        MollweideAxes,
+        Axes3D,
+    ],
     extent: Optional[Union[Tuple[int, int, int, int], str]] = None,
     figsize: int = 3,
     **scatter_kwargs,
@@ -540,28 +587,32 @@ def placements(
     """
     ...
 
-    Parameters
-    ----------
-    task : deepsensor.data.task.Task
-        ...
-    X_new_df : pandas.DataFrame
-        ...
-    data_processor : deepsensor.data.processor.DataProcessor
-        ...
-    crs : ...
-        ...
-    extent : Tuple[int, int, int, int] | str, optional
-        ..., by default None.
-    figsize : int, optional
-        ..., by default 3.
+    Args:
+        task (:class:`~.data.task.Task`):
+            Task containing the context set used to compute the acquisition
+            function.
+        X_new_df (:class:`pandas:pandas.DataFrame`):
+            Dataframe containing the placement locations.
+        data_processor (:class:`~.data.processor.DataProcessor`):
+            Data processor used to unnormalise the context set and placement
+            locations.
+        crs (:class:`matplotlib:matplotlib.axes.Axes` | :class:`matplotlib:matplotlib.projections.polar.PolarAxes` | :class:`matplotlib:matplotlib.projections.geo.AitoffAxes` | :class:`matplotlib:matplotlib.projections.geo.HammerAxes` | :class:`matplotlib:matplotlib.projections.geo.LambertAxes` | :class:`matplotlib:matplotlib.projections.geo.MollweideAxes` | :class:`mpl_toolkits.mplot3d.Axes3D`):
+            Coordinate reference system for the plots.
+        extent (Tuple[int, int, int, int] | str, optional):
+            Extent of the plots, by default None.
+        figsize (int, optional):
+            Figure size in inches, by default 3.
 
-    Returns
-    -------
-    matplotlib.pyplot.Figure
-        A figure containing the placement plots.
+    Returns:
+        :class:`matplotlib:matplotlib.figure.Figure`
+            A figure containing the placement plots.
     """
-    fig, ax = plt.subplots(subplot_kw={"projection": crs}, figsize=(figsize, figsize))
-    ax.scatter(*X_new_df.values.T[::-1], c="r", linewidths=0.5, **scatter_kwargs)
+    fig, ax = plt.subplots(
+        subplot_kw={"projection": crs}, figsize=(figsize, figsize)
+    )
+    ax.scatter(
+        *X_new_df.values.T[::-1], c="r", linewidths=0.5, **scatter_kwargs
+    )
     offgrid_context(ax, task, data_processor, linewidths=0.5, **scatter_kwargs)
 
     ax.coastlines()
@@ -577,12 +628,20 @@ def placements(
 
 def acquisition_fn(
     task: Task,
-    acquisition_fn_ds,
+    acquisition_fn_ds: np.ndarray,
     X_new_df: DataFrame,
     data_processor: DataProcessor,
-    crs,
+    crs: Union[
+        Axes,
+        PolarAxes,
+        AitoffAxes,
+        HammerAxes,
+        LambertAxes,
+        MollweideAxes,
+        Axes3D,
+    ],
     col_dim: str = "iteration",
-    cmap: str = "Greys_r",
+    cmap: Union[str, Colormap] = "Greys_r",
     figsize: int = 3,
     add_colorbar: bool = True,
     max_ncol: int = 5,
@@ -590,53 +649,61 @@ def acquisition_fn(
     """
     ...
 
-    Parameters
-    ----------
-    task : deepsensor.data.task.Task
-        ...
-    acquisition_fn_ds : ...
-        ...
-    X_new_df : pandas.DataFrame
-        ...
-    data_processor : deepsensor.data.processor.DataProcessor
-        ...
-    crs : ...
-        ...
-    col_dim : str, optional
-        ..., by default "iteration".
-    cmap : str, optional
-        ..., by default "Greys_r".
-    figsize : int, optional
-        ..., by default 3.
-    add_colorbar : bool, optional
-        ..., by default True.
-    max_ncol : int, optional
-        ..., by default 5.
+    Args:
+        task (:class:`~.data.task.Task`):
+            Task containing the context set used to compute the acquisition
+            function.
+        acquisition_fn_ds (:class:`numpy:numpy.ndarray`):
+            Acquisition function dataset.
+        X_new_df (:class:`pandas:pandas.DataFrame`):
+            Dataframe containing the placement locations.
+        data_processor (:class:`~.data.processor.DataProcessor`):
+            Data processor used to unnormalise the context set and placement
+            locations.
+        crs (:class:`matplotlib:matplotlib.axes.Axes` | :class:`matplotlib:matplotlib.projections.polar.PolarAxes` | :class:`matplotlib:matplotlib.projections.geo.AitoffAxes` | :class:`matplotlib:matplotlib.projections.geo.HammerAxes` | :class:`matplotlib:matplotlib.projections.geo.LambertAxes` | :class:`matplotlib:matplotlib.projections.geo.MollweideAxes` | :class:`mpl_toolkits.mplot3d.Axes3D`):
+            Coordinate reference system for the plots.
+        col_dim (str, optional):
+            Column dimension to plot over, by default "iteration".
+        cmap (str | matplotlib.colors.Colormap, optional):
+            Color map to use for the plots, by default "Greys_r".
+        figsize (int, optional):
+            Figure size in inches, by default 3.
+        add_colorbar (bool, optional):
+            Whether to add a colorbar to the plots, by default True.
+        max_ncol (int, optional):
+            Maximum number of columns to use for the plots, by default 5.
 
-    Returns
-    -------
-    matplotlib.pyplot.Figure
-        A figure containing the acquisition function plots.
+    Returns:
+        matplotlib.pyplot.Figure
+            A figure containing the acquisition function plots.
 
-    Raises
-    ------
-    ValueError
-        If a column dimension is encountered that is not one of
-        ``["time", "sample"]``.
+    Raises:
+        ValueError:
+            If a column dimension is encountered that is not one of
+            ``["time", "sample"]``.
+        AssertionError:
+            If the number of columns in the acquisition function dataset is
+            greater than ``max_ncol``.
     """
     # Remove spatial dims using data_processor.raw_spatial_coords_names
     plot_dims = [col_dim, *data_processor.raw_spatial_coord_names]
-    non_plot_dims = [dim for dim in acquisition_fn_ds.dims if dim not in plot_dims]
+    non_plot_dims = [
+        dim for dim in acquisition_fn_ds.dims if dim not in plot_dims
+    ]
     valid_avg_dims = ["time", "sample"]
     for dim in non_plot_dims:
         if dim not in valid_avg_dims:
             raise ValueError(
-                f"Cannot average over dim {dim} for plotting. Must be one of {valid_avg_dims}. "
-                f"Select a single value for {dim} using `acquisition_fn_ds.sel({dim}=...)`."
+                f"Cannot average over dim {dim} for plotting. Must be one of "
+                f"{valid_avg_dims}. Select a single value for {dim} using "
+                f"`acquisition_fn_ds.sel({dim}=...)`."
             )
     if len(non_plot_dims) > 0:
         # Average over non-plot dims
-        print(f"Averaging acquisition function over dims for plotting: {non_plot_dims}")
+        print(
+            "Averaging acquisition function over dims for plotting: "
+            f"{non_plot_dims}"
+        )
         acquisition_fn_ds = acquisition_fn_ds.mean(dim=non_plot_dims)
 
     col_vals = acquisition_fn_ds[col_dim].values
@@ -678,7 +745,9 @@ def acquisition_fn(
         if add_colorbar and final_axis:
             im = ax.get_children()[0]
             label = acquisition_fn_ds.name
-            cax = plt.axes([0.93, 0.035, 0.02, 0.91])  # add a small custom axis
+            cax = plt.axes(
+                [0.93, 0.035, 0.02, 0.91]
+            )  # add a small custom axis
             cbar = plt.colorbar(
                 im, cax=cax, label=label
             )  # specify axis for colorbar to occupy with cax
