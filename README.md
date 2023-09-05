@@ -101,7 +101,7 @@ for date in pd.date_range("2013-01-01", "2014-11-30")[::7]:
 # Train model
 trainer = Trainer(model, lr=5e-5)
 for epoch in range(10):
-    trainer(model, train_tasks, progress_bar=True)
+    trainer(train_tasks, progress_bar=True)
 
 # Predict on new task with 10% of context data and a dense grid of target points
 test_task = task_loader("2014-12-31", 0.1)
