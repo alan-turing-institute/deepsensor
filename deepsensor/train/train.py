@@ -121,3 +121,39 @@ def train_epoch(
         batch_losses.append(batch_loss)
 
     return batch_losses
+
+
+class Trainer:
+    """Class for training ConvNP models with an Adam optimiser
+
+    Args:
+        lr (float): Learning rate
+    """
+
+    def __init__(self, model: ConvNP, lr: float = 5e-5):
+        if deepsensor.backend.str == "tf":
+            import tensorflow as tf
+
+            self.opt = tf.keras.optimizers.Adam(lr)
+        elif deepsensor.backend.str == "torch":
+            import torch.optim as optim
+
+            self.opt = optim.Adam(model.model.parameters(), lr=lr)
+
+        self.model = model
+
+    def __call__(
+        self,
+        tasks: List[Task],
+        batch_size: int = None,
+        progress_bar=False,
+        tqdm_notebook=False,
+    ) -> List[float]:
+        return train_epoch(
+            model=self.model,
+            tasks=tasks,
+            batch_size=batch_size,
+            opt=self.opt,
+            progress_bar=progress_bar,
+            tqdm_notebook=tqdm_notebook,
+        )

@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 import deepsensor.tensorflow as deepsensor
 
-from deepsensor.train.train import train_epoch
+from deepsensor.train.train import Trainer
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.loader import TaskLoader
 from deepsensor.model.convnp import ConvNP, concat_tasks
@@ -74,12 +74,13 @@ class TestTraining(unittest.TestCase):
             train_tasks.append(tl(date, 10, 10))
 
         # Train
+        trainer = Trainer(model, lr=5e-5)
         # batch_size = None
         batch_size = 5
         n_epochs = 10
         epoch_losses = []
         for epoch in tqdm(range(n_epochs)):
-            batch_losses = train_epoch(model, train_tasks, batch_size=batch_size)
+            batch_losses = trainer(train_tasks, batch_size=batch_size)
             epoch_losses.append(np.mean(batch_losses))
 
         # Check for NaNs in the loss

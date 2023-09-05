@@ -72,7 +72,7 @@ import deepsensor.torch
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.loader import TaskLoader
 from deepsensor.model.convnp import ConvNP
-from deepsensor.train.train import train_epoch
+from deepsensor.train.train import Trainer
 
 import xarray as xr
 import pandas as pd
@@ -99,8 +99,9 @@ for date in pd.date_range("2013-01-01", "2014-11-30")[::7]:
     train_tasks.append(task)
 
 # Train model
+trainer = Trainer(model, lr=5e-5)
 for epoch in range(10):
-    train_epoch(model, train_tasks, progress_bar=True)
+    trainer(model, train_tasks, progress_bar=True)
 
 # Predict on new task with 10% of context data and a dense grid of target points
 test_task = task_loader("2014-12-31", 0.1)
