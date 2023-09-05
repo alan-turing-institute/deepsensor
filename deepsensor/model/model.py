@@ -18,80 +18,6 @@ import lab as B
 # See https://beartype.github.io/plum/types.html#moduletype
 
 
-def create_empty_spatiotemporal_xarray(
-    X: Union[xr.Dataset, xr.DataArray],
-    dates: List,
-    coord_names: dict = {"x1": "x1", "x2": "x2"},
-    data_vars: List = ["var"],
-    prepend_dims: List[str] = None,
-    prepend_coords: dict = None,
-):
-    if prepend_dims is None:
-        prepend_dims = []
-    if prepend_coords is None:
-        prepend_coords = {}
-
-    # Check for any repeated data_vars
-    if len(data_vars) != len(set(data_vars)):
-        raise ValueError(
-            f"Duplicate data_vars found in data_vars: {data_vars}. "
-            "This would cause the xarray.Dataset to have fewer variables than expected."
-        )
-
-    x1_predict = X.coords[coord_names["x1"]]
-    x2_predict = X.coords[coord_names["x2"]]
-
-    # Assert uniform spacing
-    if not np.allclose(np.diff(x1_predict), np.diff(x1_predict)[0]):
-        raise ValueError(f"Coordinate {coord_names['x1']} must be uniformly spaced.")
-    if not np.allclose(np.diff(x2_predict), np.diff(x2_predict)[0]):
-        raise ValueError(f"Coordinate {coord_names['x2']} must be uniformly spaced.")
-
-    if len(prepend_dims) != len(set(prepend_dims)):
-        # TODO unit test
-        raise ValueError(
-            f"Length of prepend_dims ({len(prepend_dims)}) must be equal to length of "
-            f"prepend_coords ({len(prepend_coords)})."
-        )
-
-    dims = [*prepend_dims, "time", coord_names["x1"], coord_names["x2"]]
-    coords = {
-        **prepend_coords,
-        "time": pd.to_datetime(dates),
-        coord_names["x1"]: x1_predict,
-        coord_names["x2"]: x2_predict,
-    }
-
-    pred_ds = xr.Dataset(
-        {data_var: xr.DataArray(dims=dims, coords=coords) for data_var in data_vars}
-    ).astype("float32")
-
-    # Convert time coord to pandas timestamps
-    pred_ds = pred_ds.assign_coords(time=pd.to_datetime(pred_ds.time.values))
-
-    # TODO: Convert init time to forecast time?
-    # pred_ds = pred_ds.assign_coords(
-    #     time=pred_ds['time'] + pd.Timedelta(days=task_loader.target_delta_t[0]))
-
-    return pred_ds
-
-
-def increase_spatial_resolution(
-    X_t_normalised, resolution_factor, coord_names: dict = {"x1": "x1", "x2": "x2"}
-):
-    # TODO wasteful to interpolate X_t_normalised
-    assert isinstance(resolution_factor, (float, int))
-    assert isinstance(X_t_normalised, (xr.DataArray, xr.Dataset))
-    x1_name, x2_name = coord_names["x1"], coord_names["x2"]
-    x1, x2 = X_t_normalised.coords[x1_name], X_t_normalised.coords[x2_name]
-    x1 = np.linspace(x1[0], x1[-1], int(x1.size * resolution_factor), dtype="float64")
-    x2 = np.linspace(x2[0], x2[-1], int(x2.size * resolution_factor), dtype="float64")
-    X_t_normalised = X_t_normalised.interp(
-        **{x1_name: x1, x2_name: x2}, method="nearest"
-    )
-    return X_t_normalised
-
-
 class ProbabilisticModel:
 
     """
@@ -482,3 +408,77 @@ class DeepSensorModel(ProbabilisticModel):
             return mean, std, samples
         else:
             return mean, std
+
+
+def create_empty_spatiotemporal_xarray(
+    X: Union[xr.Dataset, xr.DataArray],
+    dates: List,
+    coord_names: dict = {"x1": "x1", "x2": "x2"},
+    data_vars: List = ["var"],
+    prepend_dims: List[str] = None,
+    prepend_coords: dict = None,
+):
+    if prepend_dims is None:
+        prepend_dims = []
+    if prepend_coords is None:
+        prepend_coords = {}
+
+    # Check for any repeated data_vars
+    if len(data_vars) != len(set(data_vars)):
+        raise ValueError(
+            f"Duplicate data_vars found in data_vars: {data_vars}. "
+            "This would cause the xarray.Dataset to have fewer variables than expected."
+        )
+
+    x1_predict = X.coords[coord_names["x1"]]
+    x2_predict = X.coords[coord_names["x2"]]
+
+    # Assert uniform spacing
+    if not np.allclose(np.diff(x1_predict), np.diff(x1_predict)[0]):
+        raise ValueError(f"Coordinate {coord_names['x1']} must be uniformly spaced.")
+    if not np.allclose(np.diff(x2_predict), np.diff(x2_predict)[0]):
+        raise ValueError(f"Coordinate {coord_names['x2']} must be uniformly spaced.")
+
+    if len(prepend_dims) != len(set(prepend_dims)):
+        # TODO unit test
+        raise ValueError(
+            f"Length of prepend_dims ({len(prepend_dims)}) must be equal to length of "
+            f"prepend_coords ({len(prepend_coords)})."
+        )
+
+    dims = [*prepend_dims, "time", coord_names["x1"], coord_names["x2"]]
+    coords = {
+        **prepend_coords,
+        "time": pd.to_datetime(dates),
+        coord_names["x1"]: x1_predict,
+        coord_names["x2"]: x2_predict,
+    }
+
+    pred_ds = xr.Dataset(
+        {data_var: xr.DataArray(dims=dims, coords=coords) for data_var in data_vars}
+    ).astype("float32")
+
+    # Convert time coord to pandas timestamps
+    pred_ds = pred_ds.assign_coords(time=pd.to_datetime(pred_ds.time.values))
+
+    # TODO: Convert init time to forecast time?
+    # pred_ds = pred_ds.assign_coords(
+    #     time=pred_ds['time'] + pd.Timedelta(days=task_loader.target_delta_t[0]))
+
+    return pred_ds
+
+
+def increase_spatial_resolution(
+    X_t_normalised, resolution_factor, coord_names: dict = {"x1": "x1", "x2": "x2"}
+):
+    # TODO wasteful to interpolate X_t_normalised
+    assert isinstance(resolution_factor, (float, int))
+    assert isinstance(X_t_normalised, (xr.DataArray, xr.Dataset))
+    x1_name, x2_name = coord_names["x1"], coord_names["x2"]
+    x1, x2 = X_t_normalised.coords[x1_name], X_t_normalised.coords[x2_name]
+    x1 = np.linspace(x1[0], x1[-1], int(x1.size * resolution_factor), dtype="float64")
+    x2 = np.linspace(x2[0], x2[-1], int(x2.size * resolution_factor), dtype="float64")
+    X_t_normalised = X_t_normalised.interp(
+        **{x1_name: x1, x2_name: x2}, method="nearest"
+    )
+    return X_t_normalised
