@@ -203,7 +203,7 @@ class ContextDist(AcquisitionFunctionParallel):
 
 
 class Stddev(AcquisitionFunctionParallel):
-    """Random acquisition function."""
+    """Model standard deviation."""
 
     def __init__(self, model: ProbabilisticModel):
         super().__init__(model)
@@ -218,10 +218,7 @@ class Stddev(AcquisitionFunctionParallel):
 
 
 class ExpectedImprovement(AcquisitionFunctionParallel):
-    """Expected improvement acquisition function
-
-    Note, the current implementation of this acquisition function is only valid for maximisation.
-    """
+    """Expected improvement (probability of exceeding the greatest value seen so far)."""
 
     def __init__(self, model: ProbabilisticModel, context_set_idx: int = 0):
         """
