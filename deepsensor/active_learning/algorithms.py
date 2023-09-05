@@ -41,7 +41,6 @@ class GreedyAlgorithm:
         context_set_idx: int = 0,
         target_set_idx: int = 0,
         progress_bar: bool = False,
-        min_or_max: str = "min",
         task_loader: TaskLoader = None,  # OPTIONAL for oracle acquisition functions only
         verbose: bool = False,
     ):
@@ -67,17 +66,11 @@ class GreedyAlgorithm:
         self.model_infill_method = model_infill_method
         self.context_set_idx = context_set_idx
         self.target_set_idx = target_set_idx
-        self.min_or_max = min_or_max
         self.task_loader = task_loader
         self.pbar = None
 
         self.X_s_mask = X_s_mask
         self.X_t_mask = X_t_mask
-
-        if min_or_max not in ["min", "max"]:
-            raise ValueError(
-                f"min_or_max must be 'min' or 'max', not {self.min_or_max}"
-            )
 
         self.x1_name = self.model.data_processor.norm_params["coords"]["x1"]["name"]
         self.x2_name = self.model.data_processor.norm_params["coords"]["x2"]["name"]
@@ -280,10 +273,6 @@ class GreedyAlgorithm:
         If the search algorithm can be run over all points in parallel,
         this method should be overridden by the child class so that `self.run()`
         uses the parallel implementation.
-
-        TODO check if below is still valid in GreedyOptimal:
-        If the search method uses the y-values at search points (i.e. for
-        an optimal benchmark), its `acquisition_fn` should expect a y_query input.
         """
         importances_list = []
 
@@ -298,8 +287,8 @@ class GreedyAlgorithm:
             elif isinstance(acquisition_fn, AcquisitionFunction):
                 importances = []
 
-                # TODO make computing the difference a bool
-                # importance_bef = acquisition_fn(task)
+                if self.diff:
+                    importance_bef = acquisition_fn(task)
 
                 # Add size-1 dim after row dim to preserve row dim for passing to
                 #   acquisition_fn. Also roll final axis to first axis for looping over search points.
@@ -328,8 +317,8 @@ class GreedyAlgorithm:
 
                     importance = acquisition_fn(task_with_new)
 
-                    # TODO make computing the difference a bool
-                    # importance = importance - importance_bef
+                    if self.diff:
+                        importance = importance - importance_bef
 
                     importances.append(importance)
 
@@ -395,7 +384,8 @@ class GreedyAlgorithm:
         self,
         acquisition_fn: AcquisitionFunction,
         tasks: Union[List[Task], Task],
-    ) -> Tuple[pd.DataFrame, xr.Dataset]:  # TODO is this correct use of typing?
+        diff: bool = False,
+    ) -> Tuple[pd.DataFrame, xr.Dataset]:
         """
         Iteratively... docstring TODO
 
@@ -415,6 +405,12 @@ class GreedyAlgorithm:
             raise ValueError(
                 f"min_or_max must be either 'min' or 'max', got {self.min_or_max}."
             )
+
+        if diff and isinstance(acquisition_fn, AcquisitionFunctionParallel):
+            raise ValueError(
+                "diff=True is not valid for parallel acquisition functions."
+            )
+        self.diff = diff
 
         if isinstance(tasks, Task):
             tasks = [tasks]
