@@ -72,8 +72,8 @@ class GreedyAlgorithm:
         self.X_s_mask = X_s_mask
         self.X_t_mask = X_t_mask
 
-        self.x1_name = self.model.data_processor.norm_params["coords"]["x1"]["name"]
-        self.x2_name = self.model.data_processor.norm_params["coords"]["x2"]["name"]
+        self.x1_name = self.model.data_processor.config["coords"]["x1"]["name"]
+        self.x2_name = self.model.data_processor.config["coords"]["x2"]["name"]
 
         # Normalised search and target coordinates
         if not X_normalised:

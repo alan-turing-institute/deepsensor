@@ -1,4 +1,6 @@
 import numpy as np
+import os
+import json
 
 import xarray as xr
 import pandas as pd
@@ -7,15 +9,18 @@ import pprint
 
 from copy import deepcopy
 
+from plum import dispatch
 from typing import Union
 
 
 class DataProcessor:
     """Normalise xarray and pandas data for use in deepsensor models"""
 
+    config_fname = "data_processor_config.json"
+
     def __init__(
         self,
-        norm_params: dict = None,
+        folder: str | None = None,
         time_name: str = "time",
         x1_name: str = "x1",
         x2_name: str = "x2",
@@ -23,11 +28,11 @@ class DataProcessor:
         x2_map: tuple = (0, 1),
         deepcopy: bool = True,
         verbose: bool = False,
-    ) -> None:
+    ):
         """Initialise DataProcessor
 
         Args:
-            norm_params (dict, optional): Normalisation params. Defaults to {}.
+            folder (str, optional): Folder to load normalisation params from. Defaults to None.
             x1_name (str, optional): Name of first spatial coord (e.g. "lat"). Defaults to "x1".
             x2_name (str, optional): Name of second spatial coord (e.g. "lon"). Defaults to "x2".
             x1_map (tuple, optional): 2-tuple of raw x1 coords to linearly map to (0, 1), respectively.
@@ -35,22 +40,28 @@ class DataProcessor:
             x2_map (tuple, optional): 2-tuple of raw x2 coords to linearly map to (0, 1), respectively.
                 Defaults to (0, 1) (i.e. no normalisation).
             deepcopy (bool, optional): Whether to make a deepcopy of raw data to ensure it is
-                not changed by reference when normalising. Defaults to True.
+                not changed by reference when normalising. Defaults to True. TODO - test if necessary.
             verbose (bool, optional): Whether to print verbose output. Defaults to False.
         """
-        x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
+        if folder is not None:
+            fpath = os.path.join(folder, self.config_fname)
+            if not os.path.exists(fpath):
+                raise FileNotFoundError(
+                    f"Could not find DataProcessor config file {fpath}"
+                )
+            with open(fpath, "r") as f:
+                self.config = json.load(f)
+        else:
+            self.config = {}
 
-        if norm_params is None:
-            norm_params = {}
+            x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
 
-        self.norm_params = norm_params
-
-        if "coords" not in self.norm_params:
-            # Add coordinate normalisation info to norm_params
-            self.set_coord_params(time_name, x1_name, x1_map, x2_name, x2_map)
+            if "coords" not in self.config:
+                # Add coordinate normalisation info to config
+                self.set_coord_params(time_name, x1_name, x1_map, x2_name, x2_map)
 
         self.raw_spatial_coord_names = [
-            self.norm_params["coords"][coord]["name"] for coord in ["x1", "x2"]
+            self.config["coords"][coord]["name"] for coord in ["x1", "x2"]
         ]
 
         self.deepcopy = deepcopy
@@ -58,6 +69,13 @@ class DataProcessor:
 
         # List of valid normalisation method names
         self.valid_methods = ["mean_std", "min_max"]
+
+    def save(self, folder: str):
+        """Save DataProcessor config to JSON in `folder`"""
+        os.makedirs(folder, exist_ok=True)
+        fpath = os.path.join(folder, self.config_fname)
+        with open(fpath, "w") as f:
+            json.dump(self.config, f)
 
     def _validate_coord_mappings(self, x1_map, x2_map):
         """Ensure the maps are valid and of appropriate types."""
@@ -84,8 +102,7 @@ class DataProcessor:
     def _validate_xr(self, data: Union[xr.DataArray, xr.Dataset]):
         def _validate_da(da: xr.DataArray):
             coord_names = [
-                self.norm_params["coords"][coord]["name"]
-                for coord in ["time", "x1", "x2"]
+                self.config["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
             ]
             if coord_names[0] not in da.dims:
                 # We don't have a time dimension.
@@ -104,7 +121,7 @@ class DataProcessor:
 
     def _validate_pandas(self, df: Union[pd.DataFrame, pd.Series]):
         coord_names = [
-            self.norm_params["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
+            self.config["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
         ]
 
         if coord_names[0] not in df.index.names:
@@ -122,7 +139,7 @@ class DataProcessor:
 
     def __str__(self):
         s = "DataProcessor with normalisation params:\n"
-        s += pprint.pformat(self.norm_params)
+        s += pprint.pformat(self.config)
         return s
 
     @classmethod
@@ -136,40 +153,43 @@ class DataProcessor:
 
     def set_coord_params(self, time_name, x1_name, x1_map, x2_name, x2_map):
         """Set coordinate normalisation params"""
-        self.norm_params["coords"] = {}
-        self.norm_params["coords"]["time"] = {"name": time_name}
-        self.norm_params["coords"]["x1"] = {}
-        self.norm_params["coords"]["x2"] = {}
-        self.norm_params["coords"]["x1"]["name"] = x1_name
-        self.norm_params["coords"]["x1"]["map"] = x1_map
-        self.norm_params["coords"]["x2"]["name"] = x2_name
-        self.norm_params["coords"]["x2"]["map"] = x2_map
+        self.config["coords"] = {}
+        self.config["coords"]["time"] = {"name": time_name}
+        self.config["coords"]["x1"] = {}
+        self.config["coords"]["x2"] = {}
+        self.config["coords"]["x1"]["name"] = x1_name
+        self.config["coords"]["x1"]["map"] = x1_map
+        self.config["coords"]["x2"]["name"] = x2_name
+        self.config["coords"]["x2"]["map"] = x2_map
 
     def check_params_computed(self, var_ID, method):
         """Check if normalisation params computed for a given variable"""
         if (
-            var_ID in self.norm_params
-            and self.norm_params[var_ID]["method"] == method
-            and "params" in self.norm_params[var_ID]
+            var_ID in self.config
+            and self.config[var_ID]["method"] == method
+            and "params" in self.config[var_ID]
         ):
             return True
         else:
             return False
 
-    def add_to_norm_params(self, var_ID, **kwargs):
-        """Add `kwargs` to `norm_params` dict for variable `var_ID`"""
-        self.norm_params[var_ID] = kwargs
+    def add_to_config(self, var_ID, **kwargs):
+        """Add `kwargs` to `config` dict for variable `var_ID`"""
+        self.config[var_ID] = kwargs
 
     def get_norm_params(self, var_ID, data, method=None):
-        """Get pre-computed normalisation params or compute them for variable `var_ID`"""
+        """Get pre-computed normalisation params or compute them for variable `var_ID`
+
+        TODO do we need to pass var_ID? Can we just use name of data?
+        """
         if method not in self.valid_methods:
             raise ValueError(
                 f"Method {method} not recognised. Must be one of {self.valid_methods}"
             )
 
         if self.check_params_computed(var_ID, method):
-            # Already have "params" in norm_params with `"method": method` - load them
-            params = self.norm_params[var_ID]["params"]
+            # Already have "params" in config with `"method": method` - load them
+            params = self.config[var_ID]["params"]
         else:
             # Params not computed - compute them now
             if self.verbose:
@@ -185,7 +205,7 @@ class DataProcessor:
                 params = {"min": float(data.min()), "max": float(data.max())}
             if self.verbose:
                 print(f"Done. {var_ID} {method} params={params}")
-            self.add_to_norm_params(
+            self.add_to_config(
                 var_ID,
                 **{"method": method, "params": params},
             )
@@ -209,8 +229,8 @@ class DataProcessor:
             x1 (np.ndarray): Array of shape (N_x1,) containing spatial coords of x1
             unnorm (bool, optional): Whether to unnormalise. Defaults to False.
         """
-        x11, x12 = self.norm_params["coords"]["x1"]["map"]
-        x21, x22 = self.norm_params["coords"]["x2"]["map"]
+        x11, x12 = self.config["coords"]["x1"]["map"]
+        x21, x22 = self.config["coords"]["x2"]["map"]
 
         if not unnorm:
             new_coords_x1 = (x1 - x11) / (x12 - x11)
@@ -234,14 +254,14 @@ class DataProcessor:
 
         if unnorm:
             new_coord_IDs = [
-                self.norm_params["coords"][coord_ID]["name"]
+                self.config["coords"][coord_ID]["name"]
                 for coord_ID in ["time", "x1", "x2"]
             ]
             old_coord_IDs = ["time", "x1", "x2"]
         else:
             new_coord_IDs = ["time", "x1", "x2"]
             old_coord_IDs = [
-                self.norm_params["coords"][coord_ID]["name"]
+                self.config["coords"][coord_ID]["name"]
                 for coord_ID in ["time", "x1", "x2"]
             ]
 
@@ -301,20 +321,16 @@ class DataProcessor:
         """Normalise or unnormalise the data values in an xarray, pandas, or numpy object"""
         if not unnorm and method is None:
             raise ValueError("Must provide `method` if normalising data.")
-        elif (
-            unnorm
-            and method is not None
-            and self.norm_params[var_ID]["method"] != method
-        ):
+        elif unnorm and method is not None and self.config[var_ID]["method"] != method:
             # User has provided a different method to the one used for normalising
             raise ValueError(
-                f"Variable '{var_ID}' has been normalised with method '{self.norm_params[var_ID]['method']}', "
+                f"Variable '{var_ID}' has been normalised with method '{self.config[var_ID]['method']}', "
                 f"cannot unnormalise with method '{method}'. Pass `method=None` or"
-                f"`method='{self.norm_params[var_ID]['method']}'`"
+                f"`method='{self.config[var_ID]['method']}'`"
             )
         if method is None and unnorm:
-            # Determine normalisation method from norm_params for unnormalising
-            method = self.norm_params[var_ID]["method"]
+            # Determine normalisation method from config for unnormalising
+            method = self.config[var_ID]["method"]
         elif method not in self.valid_methods:
             raise ValueError(
                 f"Method {method} not recognised. Use one of {self.valid_methods}"

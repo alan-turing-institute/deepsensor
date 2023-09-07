@@ -307,7 +307,7 @@ class DeepSensorModel(ProbabilisticModel):
                 arr[i] = self.data_processor.map_array(
                     arr[i],
                     var_ID,
-                    method=self.data_processor.norm_params[var_ID]["method"],
+                    method=self.data_processor.config[var_ID]["method"],
                     unnorm=True,
                     **kwargs,
                 )
