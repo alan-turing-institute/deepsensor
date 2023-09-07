@@ -1,5 +1,7 @@
 import copy
+import os.path
 import warnings
+import json
 from typing import Union, List
 
 import lab as B
@@ -52,7 +54,7 @@ class ConvNP(DeepSensorModel):
         likelihood (str, optional): Likelihood. Must be one of `"cnp"` (equivalently `"het"`),
             `"gnp"` (equivalently `"lowrank"`), or `"cnp-spikes-beta"` (equivalently `"spikes-beta"`).
             Defaults to `"cnp"`.
-        dim_x (int, optional): Dimensionality of the inputs. Defaults to 1.
+        dim_x (int, optional): Dimensionality of the inputs. Defaults to 2.
         dim_y (int, optional): Dimensionality of the outputs. Defaults to 1.
         dim_yc (int or tuple[int], optional): Dimensionality of the outputs of the
             context set. You should set this if the dimensionality of the outputs
@@ -110,7 +112,7 @@ class ConvNP(DeepSensorModel):
         # so unnormalisation will not be performed at inference time.
         super().__init__()
 
-        self.model = construct_neural_process(*args, **kwargs)
+        self.model, self.config = construct_neural_process(*args, **kwargs)
 
     @dispatch
     def __init__(
@@ -164,7 +166,7 @@ class ConvNP(DeepSensorModel):
                 print(f"decoder_scale inferred from TaskLoader: {decoder_scale}")
             kwargs["decoder_scale"] = decoder_scale
 
-        self.model = construct_neural_process(*args, dim_x=2, **kwargs)
+        self.model, self.config = construct_neural_process(*args, **kwargs)
 
     @dispatch
     def __init__(
@@ -177,6 +179,59 @@ class ConvNP(DeepSensorModel):
         super().__init__(data_processor, task_loader)
 
         self.model = neural_process
+
+    @dispatch
+    def __init__(self, model_ID: str):
+        """Instantiate a model from a folder containing model weights and config."""
+        super().__init__()
+
+        self.load(model_ID)
+
+    @dispatch
+    def __init__(
+        self,
+        data_processor: DataProcessor,
+        task_loader: TaskLoader,
+        model_ID: str,
+    ):
+        """Instantiate a model from a folder containing model weights and config."""
+        super().__init__(data_processor, task_loader)
+
+        self.load(model_ID)
+
+    def save(self, model_ID: str):
+        """Save the model weights and config to a folder."""
+        os.makedirs(model_ID, exist_ok=True)
+
+        if backend.str == "torch":
+            import torch
+
+            torch.save(self.model.state_dict(), os.path.join(model_ID, "model.pt"))
+        elif backend.str == "tf":
+            self.model.save_weights(os.path.join(model_ID, "model.h5"))
+        else:
+            raise NotImplementedError(f"Backend {backend.str} not supported.")
+
+        config_fpath = os.path.join(model_ID, "model_config.json")
+        with open(config_fpath, "w") as f:
+            json.dump(self.config, f)
+
+    def load(self, model_ID: str):
+        """Load a model from a folder containing model weights and config."""
+        config_fpath = os.path.join(model_ID, "model_config.json")
+        with open(config_fpath, "r") as f:
+            self.config = json.load(f)
+
+        self.model, _ = construct_neural_process(**self.config)
+
+        if backend.str == "torch":
+            import torch
+
+            self.model.load_state_dict(torch.load(os.path.join(model_ID, "model.pt")))
+        elif backend.str == "tf":
+            self.model.load_weights(os.path.join(model_ID, "model.h5"))
+        else:
+            raise NotImplementedError(f"Backend {backend.str} not supported.")
 
     @classmethod
     def modify_task(cls, task):

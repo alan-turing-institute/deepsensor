@@ -157,8 +157,8 @@ def construct_neural_process(
     elif likelihood == "cnp-spikes-beta":
         likelihood = "spikes-beta"
 
-    # Use a stride of 1 for the first layer and 2 for all other layers
-    unet_strides = (1, *(2,) * (len(unet_channels) - 1))
+    # Log the call signature for `construct_convgnp`
+    config = dict(locals())
 
     if backend.str == "torch":
         import torch
@@ -177,14 +177,15 @@ def construct_neural_process(
         dim_yt=dim_yt,
         dim_aux_t=dim_aux_t,
         dim_lv=dim_lv,
+        likelihood=likelihood,
         conv_arch=conv_arch,
-        unet_channels=unet_channels,
+        unet_channels=tuple(unet_channels),
         unet_resize_convs=unet_resize_convs,
         unet_resize_conv_interp_method=unet_resize_conv_interp_method,
         aux_t_mlp_layers=aux_t_mlp_layers,
-        likelihood=likelihood,
         unet_kernels=unet_kernels,
-        unet_strides=unet_strides,
+        # Use a stride of 1 for the first layer and 2 for all other layers
+        unet_strides=(1, *(2,) * (len(unet_channels) - 1)),
         points_per_unit=points_per_unit,
         encoder_scales=encoder_scales,
         encoder_scales_learnable=encoder_scales_learnable,
@@ -194,7 +195,8 @@ def construct_neural_process(
         epsilon=epsilon,
         dtype=dtype,
     )
-    return neural_process
+
+    return neural_process, config
 
 
 def compute_encoding_tensor(model, task: Task):
