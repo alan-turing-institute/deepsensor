@@ -24,8 +24,8 @@ class DataProcessor:
         time_name: str = "time",
         x1_name: str = "x1",
         x2_name: str = "x2",
-        x1_map: tuple = (0, 1),
-        x2_map: tuple = (0, 1),
+        x1_map: tuple | None = None,
+        x2_map: tuple | None = None,
         deepcopy: bool = True,
         verbose: bool = False,
     ):
@@ -36,9 +36,11 @@ class DataProcessor:
             x1_name (str, optional): Name of first spatial coord (e.g. "lat"). Defaults to "x1".
             x2_name (str, optional): Name of second spatial coord (e.g. "lon"). Defaults to "x2".
             x1_map (tuple, optional): 2-tuple of raw x1 coords to linearly map to (0, 1), respectively.
-                Defaults to (0, 1) (i.e. no normalisation).
+                If None, the mapping inferred from first data object passed to DataProcessor.
+                Defaults to None.
             x2_map (tuple, optional): 2-tuple of raw x2 coords to linearly map to (0, 1), respectively.
-                Defaults to (0, 1) (i.e. no normalisation).
+                If None, the mapping inferred from first data object passed to DataProcessor.
+                Defaults to None.
             deepcopy (bool, optional): Whether to make a deepcopy of raw data to ensure it is
                 not changed by reference when normalising. Defaults to True. TODO - test if necessary.
             verbose (bool, optional): Whether to print verbose output. Defaults to False.
@@ -54,7 +56,14 @@ class DataProcessor:
         else:
             self.config = {}
 
-            x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
+            self.x1_none = x1_map is None
+            self.x2_none = x2_map is None
+            if (self.x1_none and not self.x2_none) or (
+                not self.x1_none and self.x2_none
+            ):
+                raise ValueError("Must provide both x1_map and x2_map, or neither.")
+            elif not self.x1_none and not self.x2_none:
+                x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
 
             if "coords" not in self.config:
                 # Add coordinate normalisation info to config
@@ -247,6 +256,7 @@ class DataProcessor:
         unnorm=False,
     ):
         """Normalise spatial coords in a pandas or xarray object"""
+
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Reset index to get coords as columns
             indexes = list(data.index.names)
@@ -265,9 +275,27 @@ class DataProcessor:
                 for coord_ID in ["time", "x1", "x2"]
             ]
 
-        new_x1, new_x2 = self.map_x1_and_x2(
-            data[old_coord_IDs[1]], data[old_coord_IDs[2]], unnorm=unnorm
+        x1, x2 = (
+            data[old_coord_IDs[1]],
+            data[old_coord_IDs[2]],
         )
+
+        # Infer x1 and x2 mappings from min/max of data coords if not provided by user
+        if self.x1_none and self.x2_none:
+            x1_map = (x1.min(), x1.max())
+            x2_map = (x2.min(), x2.max())
+            x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
+            self.config["coords"]["x1"]["map"] = x1_map
+            self.config["coords"]["x2"]["map"] = x2_map
+            if self.verbose:
+                print(
+                    f"Inferring x1_map={x1_map} and x2_map={x2_map} from data min/max"
+                )
+
+            self.x2_none = False
+            self.x1_none = False
+
+        new_x1, new_x2 = self.map_x1_and_x2(x1, x2, unnorm=unnorm)
 
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Drop old spatial coord columns *before* adding new ones, in case

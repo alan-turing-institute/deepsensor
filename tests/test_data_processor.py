@@ -64,30 +64,39 @@ class TestDataProcessor(unittest.TestCase):
             return False
         return True
 
+    def test_only_passing_one_x_mapping_raises_valueerror(self):
+        with self.assertRaises(ValueError):
+            DataProcessor(x1_map=(20, 40), x2_map=None)
+
     def test_unnorm_restores_data_for_each_method(self):
         """Check that the unnormalisation restores the original data for each normalisation method."""
         da_raw = _gen_data_xr()
         df_raw = _gen_data_pandas()
 
-        dp = DataProcessor(
+        dp_with_x_mappings = DataProcessor(
             x1_map=(20, 40),
             x2_map=(40, 60),
             time_name="time",
             x1_name="lat",
             x2_name="lon",
         )
+        dp_inferred_x_mappings = DataProcessor(
+            time_name="time", x1_name="lat", x2_name="lon"
+        )
+        dps = [dp_with_x_mappings, dp_inferred_x_mappings]
 
-        for method in dp.valid_methods:
-            da_norm, df_norm = dp([da_raw, df_raw], method=method)
-            da_unnorm, df_unnorm = dp.unnormalise([da_norm, df_norm])
-            self.assertTrue(
-                self.assert_allclose_xr(da_unnorm, da_raw),
-                f"Original {type(da_raw).__name__} not restored for method {method}.",
-            )
-            self.assertTrue(
-                self.assert_allclose_pd(df_unnorm, df_raw),
-                f"Original {type(df_raw).__name__} not restored for method {method}.",
-            )
+        for dp in dps:
+            for method in dp.valid_methods:
+                da_norm, df_norm = dp([da_raw, df_raw], method=method)
+                da_unnorm, df_unnorm = dp.unnormalise([da_norm, df_norm])
+                self.assertTrue(
+                    self.assert_allclose_xr(da_unnorm, da_raw),
+                    f"Original {type(da_raw).__name__} not restored for method {method}.",
+                )
+                self.assertTrue(
+                    self.assert_allclose_pd(df_unnorm, df_raw),
+                    f"Original {type(df_raw).__name__} not restored for method {method}.",
+                )
 
     def test_different_names_xr(self):
         """
