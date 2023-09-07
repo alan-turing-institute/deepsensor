@@ -82,7 +82,7 @@ import numpy as np
 ds_raw = xr.tutorial.open_dataset("air_temperature")
 
 # Normalise data
-data_processor = DataProcessor(x1_name="lat", x1_map=(15, 75), x2_name="lon", x2_map=(200, 330))
+data_processor = DataProcessor(x1_name="lat", x2_name="lon")
 ds = data_processor(ds_raw)
 
 # Set up task loader
