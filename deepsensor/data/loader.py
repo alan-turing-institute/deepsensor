@@ -246,7 +246,6 @@ class TaskLoader:
     def save(self, folder: str):
         """Save TaskLoader config to JSON in `folder`"""
         if not self._is_saveable:
-            # TODO unit test this
             raise ValueError(
                 "TaskLoader cannot be saved because not all data was passed as paths."
             )

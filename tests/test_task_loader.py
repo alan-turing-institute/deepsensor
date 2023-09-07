@@ -133,6 +133,12 @@ class TestTaskLoader(unittest.TestCase):
 
         return None
 
+    def test_saving_taskloader_without_paths_fails(self):
+        """Saving a TaskLoader is only possible if it is instantiated with file paths"""
+        tl = TaskLoader(context=self.da, target=self.da)
+        with self.assertRaises(ValueError):
+            tl.save("foo")
+
     def test_aux_at_contexts_and_aux_at_targets(self):
         """Test the `aux_at_contexts` and `aux_at_targets` arguments"""
         context = [self.da, self.df]
