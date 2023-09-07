@@ -253,7 +253,7 @@ class TaskLoader:
         os.makedirs(folder, exist_ok=True)
         fpath = os.path.join(folder, self.config_fname)
         with open(fpath, "w") as f:
-            json.dump(self.config, f)
+            json.dump(self.config, f, indent=4, sort_keys=False)
 
     def _cast_to_dtype(
         self,

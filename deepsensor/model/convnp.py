@@ -214,7 +214,7 @@ class ConvNP(DeepSensorModel):
 
         config_fpath = os.path.join(model_ID, "model_config.json")
         with open(config_fpath, "w") as f:
-            json.dump(self.config, f)
+            json.dump(self.config, f, indent=4, sort_keys=False)
 
     def load(self, model_ID: str):
         """Load a model from a folder containing model weights and config."""
