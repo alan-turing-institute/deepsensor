@@ -23,7 +23,7 @@ class TestPlotting(unittest.TestCase):
             x2_map=(ds_raw["lon"].min(), ds_raw["lon"].max()),
         )
         ds = self.data_processor(ds_raw)
-        self.task_loader = TaskLoader(ds, ds)
+        self.task_loader = TaskLoader(context=ds, target=ds)
         self.model = ConvNP(
             self.data_processor,
             self.task_loader,
