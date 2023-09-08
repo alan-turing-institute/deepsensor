@@ -247,7 +247,9 @@ def offgrid_context_observations(
             ax.text(*x_c[::-1], format_str.format(float(y_c)), color=color)
 
 
-def receptive_field(receptive_field, data_processor, crs, extent="global"):
+def receptive_field(
+    receptive_field, data_processor, crs, extent="global"
+):  # pragma: no cover
     fig, ax = plt.subplots(subplot_kw=dict(projection=crs))
 
     if extent == "global":
@@ -402,7 +404,7 @@ def feature_maps(
 
 def placements(
     task, X_new_df, data_processor, crs, extent=None, figsize=3, **scatter_kwargs
-):
+):  # pragma: no cover
     fig, ax = plt.subplots(subplot_kw={"projection": crs}, figsize=(figsize, figsize))
     ax.scatter(*X_new_df.values.T[::-1], c="r", linewidths=0.5, **scatter_kwargs)
     offgrid_context(ax, task, data_processor, linewidths=0.5, **scatter_kwargs)
@@ -429,7 +431,7 @@ def acquisition_fn(
     figsize=3,
     add_colorbar=True,
     max_ncol=5,
-):
+):  # pragma: no cover
     # Remove spatial dims using data_processor.raw_spatial_coords_names
     plot_dims = [col_dim, *data_processor.raw_spatial_coord_names]
     non_plot_dims = [dim for dim in acquisition_fn_ds.dims if dim not in plot_dims]
