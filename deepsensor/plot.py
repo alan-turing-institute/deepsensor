@@ -255,8 +255,8 @@ def receptive_field(receptive_field, data_processor, crs, extent="global"):
     else:
         ax.set_extent(extent, crs=crs)
 
-    x11, x12 = data_processor.norm_params["coords"]["x1"]["map"]
-    x21, x22 = data_processor.norm_params["coords"]["x2"]["map"]
+    x11, x12 = data_processor.config["coords"]["x1"]["map"]
+    x21, x22 = data_processor.config["coords"]["x2"]["map"]
 
     x1_rf_raw = receptive_field * (x12 - x11)
     x2_rf_raw = receptive_field * (x22 - x21)
@@ -281,8 +281,8 @@ def receptive_field(receptive_field, data_processor, crs, extent="global"):
     ax.coastlines()
     ax.gridlines(draw_labels=True, alpha=0.2)
 
-    x1_name = data_processor.norm_params["coords"]["x1"]["name"]
-    x2_name = data_processor.norm_params["coords"]["x2"]["name"]
+    x1_name = data_processor.config["coords"]["x1"]["name"]
+    x2_name = data_processor.config["coords"]["x2"]["name"]
     ax.set_title(
         f"Receptive field in raw coords: {x1_name}={x1_rf_raw:.2f}, {x2_name}={x2_rf_raw:.2f}"
     )
