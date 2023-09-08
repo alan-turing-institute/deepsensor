@@ -128,10 +128,10 @@ class TaskLoader:
             self._set_config()
             self._load_data_from_paths()
 
-        if aux_at_contexts is not None:
-            self._check_offgrid_aux(self._check_offgrid_aux(aux_at_contexts))
-        if aux_at_targets is not None:
-            self._check_offgrid_aux(aux_at_targets)
+        if self.aux_at_contexts is not None:
+            self._check_offgrid_aux(self._check_offgrid_aux(self.aux_at_contexts))
+        if self.aux_at_targets is not None:
+            self._check_offgrid_aux(self.aux_at_targets)
 
         self.context = self._cast_to_dtype(self.context)
         self.target = self._cast_to_dtype(self.target)
