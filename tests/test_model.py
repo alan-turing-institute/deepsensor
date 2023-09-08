@@ -3,7 +3,7 @@ import itertools
 
 from parameterized import parameterized
 
-
+import os
 import xarray as xr
 import numpy as np
 import pandas as pd
@@ -11,11 +11,12 @@ import unittest
 
 import lab as B
 
-import deepsensor.tensorflow as deepsensor
+import deepsensor.torch as deepsensor
 
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.loader import TaskLoader
 from deepsensor.model.convnp import ConvNP
+from deepsensor.train.train import Trainer
 
 from tests.utils import gen_random_data_xr, gen_random_data_pandas
 
@@ -389,6 +390,56 @@ class TestModel(unittest.TestCase):
         assert np.array_equal(
             mean_df.reset_index()["longitude"], df_raw.reset_index()["longitude"]
         )
+
+    def test_saving_and_loading(self):
+        """Test saving and loading of model"""
+        folder = f"tmp_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}"
+        os.makedirs(folder, exist_ok=True)
+
+        ds_raw = xr.tutorial.open_dataset("air_temperature")
+
+        data_processor = DataProcessor(x1_name="lat", x2_name="lon")
+        ds = data_processor(ds_raw)
+
+        t2m_fpath = f"{folder}/air_temperature_normalised.nc"
+        ds.to_netcdf(t2m_fpath)
+
+        task_loader = TaskLoader(context=t2m_fpath, target=t2m_fpath)
+
+        model = ConvNP(
+            data_processor, task_loader, unet_channels=(32,) * 3, verbose=False
+        )
+
+        # Train the model for a few iterations to test the trained model is restored correctly later.
+        task = task_loader("2014-12-31", 40, datewise_deterministic=True)
+        trainer = Trainer(model)
+        for _ in range(10):
+            trainer([task])
+        mean_ds_before, std_ds_before = model.predict(task, X_t=ds_raw)
+        mean_ds_before["air"].plot()
+
+        data_processor.save(folder)
+        task_loader.save(folder)
+        model.save(folder)
+
+        data_processor_loaded = DataProcessor(folder)
+        task_loader_loaded = TaskLoader(folder)
+        model_loaded = ConvNP(data_processor_loaded, task_loader_loaded, folder)
+
+        task = task_loader_loaded("2014-12-31", 40, datewise_deterministic=True)
+        mean_ds_loaded, std_ds_loaded = model_loaded.predict(task, X_t=ds_raw)
+        mean_ds_loaded["air"].plot()
+
+        xr.testing.assert_allclose(mean_ds_before, mean_ds_loaded)
+        print("Means match")
+
+        xr.testing.assert_allclose(std_ds_before, std_ds_loaded)
+        print("Standard deviations match")
+
+        # Delete temporary folder
+        import shutil
+
+        shutil.rmtree(folder)
 
 
 def assert_shape(x, shape: tuple):
