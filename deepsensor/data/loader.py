@@ -227,7 +227,13 @@ class TaskLoader:
             elif path.endswith(".nc"):
                 return xr.open_dataset(path)
             elif path.endswith(".csv"):
-                return pd.read_csv(path).set_index(["time", "x1", "x2"])
+                df = pd.read_csv(path)
+                if "time" in df.columns:
+                    df["time"] = pd.to_datetime(df["time"])
+                    df = df.set_index(["time", "x1", "x2"]).sort_index()
+                else:
+                    df = df.set_index(["x1", "x2"]).sort_index()
+                return df
             else:
                 raise ValueError(f"Unknown file extension for {path}")
 
