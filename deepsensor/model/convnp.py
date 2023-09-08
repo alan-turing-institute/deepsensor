@@ -208,7 +208,7 @@ class ConvNP(DeepSensorModel):
 
             torch.save(self.model.state_dict(), os.path.join(model_ID, "model.pt"))
         elif backend.str == "tf":
-            self.model.save_weights(os.path.join(model_ID, "model.h5"))
+            self.model.save_weights(os.path.join(model_ID, "model"))
         else:
             raise NotImplementedError(f"Backend {backend.str} not supported.")
 
@@ -229,7 +229,7 @@ class ConvNP(DeepSensorModel):
 
             self.model.load_state_dict(torch.load(os.path.join(model_ID, "model.pt")))
         elif backend.str == "tf":
-            self.model.load_weights(os.path.join(model_ID, "model.h5"))
+            self.model.load_weights(os.path.join(model_ID, "model"))
         else:
             raise NotImplementedError(f"Backend {backend.str} not supported.")
 
