@@ -93,6 +93,9 @@ class TaskLoader:
             self.target = self.config["target"]
             self.aux_at_contexts = self.config["aux_at_contexts"]
             self.aux_at_targets = self.config["aux_at_targets"]
+            self.links = self.config["links"]
+            if self.links is not None:
+                self.links = [tuple(link) for link in self.links]
             self.time_freq = self.config["time_freq"]
             self.xarray_interp_method = self.config["xarray_interp_method"]
             self.discrete_xarray_sampling = self.config["discrete_xarray_sampling"]
@@ -102,6 +105,7 @@ class TaskLoader:
             self.target = target
             self.aux_at_contexts = aux_at_contexts
             self.aux_at_targets = aux_at_targets
+            self.links = links
             self.time_freq = time_freq
             self.xarray_interp_method = xarray_interp_method
             self.discrete_xarray_sampling = discrete_xarray_sampling
@@ -138,7 +142,7 @@ class TaskLoader:
         self.aux_at_contexts = self._cast_to_dtype(self.aux_at_contexts)
         self.aux_at_targets = self._cast_to_dtype(self.aux_at_targets)
 
-        self.links = self.check_links(links)
+        self.links = self.check_links(self.links)
 
         (
             self.context_dims,
@@ -162,6 +166,7 @@ class TaskLoader:
                 target=self.target,
                 aux_at_contexts=self.aux_at_contexts,
                 aux_at_targets=self.aux_at_targets,
+                links=self.links,
                 context_delta_t=self.context_delta_t,
                 target_delta_t=self.target_delta_t,
                 time_freq=self.time_freq,
