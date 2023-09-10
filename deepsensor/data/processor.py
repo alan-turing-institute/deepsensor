@@ -492,21 +492,16 @@ def mask_coord_array_normalised(
     """
     if mask_da is None:
         return coord_arr
-    mask_da = mask_da.astype(float)  # Temporarily convert to float for interpolation
-    mask_da = mask_da.interp(
-        {"x1": xr.DataArray(coord_arr[0]), "x2": xr.DataArray(coord_arr[1])},
-        method="nearest",
-        kwargs=dict(fill_value=None, bounds_error=False),
-    ).data.astype(
-        bool
-    )  # Shape `coord_arr.shape[1]`, False if point is outside mask
+    mask_da = mask_da.astype(bool)
+    x1, x2 = xr.DataArray(coord_arr[0]), xr.DataArray(coord_arr[1])
+    mask_da = mask_da.sel(x1=x1, x2=x2, method="nearest")
     return coord_arr[:, mask_da]
 
 
 def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
     """Check if da1 and da2 are on the same grid
 
-    Note: da1 and da2 are assumed normalised by DataProcessor.
+    Note: da1 and da2 are assumed to have been normalised by DataProcessor.
     """
     x1equal = np.array_equal(da1["x1"].values, da2["x1"].values)
     x2equal = np.array_equal(da1["x2"].values, da2["x2"].values)
