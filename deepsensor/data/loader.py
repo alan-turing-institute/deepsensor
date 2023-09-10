@@ -450,15 +450,16 @@ class TaskLoader:
         if links is None:
             return None
 
-        if type(links) is list and type(links[0]) is not tuple:
-            raise ValueError("If `links` is a list, then it must be a list of tuples")
-        elif type(links) is tuple and type(links[0]) is not int:
-            raise ValueError("If `links` is a tuple, then it must be a tuple of ints")
-        elif type(links) is tuple and len(links) != 2:
-            raise ValueError("If `links` is a tuple of ints, then it must be length 2")
-        elif type(links) is tuple and len(links) == 2:
-            # Convert single tuple to list of tuples
-            links = [links]
+        assert isinstance(
+            links, list
+        ), f"Links must be a list of length-2 tuples, but got {type(links)}"
+        assert len(links) > 0, "If links is not None, it must be a non-empty list"
+        assert all(
+            isinstance(link, tuple) for link in links
+        ), f"Links must be a list of tuples, but got {[type(link) for link in links]}"
+        assert all(
+            len(link) == 2 for link in links
+        ), f"Links must be a list of length-2 tuples, but got lengths {[len(link) for link in links]}"
 
         # Check that the links are valid
         for link_i, (context_idx, target_idx) in enumerate(links):
