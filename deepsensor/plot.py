@@ -132,7 +132,7 @@ def offgrid_context(
     data_processor=None,
     task_loader=None,
     plot_target=False,
-    add_legend=True,
+    add_legend=False,
     context_set_idxs=None,
     markers=None,
     colors=None,
