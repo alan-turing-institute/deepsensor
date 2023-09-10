@@ -6,6 +6,7 @@ from deepsensor.data.processor import (
     mask_coord_array_normalised,
     da1_da2_same_grid,
     interp_da1_to_da2,
+    process_X_mask_for_X,
 )
 from deepsensor.model.model import DeepSensorModel, create_empty_spatiotemporal_xarray
 from deepsensor.data.task import Task, append_obs_to_task
@@ -69,9 +70,6 @@ class GreedyAlgorithm:
         self.task_loader = task_loader
         self.pbar = None
 
-        self.X_s_mask = X_s_mask
-        self.X_t_mask = X_t_mask
-
         self.x1_name = self.model.data_processor.config["coords"]["x1"]["name"]
         self.x2_name = self.model.data_processor.config["coords"]["x2"]["name"]
 
@@ -86,9 +84,14 @@ class GreedyAlgorithm:
 
         self.X_s = X_s
         self.X_t = X_t
+        self.X_s_mask = X_s_mask
+        self.X_t_mask = X_t_mask
 
         # Interpolate masks onto search and target coords
-        self.X_s_mask, self.X_t_mask = self._process_masks(X_s_mask, X_t_mask, X_s, X_t)
+        if self.X_s_mask is not None:
+            self.X_s_mask = process_X_mask_for_X(self.X_s_mask, self.X_s)
+        if self.X_t_mask is not None:
+            self.X_t_mask = process_X_mask_for_X(self.X_t_mask, self.X_t)
 
         # Interpolate overridden infill datasets at search points if necessary
         if query_infill is not None and not da1_da2_same_grid(query_infill, X_s):
@@ -140,25 +143,6 @@ class GreedyAlgorithm:
                 f"Number of new context ({N_new_context}) must be greater than zero "
                 f"and less than the number of search points ({N_s})"
             )
-
-    @classmethod
-    def _process_masks(cls, X_s_mask: xr.DataArray, X_t_mask: xr.DataArray, X_s, X_t):
-        """Process masks by interpolating to X_s and X_t"""
-        # TODO avoid repeated code
-        if X_s_mask is not None:
-            X_s_mask = X_s_mask.astype(float).interp_like(
-                X_s, method="nearest", kwargs={"fill_value": 0}
-            )
-            X_s_mask.data = X_s_mask.data.astype(bool)
-            X_s_mask.load()
-        if X_t_mask is not None:
-            X_t_mask = X_t_mask.astype(float).interp_like(
-                X_t, method="nearest", kwargs={"fill_value": 0}
-            )
-            X_t_mask.data = X_t_mask.data.astype(bool)
-            X_t_mask.load()
-
-        return X_s_mask, X_t_mask
 
     def _get_times_from_tasks(self):
         """Get times from tasks"""

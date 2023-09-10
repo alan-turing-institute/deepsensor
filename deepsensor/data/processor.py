@@ -469,7 +469,27 @@ def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]):
     return np.stack([X1.ravel(), X2.ravel()], axis=0)
 
 
-def mask_coord_array_normalised(coord_arr, mask_da):
+def process_X_mask_for_X(X_mask: xr.DataArray, X: xr.DataArray):
+    """Process X_mask by interpolating to X and converting to boolean.
+
+    Both X_mask and X are xarray DataArrays with the same spatial coords.
+    """
+    X_mask = X_mask.astype(float).interp_like(
+        X, method="nearest", kwargs={"fill_value": 0}
+    )
+    X_mask.data = X_mask.data.astype(bool)
+    X_mask.load()
+    return X_mask
+
+
+def mask_coord_array_normalised(
+    coord_arr: np.ndarray, mask_da: Union[xr.DataArray, xr.Dataset, None]
+):
+    """Remove points from (2, N) numpy array that are outside gridded xarray boolean mask.
+
+    If `coord_arr` is shape `(2, N)`, then `mask_da` is a shape `(N,)` boolean array
+    (True if point is inside mask, False if outside).
+    """
     if mask_da is None:
         return coord_arr
     mask_da = mask_da.astype(float)  # Temporarily convert to float for interpolation
