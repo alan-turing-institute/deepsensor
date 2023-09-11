@@ -18,6 +18,10 @@ def set_gpu_default_device():
             # Set default GPU device
             torch.set_default_device("cuda")
             B.set_global_device("cuda:0")
+        elif torch.backends.mps.is_available():
+            # Set default GPU device
+            torch.set_default_device("mps")
+            B.set_global_device("mps:0")
         else:
             raise RuntimeError("No GPU available: torch.cuda.is_available() == False")
     elif deepsensor.backend.str == "tf":
