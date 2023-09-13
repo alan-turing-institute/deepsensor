@@ -96,6 +96,8 @@ class TaskLoader:
             self.links = self.config["links"]
             if self.links is not None:
                 self.links = [tuple(link) for link in self.links]
+            self.context_delta_t = self.config["context_delta_t"]
+            self.target_delta_t = self.config["target_delta_t"]
             self.time_freq = self.config["time_freq"]
             self.xarray_interp_method = self.config["xarray_interp_method"]
             self.discrete_xarray_sampling = self.config["discrete_xarray_sampling"]
@@ -106,6 +108,8 @@ class TaskLoader:
             self.aux_at_contexts = aux_at_contexts
             self.aux_at_targets = aux_at_targets
             self.links = links
+            self.context_delta_t = context_delta_t
+            self.target_delta_t = target_delta_t
             self.time_freq = time_freq
             self.xarray_interp_method = xarray_interp_method
             self.discrete_xarray_sampling = discrete_xarray_sampling
@@ -116,16 +120,20 @@ class TaskLoader:
         if not isinstance(self.target, (tuple, list)):
             self.target = (self.target,)
 
-        if isinstance(context_delta_t, int):
-            context_delta_t = (context_delta_t,) * len(self.context)
+        if isinstance(self.context_delta_t, int):
+            self.context_delta_t = (self.context_delta_t,) * len(self.context)
         else:
-            assert len(context_delta_t) == len(self.context)
-        if isinstance(target_delta_t, int):
-            target_delta_t = (target_delta_t,) * len(self.target)
+            assert len(self.context_delta_t) == len(self.context), (
+                f"Length of context_delta_t ({len(self.context_delta_t)}) must be the same as "
+                f"the number of context sets ({len(self.context)})"
+            )
+        if isinstance(self.target_delta_t, int):
+            self.target_delta_t = (self.target_delta_t,) * len(self.target)
         else:
-            assert len(target_delta_t) == len(self.target)
-        self.context_delta_t = context_delta_t
-        self.target_delta_t = target_delta_t
+            assert len(self.target_delta_t) == len(self.target), (
+                f"Length of target_delta_t ({len(self.target_delta_t)}) must be the same as "
+                f"the number of target sets ({len(self.target)})"
+            )
 
         all_paths = self._check_if_all_data_passed_as_paths()
         if all_paths:
