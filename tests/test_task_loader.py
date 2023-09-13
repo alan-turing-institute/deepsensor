@@ -8,8 +8,17 @@ import numpy as np
 import pandas as pd
 import unittest
 
+import os
+import shutil
+import tempfile
+
 from deepsensor.errors import InvalidSamplingStrategyError
-from tests.utils import gen_random_data_xr, gen_random_data_pandas
+from tests.utils import (
+    gen_random_data_xr,
+    gen_random_data_pandas,
+    assert_allclose_pd,
+    assert_allclose_xr,
+)
 
 from deepsensor.data.loader import TaskLoader
 
@@ -236,6 +245,70 @@ class TestTaskLoader(unittest.TestCase):
         with self.assertRaises(ValueError):
             task = tl("2020-01-01", "split", "split", split_frac=1.1)
             task = tl("2020-01-01", "split", "split", split_frac=-0.1)
+
+    def test_saving_and_loading(self):
+        """Test saving and loading TaskLoader"""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            xarray_fpath = f"{tmp_dir}/da.nc"
+            aux_fpath = f"{tmp_dir}/da.nc"
+            pandas_fpath = f"{tmp_dir}/df.csv"
+            self.da.to_netcdf(xarray_fpath)
+            self.aux_da.to_netcdf(aux_fpath)
+            self.df.to_csv(pandas_fpath)
+
+            # Instantiating with file paths, using all the kwargs
+            tl = TaskLoader(
+                context=[aux_fpath, xarray_fpath, pandas_fpath],
+                target=[xarray_fpath, pandas_fpath],
+                links=[(2, 1)],
+                aux_at_contexts=xarray_fpath,
+                aux_at_targets=xarray_fpath,
+                context_delta_t=[0, -1, 0],
+                target_delta_t=[0, 1],
+            )
+
+            tl.save(tmp_dir)
+
+            tl_loaded = TaskLoader(tmp_dir)
+
+            # Check that the TaskLoader was saved and loaded correctly
+            self.assertEqual(
+                tl.config,
+                tl_loaded.config,
+                "Config not saved and loaded correctly",
+            )
+            for i, context in enumerate(tl.context):
+                if isinstance(context, pd.DataFrame):
+                    assert_allclose_pd(context, tl_loaded.context[i])
+                elif isinstance(context, xr.Dataset):
+                    assert_allclose_xr(context, tl_loaded.context[i])
+                else:
+                    raise ValueError(
+                        f"Context data type {type(context).__name__} not supported."
+                    )
+            self.assertEqual(
+                tl.aux_at_contexts,
+                tl_loaded.aux_at_contexts,
+                "aux_at_contexts not saved and loaded correctly",
+            )
+            self.assertEqual(
+                tl.aux_at_targets,
+                tl_loaded.aux_at_targets,
+                "aux_at_targets not saved and loaded correctly",
+            )
+            self.assertEqual(
+                tl.links, tl_loaded.links, "Links not saved and loaded correctly"
+            )
+            self.assertEqual(
+                tl.context_delta_t,
+                tl_loaded.context_delta_t,
+                "context_delta_t not saved and loaded correctly",
+            )
+            self.assertEqual(
+                tl.target_delta_t,
+                tl_loaded.target_delta_t,
+                "target_delta_t not saved and loaded correctly",
+            )
 
 
 if __name__ == "__main__":

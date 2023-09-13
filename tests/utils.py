@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+from typing import Union
+
 
 def gen_random_data_xr(coords: dict, dims: list = None, data_vars: list = None):
     """Generate random xarray data
@@ -48,3 +50,27 @@ def gen_random_data_pandas(coords: dict, dims: list = None, cols: list = None):
         df = pd.DataFrame(index=mi, columns=cols)
     df[:] = np.random.rand(*df.shape)
     return df
+
+
+def assert_allclose_pd(
+    df1: Union[pd.DataFrame, pd.Series], df2: Union[pd.DataFrame, pd.Series]
+):
+    if isinstance(df1, pd.Series):
+        df1 = df1.to_frame()
+    if isinstance(df2, pd.Series):
+        df2 = df2.to_frame()
+    try:
+        pd.testing.assert_frame_equal(df1, df2)
+    except AssertionError:
+        return False
+    return True
+
+
+def assert_allclose_xr(
+    da1: Union[xr.DataArray, xr.Dataset], da2: Union[xr.DataArray, xr.Dataset]
+):
+    try:
+        xr.testing.assert_allclose(da1, da2)
+    except AssertionError:
+        return False
+    return True
