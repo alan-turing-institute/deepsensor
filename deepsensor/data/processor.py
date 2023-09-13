@@ -53,6 +53,12 @@ class DataProcessor:
                 )
             with open(fpath, "r") as f:
                 self.config = json.load(f)
+                self.config["coords"]["x1"]["map"] = tuple(
+                    self.config["coords"]["x1"]["map"]
+                )
+                self.config["coords"]["x2"]["map"] = tuple(
+                    self.config["coords"]["x2"]["map"]
+                )
 
             self.x1_none = self.config["coords"]["x1"]["map"] is None
             self.x2_none = self.config["coords"]["x2"]["map"] is None
