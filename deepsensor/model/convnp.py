@@ -632,13 +632,13 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
 
 def remove_nans_from_task_Y_t_if_present(task):
     """If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"])"""
-    Y_t_nans_list = []
     # First check whether there are any NaNs that we need to remove
     nans_present = False
-    for Y_t_nans in Y_t_nans_list:
-        if B.any(Y_t_nans):
+    for Y_t in task["Y_t"]:
+        if B.any(B.isnan(Y_t)):
             nans_present = True
 
+    Y_t_nans_list = []
     if nans_present:
         for i, (X, Y) in enumerate(zip(task["X_t"], task["Y_t"])):
             Y = flatten_Y(Y)
