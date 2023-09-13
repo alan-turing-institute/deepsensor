@@ -35,7 +35,7 @@ class TaskLoader:
         ] = None,
         aux_at_contexts: Union[xr.DataArray, xr.Dataset, str] = None,
         aux_at_targets: Union[xr.DataArray, xr.Dataset, str] = None,
-        links: Union[Tuple, List[Tuple[int, int]], None] = None,
+        links: List[Tuple[int, int]] | None = None,
         context_delta_t: Union[int, List[int]] = 0,
         target_delta_t: Union[int, List[int]] = 0,
         time_freq: str = "D",
@@ -142,7 +142,7 @@ class TaskLoader:
         self.aux_at_contexts = self._cast_to_dtype(self.aux_at_contexts)
         self.aux_at_targets = self._cast_to_dtype(self.aux_at_targets)
 
-        self.links = self.check_links(self.links)
+        self.links = self._check_links(self.links)
 
         (
             self.context_dims,
@@ -450,7 +450,7 @@ class TaskLoader:
             aux_at_target_var_IDs,
         )
 
-    def check_links(self, links):
+    def _check_links(self, links):
         """Check that the context-target links are valid."""
         if links is None:
             return None

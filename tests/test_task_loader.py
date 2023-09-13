@@ -218,6 +218,14 @@ class TestTaskLoader(unittest.TestCase):
             task["Y_c"][0].size // 2, task["Y_t"][0].size // 2
         )  # Should be split equally
 
+        # Should raise ValueError if `links` is not a list of tuples
+        with self.assertRaises(AssertionError):
+            TaskLoader(context=self.df, target=self.df, links=[0, 1])
+        with self.assertRaises(AssertionError):
+            TaskLoader(context=self.df, target=self.df, links=(0, 1))
+        with self.assertRaises(AssertionError):
+            TaskLoader(context=self.df, target=self.df, links=[(0, 1, 2)])
+
         # Should raise ValueError if "split" provided for context but not target (or vice versa)
         with self.assertRaises(ValueError):
             task = tl("2020-01-01", "split", "all")
