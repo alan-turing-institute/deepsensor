@@ -1,14 +1,15 @@
 import copy
 import os.path
-import warnings
 import json
 from typing import Union, List
 
 import lab as B
 import numpy as np
+import warnings
 from matrix import Diagonal
 from plum import ModuleType, dispatch
 
+import deepsensor.data.task
 from deepsensor import backend
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
@@ -237,43 +238,22 @@ class ConvNP(DeepSensorModel):
     def modify_task(cls, task):
         """Cast numpy arrays to TensorFlow or PyTorch tensors, add batch dim, and mask NaNs"""
 
-        def array_modify_fn(arr):
-            arr = arr[np.newaxis, ...]  # Add batch dim
+        if "batch_dim" not in task["ops"]:
+            task = task.add_batch_dim()
+        if "float32" not in task["ops"]:
+            task = task.cast_to_float32()
+        if "numpy_mask" not in task["ops"]:
+            task = task.mask_nans_numpy()
+        if "nps_mask" not in task["ops"]:
+            task = task.mask_nans_nps()
+        if "tensor" not in task["ops"]:
+            task = task.convert_to_tensor()
 
-            arr = arr.astype(np.float32)  # Cast to float32
-
-            # Find NaNs
-            mask = np.isnan(arr)
-            if np.any(mask):
-                # Set NaNs to zero - necessary for `neuralprocesses` (can't have NaNs)
-                arr[mask] = 0.0
-                # Mask array (True for observed, False for missing) - keep size 1 variable dim
-                mask = ~np.any(mask, axis=1, keepdims=True)
-
-            # Convert to tensor object based on deep learning backend
-            arr = backend.convert_to_tensor(arr)
-
-            # Convert to `nps.Masked` object if there are NaNs
-            if B.any(mask):
-                arr = backend.nps.Masked(arr, B.cast(B.dtype(arr), mask))
-
-            return arr
-
-        task = task.modify(array_modify_fn, modify_flag="NPS")
-        return task
-
-    @classmethod
-    def check_task(cls, task):
-        """Check that the task is compatible with the model."""
-        if task["flag"] is None:
-            task = cls.modify_task(task)
-        elif task["flag"] != "NPS":
-            raise ValueError(f"Task has been modified for {task['modify']}.")
         return task
 
     def __call__(self, task, n_samples=10, requires_grad=False):
         """Compute ConvNP distribution."""
-        task = ConvNP.check_task(task)
+        task = ConvNP.modify_task(task)
         dist = run_nps_model(self.model, task, n_samples, requires_grad)
         return dist
 
@@ -426,7 +406,7 @@ class ConvNP(DeepSensorModel):
         #
         #     )
 
-        task = ConvNP.check_task(task)
+        task = ConvNP.modify_task(task)
 
         context_data, xt, yt, model_kwargs = convert_task_to_nps_args(task)
 
@@ -488,8 +468,8 @@ class ConvNP(DeepSensorModel):
         task = flatten_gridded_data_in_task(task)
         task_arsample = flatten_gridded_data_in_task(task_arsample)
 
-        task_arsample = ConvNP.check_task(task_arsample)
-        task = ConvNP.check_task(task)
+        task_arsample = ConvNP.modify_task(task_arsample)
+        task = ConvNP.modify_task(task)
 
         if backend.str == "torch":
             import torch
@@ -536,98 +516,12 @@ class ConvNP(DeepSensorModel):
 
 
 def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
-    """Concatenate a list of tasks into a single task containing multiple batches.
-
-    TODO:
-    - Consider moving to `nps.py` as this leverages `neuralprocesses` functionality.
-    - Raise error if aux_t values passed (not supported I don't think)
-
-    Parameters
-    ----------
-    tasks : list of Task. List of tasks to concatenate into a single task.
-    multiple : int. Contexts are padded to the smallest multiple of this number that is greater
-        than the number of contexts in each task. Defaults to 1 (padded to the largest number of
-        contexts in the tasks). Setting to a larger number will increase the amount of padding
-        but decrease the range of tensor shapes presented to the model, which simplifies
-        the computational graph in graph mode.
-
-    Returns
-    -------
-    merged_task : Task. Task containing multiple batches.
-    """
-    if len(tasks) == 1:
-        return tasks[0]
-
-    # Assert number of target sets equal
-    n_target_sets = [len(task["Y_t"]) for task in tasks]
-    if not all([n == n_target_sets[0] for n in n_target_sets]):
-        raise ValueError(
-            f"All tasks must have the same number of target sets to concatenate: got {n_target_sets}. "
-        )
-    n_target_sets = n_target_sets[0]
-
-    for target_set_i in range(n_target_sets):
-        # Raise error if target sets have different numbers of targets across tasks
-        n_target_obs = [task["Y_t"][target_set_i].size for task in tasks]
-        if not all([n == n_target_obs[0] for n in n_target_obs]):
-            raise ValueError(
-                f"All tasks must have the same number of targets to concatenate: got {n_target_sets}. "
-                "If you want to train using batches containing tasks with differing numbers of targets, "
-                "you can run the model individually over each task and average the losses."
-            )
-
-        # Raise error if target sets are different types (gridded/non-gridded) across tasks
-        if isinstance(tasks[0]["X_t"][target_set_i], tuple):
-            for task in tasks:
-                if not isinstance(task["X_t"][target_set_i], tuple):
-                    raise ValueError(
-                        "All tasks must have the same type of target set (gridded or non-gridded) "
-                        f"to concatenate. For target set {target_set_i}, got {type(task['X_t'][target_set_i])}."
-                    )
-
-    # For each task, store list of tuples of (x_c, y_c) (one tuple per context set)
-    contexts = []
-    for i, task in enumerate(tasks):
-        # Ensure converted to tensors with batch dims
-        task = ConvNP.modify_task(task)
-        tasks[i] = task
-
-        contexts_i = list(zip(task["X_c"], task["Y_c"]))
-        contexts.append(contexts_i)
-
-    # List of tuples of merged (x_c, y_c) along batch dim with padding
-    # (up to the smallest multiple of `multiple` greater than the number of contexts in each task)
-    merged_context = [
-        backend.nps.merge_contexts(
-            *[context_set for context_set in contexts_i], multiple=multiple
-        )
-        for contexts_i in zip(*contexts)
-    ]
-
-    merged_task = copy.deepcopy(tasks[0])
-
-    # Convert list of tuples of (x_c, y_c) to list of x_c and list of y_c
-    merged_task["X_c"] = [c[0] for c in merged_context]
-    merged_task["Y_c"] = [c[1] for c in merged_context]
-
-    # This assumes that all tasks have the same number of targets
-    for i in range(n_target_sets):
-        if isinstance(tasks[0]["X_t"][i], tuple):
-            # Target set is gridded with tuple of coords for `X_t`
-            merged_task["X_t"][i] = (
-                B.concat(*[t["X_t"][i][0] for t in tasks], axis=0),
-                B.concat(*[t["X_t"][i][1] for t in tasks], axis=0),
-            )
-        else:
-            # Target set is off-the-grid with tensor for `X_t`
-            merged_task["X_t"][i] = B.concat(*[t["X_t"][i] for t in tasks], axis=0)
-        merged_task["Y_t"][i] = B.concat(*[t["Y_t"][i] for t in tasks], axis=0)
-
-    merged_task["time"] = [t["time"] for t in tasks]
-
-    merged_task = Task(merged_task)
-
-    return merged_task
+    warnings.warn(
+        "concat_tasks has been moved to deepsensor.data.task and will be removed from "
+        "deepsensor.model.convnp in a future release.",
+        FutureWarning,
+    )
+    return deepsensor.data.task.concat_tasks(tasks, multiple)
 
 
 def remove_nans_from_task_Y_t_if_present(task):

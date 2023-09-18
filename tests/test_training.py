@@ -11,7 +11,8 @@ import deepsensor.tensorflow as deepsensor
 from deepsensor.train.train import Trainer
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.loader import TaskLoader
-from deepsensor.model.convnp import ConvNP, concat_tasks
+from deepsensor.model.convnp import ConvNP
+from deepsensor.data.task import concat_tasks
 
 from tests.utils import gen_random_data_xr, gen_random_data_pandas
 
@@ -56,6 +57,34 @@ class TestTraining(unittest.TestCase):
 
         # Check that the context and target data are concatenated correctly
         merged_task = concat_tasks(tasks, multiple=multiple)
+
+    def test_concat_tasks_with_nans(self):
+        tl = TaskLoader(context=self.da, target=self.da)
+
+        seed = 42
+        rng = np.random.default_rng(seed)
+
+        n_tasks = 5
+        tasks = []
+        tasks_different_n_targets = []
+        for i in range(n_tasks):
+            n_context = rng.integers(1, 100)
+            n_target = rng.integers(1, 100)
+            date = rng.choice(self.da.time.values)
+            tasks_different_n_targets.append(
+                tl(date, n_context, n_target)
+            )  # Changing number of targets
+            task = tl(date, n_context, 42)
+            task["Y_c"][0][:, 0] = np.nan
+            tasks.append(task)
+
+        multiple = 50
+
+        # Check that the context and target data are concatenated correctly
+        merged_task = concat_tasks(tasks, multiple=multiple)
+
+        if np.any(np.isnan(merged_task["Y_c"][0].y)):
+            raise ValueError("NaNs in the merged context data")
 
     def test_training(self):
         """A basic test of the training loop

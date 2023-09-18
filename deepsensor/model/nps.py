@@ -201,6 +201,6 @@ def construct_neural_process(
 
 def compute_encoding_tensor(model, task: Task):
     neural_process_encoder = backend.nps.Model(model.model.encoder, lambda x: x)
-    task = model.check_task(task)
+    task = model.modify_task(task)
     encoding = B.to_numpy(run_nps_model(neural_process_encoder, task))
     return encoding

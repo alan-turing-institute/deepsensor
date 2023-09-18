@@ -818,8 +818,7 @@ class TaskLoader:
         task = {}
 
         task["time"] = date
-        # Flag for modifying the task (reshaping, adding data, etc.)
-        task["flag"] = None
+        task["ops"] = []
         task["X_c"] = []
         task["Y_c"] = []
         task["X_t"] = []

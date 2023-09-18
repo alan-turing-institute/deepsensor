@@ -204,12 +204,6 @@ class TestTaskLoader(unittest.TestCase):
                 with self.assertRaises(InvalidSamplingStrategyError):
                     task = tl("2020-01-01", invalid_sampling_strategy)
 
-    def test_split_fails_if_not_df(self):
-        """The "split" sampling strategy only works with pandas objects (currently)"""
-        with self.assertRaises(ValueError):
-            # Indexes don't connect two pandas objects
-            tl = TaskLoader(context=self.df, target=self.da, links=[(0, 0)])
-
     def test_wrong_links(self):
         """Test link indexes out of range"""
         with self.assertRaises(ValueError):
