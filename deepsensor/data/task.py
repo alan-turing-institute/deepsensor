@@ -127,6 +127,40 @@ class Task(dict):
         """
         return self.op(lambda x: x.astype(np.float32), op_flag="float32")
 
+    def remove_nans_from_task_Y_t_if_present(self):
+        """If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"])"""
+        self["ops"].append("target_nans_removed")
+
+        # First check whether there are any NaNs that we need to remove
+        nans_present = False
+        for Y_t in self["Y_t"]:
+            if B.any(B.isnan(Y_t)):
+                nans_present = True
+
+        Y_t_nans_list = []
+        if nans_present:
+            for i, (X, Y) in enumerate(zip(self["X_t"], self["Y_t"])):
+                Y = flatten_Y(Y)
+                Y_t_nans = B.any(B.isnan(Y), axis=0)  # shape (n_targets,)
+                Y_t_nans_list.append(Y_t_nans)
+
+        if not nans_present:
+            return self
+
+        # NaNs present in self - remove NaNs
+        for i, (X, Y, Y_t_nans) in enumerate(zip(self["X_t"], self["Y_t"], Y_t_nans_list)):
+            if B.any(Y_t_nans):
+                if isinstance(X, tuple):
+                    # Gridded data
+                    X = flatten_X(X)
+                    Y = flatten_Y(Y)
+                self["X_t"][i] = X[:, ~Y_t_nans]
+                self["Y_t"][i] = Y[:, ~Y_t_nans]
+                if "Y_t_aux" in self.keys():
+                    self["Y_t_aux"] = self["Y_t_aux"][:, ~Y_t_nans]
+
+        return self
+
     def mask_nans_numpy(self):
         """Replace NaNs with zeroes and set a mask to indicate where the NaNs were.
 
@@ -291,6 +325,20 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     if len(tasks) == 1:
         return tasks[0]
 
+    for i, task in enumerate(tasks):
+        if "numpy_mask" in task["ops"] or "nps_mask" in task["ops"]:
+            raise ValueError(
+                "Cannot concatenate tasks that have had NaNs masked. "
+                "Masking will be applied automatically after concatenation."
+            )
+        if "target_nans_removed" not in task["ops"]:
+            task = task.remove_nans_from_task_Y_t_if_present()
+        if "batch_dim" not in task["ops"]:
+            task = task.add_batch_dim()
+        if "float32" not in task["ops"]:
+            task = task.cast_to_float32()
+        tasks[i] = task
+
     # Assert number of target sets equal
     n_target_sets = [len(task["Y_t"]) for task in tasks]
     if not all([n == n_target_sets[0] for n in n_target_sets]):
@@ -305,8 +353,8 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
         if not all([n == n_target_obs[0] for n in n_target_obs]):
             raise ValueError(
                 f"All tasks must have the same number of targets to concatenate: got {n_target_sets}. "
-                "If you want to train using batches containing tasks with differing numbers of targets, "
-                "you can run the model individually over each task and average the losses."
+                "To train with Task batches containing differing numbers of targets, "
+                "run the model individually over each task and average the losses."
             )
 
         # Raise error if target sets are different types (gridded/non-gridded) across tasks
@@ -321,19 +369,6 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     # For each task, store list of tuples of (x_c, y_c) (one tuple per context set)
     contexts = []
     for i, task in enumerate(tasks):
-        if "numpy_mask" in task["ops"] or "nps_mask" in task["ops"]:
-            raise ValueError(
-                "Cannot concatenate tasks that have had NaNs masked. "
-                "Masking will be applied automatically after concatenation."
-            )
-        # Ensure converted to tensors with batch dims
-        if "batch_dim" not in task["ops"]:
-            task = task.add_batch_dim()
-        if "float32" not in task["ops"]:
-            task = task.cast_to_float32()
-
-        tasks[i] = task
-
         contexts_i = list(zip(task["X_c"], task["Y_c"]))
         contexts.append(contexts_i)
 

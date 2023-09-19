@@ -238,6 +238,8 @@ class ConvNP(DeepSensorModel):
     def modify_task(cls, task):
         """Cast numpy arrays to TensorFlow or PyTorch tensors, add batch dim, and mask NaNs"""
 
+        if "target_nans_removed" not in task["ops"]:
+            task = task.remove_nans_from_task_Y_t_if_present()
         if "batch_dim" not in task["ops"]:
             task = task.add_batch_dim()
         if "float32" not in task["ops"]:
@@ -397,15 +399,6 @@ class ConvNP(DeepSensorModel):
         -------
 
         """
-        # Remove NaNs from the target data if present
-        task, nans_present = remove_nans_from_task_Y_t_if_present(task)
-        # if nans_present:
-        #     TODO raise error like:
-        #     warnings.warn(
-        #         "NaNs present in the target data. These will be removed before evaluating the loss.",
-        #
-        #     )
-
         task = ConvNP.modify_task(task)
 
         context_data, xt, yt, model_kwargs = convert_task_to_nps_args(task)
@@ -522,37 +515,3 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
         FutureWarning,
     )
     return deepsensor.data.task.concat_tasks(tasks, multiple)
-
-
-def remove_nans_from_task_Y_t_if_present(task):
-    """If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"])"""
-    # First check whether there are any NaNs that we need to remove
-    nans_present = False
-    for Y_t in task["Y_t"]:
-        if B.any(B.isnan(Y_t)):
-            nans_present = True
-
-    Y_t_nans_list = []
-    if nans_present:
-        for i, (X, Y) in enumerate(zip(task["X_t"], task["Y_t"])):
-            Y = flatten_Y(Y)
-            Y_t_nans = B.any(B.isnan(Y), axis=0)  # shape (n_targets,)
-            Y_t_nans_list.append(Y_t_nans)
-
-    if not nans_present:
-        return task, False
-
-    # NaNs present in task - make deep copy and remove NaNs
-    task = copy.deepcopy(task)
-    for i, (X, Y, Y_t_nans) in enumerate(zip(task["X_t"], task["Y_t"], Y_t_nans_list)):
-        if B.any(Y_t_nans):
-            if isinstance(X, tuple):
-                # Gridded data
-                X = flatten_X(X)
-                Y = flatten_Y(Y)
-            task["X_t"][i] = X[:, ~Y_t_nans]
-            task["Y_t"][i] = Y[:, ~Y_t_nans]
-            if "Y_t_aux" in task.keys():
-                task["Y_t_aux"] = task["Y_t_aux"][:, ~Y_t_nans]
-
-    return task, True
