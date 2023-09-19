@@ -148,7 +148,9 @@ class Task(dict):
             return self
 
         # NaNs present in self - remove NaNs
-        for i, (X, Y, Y_t_nans) in enumerate(zip(self["X_t"], self["Y_t"], Y_t_nans_list)):
+        for i, (X, Y, Y_t_nans) in enumerate(
+            zip(self["X_t"], self["Y_t"], Y_t_nans_list)
+        ):
             if B.any(Y_t_nans):
                 if isinstance(X, tuple):
                     # Gridded data
