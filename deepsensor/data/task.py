@@ -354,7 +354,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
         n_target_obs = [task["Y_t"][target_set_i].size for task in tasks]
         if not all([n == n_target_obs[0] for n in n_target_obs]):
             raise ValueError(
-                f"All tasks must have the same number of targets to concatenate: got {n_target_sets}. "
+                f"All tasks must have the same number of targets to concatenate: got {n_target_obs}. "
                 "To train with Task batches containing differing numbers of targets, "
                 "run the model individually over each task and average the losses."
             )
