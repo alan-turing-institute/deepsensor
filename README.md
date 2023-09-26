@@ -1,6 +1,6 @@
 [//]: # (![]&#40;figs/DeepSensorLogo.png&#41;)
 <ul style="text-align: center;">
-<img src="figs/DeepSensorLogo.png" width="700"/>
+<img src="figs/DeepSensorLogo2.png" width="700"/>
 </ul>
 
 <ul style="margin-top:0px;">
