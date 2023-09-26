@@ -20,12 +20,12 @@ class DataProcessor:
 
     def __init__(
         self,
-        folder: str | None = None,
+        folder: Union[str, None] = None,
         time_name: str = "time",
         x1_name: str = "x1",
         x2_name: str = "x2",
-        x1_map: tuple | None = None,
-        x2_map: tuple | None = None,
+        x1_map: Union[tuple, None] = None,
+        x2_map: Union[tuple, None] = None,
         deepcopy: bool = True,
         verbose: bool = False,
     ):

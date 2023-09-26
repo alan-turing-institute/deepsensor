@@ -9,6 +9,8 @@ from deepsensor.data.utils import (
     compute_pandas_data_resolution,
 )
 
+from typing import List
+
 
 def gen_ppu(task_loader: TaskLoader) -> int:
     """Computes data-informed settings for the model's internal grid density (ppu, points per unit)
@@ -55,7 +57,7 @@ def gen_decoder_scale(model_ppu: int) -> float:
     return 1 / model_ppu
 
 
-def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> list[float]:
+def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> List[float]:
     """Computes data-informed settings for the encoder SetConv scale for each context set
 
     This sets the length scale of the Gaussian basis functions used to encode the context sets.

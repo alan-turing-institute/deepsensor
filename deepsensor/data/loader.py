@@ -18,7 +18,7 @@ class TaskLoader:
 
     def __init__(
         self,
-        task_loader_ID: str | None = None,
+        task_loader_ID: Union[str, None] = None,
         context: Union[
             xr.DataArray,
             xr.Dataset,
@@ -35,7 +35,7 @@ class TaskLoader:
         ] = None,
         aux_at_contexts: Union[xr.DataArray, xr.Dataset, str] = None,
         aux_at_targets: Union[xr.DataArray, xr.Dataset, str] = None,
-        links: List[Tuple[int, int]] | None = None,
+        links: Union[List[Tuple[int, int]], None] = None,
         context_delta_t: Union[int, List[int]] = 0,
         target_delta_t: Union[int, List[int]] = 0,
         time_freq: str = "D",
