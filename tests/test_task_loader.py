@@ -70,7 +70,7 @@ class TestTaskLoader(unittest.TestCase):
         Loops over all possible combinations of context/target sampling methods
         and returns a list of arguments for ``TaskLoader.__call__``.
         Options tested include:
-        
+
             - (int): Random number of samples
             - (float): Fraction of samples
             - "all": All samples
