@@ -1,9 +1,8 @@
 import copy
 import os.path
 import json
-from typing import Union, List, Literal, Tuple, Optional, types
+from typing import Union, List, Literal, Optional
 import warnings
-from typing import Union, List
 
 import lab as B
 import numpy as np
@@ -11,23 +10,22 @@ import warnings
 from matrix import Diagonal
 from plum import ModuleType, dispatch
 
-import deepsensor.data.task
-from deepsensor import backend
-from deepsensor.data.loader import TaskLoader
-from deepsensor.data.processor import DataProcessor
-from deepsensor.data.task import (
+from .. import backend
+from ..data.loader import TaskLoader
+from ..data.processor import DataProcessor
+from ..data.task import (
     Task,
     flatten_gridded_data_in_task,
     flatten_X,
     flatten_Y,
 )
-from deepsensor.model.defaults import (
+from ..model.defaults import (
     gen_ppu,
     gen_encoder_scales,
     gen_decoder_scale,
 )
-from deepsensor.model.model import DeepSensorModel
-from deepsensor.model.nps import (
+from ..model.model import DeepSensorModel
+from ..model.nps import (
     construct_neural_process,
     convert_task_to_nps_args,
     run_nps_model,

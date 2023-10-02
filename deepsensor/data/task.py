@@ -6,8 +6,8 @@ import lab as B
 import plum
 import copy
 
-from deepsensor import backend
-from deepsensor.errors import TaskSetIndexError, GriddedDataError
+from . import backend
+from ..errors import TaskSetIndexError, GriddedDataError
 
 
 class Task(dict):

@@ -20,8 +20,8 @@ def convert_to_tensor(arr):
     return torch.tensor(arr)
 
 
-from deepsensor import config as deepsensor_config
-from deepsensor import backend
+from .. import config as deepsensor_config
+from .. import backend
 
 backend.nps = nps
 backend.model = torch.nn.Module

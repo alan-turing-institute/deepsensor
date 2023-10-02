@@ -1,4 +1,4 @@
-from deepsensor import backend
+from .. import backend
 import lab as B
 
 from deepsensor.data.task import Task
