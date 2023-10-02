@@ -99,7 +99,7 @@ class Task(dict):
 
         Returns
         -------
-        task : dict. 
+        task : dict.
             Task dictionary with f applied to the array elements and
             op_flag set in the ``ops`` key.
         """

@@ -563,7 +563,7 @@ class DeepSensorModel(ProbabilisticModel):
                 X_t_arr = mask_coord_array_normalised(X_t_arr, X_t_mask_normalised)
             else:
                 X_t_arr = (X_t_normalised["x1"].values, X_t_normalised["x2"].values)
-                
+
         elif mode == "off-grid":
             X_t_arr = X_t_normalised.reset_index()[["x1", "x2"]].values.T
 

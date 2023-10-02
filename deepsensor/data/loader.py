@@ -50,7 +50,7 @@ class TaskLoader:
     ) -> None:
         """
         Initialise a TaskLoader object.
-    
+
         The behaviour is the following:
         - If all data passed as paths, load the data and overwrite the paths with the loaded data
         - Either all data is passed as paths, or all data is passed as loaded data (else ValueError)

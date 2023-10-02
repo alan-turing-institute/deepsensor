@@ -241,7 +241,7 @@ class ConvNP(DeepSensorModel):
         super().__init__()
 
         self.load(model_ID)
-        
+
     @dispatch
     def __init__(
         self,
@@ -251,7 +251,7 @@ class ConvNP(DeepSensorModel):
     ):
         """Instantiate a model from a folder containing model weights and config."""
         super().__init__(data_processor, task_loader)
-        
+
         self.load(model_ID)
 
     def save(self, model_ID: str):
@@ -290,7 +290,6 @@ class ConvNP(DeepSensorModel):
 
     @classmethod
     def modify_task(cls, task):
-    
         """
         Cast numpy arrays to TensorFlow or PyTorch tensors, add batch dim, and
         mask NaNs.
@@ -305,7 +304,7 @@ class ConvNP(DeepSensorModel):
         ...
             ...
         """
- 
+
         if "target_nans_removed" not in task["ops"]:
             task = task.remove_nans_from_task_Y_t_if_present()
         if "batch_dim" not in task["ops"]:

@@ -240,7 +240,7 @@ class DataProcessor:
             and "params" in self.config[var_ID]
         ):
             return True
-        
+
         return False
 
     def add_to_config(self, var_ID, **kwargs):
@@ -251,7 +251,7 @@ class DataProcessor:
         """
         Get pre-computed normalisation params or compute them for variable
         ``var_ID``.
-        
+
         .. note:
 
             TODO do we need to pass var_ID? Can we just use name of data?
