@@ -1,4 +1,6 @@
 import numpy as np
+import os
+import json
 
 import xarray as xr
 import pandas as pd
@@ -7,30 +9,33 @@ import pprint
 
 from copy import deepcopy
 
+from plum import dispatch
 from typing import Union, Optional, List
 
 
 class DataProcessor:
     """Normalise xarray and pandas data for use in deepsensor models"""
 
+    config_fname = "data_processor_config.json"
+
     def __init__(
         self,
-        norm_params: Optional[dict] = None,
+        folder: Union[str, None] = None,
         time_name: str = "time",
         x1_name: str = "x1",
         x2_name: str = "x2",
-        x1_map: tuple = (0, 1),
-        x2_map: tuple = (0, 1),
+        x1_map: Union[tuple, None] = None,
+        x2_map: Union[tuple, None] = None,
         deepcopy: bool = True,
         verbose: bool = False,
-    ) -> None:
+    ):
         """
         Initialise a DataProcessor object.
 
         Parameters
         ----------
-        norm_params : dict, optional
-            Normalisation params. Defaults to None.
+        folder : str, optional
+            Folder to load normalisation params from. Defaults to None.
         x1_name : str, optional)
             Name of first spatial coord (e.g. "lat"). Defaults to "x1".
         x2_name : str, optional)
@@ -47,19 +52,41 @@ class DataProcessor:
         verbose : bool, optional)
             Whether to print verbose output. Defaults to False.
         """
-        x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
+        if folder is not None:
+            fpath = os.path.join(folder, self.config_fname)
+            if not os.path.exists(fpath):
+                raise FileNotFoundError(
+                    f"Could not find DataProcessor config file {fpath}"
+                )
+            with open(fpath, "r") as f:
+                self.config = json.load(f)
+                self.config["coords"]["x1"]["map"] = tuple(
+                    self.config["coords"]["x1"]["map"]
+                )
+                self.config["coords"]["x2"]["map"] = tuple(
+                    self.config["coords"]["x2"]["map"]
+                )
 
-        if norm_params is None:
-            norm_params = {}
+            self.x1_none = self.config["coords"]["x1"]["map"] is None
+            self.x2_none = self.config["coords"]["x2"]["map"] is None
+        else:
+            self.config = {}
 
-        self.norm_params = norm_params
+            self.x1_none = x1_map is None
+            self.x2_none = x2_map is None
+            if (self.x1_none and not self.x2_none) or (
+                not self.x1_none and self.x2_none
+            ):
+                raise ValueError("Must provide both x1_map and x2_map, or neither.")
+            elif not self.x1_none and not self.x2_none:
+                x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
 
-        if "coords" not in self.norm_params:
-            # Add coordinate normalisation info to norm_params
-            self.set_coord_params(time_name, x1_name, x1_map, x2_name, x2_map)
+            if "coords" not in self.config:
+                # Add coordinate normalisation info to config
+                self.set_coord_params(time_name, x1_name, x1_map, x2_name, x2_map)
 
         self.raw_spatial_coord_names = [
-            self.norm_params["coords"][coord]["name"] for coord in ["x1", "x2"]
+            self.config["coords"][coord]["name"] for coord in ["x1", "x2"]
         ]
 
         self.deepcopy = deepcopy
@@ -67,6 +94,13 @@ class DataProcessor:
 
         # List of valid normalisation method names
         self.valid_methods = ["mean_std", "min_max"]
+
+    def save(self, folder: str):
+        """Save DataProcessor config to JSON in `folder`"""
+        os.makedirs(folder, exist_ok=True)
+        fpath = os.path.join(folder, self.config_fname)
+        with open(fpath, "w") as f:
+            json.dump(self.config, f, indent=4, sort_keys=False)
 
     def _validate_coord_mappings(self, x1_map, x2_map):
         """Ensure the maps are valid and of appropriate types."""
@@ -93,8 +127,7 @@ class DataProcessor:
     def _validate_xr(self, data: Union[xr.DataArray, xr.Dataset]):
         def _validate_da(da: xr.DataArray):
             coord_names = [
-                self.norm_params["coords"][coord]["name"]
-                for coord in ["time", "x1", "x2"]
+                self.config["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
             ]
             if coord_names[0] not in da.dims:
                 # We don't have a time dimension.
@@ -113,7 +146,7 @@ class DataProcessor:
 
     def _validate_pandas(self, df: Union[pd.DataFrame, pd.Series]):
         coord_names = [
-            self.norm_params["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
+            self.config["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
         ]
 
         if coord_names[0] not in df.index.names:
@@ -131,7 +164,7 @@ class DataProcessor:
 
     def __str__(self):
         s = "DataProcessor with normalisation params:\n"
-        s += pprint.pformat(self.norm_params)
+        s += pprint.pformat(self.config)
         return s
 
     @classmethod
@@ -202,34 +235,26 @@ class DataProcessor:
             Whether normalisation params are computed for a given variable.
         """
         if (
-            var_ID in self.norm_params
-            and self.norm_params[var_ID]["method"] == method
-            and "param1" in self.norm_params[var_ID]
-            and "param2" in self.norm_params[var_ID]
+            var_ID in self.config
+            and self.config[var_ID]["method"] == method
+            and "params" in self.config[var_ID]
         ):
             return True
-
+        
         return False
 
-    def add_to_norm_params(self, var_ID, **kwargs) -> None:
-        """
-        Add ``kwargs`` to ``norm_params`` dict for variable ``var_ID``.
-
-        Parameters
-        ----------
-        var_ID : ...
-            ...
-
-        Returns
-        -------
-        None.
-        """
-        self.norm_params[var_ID] = kwargs
+    def add_to_config(self, var_ID, **kwargs):
+        """Add `kwargs` to `config` dict for variable `var_ID`"""
+        self.config[var_ID] = kwargs
 
     def get_norm_params(self, var_ID, data, method=None):
         """
         Get pre-computed normalisation params or compute them for variable
         ``var_ID``.
+        
+        .. note:
+
+            TODO do we need to pass var_ID? Can we just use name of data?
 
         Parameters
         ----------
@@ -251,9 +276,8 @@ class DataProcessor:
             )
 
         if self.check_params_computed(var_ID, method):
-            # Already have "param1" and "param2" in norm_params with `"method": method` - load them
-            param1 = self.norm_params[var_ID]["param1"]
-            param2 = self.norm_params[var_ID]["param2"]
+            # Already have "params" in config with `"method": method` - load them
+            params = self.config[var_ID]["params"]
         else:
             # Params not computed - compute them now
             if self.verbose:
@@ -264,20 +288,16 @@ class DataProcessor:
                 )
             DataProcessor.load_dask(data)
             if method == "mean_std":
-                param1 = float(data.mean())
-                param2 = float(data.std())
+                params = {"mean": float(data.mean()), "std": float(data.std())}
             elif method == "min_max":
-                param1 = float(data.min())
-                param2 = float(data.max())
+                params = {"min": float(data.min()), "max": float(data.max())}
             if self.verbose:
-                print(
-                    f"Done. {var_ID} {method} param1={param1:.3f}, param2={param2:.3f}"
-                )
-            self.add_to_norm_params(
+                print(f"Done. {var_ID} {method} params={params}")
+            self.add_to_config(
                 var_ID,
-                **{"method": method, "param1": param1, "param2": param2},
+                **{"method": method, "params": params},
             )
-        return param1, param2
+        return params
 
     def map_coord_array(self, coord_array: np.ndarray, unnorm: bool = False):
         """
@@ -317,8 +337,8 @@ class DataProcessor:
         Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
             Normalised or unnormalised spatial coords of x1 and x2.
         """
-        x11, x12 = self.norm_params["coords"]["x1"]["map"]
-        x21, x22 = self.norm_params["coords"]["x2"]["map"]
+        x11, x12 = self.config["coords"]["x1"]["map"]
+        x21, x22 = self.config["coords"]["x2"]["map"]
 
         if not unnorm:
             new_coords_x1 = (x1 - x11) / (x12 - x11)
@@ -356,20 +376,38 @@ class DataProcessor:
 
         if unnorm:
             new_coord_IDs = [
-                self.norm_params["coords"][coord_ID]["name"]
+                self.config["coords"][coord_ID]["name"]
                 for coord_ID in ["time", "x1", "x2"]
             ]
             old_coord_IDs = ["time", "x1", "x2"]
         else:
             new_coord_IDs = ["time", "x1", "x2"]
             old_coord_IDs = [
-                self.norm_params["coords"][coord_ID]["name"]
+                self.config["coords"][coord_ID]["name"]
                 for coord_ID in ["time", "x1", "x2"]
             ]
 
-        new_x1, new_x2 = self.map_x1_and_x2(
-            data[old_coord_IDs[1]], data[old_coord_IDs[2]], unnorm=unnorm
+        x1, x2 = (
+            data[old_coord_IDs[1]],
+            data[old_coord_IDs[2]],
         )
+
+        # Infer x1 and x2 mappings from min/max of data coords if not provided by user
+        if self.x1_none and self.x2_none:
+            x1_map = (x1.min(), x1.max())
+            x2_map = (x2.min(), x2.max())
+            x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
+            self.config["coords"]["x1"]["map"] = x1_map
+            self.config["coords"]["x2"]["map"] = x2_map
+            if self.verbose:
+                print(
+                    f"Inferring x1_map={x1_map} and x2_map={x2_map} from data min/max"
+                )
+
+            self.x2_none = False
+            self.x1_none = False
+
+        new_x1, new_x2 = self.map_x1_and_x2(x1, x2, unnorm=unnorm)
 
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Drop old spatial coord columns *before* adding new ones, in case
@@ -444,46 +482,46 @@ class DataProcessor:
         """
         if not unnorm and method is None:
             raise ValueError("Must provide `method` if normalising data.")
-        elif (
-            unnorm
-            and method is not None
-            and self.norm_params[var_ID]["method"] != method
-        ):
+        elif unnorm and method is not None and self.config[var_ID]["method"] != method:
             # User has provided a different method to the one used for normalising
             raise ValueError(
-                f"Variable '{var_ID}' has been normalised with method '{self.norm_params[var_ID]['method']}', "
+                f"Variable '{var_ID}' has been normalised with method '{self.config[var_ID]['method']}', "
                 f"cannot unnormalise with method '{method}'. Pass `method=None` or"
-                f"`method='{self.norm_params[var_ID]['method']}'`"
+                f"`method='{self.config[var_ID]['method']}'`"
             )
         if method is None and unnorm:
-            # Determine normalisation method from norm_params for unnormalising
-            method = self.norm_params[var_ID]["method"]
+            # Determine normalisation method from config for unnormalising
+            method = self.config[var_ID]["method"]
         elif method not in self.valid_methods:
             raise ValueError(
                 f"Method {method} not recognised. Use one of {self.valid_methods}"
             )
 
-        param1, param2 = self.get_norm_params(var_ID, data, method)
+        params = self.get_norm_params(var_ID, data, method)
 
         if method == "mean_std":
+            std = params["std"]
+            mean = params["mean"]
             if unnorm:
-                scale = param2
-                offset = param1
+                scale = std
+                offset = mean
             else:
-                scale = 1 / param2
-                offset = -param1 / param2
+                scale = 1 / std
+                offset = -mean / std
             data = data * scale
             if add_offset:
                 data = data + offset
             return data
 
         elif method == "min_max":
+            minimum = params["min"]
+            maximum = params["max"]
             if unnorm:
-                scale = (param2 - param1) / 2
-                offset = (param2 + param1) / 2
+                scale = (maximum - minimum) / 2
+                offset = (maximum + minimum) / 2
             else:
-                scale = 2 / (param2 - param1)
-                offset = -(param2 + param1) / (param2 - param1)
+                scale = 2 / (maximum - minimum)
+                offset = -(maximum + minimum) / (maximum - minimum)
             data = data * scale
             if add_offset:
                 data = data + offset
@@ -632,9 +670,27 @@ def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]) -> np.
     return np.stack([X1.ravel(), X2.ravel()], axis=0)
 
 
-def mask_coord_array_normalised(coord_arr, mask_da):
+def process_X_mask_for_X(X_mask: xr.DataArray, X: xr.DataArray):
+    """Process X_mask by interpolating to X and converting to boolean.
+
+    Both X_mask and X are xarray DataArrays with the same spatial coords.
     """
-    ...
+    X_mask = X_mask.astype(float).interp_like(
+        X, method="nearest", kwargs={"fill_value": 0}
+    )
+    X_mask.data = X_mask.data.astype(bool)
+    X_mask.load()
+    return X_mask
+
+
+def mask_coord_array_normalised(
+    coord_arr: np.ndarray, mask_da: Union[xr.DataArray, xr.Dataset, None]
+):
+    """
+    Remove points from (2, N) numpy array that are outside gridded xarray boolean mask.
+
+    If `coord_arr` is shape `(2, N)`, then `mask_da` is a shape `(N,)` boolean array
+    (True if point is inside mask, False if outside).
 
     Parameters
     ----------
@@ -650,14 +706,9 @@ def mask_coord_array_normalised(coord_arr, mask_da):
     """
     if mask_da is None:
         return coord_arr
-    mask_da = mask_da.astype(float)  # Temporarily convert to float for interpolation
-    mask_da = mask_da.interp(
-        {"x1": xr.DataArray(coord_arr[0]), "x2": xr.DataArray(coord_arr[1])},
-        method="nearest",
-        kwargs=dict(fill_value=None, bounds_error=False),
-    ).data.astype(
-        bool
-    )  # Shape `coord_arr.shape[1]`, False if point is outside mask
+    mask_da = mask_da.astype(bool)
+    x1, x2 = xr.DataArray(coord_arr[0]), xr.DataArray(coord_arr[1])
+    mask_da = mask_da.sel(x1=x1, x2=x2, method="nearest")
     return coord_arr[:, mask_da]
 
 

@@ -103,18 +103,23 @@ def context_encoding(
     if nrows == 1:
         axes = axes[np.newaxis]
 
-    channel_i = 0
-    for ctx_i in context_set_idxs:
+    ctx_channel_idxs = np.cumsum(np.array(task_loader.context_dims) + 1)
+
+    for row_i, ctx_i in enumerate(context_set_idxs):
+        channel_i = (
+            ctx_channel_idxs[ctx_i - 1] if ctx_i > 0 else 0
+        )  # Starting channel index
         if verbose_titles:
             var_IDs = task_loader.context_var_IDs_and_delta_t[ctx_i]
         else:
             var_IDs = task_loader.context_var_IDs[ctx_i]
-        size = task_loader.context_dims[ctx_i] + 1  # Add density channel
-        for var_i in range(size):
-            ax = axes[ctx_i, var_i]
-            # Need `origin="lower"` because encoding has `x1` increasing from
-            # top to bottom, whereas in visualisations we want `x1` increasing
-            # from bottom to top.
+
+        ncols_row_i = task_loader.context_dims[ctx_i] + 1  # Add density channel
+        for col_i in range(ncols_row_i):
+            ax = axes[row_i, col_i]
+            # Need `origin="lower"` because encoding has `x1` increasing from top to bottom,
+            # whereas in visualisations we want `x1` increasing from bottom to top.
+
             im = ax.imshow(
                 encoding_tensor[channel_i],
                 origin="lower",
@@ -123,11 +128,11 @@ def context_encoding(
             )
             if titles is not None:
                 ax.set_title(titles[channel_i])
-            elif var_i == 0:
+            elif col_i == 0:
                 ax.set_title(f"Density {ctx_i}")
-            elif var_i > 0:
-                ax.set_title(f"{var_IDs[var_i - 1]}")
-            if var_i == 0:
+            elif col_i > 0:
+                ax.set_title(f"{var_IDs[col_i - 1]}")
+            if col_i == 0:
                 ax.set_ylabel(f"Context set {ctx_i}")
             if cbar:
                 divider = make_axes_locatable(ax)
@@ -150,9 +155,9 @@ def context_encoding(
                 labelleft=False,
             )
             channel_i += 1
-        for var_i in range(size, ncols):
+        for col_i in range(ncols_row_i, ncols):
             # Hide unused axes
-            ax = axes[ctx_i, var_i]
+            ax = axes[ctx_i, col_i]
             ax.axis("off")
 
     plt.tight_layout()
@@ -386,8 +391,8 @@ def receptive_field(
     else:
         ax.set_extent(extent, crs=crs)
 
-    x11, x12 = data_processor.norm_params["coords"]["x1"]["map"]
-    x21, x22 = data_processor.norm_params["coords"]["x2"]["map"]
+    x11, x12 = data_processor.config["coords"]["x1"]["map"]
+    x21, x22 = data_processor.config["coords"]["x2"]["map"]
 
     x1_rf_raw = receptive_field * (x12 - x11)
     x2_rf_raw = receptive_field * (x22 - x21)
@@ -412,8 +417,8 @@ def receptive_field(
     ax.coastlines()
     ax.gridlines(draw_labels=True, alpha=0.2)
 
-    x1_name = data_processor.norm_params["coords"]["x1"]["name"]
-    x2_name = data_processor.norm_params["coords"]["x2"]["name"]
+    x1_name = data_processor.config["coords"]["x1"]["name"]
+    x2_name = data_processor.config["coords"]["x2"]["name"]
     ax.set_title(
         f"Receptive field in raw coords: {x1_name}={x1_rf_raw:.2f}, "
         f"{x2_name}={x2_rf_raw:.2f}"

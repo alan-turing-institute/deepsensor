@@ -6,6 +6,7 @@ from deepsensor.data.processor import (
     mask_coord_array_normalised,
     da1_da2_same_grid,
     interp_da1_to_da2,
+    process_X_mask_for_X,
 )
 from deepsensor.model.model import (
     DeepSensorModel,
@@ -44,7 +45,6 @@ class GreedyAlgorithm:
         context_set_idx: int = 0,
         target_set_idx: int = 0,
         progress_bar: bool = False,
-        min_or_max: str = "min",
         task_loader: Optional[
             TaskLoader
         ] = None,  # OPTIONAL for oracle acquisition functions only
@@ -109,20 +109,11 @@ class GreedyAlgorithm:
         self.model_infill_method = model_infill_method
         self.context_set_idx = context_set_idx
         self.target_set_idx = target_set_idx
-        self.min_or_max = min_or_max
         self.task_loader = task_loader
         self.pbar = None
 
-        self.X_s_mask = X_s_mask
-        self.X_t_mask = X_t_mask
-
-        if min_or_max not in ["min", "max"]:
-            raise ValueError(
-                f"min_or_max must be 'min' or 'max', not {self.min_or_max}"
-            )
-
-        self.x1_name = self.model.data_processor.norm_params["coords"]["x1"]["name"]
-        self.x2_name = self.model.data_processor.norm_params["coords"]["x2"]["name"]
+        self.x1_name = self.model.data_processor.config["coords"]["x1"]["name"]
+        self.x2_name = self.model.data_processor.config["coords"]["x2"]["name"]
 
         # Normalised search and target coordinates
         if not X_normalised:
@@ -135,9 +126,14 @@ class GreedyAlgorithm:
 
         self.X_s = X_s
         self.X_t = X_t
+        self.X_s_mask = X_s_mask
+        self.X_t_mask = X_t_mask
 
         # Interpolate masks onto search and target coords
-        self.X_s_mask, self.X_t_mask = self._process_masks(X_s_mask, X_t_mask, X_s, X_t)
+        if self.X_s_mask is not None:
+            self.X_s_mask = process_X_mask_for_X(self.X_s_mask, self.X_s)
+        if self.X_t_mask is not None:
+            self.X_t_mask = process_X_mask_for_X(self.X_t_mask, self.X_t)
 
         # Interpolate overridden infill datasets at search points if necessary
         if query_infill is not None and not da1_da2_same_grid(query_infill, X_s):
@@ -189,25 +185,6 @@ class GreedyAlgorithm:
                 f"Number of new context ({N_new_context}) must be greater "
                 f"than zero and less than the number of search points ({N_s})"
             )
-
-    @classmethod
-    def _process_masks(cls, X_s_mask: xr.DataArray, X_t_mask: xr.DataArray, X_s, X_t):
-        """Process masks by interpolating to X_s and X_t"""
-        # TODO avoid repeated code
-        if X_s_mask is not None:
-            X_s_mask = X_s_mask.astype(float).interp_like(
-                X_s, method="nearest", kwargs={"fill_value": 0}
-            )
-            X_s_mask.data = X_s_mask.data.astype(bool)
-            X_s_mask.load()
-        if X_t_mask is not None:
-            X_t_mask = X_t_mask.astype(float).interp_like(
-                X_t, method="nearest", kwargs={"fill_value": 0}
-            )
-            X_t_mask.data = X_t_mask.data.astype(bool)
-            X_t_mask.load()
-
-        return X_s_mask, X_t_mask
 
     def _get_times_from_tasks(self):
         """Get times from tasks"""
@@ -347,8 +324,8 @@ class GreedyAlgorithm:
             elif isinstance(acquisition_fn, AcquisitionFunction):
                 importances = []
 
-                # TODO make computing the difference a bool
-                # importance_bef = acquisition_fn(task)
+                if self.diff:
+                    importance_bef = acquisition_fn(task)
 
                 # Add size-1 dim after row dim to preserve row dim for passing to
                 #   acquisition_fn. Also roll final axis to first axis for looping over search points.
@@ -377,8 +354,8 @@ class GreedyAlgorithm:
 
                     importance = acquisition_fn(task_with_new)
 
-                    # TODO make computing the difference a bool
-                    # importance = importance - importance_bef
+                    if self.diff:
+                        importance = importance - importance_bef
 
                     importances.append(importance)
 
@@ -444,6 +421,7 @@ class GreedyAlgorithm:
         self,
         acquisition_fn: AcquisitionFunction,
         tasks: Union[List[Task], Task],
+        diff: bool = False,
     ) -> Tuple[pd.DataFrame, xr.Dataset]:
         """
         Iteratively... docstring TODO
@@ -489,6 +467,12 @@ class GreedyAlgorithm:
             raise ValueError(
                 f"min_or_max must be either 'min' or 'max', got " f"{self.min_or_max}."
             )
+
+        if diff and isinstance(acquisition_fn, AcquisitionFunctionParallel):
+            raise ValueError(
+                "diff=True is not valid for parallel acquisition functions."
+            )
+        self.diff = diff
 
         if isinstance(tasks, Task):
             tasks = [tasks]

@@ -9,6 +9,8 @@ from deepsensor.data.utils import (
     compute_pandas_data_resolution,
 )
 
+from typing import List
+
 
 def gen_ppu(task_loader: TaskLoader) -> int:
     """

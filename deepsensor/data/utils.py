@@ -144,8 +144,11 @@ def compute_pandas_data_resolution(
     closest_distances = []
     df = df.reset_index().set_index("time")
     for time in dates:
-        df_t = df.loc[time]
+        df_t = df.loc[[time]]
         X = df_t[["x1", "x2"]].values  # (N, 2) array of coordinates
+        if X.shape[0] < 2:
+            # Skip this time if there are fewer than 2 stationS
+            continue
         X_unique = np.unique(X, axis=0)  # (N_unique, 2) array of unique coordinates
 
         pairwise_distances = scipy.spatial.distance.cdist(X_unique, X_unique)

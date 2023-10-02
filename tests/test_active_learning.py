@@ -199,19 +199,15 @@ class TestActiveLearning(unittest.TestCase):
             MeanStddev(self.model),
             Stddev(self.model),
         ]
-
         # Coarsen search points to speed up computation
         X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
-
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
             X_s=X_s,
             N_new_context=2,
         )
-
         task = self.task_loader("2014-12-31", context_sampling=10)
-
         for acquisition_fn in acquisition_fns:
             X_new_df, acquisition_fn_ds = alg(acquisition_fn, task)
 
@@ -222,10 +218,8 @@ class TestActiveLearning(unittest.TestCase):
             MeanStddev(self.model_with_aux),
             Stddev(self.model_with_aux),
         ]
-
         # Coarsen search points to speed up computation
         X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
-
         alg = GreedyAlgorithm(
             model=self.model_with_aux,
             X_t=X_s,
@@ -233,18 +227,14 @@ class TestActiveLearning(unittest.TestCase):
             N_new_context=2,
             task_loader=self.task_loader_with_aux,
         )
-
         task = self.task_loader_with_aux("2014-12-31", context_sampling=10)
-
         for acquisition_fn in acquisition_fns:
             X_new_df, acquisition_fn_ds = alg(acquisition_fn, task)
 
     def test_greedy_alg_with_oracle_acquisition_fn(self):
         acquisition_fn = OracleMAE(self.model)
-
         # Coarsen search points to speed up computation
         X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
-
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
@@ -252,16 +242,12 @@ class TestActiveLearning(unittest.TestCase):
             N_new_context=2,
             task_loader=self.task_loader,
         )
-
         task = self.task_loader("2014-12-31", context_sampling=10)
-
         _ = alg(acquisition_fn, task)
 
     def test_greedy_alg_with_sequential_acquisition_fn(self):
         acquisition_fn = Stddev(self.model)
-
         X_s = self.ds_raw.air
-
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
@@ -269,18 +255,14 @@ class TestActiveLearning(unittest.TestCase):
             N_new_context=1,
             task_loader=self.task_loader,
         )
-
         task = self.task_loader("2014-12-31", context_sampling=10)
-
         _ = alg(acquisition_fn, task)
 
     def test_greedy_alg_with_aux_at_targets_without_task_loader_raises_value_error(
         self,
     ):
         acquisition_fn = MeanStddev(self.model)
-
         X_s = self.ds_raw.air
-
         alg = GreedyAlgorithm(
             model=self.model_with_aux,
             X_t=X_s,
@@ -288,9 +270,7 @@ class TestActiveLearning(unittest.TestCase):
             N_new_context=1,
             task_loader=None,  # don't pass task_loader (to raise error)
         )
-
         task = self.task_loader_with_aux("2014-12-31", context_sampling=10)
-
         with self.assertRaises(ValueError):
             _ = alg(acquisition_fn, task)
 
@@ -298,10 +278,7 @@ class TestActiveLearning(unittest.TestCase):
         self,
     ):
         acquisition_fn = OracleMAE(self.model)
-
-        # Coarsen search points to speed up computation
-        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
-
+        X_s = self.ds_raw.air
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
@@ -309,13 +286,11 @@ class TestActiveLearning(unittest.TestCase):
             N_new_context=2,
             task_loader=None,  # don't pass task_loader (to raise error)
         )
-
         task = self.task_loader("2014-12-31", context_sampling=10)
-
         with self.assertRaises(ValueError):
             _ = alg(acquisition_fn, task)
 
-    def assert_acquisition_fn_without_min_or_max_raises_error(
+    def test_acquisition_fn_without_min_or_max_raises_error(
         self,
     ):
         class DummyAcquisitionFn(AcquisitionFunction):
@@ -327,11 +302,29 @@ class TestActiveLearning(unittest.TestCase):
         acquisition_fn = DummyAcquisitionFn(self.model)
 
         X_s = self.ds_raw.air
-
+        alg = GreedyAlgorithm(
+            model=self.model,
+            X_t=X_s,
+            X_s=X_s,
+            N_new_context=2,
+        )
         with self.assertRaises(ValueError):
-            alg = GreedyAlgorithm(
-                model=self.model,
-                X_t=X_s,
-                X_s=X_s,
-                N_new_context=2,
-            )
+            _ = alg(acquisition_fn, None)
+
+    def test_parallel_acquisition_fn_with_diff_raises_error(
+        self,
+    ):
+        acquisition_fn = Stddev(self.model)
+        X_s = self.ds_raw.air
+        alg = GreedyAlgorithm(
+            model=self.model,
+            X_t=X_s,
+            X_s=X_s,
+        )
+        task = self.task_loader("2014-12-31", context_sampling=10)
+
+        # This should work
+        _ = alg(acquisition_fn, task)
+        # This should raise an error
+        with self.assertRaises(ValueError):
+            _ = alg(acquisition_fn, task, diff=True)

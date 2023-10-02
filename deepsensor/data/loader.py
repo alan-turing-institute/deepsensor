@@ -1,5 +1,9 @@
 from deepsensor.data.task import Task, flatten_X
 
+import os
+import json
+import copy
+
 import numpy as np
 import xarray as xr
 import pandas as pd
@@ -10,20 +14,25 @@ from deepsensor.errors import InvalidSamplingStrategyError
 
 
 class TaskLoader:
+    config_fname = "task_loader_config.json"
+
     def __init__(
         self,
+        task_loader_ID: Union[str, None] = None,
         context: Union[
             xr.DataArray,
             xr.Dataset,
             pd.DataFrame,
-            List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
-        ],
+            str,
+            List[Union[xr.DataArray, xr.Dataset, pd.DataFrame, str]],
+        ] = None,
         target: Union[
             xr.DataArray,
             xr.Dataset,
             pd.DataFrame,
-            List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
-        ],
+            str,
+            List[Union[xr.DataArray, xr.Dataset, pd.DataFrame, str]],
+        ] = None,
         aux_at_contexts: Optional[Tuple[int, Union[xr.DataArray, xr.Dataset]]] = None,
         aux_at_targets: Optional[
             Union[
@@ -41,9 +50,18 @@ class TaskLoader:
     ) -> None:
         """
         Initialise a TaskLoader object.
+    
+        The behaviour is the following:
+        - If all data passed as paths, load the data and overwrite the paths with the loaded data
+        - Either all data is passed as paths, or all data is passed as loaded data (else ValueError)
+        - If all data passed as paths, the TaskLoader can be saved with the `save` method (using config)
 
         Parameters
         ----------
+        task_loader_ID : ...
+            If loading a TaskLoader from a config file, this is the folder the
+            TaskLoader was saved in (using `.save`). If this argument is passed, all other
+            arguments are ignored.
         context : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset`, :class:`pandas.DataFrame`]
             Context data. Can be a single :class:`xarray.DataArray`,
             :class:`xarray.Dataset` or :class:`pandas.DataFrame`, or a
@@ -89,45 +107,75 @@ class TaskLoader:
             Data type of the data. Used to cast the data to the specified
             dtype. Default: ``'float32'``.
         """
-        self.time_freq = time_freq
-        self.xarray_interp_method = xarray_interp_method
-        self.discrete_xarray_sampling = discrete_xarray_sampling
-        self.dtype = dtype
+        if task_loader_ID is not None:
+            self.task_loader_ID = task_loader_ID
+            # Load TaskLoader from config file
+            fpath = os.path.join(task_loader_ID, self.config_fname)
+            with open(fpath, "r") as f:
+                self.config = json.load(f)
 
-        if aux_at_contexts is not None:
-            self._check_offgrid_aux(self._check_offgrid_aux(aux_at_contexts[1]))
-        if aux_at_targets is not None:
-            self._check_offgrid_aux(aux_at_targets)
-
-        if isinstance(context, (xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series)):
-            context = (context,)
-        if isinstance(target, (xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series)):
-            target = (target,)
-        (
-            context,
-            target,
-            aux_at_contexts,
-            aux_at_targets,
-        ) = self._cast_context_and_target_to_dtype(
-            context, target, aux_at_contexts, aux_at_targets
-        )
-        self.context = context
-        self.target = target
-        self.aux_at_contexts = aux_at_contexts
-        self.aux_at_targets = aux_at_targets
-
-        self.links = self.check_links(links)
-
-        if isinstance(context_delta_t, int):
-            context_delta_t = (context_delta_t,) * len(context)
+            self.context = self.config["context"]
+            self.target = self.config["target"]
+            self.aux_at_contexts = self.config["aux_at_contexts"]
+            self.aux_at_targets = self.config["aux_at_targets"]
+            self.links = self.config["links"]
+            if self.links is not None:
+                self.links = [tuple(link) for link in self.links]
+            self.context_delta_t = self.config["context_delta_t"]
+            self.target_delta_t = self.config["target_delta_t"]
+            self.time_freq = self.config["time_freq"]
+            self.xarray_interp_method = self.config["xarray_interp_method"]
+            self.discrete_xarray_sampling = self.config["discrete_xarray_sampling"]
+            self.dtype = self.config["dtype"]
         else:
-            assert len(context_delta_t) == len(context)
-        if isinstance(target_delta_t, int):
-            target_delta_t = (target_delta_t,) * len(target)
+            self.context = context
+            self.target = target
+            self.aux_at_contexts = aux_at_contexts
+            self.aux_at_targets = aux_at_targets
+            self.links = links
+            self.context_delta_t = context_delta_t
+            self.target_delta_t = target_delta_t
+            self.time_freq = time_freq
+            self.xarray_interp_method = xarray_interp_method
+            self.discrete_xarray_sampling = discrete_xarray_sampling
+            self.dtype = dtype
+
+        if not isinstance(self.context, (tuple, list)):
+            self.context = (self.context,)
+        if not isinstance(self.target, (tuple, list)):
+            self.target = (self.target,)
+
+        if isinstance(self.context_delta_t, int):
+            self.context_delta_t = (self.context_delta_t,) * len(self.context)
         else:
-            assert len(target_delta_t) == len(target)
-        self.context_delta_t = context_delta_t
-        self.target_delta_t = target_delta_t
+            assert len(self.context_delta_t) == len(self.context), (
+                f"Length of context_delta_t ({len(self.context_delta_t)}) must be the same as "
+                f"the number of context sets ({len(self.context)})"
+            )
+        if isinstance(self.target_delta_t, int):
+            self.target_delta_t = (self.target_delta_t,) * len(self.target)
+        else:
+            assert len(self.target_delta_t) == len(self.target), (
+                f"Length of target_delta_t ({len(self.target_delta_t)}) must be the same as "
+                f"the number of target sets ({len(self.target)})"
+            )
+
+        all_paths = self._check_if_all_data_passed_as_paths()
+        if all_paths:
+            self._set_config()
+            self._load_data_from_paths()
+
+        if self.aux_at_contexts is not None:
+            self._check_offgrid_aux(self._check_offgrid_aux(self.aux_at_contexts))
+        if self.aux_at_targets is not None:
+            self._check_offgrid_aux(self.aux_at_targets)
+
+        self.context = self._cast_to_dtype(self.context)
+        self.target = self._cast_to_dtype(self.target)
+        self.aux_at_contexts = self._cast_to_dtype(self.aux_at_contexts)
+        self.aux_at_targets = self._cast_to_dtype(self.aux_at_targets)
+
+        self.links = self._check_links(self.links)
 
         (
             self.context_dims,
@@ -142,32 +190,134 @@ class TaskLoader:
             self.aux_at_target_var_IDs,
         ) = self.infer_context_and_target_var_IDs()
 
-    def _cast_context_and_target_to_dtype(
+    def _set_config(self):
+        """Instantiate a config dictionary for the TaskLoader object"""
+        # Take deepcopy to avoid modifying the original config
+        self.config = copy.deepcopy(
+            dict(
+                context=self.context,
+                target=self.target,
+                aux_at_contexts=self.aux_at_contexts,
+                aux_at_targets=self.aux_at_targets,
+                links=self.links,
+                context_delta_t=self.context_delta_t,
+                target_delta_t=self.target_delta_t,
+                time_freq=self.time_freq,
+                xarray_interp_method=self.xarray_interp_method,
+                discrete_xarray_sampling=self.discrete_xarray_sampling,
+                dtype=self.dtype,
+            )
+        )
+
+    def _check_if_all_data_passed_as_paths(self) -> bool:
+        """If all data passed as paths, save paths to config and return True."""
+
+        def _check_if_strings(x, mode="all"):
+            if x is None:
+                return None
+            elif isinstance(x, (tuple, list)):
+                if mode == "all":
+                    return all([isinstance(x_i, str) for x_i in x])
+                elif mode == "any":
+                    return any([isinstance(x_i, str) for x_i in x])
+            else:
+                return isinstance(x, str)
+
+        all_paths = all(
+            filter(
+                lambda x: x is not None,
+                [
+                    _check_if_strings(self.context),
+                    _check_if_strings(self.target),
+                    _check_if_strings(self.aux_at_contexts),
+                    _check_if_strings(self.aux_at_targets),
+                ],
+            )
+        )
+        self._is_saveable = all_paths
+
+        any_paths = any(
+            filter(
+                lambda x: x is not None,
+                [
+                    _check_if_strings(self.context, mode="any"),
+                    _check_if_strings(self.target, mode="any"),
+                    _check_if_strings(self.aux_at_contexts, mode="any"),
+                    _check_if_strings(self.aux_at_targets, mode="any"),
+                ],
+            )
+        )
+        if any_paths and not all_paths:
+            raise ValueError(
+                "Data must be passed either all as paths or all as xarray/pandas objects (not a mix)."
+            )
+
+        return all_paths
+
+    def _load_data_from_paths(self):
+        """Load data from paths and overwrite paths with loaded data."""
+
+        def _load_pandas_or_xarray(path):
+            # Need to be careful about this. We need to ensure data gets into the right form
+            #  for TaskLoader.
+            if path is None:
+                return None
+            elif path.endswith(".nc"):
+                return xr.open_dataset(path)
+            elif path.endswith(".csv"):
+                df = pd.read_csv(path)
+                if "time" in df.columns:
+                    df["time"] = pd.to_datetime(df["time"])
+                    df = df.set_index(["time", "x1", "x2"]).sort_index()
+                else:
+                    df = df.set_index(["x1", "x2"]).sort_index()
+                return df
+            else:
+                raise ValueError(f"Unknown file extension for {path}")
+
+        def _load_data(data):
+            if isinstance(data, (tuple, list)):
+                data = tuple([_load_pandas_or_xarray(data_i) for data_i in data])
+            else:
+                data = _load_pandas_or_xarray(data)
+            return data
+
+        self.context = _load_data(self.context)
+        self.target = _load_data(self.target)
+        self.aux_at_contexts = _load_data(self.aux_at_contexts)
+        self.aux_at_targets = _load_data(self.aux_at_targets)
+
+    def save(self, folder: str):
+        """Save TaskLoader config to JSON in `folder`"""
+        if not self._is_saveable:
+            raise ValueError(
+                "TaskLoader cannot be saved because not all data was passed as paths."
+            )
+
+        os.makedirs(folder, exist_ok=True)
+        fpath = os.path.join(folder, self.config_fname)
+        with open(fpath, "w") as f:
+            json.dump(self.config, f, indent=4, sort_keys=False)
+
+    def _cast_to_dtype(
         self,
-        context: List,
-        target: List,
-        aux_at_contexts: Optional[Tuple[int, Union[xr.DataArray, xr.Dataset]]] = None,
-        aux_at_targets: Optional[Union[xr.DataArray, xr.Dataset]] = None,
+        var: Union[
+            xr.DataArray,
+            xr.Dataset,
+            pd.DataFrame,
+            List[Union[xr.DataArray, xr.Dataset, pd.DataFrame, str]],
+        ],
     ) -> (List, List):
         """
         Cast context and target data to the default dtype.
 
         Parameters
         ----------
-        context : List
-            List of context data.
-        target : List
-            List of target data.
-        aux_at_contexts : Tuple[int, :class:`xarray.DataArray` | :class:`xarray.Dataset`], optional
-            Auxiliary data at context locations. Tuple of two elements, where
-            the first element is the index of the context set for which the
-            auxiliary data will be sampled at, and the second element is the
-            auxiliary data, which can be a single :class:`xarray.DataArray` or
-            :class:`xarray.Dataset`. Default: None.
-        aux_at_targets : :class:`xarray.DataArray` | :class:`xarray.Dataset`], optional
-            Auxiliary data at target locations. Can be a single
-            :class:`xarray.DataArray` or :class:`xarray.Dataset`. Default:
-            None.
+        var : ...
+            ...
+
+        TODO unit test this by passing in a variety of data types and checking that they are
+        cast correctly.
 
         Returns
         -------
@@ -187,27 +337,25 @@ class TaskLoader:
             elif isinstance(var, (pd.DataFrame, pd.Series)):
                 var = var.astype(self.dtype)
                 # Note: Numeric pandas indexes are always cast to float64, so we have to cast
-                # x1/x2 coord dtypes during task sampling
+                #   x1/x2 coord dtypes during task sampling
             else:
                 raise ValueError(f"Unknown type {type(var)} for context set {var}")
             return var
 
-        context = tuple([cast_to_dtype(var) for var in context])
-        target = tuple([cast_to_dtype(var) for var in target])
-        if aux_at_contexts is not None:
-            aux_at_contexts = (
-                aux_at_contexts[0],
-                cast_to_dtype(aux_at_contexts[1]),
-            )
-        if aux_at_targets is not None:
-            aux_at_targets = aux_at_targets.astype(self.dtype)
+        if var is None:
+            return var
+        elif isinstance(var, (tuple, list)):
+            var = tuple([cast_to_dtype(var_i) for var_i in var])
+        else:
+            var = cast_to_dtype(var)
 
-        return context, target, aux_at_contexts, aux_at_targets
+        return var
 
     def _check_offgrid_aux(self, offgrid_aux):
         if offgrid_aux is not None and "time" in offgrid_aux.dims:
             raise ValueError(
-                "The auxiliary data at target locations should not have a time dimension."
+                "Auxiliary data has a time dimension. Spatiotemporal auxiliary data is not yet supported. "
+                "Please slice the auxiliary data to a single time step."
             )
 
     def load_dask(self) -> None:
@@ -220,7 +368,7 @@ class TaskLoader:
         """
 
         def load(datasets):
-            if not datasets:
+            if datasets is None:
                 return
             if not isinstance(datasets, (tuple, list)):
                 datasets = [datasets]
@@ -230,7 +378,7 @@ class TaskLoader:
 
         load(self.context)
         load(self.target)
-        load(self.aux_at_contexts[1])
+        load(self.aux_at_contexts)
         load(self.aux_at_targets)
 
         return None
@@ -275,7 +423,7 @@ class TaskLoader:
         context_dims = count_data_dims_of_tuple_of_sets(self.context)
         target_dims = count_data_dims_of_tuple_of_sets(self.target)
         if self.aux_at_contexts is not None:
-            context_dims += count_data_dims_of_tuple_of_sets(self.aux_at_contexts[1])
+            context_dims += count_data_dims_of_tuple_of_sets(self.aux_at_contexts)
         if self.aux_at_targets is not None:
             aux_at_target_dims = count_data_dims_of_tuple_of_sets(self.aux_at_targets)[
                 0
@@ -343,9 +491,9 @@ class TaskLoader:
         )
 
         if self.aux_at_contexts is not None:
-            context_var_IDs += infer_var_IDs_of_tuple_of_sets(self.aux_at_contexts[1])
+            context_var_IDs += infer_var_IDs_of_tuple_of_sets(self.aux_at_contexts)
             context_var_IDs_and_delta_t += infer_var_IDs_of_tuple_of_sets(
-                self.aux_at_contexts[1], [0]
+                self.aux_at_contexts, [0]
             )
 
         if self.aux_at_targets is not None:
@@ -363,7 +511,7 @@ class TaskLoader:
             aux_at_target_var_IDs,
         )
 
-    def check_links(self, links: Union[Tuple[int, int], List[Tuple[int, int]]]):
+    def _check_links(self, links: Union[Tuple[int, int], List[Tuple[int, int]]]):
         """
         Check that the context-target links are valid.
 
@@ -389,15 +537,16 @@ class TaskLoader:
         if links is None:
             return None
 
-        if type(links) is list and type(links[0]) is not tuple:
-            raise ValueError("If `links` is a list, then it must be a list of tuples")
-        elif type(links) is tuple and type(links[0]) is not int:
-            raise ValueError("If `links` is a tuple, then it must be a tuple of ints")
-        elif type(links) is tuple and len(links) != 2:
-            raise ValueError("If `links` is a tuple of ints, then it must be length 2")
-        elif type(links) is tuple and len(links) == 2:
-            # Convert single tuple to list of tuples
-            links = [links]
+        assert isinstance(
+            links, list
+        ), f"Links must be a list of length-2 tuples, but got {type(links)}"
+        assert len(links) > 0, "If links is not None, it must be a non-empty list"
+        assert all(
+            isinstance(link, tuple) for link in links
+        ), f"Links must be a list of tuples, but got {[type(link) for link in links]}"
+        assert all(
+            len(link) == 2 for link in links
+        ), f"Links must be a list of length-2 tuples, but got lengths {[len(link) for link in links]}"
 
         # Check that the links are valid
         for link_i, (context_idx, target_idx) in enumerate(links):
@@ -430,7 +579,7 @@ class TaskLoader:
         s += f"\nContext variable IDs: {self.context_var_IDs}"
         s += f"\nTarget variable IDs: {self.target_var_IDs}"
         if self.aux_at_targets is not None:
-            s += f"\nAuxiliary-at-target data at targets: {self.aux_at_target_var_IDs}"
+            s += f"\nAuxiliary-at-target variable IDs: {self.aux_at_target_var_IDs}"
         return s
 
     def __repr__(self):
@@ -905,8 +1054,7 @@ class TaskLoader:
         task = {}
 
         task["time"] = date
-        # Flag for modifying the task (reshaping, adding data, etc.)
-        task["flag"] = None
+        task["ops"] = []
         task["X_c"] = []
         task["Y_c"] = []
         task["X_t"] = []
@@ -963,9 +1111,14 @@ class TaskLoader:
 
         if self.aux_at_contexts is not None:
             # Add auxiliary variable sampled at context set as a new context variable
-            X_c = task["X_c"][self.aux_at_contexts[0]]
-            Y_c_aux = self.sample_offgrid_aux(X_c, self.aux_at_contexts[1])
-            task["X_c"].append(X_c)
+            X_c_offgrid = [X_c for X_c in task["X_c"] if not isinstance(X_c, tuple)]
+            if len(X_c_offgrid) == 0:
+                # No offgrid context sets
+                X_c_offrid_all = np.empty((2, 0), dtype=self.dtype)
+            else:
+                X_c_offrid_all = np.concatenate(X_c_offgrid, axis=1)
+            Y_c_aux = self.sample_offgrid_aux(X_c_offrid_all, self.aux_at_contexts)
+            task["X_c"].append(X_c_offrid_all)
             task["Y_c"].append(Y_c_aux)
 
         if self.aux_at_targets is not None:

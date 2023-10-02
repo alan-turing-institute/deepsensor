@@ -476,7 +476,7 @@ class ContextDist(AcquisitionFunctionParallel):
 
 
 class Stddev(AcquisitionFunctionParallel):
-    """Random acquisition function."""
+    """Model standard deviation."""
 
     def __init__(self, model: ProbabilisticModel):
         """

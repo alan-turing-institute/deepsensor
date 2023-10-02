@@ -1,13 +1,16 @@
 # %%
-from typing import Union
-
-import xarray as xr
 import numpy as np
 import pandas as pd
 import unittest
+import tempfile
 
 from deepsensor.data.processor import DataProcessor
-from tests.utils import gen_random_data_xr, gen_random_data_pandas
+from tests.utils import (
+    gen_random_data_xr,
+    gen_random_data_pandas,
+    assert_allclose_pd,
+    assert_allclose_xr,
+)
 
 
 def _gen_data_xr(coords=None, dims=None, data_vars=None):
@@ -42,52 +45,39 @@ class TestDataProcessor(unittest.TestCase):
     - ...
     """
 
-    def assert_allclose_pd(
-        self, df1: Union[pd.DataFrame, pd.Series], df2: Union[pd.DataFrame, pd.Series]
-    ):
-        if isinstance(df1, pd.Series):
-            df1 = df1.to_frame()
-        if isinstance(df2, pd.Series):
-            df2 = df2.to_frame()
-        try:
-            pd.testing.assert_frame_equal(df1, df2)
-        except AssertionError:
-            return False
-        return True
-
-    def assert_allclose_xr(
-        self, da1: Union[xr.DataArray, xr.Dataset], da2: Union[xr.DataArray, xr.Dataset]
-    ):
-        try:
-            xr.testing.assert_allclose(da1, da2)
-        except AssertionError:
-            return False
-        return True
+    def test_only_passing_one_x_mapping_raises_valueerror(self):
+        with self.assertRaises(ValueError):
+            DataProcessor(x1_map=(20, 40), x2_map=None)
 
     def test_unnorm_restores_data_for_each_method(self):
         """Check that the unnormalisation restores the original data for each normalisation method."""
         da_raw = _gen_data_xr()
         df_raw = _gen_data_pandas()
 
-        dp = DataProcessor(
+        dp_with_x_mappings = DataProcessor(
             x1_map=(20, 40),
             x2_map=(40, 60),
             time_name="time",
             x1_name="lat",
             x2_name="lon",
         )
+        dp_inferred_x_mappings = DataProcessor(
+            time_name="time", x1_name="lat", x2_name="lon"
+        )
+        dps = [dp_with_x_mappings, dp_inferred_x_mappings]
 
-        for method in dp.valid_methods:
-            da_norm, df_norm = dp([da_raw, df_raw], method=method)
-            da_unnorm, df_unnorm = dp.unnormalise([da_norm, df_norm])
-            self.assertTrue(
-                self.assert_allclose_xr(da_unnorm, da_raw),
-                f"Original {type(da_raw).__name__} not restored for method {method}.",
-            )
-            self.assertTrue(
-                self.assert_allclose_pd(df_unnorm, df_raw),
-                f"Original {type(df_raw).__name__} not restored for method {method}.",
-            )
+        for dp in dps:
+            for method in dp.valid_methods:
+                da_norm, df_norm = dp([da_raw, df_raw], method=method)
+                da_unnorm, df_unnorm = dp.unnormalise([da_norm, df_norm])
+                self.assertTrue(
+                    assert_allclose_xr(da_unnorm, da_raw),
+                    f"Original {type(da_raw).__name__} not restored for method {method}.",
+                )
+                self.assertTrue(
+                    assert_allclose_pd(df_unnorm, df_raw),
+                    f"Original {type(df_raw).__name__} not restored for method {method}.",
+                )
 
     def test_different_names_xr(self):
         """
@@ -113,7 +103,7 @@ class TestDataProcessor(unittest.TestCase):
 
         da_unnorm = dp.unnormalise(da_norm)
         self.assertTrue(
-            self.assert_allclose_xr(da_unnorm, da_raw),
+            assert_allclose_xr(da_unnorm, da_raw),
             f"Original {type(da_raw).__name__} not restored.",
         )
 
@@ -132,7 +122,7 @@ class TestDataProcessor(unittest.TestCase):
 
         da_unnorm = dp.unnormalise(da_norm)
         self.assertTrue(
-            self.assert_allclose_xr(da_unnorm, da_raw),
+            assert_allclose_xr(da_unnorm, da_raw),
             f"Original {type(da_raw).__name__} not restored.",
         )
 
@@ -198,7 +188,7 @@ class TestDataProcessor(unittest.TestCase):
         df_unnorm = dp.unnormalise(df_norm)
 
         self.assertTrue(
-            self.assert_allclose_pd(df_unnorm, df_raw),
+            assert_allclose_pd(df_unnorm, df_raw),
             f"Original {type(df_raw).__name__} not restored.",
         )
 
@@ -218,7 +208,7 @@ class TestDataProcessor(unittest.TestCase):
         df_unnorm = dp.unnormalise(df_norm)
 
         self.assertTrue(
-            self.assert_allclose_pd(df_unnorm, df_raw),
+            assert_allclose_pd(df_unnorm, df_raw),
             f"Original {type(df_raw).__name__} not restored.",
         )
 
@@ -264,7 +254,7 @@ class TestDataProcessor(unittest.TestCase):
 
         self.assertListEqual(list(df_raw.index.names), list(df_unnorm.index.names))
         self.assertTrue(
-            self.assert_allclose_pd(df_unnorm, df_raw),
+            assert_allclose_pd(df_unnorm, df_raw),
             f"Original {type(df_raw).__name__} not restored.",
         )
 
@@ -291,6 +281,34 @@ class TestDataProcessor(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             dp(df_raw)
+
+    def test_saving_and_loading(self):
+        """Test saving and loading DataProcessor"""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            da_raw = _gen_data_xr()
+            df_raw = _gen_data_pandas()
+
+            dp = DataProcessor(
+                x1_map=(20, 40),
+                x2_map=(40, 60),
+                time_name="time",
+                x1_name="lat",
+                x2_name="lon",
+            )
+            # Normalise some data to store normalisation parameters in config
+            da_norm = dp(da_raw, method="mean_std")
+            df_norm = dp(df_raw, method="min_max")
+
+            dp.save(tmp_dir)
+
+            dp_loaded = DataProcessor(tmp_dir)
+
+            # Check that the TaskLoader was saved and loaded correctly
+            self.assertEqual(
+                dp.config,
+                dp_loaded.config,
+                "Config not saved and loaded correctly",
+            )
 
 
 if __name__ == "__main__":
