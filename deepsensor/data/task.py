@@ -11,16 +11,21 @@ from deepsensor.errors import TaskSetIndexError, GriddedDataError
 
 
 class Task(dict):
-    """Task dictionary class
+    """
+    Task dictionary class.
 
-    Inherits from `dict` and adds methods for printing and modifying the data.
+    Inherits from ``dict`` and adds methods for printing and modifying the
+    data.
     """
 
     def __init__(self, task_dict: dict) -> None:
-        """Initialise a Task object.
+        """
+        Initialise a Task object.
 
-        Args:
-            task_dict (dict): Dictionary containing the task.
+        Parameters
+        ----------
+        task_dict : dict
+            Dictionary containing the task.
         """
         super().__init__(task_dict)
 
@@ -55,7 +60,8 @@ class Task(dict):
             return f"{type(v).__name__}/{v}"
 
     def __str__(self):
-        """Print a convenient summary of the task dictionary
+        """
+        Print a convenient summary of the task dictionary.
 
         For array entries, print their shape, otherwise print the value.
         """
@@ -65,10 +71,11 @@ class Task(dict):
         return s
 
     def __repr__(self):
-        """Print a convenient summary of the task dictionary
+        """
+        Print a convenient summary of the task dictionary.
 
-        Print the type of each entry and if it is an array, print its shape, otherwise print the value.
-        Print the type of each entry and if it is an array, print its shape, otherwise print the value.
+        Print the type of each entry and if it is an array, print its shape,
+        otherwise print the value.
         """
         s = ""
         for k, v in self.items():
@@ -78,18 +85,23 @@ class Task(dict):
     def op(self, f, op_flag=None):
         """Apply function f to the array elements of a task dictionary.
 
-        Useful for recasting to a different dtype or reshaping (e.g. adding a batch dimension).
+        Useful for recasting to a different dtype or reshaping (e.g. adding a
+        batch dimension).
 
         Parameters
         ----------
-        f : function. Function to apply to the array elements of the task.
-        task : dict. Task dictionary.
-        op_flag : str. Flag to set in the task dictionary's `ops` key.
+        f : function
+            Function to apply to the array elements of the task.
+        task : dict
+            Task dictionary.
+        op_flag : str
+            Flag to set in the task dictionary's `ops` key.
 
         Returns
         -------
-        task : dict. Task dictionary with f applied to the array elements and op_flag set
-            in the `ops` key.
+        task : dict. 
+            Task dictionary with f applied to the array elements and
+            op_flag set in the ``ops`` key.
         """
 
         def recurse(k, v):
@@ -233,13 +245,15 @@ def append_obs_to_task(
     Y_new: B.Numeric,
     context_set_idx: int,
 ):
-    """Append a single observation to a context set in `task`
+    """
+    Append a single observation to a context set in ``task``.
 
-    Makes a deep copy of the data structure to avoid affecting the
-    original object.
+    Makes a deep copy of the data structure to avoid affecting the original
+    object.
 
-    TODO for speed during active learning algs, consider a shallow copy option plus
-    ability to remove observations.
+    ..
+        TODO: for speed during active learning algs, consider a shallow copy
+        option plus ability to remove observations.
     """
     if not 0 <= context_set_idx <= len(task["X_c"]) - 1:
         raise TaskSetIndexError(context_set_idx, len(task["X_c"]), "context")
@@ -273,7 +287,19 @@ def append_obs_to_task(
 
 
 def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
-    """Convert tuple of gridded coords to (2, N) array if necessary"""
+    """
+    Convert tuple of gridded coords to (2, N) array if necessary.
+
+    Parameters
+    ----------
+    X : :class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
+        ...
+
+    Returns
+    ----------
+    :class:`numpy:numpy.ndarray`
+        ...
+    """
     if type(X) is tuple:
         X1, X2 = np.meshgrid(X[0], X[1], indexing="ij")
         X = np.stack([X1.ravel(), X2.ravel()], axis=0)
@@ -281,16 +307,40 @@ def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
 
 
 def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
-    """Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2) array if necessary"""
+    """
+    Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2)
+    array if necessary.
+
+    Parameters
+    ----------
+    Y : :class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
+        ...
+
+    Returns
+    -------
+    :class:`numpy:numpy.ndarray`
+        ...
+    """
     if Y.ndim == 3:
         Y = Y.reshape(*Y.shape[:-2], -1)
     return Y
 
 
 def flatten_gridded_data_in_task(task: Task) -> Task:
-    """Convert any gridded data in `Task` to flattened arrays
+    """
+    Convert any gridded data in ``Task`` to flattened arrays.
 
-    Necessary for AR sampling, which doesn't yet permit gridded context sets
+    Necessary for AR sampling, which doesn't yet permit gridded context sets.
+
+    Parameters
+    ----------
+    task : :class:`~.data.task.Task`
+        ...
+
+    Returns
+    -------
+    Task
+        ...
     """
     task_flattened = copy.deepcopy(task)
 
@@ -303,26 +353,40 @@ def flatten_gridded_data_in_task(task: Task) -> Task:
 
 
 def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
-    """Concatenate a list of tasks into a single task containing multiple batches.
+    """
+    Concatenate a list of tasks into a single task containing multiple batches.
 
-    This leverages `neuralprocesses` functionality and is primarily intended for use
-    with the `ConvNP` model.
-
-    TODO:
-    - Raise error if aux_t values passed (not supported)
+    ..
+        TODO:
+        - Consider moving to ``nps.py`` as this leverages ``neuralprocesses``
+          functionality.
+        - Raise error if ``aux_t`` values passed (not supported I don't think)
 
     Parameters
     ----------
-    tasks : list of Task. List of tasks to concatenate into a single task.
-    multiple : int. Contexts are padded to the smallest multiple of this number that is greater
-        than the number of contexts in each task. Defaults to 1 (padded to the largest number of
-        contexts in the tasks). Setting to a larger number will increase the amount of padding
-        but decrease the range of tensor shapes presented to the model, which simplifies
-        the computational graph in graph mode.
+    tasks : List[Task]
+        List of tasks to concatenate into a single task.
+    multiple : int, optional
+        Contexts are padded to the smallest multiple of this number that is
+        greater than the number of contexts in each task. Defaults to 1
+        (padded to the largest number of contexts in the tasks). Setting to a
+        larger number will increase the amount of padding but decrease the
+        range of tensor shapes presented to the model, which simplifies the
+        computational graph in graph mode.
 
     Returns
     -------
-    merged_task : Task. Task containing multiple batches.
+    merged_task : :class:`~.data.task.Task`
+        Task containing multiple batches.
+
+    Raises
+    ------
+    ValueError
+        If the tasks have different numbers of target sets.
+    ValueError
+        If the tasks have different numbers of targets.
+    ValueError
+        If the tasks have different types of target sets (gridded/non-gridded).
     """
     if len(tasks) == 1:
         return tasks[0]

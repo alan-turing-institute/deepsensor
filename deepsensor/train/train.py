@@ -9,7 +9,23 @@ import lab as B
 from typing import List
 
 
-def set_gpu_default_device():
+def set_gpu_default_device() -> None:
+    """
+    Set default GPU device for the backend.
+
+    Raises
+    ------
+    RuntimeError
+        If no GPU is available.
+    RuntimeError
+        If backend is not supported.
+    NotImplementedError
+        If backend is not supported.
+
+    Returns
+    -------
+    None.
+    """
     if deepsensor.backend.str == "torch":
         # Run on GPU if available
         import torch
@@ -46,17 +62,31 @@ def train_epoch(
     progress_bar=False,
     tqdm_notebook=False,
 ) -> List[float]:
-    """Train model for one epoch
+    """
+    Train model for one epoch.
 
-    Args:
-        model (ConvNP): Model to train
-        tasks (List[Task]): List of tasks to train on
-        lr (float): Learning rate
-        batch_size (int, optional): Batch size. Defaults to None. If None, no batching is performed.
-        opt: TF or Torch optimiser object. Optional.
+    Parameters
+    ----------
+    model : :class:`~.model.convnp.ConvNP`
+        Model to train.
+    tasks : List[:class:`~.data.task.Task`]
+        List of tasks to train on.
+    lr : float, optional
+        Learning rate, by default 5e-5.
+    batch_size : int, optional
+        Batch size. Defaults to None. If None, no batching is performed.
+    opt : Optimizer, optional
+        TF or Torch optimizer. Defaults to None. If None,
+        :class:`tensorflow:tensorflow.keras.optimizer.Adam` is used.
+    progress_bar : bool, optional
+        Whether to display a progress bar. Defaults to False.
+    tqdm_notebook : bool, optional
+        Whether to use a notebook progress bar. Defaults to False.
 
-    Returns:
-        List[float]: List of losses for each task/batch
+    Returns
+    -------
+    List[float]
+        List of losses for each task/batch.
     """
     if deepsensor.backend.str == "tf":
         import tensorflow as tf

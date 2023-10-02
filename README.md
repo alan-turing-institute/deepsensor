@@ -146,7 +146,7 @@ This quickstart example is also available as a [Jupyter notebook](https://github
 Extending DeepSensor with new models
 ----------
 To extend DeepSensor with a new model, simply create a new class that inherits from `deepsensor.model.DeepSensorModel`
-and implement the low-level prediction methods defined in `deepsensor.model.ProbabilisticModel`,
+and implement the low-level prediction methods defined in `deepsensor.model.model.ProbabilisticModel`,
 such as `.mean` and `.stddev`.
 ```python
 class NewModel(DeepSensorModel):
