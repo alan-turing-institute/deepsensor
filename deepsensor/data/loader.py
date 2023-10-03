@@ -165,11 +165,6 @@ class TaskLoader:
             self._set_config()
             self._load_data_from_paths()
 
-        if self.aux_at_contexts is not None:
-            self._check_offgrid_aux(self._check_offgrid_aux(self.aux_at_contexts))
-        if self.aux_at_targets is not None:
-            self._check_offgrid_aux(self.aux_at_targets)
-
         self.context = self._cast_to_dtype(self.context)
         self.target = self._cast_to_dtype(self.target)
         self.aux_at_contexts = self._cast_to_dtype(self.aux_at_contexts)
@@ -356,13 +351,6 @@ class TaskLoader:
             var = cast_to_dtype(var)
 
         return var
-
-    def _check_offgrid_aux(self, offgrid_aux):
-        if offgrid_aux is not None and "time" in offgrid_aux.dims:
-            raise ValueError(
-                "Auxiliary data has a time dimension. Spatiotemporal auxiliary data is not yet supported. "
-                "Please slice the auxiliary data to a single time step."
-            )
 
     def load_dask(self) -> None:
         """
@@ -787,6 +775,11 @@ class TaskLoader:
         :class:`numpy:numpy.ndarray`
             ...
         """
+        if "time" in offgrid_aux.dims:
+            raise ValueError(
+                "If `aux_at_targets` data has a `time` dimension, it must be sliced before "
+                "passing it to `sample_offgrid_aux`."
+            )
         if isinstance(X_t, tuple):
             xt1, xt2 = X_t
             xt1 = xt1.ravel()
@@ -803,6 +796,39 @@ class TaskLoader:
             # Reshape to (variable, *spatial_dims)
             Y_t_aux = Y_t_aux.reshape(1, *Y_t_aux.shape)
         return Y_t_aux
+
+    def time_slice_variable(self, var, date, delta_t=0):
+        """
+        Slice a variable by a given time delta.
+
+        Parameters
+        ----------
+        var : ...
+            Variable to slice.
+        delta_t : ...
+            Time delta to slice by.
+
+        Returns
+        -------
+        var : ...
+            Sliced variable.
+
+        Raises
+        ------
+        ValueError
+            If the variable is of an unknown type.
+        """
+        # TODO: Does this work with instantaneous time?
+        delta_t = pd.Timedelta(delta_t, unit=self.time_freq)
+        if isinstance(var, (xr.Dataset, xr.DataArray)):
+            if "time" in var.dims:
+                var = var.sel(time=date + delta_t)
+        elif isinstance(var, (pd.DataFrame, pd.Series)):
+            if "time" in var.index.names:
+                var = var[var.index.get_level_values("time") == date + delta_t]
+        else:
+            raise ValueError(f"Unknown variable type {type(var)}")
+        return var
 
     def task_generation(
         self,
@@ -945,39 +971,6 @@ class TaskLoader:
 
             return sampling_strat
 
-        def time_slice_variable(var, delta_t):
-            """
-            Slice a variable by a given time delta.
-
-            Parameters
-            ----------
-            var : ...
-                Variable to slice.
-            delta_t : ...
-                Time delta to slice by.
-
-            Returns
-            -------
-            var : ...
-                Sliced variable.
-
-            Raises
-            ------
-            ValueError
-                If the variable is of an unknown type.
-            """
-            # TODO: Does this work with instantaneous time?
-            delta_t = pd.Timedelta(delta_t, unit=self.time_freq)
-            if isinstance(var, (xr.Dataset, xr.DataArray)):
-                if "time" in var.dims:
-                    var = var.sel(time=date + delta_t)
-            elif isinstance(var, (pd.DataFrame, pd.Series)):
-                if "time" in var.index.names:
-                    var = var[var.index.get_level_values("time") == date + delta_t]
-            else:
-                raise ValueError(f"Unknown variable type {type(var)}")
-            return var
-
         def sample_variable(var, sampling_strat, seed):
             """
             Sample a variable by a given sampling strategy to get input and
@@ -1058,11 +1051,11 @@ class TaskLoader:
         task["Y_t"] = []
 
         context_slices = [
-            time_slice_variable(var, delta_t)
+            self.time_slice_variable(var, date, delta_t)
             for var, delta_t in zip(self.context, self.context_delta_t)
         ]
         target_slices = [
-            time_slice_variable(var, delta_t)
+            self.time_slice_variable(var, date, delta_t)
             for var, delta_t in zip(self.target, self.target_delta_t)
         ]
 
@@ -1230,7 +1223,11 @@ class TaskLoader:
                 X_c_offrid_all = np.empty((2, 0), dtype=self.dtype)
             else:
                 X_c_offrid_all = np.concatenate(X_c_offgrid, axis=1)
-            Y_c_aux = self.sample_offgrid_aux(X_c_offrid_all, self.aux_at_contexts)
+            Y_c_aux = (
+                self.sample_offgrid_aux(
+                    X_c_offrid_all, self.time_slice_variable(self.aux_at_contexts, date)
+                ),
+            )
             task["X_c"].append(X_c_offrid_all)
             task["Y_c"].append(Y_c_aux)
 
@@ -1242,7 +1239,8 @@ class TaskLoader:
                     "are multiple target variables (not supported by default `ConvNP` model)."
                 )
             task["Y_t_aux"] = self.sample_offgrid_aux(
-                task["X_t"][0], self.aux_at_targets
+                task["X_t"][0],
+                self.time_slice_variable(self.aux_at_targets, date),
             )
 
         return Task(task)
