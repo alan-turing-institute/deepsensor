@@ -259,12 +259,14 @@ class TestModel(unittest.TestCase):
         # All NaNs
         task = tl("2020-01-01", context_sampling=10, target_sampling=10)
         task["Y_c"][0][:, 0] = np.nan
+        task["Y_t"][0][:, 0] = np.nan  # Also sanity check with target
         model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
         _ = model(task)
 
         # One NaN
         task = tl("2020-01-01", context_sampling=10, target_sampling=10)
         task["Y_c"][0][0, 0] = np.nan
+        task["Y_t"][0][0, 0] = np.nan  # Also sanity check with target
         model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
         _ = model(task)
 
@@ -290,14 +292,16 @@ class TestModel(unittest.TestCase):
         )
 
         # All NaNs
-        task = tl("2020-01-01", context_sampling="all", target_sampling=10)
+        task = tl("2020-01-01", context_sampling="all", target_sampling="all")
         task["Y_c"][0][:, 0, 0] = np.nan
+        task["Y_t"][0][:, 0, 0] = np.nan  # Also sanity check with target
         model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
         _ = model(task)
 
         # One NaN
-        task = tl("2020-01-01", context_sampling="all", target_sampling=10)
+        task = tl("2020-01-01", context_sampling="all", target_sampling="all")
         task["Y_c"][0][0, 0, 0] = np.nan
+        task["Y_t"][0][0, 0, 0] = np.nan  # Also sanity check with target
         model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
         _ = model(task)
 
