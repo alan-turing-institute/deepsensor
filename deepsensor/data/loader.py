@@ -257,13 +257,17 @@ class TaskLoader:
     def _load_data_from_paths(self):
         """Load data from paths and overwrite paths with loaded data."""
 
+        loaded_data = {}
+
         def _load_pandas_or_xarray(path):
             # Need to be careful about this. We need to ensure data gets into the right form
             #  for TaskLoader.
             if path is None:
                 return None
+            elif path in loaded_data:
+                return loaded_data[path]
             elif path.endswith(".nc"):
-                return xr.open_dataset(path)
+                data = xr.open_dataset(path)
             elif path.endswith(".csv"):
                 df = pd.read_csv(path)
                 if "time" in df.columns:
@@ -271,9 +275,11 @@ class TaskLoader:
                     df = df.set_index(["time", "x1", "x2"]).sort_index()
                 else:
                     df = df.set_index(["x1", "x2"]).sort_index()
-                return df
+                data = df
             else:
                 raise ValueError(f"Unknown file extension for {path}")
+            loaded_data[path] = data
+            return data
 
         def _load_data(data):
             if isinstance(data, (tuple, list)):
