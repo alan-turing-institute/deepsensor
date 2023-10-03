@@ -397,6 +397,8 @@ class DeepSensorModel(ProbabilisticModel):
         ],
         X_t_mask: Union[xr.Dataset, xr.DataArray] = None,
         X_t_is_normalised: bool = False,
+        aux_at_targets_override: Union[xr.Dataset, xr.DataArray] = None,
+        aux_at_targets_override_is_normalised: bool = False,
         resolution_factor: int = 1,
         n_samples: int = 0,
         ar_sample: bool = False,
@@ -421,9 +423,18 @@ class DeepSensorModel(ProbabilisticModel):
         X_t : :class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`
             Target locations to predict at. Can be an xarray object containing
             on-grid locations or a pandas object containing off-grid locations.
+        X_t_mask: :class:`xarray.Dataset` | :class:`xarray.DataArray`
+            Optional 2D mask to apply to X_t (zero/False will be NaNs). Will be interpolated
+            to the same grid as X_t. Default None (no mask).
         X_t_is_normalised : bool
             Whether the ``X_t`` coords are normalised. If False, will normalise
             the coords before passing to model. Default ``False``.
+        aux_at_targets_override : :class:`xarray.Dataset` | :class:`xarray.DataArray`
+            Optional auxiliary xarray data to override from the task_loader.
+        aux_at_targets_override_is_normalised : bool
+            Whether the `aux_at_targets_override` coords are normalised.
+            If False, the DataProcessor will normalise the coords before passing to model.
+            Default False.
         resolution_factor : float
             Optional factor to increase the resolution of the target grid by.
             E.g. 2 will double the target resolution, 0.5 will halve it.
@@ -641,13 +652,27 @@ class DeepSensorModel(ProbabilisticModel):
         # Don't change tasks by reference when overriding target locations
         tasks = copy.deepcopy(tasks)
 
+        if self.task_loader.aux_at_targets is not None:
+            if aux_at_targets_override is not None:
+                aux_at_targets = aux_at_targets_override
+                if not aux_at_targets_override_is_normalised:
+                    # Assumes using default normalisation method
+                    aux_at_targets = self.data_processor(
+                        aux_at_targets, assert_computed=True
+                    )
+            else:
+                aux_at_targets = self.task_loader.aux_at_targets
+
         for task in tqdm(tasks, position=0, disable=progress_bar < 1, leave=True):
             task["X_t"] = [X_t_arr for _ in range(len(task["X_t"]))]
 
             # If passing auxiliary data, need to sample it at target locations
-            if "Y_t_aux" in task.keys():
+            if self.task_loader.aux_at_targets is not None:
+                aux_at_targets_sliced = self.task_loader.time_slice_variable(
+                    aux_at_targets, task["time"]
+                )
                 task["Y_t_aux"] = self.task_loader.sample_offgrid_aux(
-                    X_t_arr, self.task_loader.aux_at_targets
+                    X_t_arr, aux_at_targets_sliced
                 )
 
             # If `DeepSensor` model child has been sub-classed with a `__call__` method,
