@@ -6,7 +6,6 @@ import lab as B
 import plum
 import copy
 
-from .. import backend
 from ..errors import TaskSetIndexError, GriddedDataError
 
 
@@ -49,7 +48,7 @@ class Task(dict):
     def summarise_repr(cls, k, v):
         if plum.isinstance(v, B.Numeric):
             return f"{type(v).__name__}/{v.dtype}/{v.shape}"
-        if plum.isinstance(v, backend.nps.mask.Masked):
+        if plum.isinstance(v, deepsensor.backend.nps.mask.Masked):
             return f"{type(v).__name__}/(y={v.y.dtype}/{v.y.shape})/(mask={v.mask.dtype}/{v.mask.shape})"
         elif plum.isinstance(v, tuple):
             # return tuple(vi.shape for vi in v)
@@ -110,7 +109,7 @@ class Task(dict):
             elif type(v) is tuple:
                 return (recurse(k, v[0]), recurse(k, v[1]))
             elif isinstance(
-                v, (np.ndarray, np.ma.MaskedArray, backend.nps.Masked)
+                v, (np.ndarray, np.ma.MaskedArray, deepsensor.backend.nps.Masked)
             ):
                 return f(v)
             else:
@@ -190,14 +189,14 @@ class Task(dict):
             )
 
         def f(arr):
-            if isinstance(arr, backend.nps.Masked):
+            if isinstance(arr, deepsensor.backend.nps.Masked):
                 # Ignore nps.Masked objects
                 nps_mask = arr.mask == 0
                 nan_mask = np.isnan(arr.y)
                 mask = np.logical_or(nps_mask, nan_mask)
                 data = arr.y
                 data[nan_mask] = 0.0
-                arr = backend.nps.Masked(data, mask)
+                arr = deepsensor.backend.nps.Masked(data, mask)
             else:
                 mask = np.isnan(arr)
                 if np.any(mask):
@@ -222,7 +221,7 @@ class Task(dict):
                 # Mask array (True for observed, False for missing). Keep size 1 variable dim.
                 mask = ~B.any(arr.mask, axis=1, squeeze=False)
                 mask = B.cast(B.dtype(arr.data), mask)
-                arr = backend.nps.Masked(arr.data, mask)
+                arr = deepsensor.backend.nps.Masked(arr.data, mask)
             return arr
 
         return self.op(lambda x: f(x), op_flag="nps_mask")
@@ -235,13 +234,13 @@ class Task(dict):
         """
 
         def f(arr):
-            if isinstance(arr, backend.nps.Masked):
-                arr = backend.nps.Masked(
-                    backend.convert_to_tensor(arr.y),
-                    backend.convert_to_tensor(arr.mask),
+            if isinstance(arr, deepsensor.backend.nps.Masked):
+                arr = deepsensor.backend.nps.Masked(
+                    deepsensor.backend.convert_to_tensor(arr.y),
+                    deepsensor.backend.convert_to_tensor(arr.mask),
                 )
             else:
-                arr = backend.convert_to_tensor(arr)
+                arr = deepsensor.backend.convert_to_tensor(arr)
             return arr
 
         return self.op(lambda x: f(x), op_flag="tensor")
@@ -453,7 +452,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     # List of tuples of merged (x_c, y_c) along batch dim with padding
     # (up to the smallest multiple of `multiple` greater than the number of contexts in each task)
     merged_context = [
-        backend.nps.merge_contexts(
+        deepsensor.backend.nps.merge_contexts(
             *[context_set for context_set in contexts_i], multiple=multiple
         )
         for contexts_i in zip(*contexts)
