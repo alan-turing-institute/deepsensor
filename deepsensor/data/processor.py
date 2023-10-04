@@ -209,14 +209,14 @@ class DataProcessor:
         -------
         None.
         """
-        self.norm_params["coords"] = {}
-        self.norm_params["coords"]["time"] = {"name": time_name}
-        self.norm_params["coords"]["x1"] = {}
-        self.norm_params["coords"]["x2"] = {}
-        self.norm_params["coords"]["x1"]["name"] = x1_name
-        self.norm_params["coords"]["x1"]["map"] = x1_map
-        self.norm_params["coords"]["x2"]["name"] = x2_name
-        self.norm_params["coords"]["x2"]["map"] = x2_map
+        self.config["coords"] = {}
+        self.config["coords"]["time"] = {"name": time_name}
+        self.config["coords"]["x1"] = {}
+        self.config["coords"]["x2"] = {}
+        self.config["coords"]["x1"]["name"] = x1_name
+        self.config["coords"]["x1"]["map"] = x1_map
+        self.config["coords"]["x2"]["name"] = x2_name
+        self.config["coords"]["x2"]["map"] = x2_map
 
     def check_params_computed(self, var_ID, method) -> bool:
         """
@@ -247,7 +247,7 @@ class DataProcessor:
         """Add `kwargs` to `config` dict for variable `var_ID`"""
         self.config[var_ID] = kwargs
 
-    def get_norm_params(self, var_ID, data, method=None):
+    def get_config(self, var_ID, data, method=None):
         """
         Get pre-computed normalisation params or compute them for variable
         ``var_ID``.
@@ -497,7 +497,7 @@ class DataProcessor:
                 f"Method {method} not recognised. Use one of {self.valid_methods}"
             )
 
-        params = self.get_norm_params(var_ID, data, method)
+        params = self.get_config(var_ID, data, method)
 
         if method == "mean_std":
             std = params["std"]
