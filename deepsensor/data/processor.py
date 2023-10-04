@@ -36,20 +36,20 @@ class DataProcessor:
         ----------
         folder : str, optional
             Folder to load normalisation params from. Defaults to None.
-        x1_name : str, optional)
+        x1_name : str, optional
             Name of first spatial coord (e.g. "lat"). Defaults to "x1".
-        x2_name : str, optional)
+        x2_name : str, optional
             Name of second spatial coord (e.g. "lon"). Defaults to "x2".
-        x1_map : tuple, optional)
+        x1_map : tuple, optional
             2-tuple of raw x1 coords to linearly map to (0, 1), respectively.
             Defaults to (0, 1) (i.e. no normalisation).
-        x2_map : tuple, optional)
+        x2_map : tuple, optional
             2-tuple of raw x2 coords to linearly map to (0, 1), respectively.
             Defaults to (0, 1) (i.e. no normalisation).
-        deepcopy : bool, optional)
+        deepcopy : bool, optional
             Whether to make a deepcopy of raw data to ensure it is not changed
             by reference when normalising. Defaults to True.
-        verbose : bool, optional)
+        verbose : bool, optional
             Whether to print verbose output. Defaults to False.
         """
         if folder is not None:
