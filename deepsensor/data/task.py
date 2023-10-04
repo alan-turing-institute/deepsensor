@@ -184,9 +184,7 @@ class Task(dict):
         task : dict. Task with NaNs set to zeros and a mask indicating where the missing values are.
         """
         if "batch_dim" not in self["ops"]:
-            raise ValueError(
-                "Must call `add_batch_dim` before `mask_nans_numpy`"
-            )
+            raise ValueError("Must call `add_batch_dim` before `mask_nans_numpy`")
 
         def f(arr):
             if isinstance(arr, deepsensor.backend.nps.Masked):
@@ -208,13 +206,9 @@ class Task(dict):
 
     def mask_nans_nps(self):
         if "batch_dim" not in self["ops"]:
-            raise ValueError(
-                "Must call `add_batch_dim` before `mask_nans_nps`"
-            )
+            raise ValueError("Must call `add_batch_dim` before `mask_nans_nps`")
         if "numpy_mask" not in self["ops"]:
-            raise ValueError(
-                "Must call `mask_nans_numpy` before `mask_nans_nps`"
-            )
+            raise ValueError("Must call `mask_nans_numpy` before `mask_nans_nps`")
 
         def f(arr):
             if isinstance(arr, np.ma.MaskedArray):
@@ -293,9 +287,7 @@ def append_obs_to_task(
     return task_with_new
 
 
-def flatten_X(
-    X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]
-) -> np.ndarray:
+def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
     """
     Convert tuple of gridded coords to (2, N) array if necessary.
 
@@ -315,9 +307,7 @@ def flatten_X(
     return X
 
 
-def flatten_Y(
-    Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]
-) -> np.ndarray:
+def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
     """
     Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2)
     array if necessary.
@@ -474,9 +464,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
             )
         else:
             # Target set is off-the-grid with tensor for `X_t`
-            merged_task["X_t"][i] = B.concat(
-                *[t["X_t"][i] for t in tasks], axis=0
-            )
+            merged_task["X_t"][i] = B.concat(*[t["X_t"][i] for t in tasks], axis=0)
         merged_task["Y_t"][i] = B.concat(*[t["Y_t"][i] for t in tasks], axis=0)
 
     merged_task["time"] = [t["time"] for t in tasks]
