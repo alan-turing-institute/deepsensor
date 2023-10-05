@@ -179,8 +179,7 @@ def offgrid_context(
     colors: Optional[str] = None,
     **scatter_kwargs,
 ) -> None:
-    """
-    Plot the off-grid context points on ``axes``.
+    """Plot the off-grid context points on ``axes``.
 
     Uses a provided :class:`~.data.processor.DataProcessor` to unnormalise the
     context coordinates if provided.
@@ -207,9 +206,8 @@ def offgrid_context(
             Marker styles to use for each context set, by default None.
         colors (str, optional):
             Colors to use for each context set, by default None.
-        **scatter_kwargs:
-            Additional keyword arguments to pass to the scatter plot, by
-            default ``{}``.
+        scatter_kwargs:
+            Additional keyword arguments to pass to the scatter plot.
 
     Returns:
         None.
@@ -642,7 +640,6 @@ def acquisition_fn(
     max_ncol: int = 5,
 ) -> plt.Figure:
     """
-    ...
 
     Args:
         task (:class:`~.data.task.Task`):
