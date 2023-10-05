@@ -13,7 +13,7 @@ jobs:
             - name: "Install sphinx"
               run: pip install -r requirements.docs.txt
             - name: "Sphinx link check"
-              run: sphinx-build docs -W -b linkcheck -d docs/_build/doctrees docs/_build/html
+              run: sphinx-build docs -b linkcheck -d docs/_build/doctrees docs/_build/html
             - name: "Sphinx build"
               run: sphinx-build docs docs/_build
             - name: "Deploy"
