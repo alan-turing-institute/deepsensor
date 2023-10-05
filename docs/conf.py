@@ -44,7 +44,7 @@ intersphinx_mapping = {
     #     "http://www.tensorflow.org/api_docs/python/",
     #     "https://raw.githubusercontent.com/GPflow/tensorflow-intersphinx/master/tf2_py_objects.inv",
     # ),
-    "numpy": ("https://numpy.org/doc/stable/reference/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
     "matplotlib": ("http://matplotlib.org/stable/", None),
     "xarray": (
         "http://xarray.pydata.org/en/stable/",
