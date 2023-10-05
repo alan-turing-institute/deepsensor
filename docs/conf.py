@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath("../"))
 project = "DeepSensor"
 copyright = "2023, Tom Andersson"
 author = "Tom Andersson"
-release = "0.1.7"
+release = "0.2.5"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
