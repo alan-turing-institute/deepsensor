@@ -18,7 +18,7 @@ jobs:
               run: sphinx-build docs docs/_build
             - name: "Deploy"
               uses: peaceiris/actions-gh-pages@v3
-              if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/add-documentation' || github.ref == 'refs/heads/docs') }}
+              if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' || github.ref == 'refs/heads/add-documentation' || github.ref == 'refs/heads/docs') }}
               with:
                     publish_branch: gh-pages
                     github_token: ${{ secrets.GITHUB_TOKEN }}
