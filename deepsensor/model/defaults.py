@@ -77,7 +77,7 @@ def gen_decoder_scale(model_ppu: int) -> float:
     return 1 / model_ppu
 
 
-def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> list[float]:
+def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> List[float]:
     """
     Computes data-informed settings for the encoder SetConv scale for each
     context set.
