@@ -3,12 +3,13 @@ from deepsensor.data.task import Task, flatten_X
 import os
 import json
 import copy
+import random
 
 import numpy as np
 import xarray as xr
 import pandas as pd
 
-from typing import List, Tuple, Union, Optional
+from typing import List, Tuple, Union, Optional, Sequence
 
 from deepsensor.errors import InvalidSamplingStrategyError
 
@@ -810,6 +811,58 @@ class TaskLoader:
             # Reshape to (variable, *spatial_dims)
             Y_t_aux = Y_t_aux.reshape(1, *Y_t_aux.shape)
         return Y_t_aux
+    
+    def sample_patch_size_extent(self) -> Sequence[float]:
+        """Sample patch size.
+
+        :return sequence of patch spatial extent as [lat_min, lat_max, lon_min, lon_max]
+        """
+        # assumption of normalized spatial coordinates between 0 and 1
+
+        lat_extend, lon_extend = self.patch_size
+
+        lat_side = lat_extend / 2
+        lon_side = lon_extend / 2
+
+        # sample a point that satisfies the boundary and target conditions
+        continue_looking = True
+        while continue_looking:
+            lat_point = random.uniform(lat_side, 1 - lat_side)
+            lon_point = random.uniform(lon_side, 1 - lon_side)
+
+            # bbox of lat_min, lat_max, lon_min, lon_max
+            bbox = [lat_point - lat_side, lat_point + lat_side, lon_point - lon_side, lon_point + lon_side]
+
+            x1_slice = slice(bbox[0], bbox[1])
+            x2_slice = slice(bbox[2], bbox[3])
+            # check whether target is non-empty given this box
+            target_check: list[bool] = []
+            for target_var in self.target:
+                if isinstance(target_var, (pd.DataFrame, pd.Series)):
+                    data = target_var.loc[(slice(None), x1_slice, x2_slice)]
+                else:
+                    data = target_var.sel(x1=x1_slice, x2=x2_slice)
+
+                target_check.append(True if len(data)>0 else False)
+
+            # check whether context is non-empty given this box
+            context_check: list[bool] = []
+            for context_var in self.context:
+                if isinstance(context_var, (pd.DataFrame, pd.Series)):
+                    data = context_var[(context_var.index.get_level_values('x1') >= bbox[0]) & (context_var.index.get_level_values('x1') <= bbox[1]) & 
+                        (context_var.index.get_level_values('x2') >= bbox[2]) & (context_var.index.get_level_values('x2') <= bbox[3])]
+
+                    # data = context_var.loc[(slice(None), x1_slice, x2_slice)]
+                else:
+                    data = context_var.sel(x1=x1_slice, x2=x2_slice)
+
+                context_check.append(True if len(data)>0 else False)
+
+
+            if all(target_check) and all(context_check):
+                continue_looking = False
+        
+        return bbox
 
     def task_generation(
         self,
@@ -1095,6 +1148,12 @@ class TaskLoader:
                 target_slices[link[1]] = target_slices[link[1]].drop(
                     context_slices[link[0]].index
                 )
+
+        # sample common patch size for context and target set
+        if self.patch_size is not None:
+            sample_patch_size = self.sample_patch_size_extent()
+        else:
+            sample_patch_size = None
 
         for i, (var, sampling_strat) in enumerate(
             zip(context_slices, context_sampling)
