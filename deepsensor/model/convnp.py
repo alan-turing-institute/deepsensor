@@ -287,7 +287,7 @@ class ConvNP(DeepSensorModel):
             raise NotImplementedError(f"Backend {backend.str} not supported.")
 
     @classmethod
-    def modify_task(cls, task):
+    def modify_task(cls, task: Task):
         """
         Cast numpy arrays to TensorFlow or PyTorch tensors, add batch dim, and
         mask NaNs.
@@ -303,8 +303,6 @@ class ConvNP(DeepSensorModel):
             ...
         """
 
-        if "target_nans_removed" not in task["ops"]:
-            task = task.remove_nans_from_task_Y_t_if_present()
         if "batch_dim" not in task["ops"]:
             task = task.add_batch_dim()
         if "float32" not in task["ops"]:

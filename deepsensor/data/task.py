@@ -140,39 +140,41 @@ class Task(dict):
         """
         return self.op(lambda x: x.astype(np.float32), op_flag="float32")
 
-    def remove_nans_from_task_Y_t_if_present(self):
+    def remove_any_nans_from_Y_t(self):
         """If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"])"""
-        self["ops"].append("target_nans_removed")
+        if "batch_dim" in self["ops"]:
+            raise ValueError(
+                "Cannot remove NaNs from task if a batch dim has been added."
+            )
 
         # First check whether there are any NaNs that we need to remove
         nans_present = False
         for Y_t in self["Y_t"]:
             if B.any(B.isnan(Y_t)):
                 nans_present = True
-
-        Y_t_nans_list = []
-        if nans_present:
-            for i, (X, Y) in enumerate(zip(self["X_t"], self["Y_t"])):
-                Y = flatten_Y(Y)
-                Y_t_nans = B.any(B.isnan(Y), axis=0)  # shape (n_targets,)
-                Y_t_nans_list.append(Y_t_nans)
+                break
 
         if not nans_present:
             return self
 
         # NaNs present in self - remove NaNs
-        for i, (X, Y, Y_t_nans) in enumerate(
-            zip(self["X_t"], self["Y_t"], Y_t_nans_list)
-        ):
+        for i, (X, Y) in enumerate(zip(self["X_t"], self["Y_t"])):
+            Y_t_nans = B.isnan(Y)
+            if "Y_t_aux" in self.keys():
+                self["Y_t_aux"] = flatten_Y(self["Y_t_aux"])
             if B.any(Y_t_nans):
                 if isinstance(X, tuple):
-                    # Gridded data
+                    # Gridded data - need to flatten to remove NaNs
                     X = flatten_X(X)
                     Y = flatten_Y(Y)
+                    Y_t_nans = flatten_Y(Y_t_nans)
+                Y_t_nans = B.any(Y_t_nans, axis=0)  # shape (n_targets,)
                 self["X_t"][i] = X[:, ~Y_t_nans]
                 self["Y_t"][i] = Y[:, ~Y_t_nans]
                 if "Y_t_aux" in self.keys():
                     self["Y_t_aux"] = self["Y_t_aux"][:, ~Y_t_nans]
+
+        self["ops"].append("target_nans_removed")
 
         return self
 
@@ -399,7 +401,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
                 "Masking will be applied automatically after concatenation."
             )
         if "target_nans_removed" not in task["ops"]:
-            task = task.remove_nans_from_task_Y_t_if_present()
+            task = task.remove_any_nans_from_Y_t()
         if "batch_dim" not in task["ops"]:
             task = task.add_batch_dim()
         if "float32" not in task["ops"]:

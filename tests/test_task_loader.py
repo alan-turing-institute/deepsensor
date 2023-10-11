@@ -11,6 +11,7 @@ import unittest
 import os
 import shutil
 import tempfile
+import copy
 
 from deepsensor.errors import InvalidSamplingStrategyError
 from tests.utils import (
@@ -221,7 +222,7 @@ class TestTaskLoader(unittest.TestCase):
             1.1,
             # If float, sampling strategy must be greater than or equal to 0.0
             -0.1,
-            # If str, sampling strategy must be in ["all", "split"]
+            # If str, sampling strategy must be one of the valid options
             "invalid",
             # If np.ndarray, sampling strategy must be shape (2, N)
             np.zeros((1, 2, 2)),
@@ -261,6 +262,45 @@ class TestTaskLoader(unittest.TestCase):
         with self.assertRaises(ValueError):
             tl = TaskLoader(context=self.df, target=self.df, links=[(0, 1)])
 
+    def test_links_gapfill_da(self) -> None:
+        """TODO"""
+        da_with_nans = copy.deepcopy(self.da)
+        nan_idxs = np.random.randint(0, da_with_nans.size, size=10_000)
+        da_with_nans.data.ravel()[nan_idxs] = np.nan
+        tl = TaskLoader(context=da_with_nans, target=da_with_nans, links=[(0, 0)])
+
+        # This should not raise an error
+        task = tl("2020-01-01", "gapfill", "gapfill")
+
+        # Should raise ValueError if "gapfill" provided for context but not target (or vice versa)
+        with self.assertRaises(ValueError):
+            task = tl("2020-01-01", "gapfill", "all")
+        with self.assertRaises(ValueError):
+            task = tl("2020-01-01", "all", "gapfill")
+
+    def test_links_split_df(self) -> None:
+        """TODO"""
+        tl = TaskLoader(context=self.df, target=self.df, links=[(0, 0)])
+        task = tl("2020-01-01", "split", "split", split_frac=0.0)
+        self.assertEqual(task["Y_c"][0].size, 0)  # Should be no context data
+        task = tl("2020-01-01", "split", "split", split_frac=1.0)
+        self.assertEqual(task["Y_t"][0].size, 0)  # Should be no target data
+        task = tl("2020-01-01", "split", "split", split_frac=0.5)
+        self.assertEqual(
+            task["Y_c"][0].size // 2, task["Y_t"][0].size // 2
+        )  # Should be split equally
+
+        # Should raise ValueError if "split" provided for context but not target (or vice versa)
+        with self.assertRaises(ValueError):
+            task = tl("2020-01-01", "split", "all")
+        with self.assertRaises(ValueError):
+            task = tl("2020-01-01", "all", "split")
+
+        # Should raise ValueError if `split_frac` not between 0 and 1
+        with self.assertRaises(ValueError):
+            task = tl("2020-01-01", "split", "split", split_frac=1.1)
+            task = tl("2020-01-01", "split", "split", split_frac=-0.1)
+
     def test_links(self) -> None:
         """
         Test sampling from linked dataframes works as expected.
@@ -274,17 +314,10 @@ class TestTaskLoader(unittest.TestCase):
         -------
         None
         """
+        # This should not raise an error
         tl = TaskLoader(context=self.df, target=self.df, links=[(0, 0)])
-        task = tl("2020-01-01", "split", "split", split_frac=0.0)
-        self.assertEqual(task["Y_c"][0].size, 0)  # Should be no context data
-        task = tl("2020-01-01", "split", "split", split_frac=1.0)
-        self.assertEqual(task["Y_t"][0].size, 0)  # Should be no target data
-        task = tl("2020-01-01", "split", "split", split_frac=0.5)
-        self.assertEqual(
-            task["Y_c"][0].size // 2, task["Y_t"][0].size // 2
-        )  # Should be split equally
 
-        # Should raise ValueError if `links` is not a list of tuples
+        # Should raise ValueError if `links` is not a 2-tuple or a list of 2-tuples
         with self.assertRaises(AssertionError):
             TaskLoader(context=self.df, target=self.df, links=[0, 1])
         with self.assertRaises(AssertionError):
@@ -292,16 +325,22 @@ class TestTaskLoader(unittest.TestCase):
         with self.assertRaises(AssertionError):
             TaskLoader(context=self.df, target=self.df, links=[(0, 1, 2)])
 
-        # Should raise ValueError if "split" provided for context but not target (or vice versa)
+        # Cannot use a sampling strategy that requires links if TaskLoader was not instantiated with links
         with self.assertRaises(ValueError):
-            task = tl("2020-01-01", "split", "all")
+            tl = TaskLoader(context=self.da, target=self.da, links=None)
+            task = tl("2020-01-01", "gapfill", "gapfill")
         with self.assertRaises(ValueError):
-            task = tl("2020-01-01", "all", "split")
+            tl = TaskLoader(context=self.df, target=self.df, links=None)
+            task = tl("2020-01-01", "split", "split")
 
-        # Should raise ValueError if `split_frac` not between 0 and 1
-        with self.assertRaises(ValueError):
-            task = tl("2020-01-01", "split", "split", split_frac=1.1)
-            task = tl("2020-01-01", "split", "split", split_frac=-0.1)
+        # Cannot use "split" sampling strategy if not pandas
+        with self.assertRaises(AssertionError):
+            tl = TaskLoader(context=self.da, target=self.da, links=[(0, 0)])
+            task = tl("2020-01-01", "split", "split")
+        # Cannot use "gapfill" sampling strategy if not xarray
+        with self.assertRaises(AssertionError):
+            tl = TaskLoader(context=self.df, target=self.df, links=[(0, 0)])
+            task = tl("2020-01-01", "gapfill", "gapfill")
 
     def test_saving_and_loading(self):
         """Test saving and loading TaskLoader"""

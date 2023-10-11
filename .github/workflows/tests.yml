@@ -18,11 +18,17 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Delete huge unnecessary folders
+      run: |
+        rm -rf /usr/share/dotnet/
+        rm -rf /opt/ghc/
+        rm -rf /usr/local/share/boost/
+      shell: bash
     - name: Print space
       run: df -h
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements.dev.txt
     - name: Test with tox

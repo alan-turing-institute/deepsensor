@@ -9,3 +9,5 @@ build/
 dist/*
 .tox/
 _build
+*.png
+docs/

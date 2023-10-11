@@ -533,6 +533,7 @@ class DataProcessor:
         method: Optional[str] = None,
         add_offset: bool = True,
         unnorm: bool = False,
+        assert_computed: bool = False,
     ):
         """
         Normalise or unnormalise the data values and coords in an xarray or
@@ -564,10 +565,19 @@ class DataProcessor:
 
         if isinstance(data, (xr.DataArray, pd.Series)):
             # Single var
-            data = self.map_array(data, data.name, method, unnorm, add_offset)
+            var_ID = data.name
+            if assert_computed:
+                assert self.check_params_computed(
+                    var_ID, method
+                ), f"{method} normalisation params for {var_ID} not computed."
+            data = self.map_array(data, var_ID, method, unnorm, add_offset)
         elif isinstance(data, (xr.Dataset, pd.DataFrame)):
             # Multiple vars
             for var_ID in data:
+                if assert_computed:
+                    assert self.check_params_computed(
+                        var_ID, method
+                    ), f"{method} normalisation params for {var_ID} not computed."
                 data[var_ID] = self.map_array(
                     data[var_ID], var_ID, method, unnorm, add_offset
                 )
@@ -585,6 +595,7 @@ class DataProcessor:
             List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
         ],
         method: str = "mean_std",
+        assert_computed: bool = False,
     ) -> Union[
         xr.DataArray,
         xr.Dataset,
@@ -609,9 +620,12 @@ class DataProcessor:
             Normalised data.
         """
         if isinstance(data, list):
-            return [self.map(d, method, unnorm=False) for d in data]
+            return [
+                self.map(d, method, unnorm=False, assert_computed=assert_computed)
+                for d in data
+            ]
         else:
-            return self.map(data, method, unnorm=False)
+            return self.map(data, method, unnorm=False, assert_computed=assert_computed)
 
     def unnormalise(
         self,
