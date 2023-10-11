@@ -1009,24 +1009,30 @@ class TaskLoader:
         # Check `split_frac
         if split_frac < 0 or split_frac > 1:
             raise ValueError(f"split_frac must be between 0 and 1, got {split_frac}")
-        if (
-            self.links is not None
-            and "split" in context_sampling
-            and "split" not in target_sampling
-        ):
-            raise ValueError(
-                "Cannot use 'split' sampling strategy for context set and not "
-                "target set"
-            )
-        elif (
-            self.links is not None
-            and "split" not in context_sampling
-            and "split" in target_sampling
-        ):
-            raise ValueError(
-                "Cannot use 'split' sampling strategy for target set and not "
-                "context set"
-            )
+        if self.links is None:
+            b1 = any([strat in ["split", "gapfill"] for strat in context_sampling])
+            b2 = any([strat in ["split", "gapfill"] for strat in target_sampling])
+            if b1 or b2:
+                raise ValueError(
+                    "If using 'split' or 'gapfill' sampling strategies, the context and target "
+                    "sets must be linked with the TaskLoader `links` attribute."
+                )
+        if self.links is not None:
+            for context_idx, target_idx in self.links:
+                link_strats = (
+                    context_sampling[context_idx],
+                    target_sampling[target_idx],
+                )
+                if any([strat in ["split", "gapfill"] for strat in link_strats]):
+                    # If one of the sampling strategies is "split" or "gapfill", the other must
+                    # use the same splitting strategy
+                    if link_strats[0] != link_strats[1]:
+                        raise ValueError(
+                            f"Linked context set {context_idx} and target set {target_idx} "
+                            f"must use the same sampling strategy if one of them "
+                            f"uses the 'split' or 'gapfill' sampling strategy. "
+                            f"Got {link_strats[0]} and {link_strats[1]}."
+                        )
 
         if not isinstance(date, pd.Timestamp):
             date = pd.Timestamp(date)
@@ -1067,11 +1073,7 @@ class TaskLoader:
         ):
             # Perform the split sampling strategy for linked context and target sets at this point
             # while we have the full context and target data in scope
-            # TODO this is unsafe - this just applies splitting strategy
-            #  to all linked context and target sets, regardless of whether they are
-            #  linked or not
 
-            # Find all indices with "split" sampling strategy
             context_split_idxs = np.where(np.array(context_sampling) == "split")[0]
             target_split_idxs = np.where(np.array(target_sampling) == "split")[0]
             assert len(context_split_idxs) == len(target_split_idxs), (
@@ -1082,7 +1084,6 @@ class TaskLoader:
             for split_i, (context_idx, target_idx) in enumerate(
                 zip(context_split_idxs, target_split_idxs)
             ):
-                # TODO unit test
                 assert (context_idx, target_idx) in self.links, (
                     f"Context set {context_idx} and target set {target_idx} must be linked, "
                     f"with the `links` attribute if using the 'split' sampling strategy"
@@ -1117,13 +1118,6 @@ class TaskLoader:
 
                 context_slices[context_idx] = context_var
                 target_slices[target_idx] = target_var
-        elif self.links is None and (
-            "split" in context_sampling or "split" in target_sampling
-        ):
-            # TODO unit test
-            raise ValueError(
-                "Cannot use 'split' sampling strategy for context or target set when `links` is None"
-            )
 
         # TODO move to method
         if (
@@ -1133,10 +1127,7 @@ class TaskLoader:
         ):
             # Perform the gapfill sampling strategy for linked context and target sets at this point
             # while we have the full context and target data in scope
-            # TODO this is really unsafe - this just applies splitting strategy
-            #  to all linked context and target sets, regardless of whether they are
 
-            # Find all indices with "gapfill" sampling strategy
             context_gapfill_idxs = np.where(np.array(context_sampling) == "gapfill")[0]
             target_gapfill_idxs = np.where(np.array(target_sampling) == "gapfill")[0]
             assert len(context_gapfill_idxs) == len(target_gapfill_idxs), (
@@ -1147,7 +1138,6 @@ class TaskLoader:
             for gapfill_i, (context_idx, target_idx) in enumerate(
                 zip(context_gapfill_idxs, target_gapfill_idxs)
             ):
-                # TODO unit test
                 assert (context_idx, target_idx) in self.links, (
                     f"Context set {context_idx} and target set {target_idx} must be linked, "
                     f"with the `links` attribute if using the 'gapfill' sampling strategy"
@@ -1194,13 +1184,6 @@ class TaskLoader:
 
                     context_slices[context_idx] = context_var
                     target_slices[target_idx] = target_var
-        elif self.links is None and (
-            "gapfill" in context_sampling or "gapfill" in target_sampling
-        ):
-            # TODO unit test
-            raise ValueError(
-                "Cannot use 'gapfill' sampling strategy for context or target set when `links` is None"
-            )
 
         for i, (var, sampling_strat) in enumerate(
             zip(context_slices, context_sampling)
