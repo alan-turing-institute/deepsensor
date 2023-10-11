@@ -16,7 +16,9 @@ data with neural processes</p>
 ![Tests](https://github.com/tom-andersson/deepsensor/actions/workflows/tests.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/tom-andersson/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/tom-andersson/deepsensor?branch=main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![All Contributors](https://img.shields.io/github/all-contributors/tom-andersson/deepsensor?color=ee8449&style=flat-square)](#contributors)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/tom-andersson/deepsensor/blob/main/LICENSE)
+
 
 **NOTE**: This package is a work in progress and breaking changes are likely. If you are interested
 in using DeepSensor, please get in touch first (tomand@bas.ac.uk).
@@ -177,3 +179,14 @@ on the top right of this page.
 
 ## Acknowledgements
 DeepSensor is funded by [The Alan Turing Institute](https://www.turing.ac.uk/).
+
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
