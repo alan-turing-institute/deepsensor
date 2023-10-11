@@ -18,6 +18,14 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Delete huge unnecessary folders, and clean apt cache
+      run: |
+        rm -rf /opt/hostedtoolcache
+        rm -rf /usr/share/dotnet
+        rm -rf /opt/ghc
+        rm -rf "$AGENT_TOOLSDIRECTORY"
+        sudo apt-get clean
+      shell: bash
     - name: Print space
       run: df -h
     - name: Install dependencies
