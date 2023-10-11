@@ -727,7 +727,7 @@ class TaskLoader:
             idx = rng.choice(df.index, N)
             X_c = df.loc[idx].reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
             Y_c = df.loc[idx].values.T
-        elif sampling_strat in ["all", "split"]:
+        elif isinstance(sampling_strat, str) and sampling_strat in ["all", "split"]:
             # NOTE if "split", we assume that the context-target split has already been applied to the df
             # in an earlier scope with access to both the context and target data. This is maybe risky!
             X_c = df.reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
