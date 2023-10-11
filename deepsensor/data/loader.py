@@ -1023,7 +1023,9 @@ class TaskLoader:
                     context_sampling[context_idx],
                     target_sampling[target_idx],
                 )
-                if any([strat == _ for _ in ["split", "gapfill"] for strat in link_strats]):
+                if any(
+                    [strat == _ for _ in ["split", "gapfill"] for strat in link_strats]
+                ):
                     # If one of the sampling strategies is "split" or "gapfill", the other must
                     # use the same splitting strategy
                     if link_strats[0] != link_strats[1]:
