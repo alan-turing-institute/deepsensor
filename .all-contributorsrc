@@ -17,6 +17,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "tom-andersson",
+      "name": "Tom Andersson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26459412?v=4",
+      "profile": "https://www.bas.ac.uk/profile/tomand",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
