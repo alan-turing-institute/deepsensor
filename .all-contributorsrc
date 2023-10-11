@@ -1,6 +1,7 @@
 {
   "projectName": "deepsensor",
   "projectOwner": "tom-andersson",
+  "skipCI": true,
   "files": [
     "README.md"
   ],
