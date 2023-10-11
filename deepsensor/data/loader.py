@@ -1010,8 +1010,8 @@ class TaskLoader:
         if split_frac < 0 or split_frac > 1:
             raise ValueError(f"split_frac must be between 0 and 1, got {split_frac}")
         if self.links is None:
-            b1 = any([strat in ["split", "gapfill"] for strat in context_sampling])
-            b2 = any([strat in ["split", "gapfill"] for strat in target_sampling])
+            b1 = any([strat == _ for _ in ["split", "gapfill"] for strat in context_sampling])
+            b2 = any([strat == _ for _ in ["split", "gapfill"] for strat in target_sampling])
             if b1 or b2:
                 raise ValueError(
                     "If using 'split' or 'gapfill' sampling strategies, the context and target "
