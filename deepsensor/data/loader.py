@@ -1011,10 +1011,18 @@ class TaskLoader:
             raise ValueError(f"split_frac must be between 0 and 1, got {split_frac}")
         if self.links is None:
             b1 = any(
-                [strat == _ for _ in ["split", "gapfill"] for strat in context_sampling]
+                [
+                    strat in ["split", "gapfill"]
+                    for strat in context_sampling
+                    if isinstance(strat, str)
+                ]
             )
             b2 = any(
-                [strat == _ for _ in ["split", "gapfill"] for strat in target_sampling]
+                [
+                    strat in ["split", "gapfill"]
+                    for strat in target_sampling
+                    if isinstance(strat, str)
+                ]
             )
             if b1 or b2:
                 raise ValueError(
@@ -1028,7 +1036,11 @@ class TaskLoader:
                     target_sampling[target_idx],
                 )
                 if any(
-                    [strat == _ for _ in ["split", "gapfill"] for strat in link_strats]
+                    [
+                        strat in ["split", "gapfill"]
+                        for strat in link_strats
+                        if isinstance(strat, str)
+                    ]
                 ):
                     # If one of the sampling strategies is "split" or "gapfill", the other must
                     # use the same splitting strategy
