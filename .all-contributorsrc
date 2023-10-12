@@ -1,0 +1,155 @@
+{
+  "projectName": "deepsensor",
+  "projectOwner": "tom-andersson",
+  "skipCI": true,
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributorsSortAlphabetically": true,
+  "contributors": [
+    {
+      "login": "kallewesterling",
+      "name": "Kalle Westerling",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7298727?v=4",
+      "profile": "http://www.westerling.nu",
+      "contributions": [
+        "doc",
+        "infra",
+        "ideas",
+        "projectManagement",
+        "promotion",
+        "question"
+      ]
+    },
+    {
+      "login": "tom-andersson",
+      "name": "Tom Andersson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26459412?v=4",
+      "profile": "https://www.bas.ac.uk/profile/tomand",
+      "contributions": [
+        "code",
+        "research",
+        "maintenance",
+        "bug",
+        "test",
+        "tutorial",
+        "doc",
+        "review",
+        "talk",
+        "question"
+      ]
+    },
+    {
+      "login": "acocac",
+      "name": "Alejandro ©",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13321552?v=4",
+      "profile": "https://github.com/acocac",
+      "contributions": [
+        "userTesting",
+        "bug",
+        "mentoring",
+        "ideas",
+        "research"
+      ]
+    },
+    {
+      "login": "wesselb",
+      "name": "Wessel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1444448?v=4",
+      "profile": "http://wessel.ai",
+      "contributions": [
+        "research",
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "scotthosking",
+      "name": "Scott Hosking",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10783052?v=4",
+      "profile": "https://scotthosking.com",
+      "contributions": [
+        "fundingFinding",
+        "ideas",
+        "projectManagement"
+      ]
+    },
+    {
+      "login": "patel-zeel",
+      "name": "Zeel B Patel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59758528?v=4",
+      "profile": "http://patel-zeel.github.io",
+      "contributions": [
+        "bug",
+        "code",
+        "userTesting",
+        "ideas"
+      ]
+    },
+    {
+      "login": "jonas-scholz123",
+      "name": "Jonas Scholz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37850411?v=4",
+      "profile": "https://github.com/jonas-scholz123",
+      "contributions": [
+        "userTesting",
+        "research",
+        "code",
+        "bug",
+        "ideas"
+      ]
+    },
+    {
+      "login": "nilsleh",
+      "name": "Nils Lehmann",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35272119?v=4",
+      "profile": "https://nilsleh.info/",
+      "contributions": [
+        "ideas",
+        "userTesting",
+        "bug"
+      ]
+    },
+    {
+      "login": "kenzaxtazi",
+      "name": "Kenza Tazi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43008274?v=4",
+      "profile": "http://kenzaxtazi.github.io",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "polpel",
+      "name": "Paolo Pelucchi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56694450?v=4",
+      "profile": "https://github.com/polpel",
+      "contributions": [
+        "userTesting",
+        "bug"
+      ]
+    },
+    {
+      "login": "RohitRathore1",
+      "name": "Rohit Singh Rathaur",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42641738?v=4",
+      "profile": "https://rohitrathore.netlify.app/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "magnusross",
+      "name": "Magnus Ross",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51709759?v=4",
+      "profile": "http://magnusross.github.io/about",
+      "contributions": [
+        "tutorial",
+        "data"
+      ]
+    }
+  ]
+}

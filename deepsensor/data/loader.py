@@ -166,11 +166,6 @@ class TaskLoader:
             self._set_config()
             self._load_data_from_paths()
 
-        if self.aux_at_contexts is not None:
-            self._check_offgrid_aux(self._check_offgrid_aux(self.aux_at_contexts))
-        if self.aux_at_targets is not None:
-            self._check_offgrid_aux(self.aux_at_targets)
-
         self.context = self._cast_to_dtype(self.context)
         self.target = self._cast_to_dtype(self.target)
         self.aux_at_contexts = self._cast_to_dtype(self.aux_at_contexts)
@@ -258,13 +253,17 @@ class TaskLoader:
     def _load_data_from_paths(self):
         """Load data from paths and overwrite paths with loaded data."""
 
+        loaded_data = {}
+
         def _load_pandas_or_xarray(path):
             # Need to be careful about this. We need to ensure data gets into the right form
             #  for TaskLoader.
             if path is None:
                 return None
+            elif path in loaded_data:
+                return loaded_data[path]
             elif path.endswith(".nc"):
-                return xr.open_dataset(path)
+                data = xr.open_dataset(path)
             elif path.endswith(".csv"):
                 df = pd.read_csv(path)
                 if "time" in df.columns:
@@ -272,9 +271,11 @@ class TaskLoader:
                     df = df.set_index(["time", "x1", "x2"]).sort_index()
                 else:
                     df = df.set_index(["x1", "x2"]).sort_index()
-                return df
+                data = df
             else:
                 raise ValueError(f"Unknown file extension for {path}")
+            loaded_data[path] = data
+            return data
 
         def _load_data(data):
             if isinstance(data, (tuple, list)):
@@ -351,13 +352,6 @@ class TaskLoader:
             var = cast_to_dtype(var)
 
         return var
-
-    def _check_offgrid_aux(self, offgrid_aux):
-        if offgrid_aux is not None and "time" in offgrid_aux.dims:
-            raise ValueError(
-                "Auxiliary data has a time dimension. Spatiotemporal auxiliary data is not yet supported. "
-                "Please slice the auxiliary data to a single time step."
-            )
 
     def load_dask(self) -> None:
         """
@@ -561,14 +555,6 @@ class TaskLoader:
                     f"Invalid target index {target_idx} in link {link_i} of {links}: "
                     f"there are only {len(self.target)} target sets"
                 )
-            if not isinstance(self.context[context_idx], (pd.DataFrame, pd.Series)):
-                raise ValueError(
-                    f"Context set {context_idx} must be a pandas object when using the 'split' sampling strategy"
-                )
-            if not isinstance(self.target[target_idx], (pd.DataFrame, pd.Series)):
-                raise ValueError(
-                    f"Target set {target_idx} must be a pandas object when using the 'split' sampling strategy"
-                )
 
         return links
 
@@ -665,12 +651,7 @@ class TaskLoader:
                     return X_c, Y_c
                 x1 = rng.uniform(da.coords["x1"].min(), da.coords["x1"].max(), N)
                 x2 = rng.uniform(da.coords["x2"].min(), da.coords["x2"].max(), N)
-                Y_c = da.interp(
-                    x1=xr.DataArray(x1),
-                    x2=xr.DataArray(x2),
-                    method=self.xarray_interp_method,
-                    kwargs=dict(fill_value=None, bounds_error=True),
-                )
+                Y_c = da.sel(x1=xr.DataArray(x1), x2=xr.DataArray(x2), method="nearest")
                 Y_c = np.array(Y_c, dtype=self.dtype)
             X_c = np.array([x1, x2], dtype=self.dtype)
             if Y_c.ndim == 1:
@@ -680,13 +661,13 @@ class TaskLoader:
         elif isinstance(sampling_strat, np.ndarray):
             X_c = sampling_strat.astype(self.dtype)
             try:
-                Y_c = da.interp(
+                Y_c = da.sel(
                     x1=xr.DataArray(X_c[0]),
                     x2=xr.DataArray(X_c[1]),
-                    method=self.xarray_interp_method,
-                    kwargs=dict(fill_value=None, bounds_error=True),
+                    method="nearest",
+                    tolerance=0.1,  # Maximum distance from observed point to sample
                 )
-            except ValueError:
+            except KeyError:
                 raise InvalidSamplingStrategyError(
                     f"Passed a numpy coordinate array to sample xarray object, "
                     f"but the coordinates are out of bounds."
@@ -696,7 +677,7 @@ class TaskLoader:
                 # returned a 1D array, but we need a 2D array of shape (variable, N)
                 Y_c = Y_c.reshape(1, *Y_c.shape)
 
-        elif sampling_strat == "all":
+        elif sampling_strat in ["all", "gapfill"]:
             X_c = (
                 da.coords["x1"].values[np.newaxis],
                 da.coords["x2"].values[np.newaxis],
@@ -820,6 +801,11 @@ class TaskLoader:
         :class:`numpy:numpy.ndarray`
             ...
         """
+        if "time" in offgrid_aux.dims:
+            raise ValueError(
+                "If `aux_at_targets` data has a `time` dimension, it must be sliced before "
+                "passing it to `sample_offgrid_aux`."
+            )
         if isinstance(X_t, tuple):
             xt1, xt2 = X_t
             xt1 = xt1.ravel()
@@ -902,6 +888,39 @@ class TaskLoader:
                 continue_looking = False
 
         return bbox
+    
+    def time_slice_variable(self, var, date, delta_t=0):
+        """
+        Slice a variable by a given time delta.
+
+        Parameters
+        ----------
+        var : ...
+            Variable to slice.
+        delta_t : ...
+            Time delta to slice by.
+
+        Returns
+        -------
+        var : ...
+            Sliced variable.
+
+        Raises
+        ------
+        ValueError
+            If the variable is of an unknown type.
+        """
+        # TODO: Does this work with instantaneous time?
+        delta_t = pd.Timedelta(delta_t, unit=self.time_freq)
+        if isinstance(var, (xr.Dataset, xr.DataArray)):
+            if "time" in var.dims:
+                var = var.sel(time=date + delta_t)
+        elif isinstance(var, (pd.DataFrame, pd.Series)):
+            if "time" in var.index.names:
+                var = var[var.index.get_level_values("time") == date + delta_t]
+        else:
+            raise ValueError(f"Unknown variable type {type(var)}")
+        return var
 
     def task_generation(
         self,
@@ -1023,7 +1042,11 @@ class TaskLoader:
                     raise InvalidSamplingStrategyError(
                         f"Unknown sampling strategy {strat} of type {type(strat)}"
                     )
-                elif isinstance(strat, str) and strat not in ["all", "split"]:
+                elif isinstance(strat, str) and strat not in [
+                    "all",
+                    "split",
+                    "gapfill",
+                ]:
                     raise InvalidSamplingStrategyError(
                         f"Unknown sampling strategy {strat} for type str"
                     )
@@ -1044,39 +1067,6 @@ class TaskLoader:
 
             return sampling_strat
 
-        def time_slice_variable(var, delta_t):
-            """
-            Slice a variable by a given time delta.
-
-            Parameters
-            ----------
-            var : ...
-                Variable to slice.
-            delta_t : ...
-                Time delta to slice by.
-
-            Returns
-            -------
-            var : ...
-                Sliced variable.
-
-            Raises
-            ------
-            ValueError
-                If the variable is of an unknown type.
-            """
-            # TODO: Does this work with instantaneous time?
-            delta_t = pd.Timedelta(delta_t, unit=self.time_freq)
-            if isinstance(var, (xr.Dataset, xr.DataArray)):
-                if "time" in var.dims:
-                    var = var.sel(time=date + delta_t)
-            elif isinstance(var, (pd.DataFrame, pd.Series)):
-                if "time" in var.index.names:
-                    var = var[var.index.get_level_values("time") == date + delta_t]
-            else:
-                raise ValueError(f"Unknown variable type {type(var)}")
-            return var
-
         def sample_variable(var, sampling_strat, sample_patch_size, seed):
             """
             Sample a variable by a given sampling strategy to get input and
@@ -1088,6 +1078,8 @@ class TaskLoader:
                 Variable to sample.
             sampling_strat : ...
                 Sampling strategy to use.
+            sample_patch_size: ...
+                Desired sample patch size
             seed : ...
                 Seed for random sampling.
 
@@ -1115,24 +1107,48 @@ class TaskLoader:
         # Check `split_frac
         if split_frac < 0 or split_frac > 1:
             raise ValueError(f"split_frac must be between 0 and 1, got {split_frac}")
-        if (
-            self.links is not None
-            and "split" in context_sampling
-            and "split" not in target_sampling
-        ):
-            raise ValueError(
-                "Cannot use 'split' sampling strategy for context set and not "
-                "target set"
+        if self.links is None:
+            b1 = any(
+                [
+                    strat in ["split", "gapfill"]
+                    for strat in context_sampling
+                    if isinstance(strat, str)
+                ]
             )
-        elif (
-            self.links is not None
-            and "split" not in context_sampling
-            and "split" in target_sampling
-        ):
-            raise ValueError(
-                "Cannot use 'split' sampling strategy for target set and not "
-                "context set"
+            b2 = any(
+                [
+                    strat in ["split", "gapfill"]
+                    for strat in target_sampling
+                    if isinstance(strat, str)
+                ]
             )
+            if b1 or b2:
+                raise ValueError(
+                    "If using 'split' or 'gapfill' sampling strategies, the context and target "
+                    "sets must be linked with the TaskLoader `links` attribute."
+                )
+        if self.links is not None:
+            for context_idx, target_idx in self.links:
+                link_strats = (
+                    context_sampling[context_idx],
+                    target_sampling[target_idx],
+                )
+                if any(
+                    [
+                        strat in ["split", "gapfill"]
+                        for strat in link_strats
+                        if isinstance(strat, str)
+                    ]
+                ):
+                    # If one of the sampling strategies is "split" or "gapfill", the other must
+                    # use the same splitting strategy
+                    if link_strats[0] != link_strats[1]:
+                        raise ValueError(
+                            f"Linked context set {context_idx} and target set {target_idx} "
+                            f"must use the same sampling strategy if one of them "
+                            f"uses the 'split' or 'gapfill' sampling strategy. "
+                            f"Got {link_strats[0]} and {link_strats[1]}."
+                        )
 
         if not isinstance(date, pd.Timestamp):
             date = pd.Timestamp(date)
@@ -1167,39 +1183,90 @@ class TaskLoader:
         task["Y_t"] = []
 
         context_slices = [
-            time_slice_variable(var, delta_t)
+            self.time_slice_variable(var, date, delta_t)
             for var, delta_t in zip(self.context, self.context_delta_t)
         ]
         target_slices = [
-            time_slice_variable(var, delta_t)
+            self.time_slice_variable(var, date, delta_t)
             for var, delta_t in zip(self.target, self.target_delta_t)
         ]
 
+        # TODO move to method
         if (
             self.links is not None
             and "split" in context_sampling
             and "split" in target_sampling
         ):
-            # Perform the split sampling strategy for linked context and target
-            # sets at this point while we have the full context and target data
-            # in scope
-            for link_i, link in enumerate(self.links):
-                N_obs = len(context_slices[link[0]])
-                N_obs_target_check = len(target_slices[link[1]])
-                if N_obs != N_obs_target_check:
-                    raise ValueError(
-                        f"Context set {link[0]} has {N_obs} observations, but "
-                        f"target set {link[1]} "
-                        f"has {N_obs_target_check} observations"
+            # Perform the split sampling strategy for linked context and target sets at this point
+            # while we have the full context and target data in scope
+
+            context_split_idxs = np.where(np.array(context_sampling) == "split")[0]
+            target_split_idxs = np.where(np.array(target_sampling) == "split")[0]
+            assert len(context_split_idxs) == len(target_split_idxs), (
+                f"Number of context sets with 'split' sampling strategy "
+                f"({len(context_split_idxs)}) must match number of target sets "
+                f"with 'split' sampling strategy ({len(target_split_idxs)})"
+            )
+            for split_i, (context_idx, target_idx) in enumerate(
+                zip(context_split_idxs, target_split_idxs)
+            ):
+                assert (context_idx, target_idx) in self.links, (
+                    f"Context set {context_idx} and target set {target_idx} must be linked, "
+                    f"with the `links` attribute if using the 'split' sampling strategy"
+                )
+
+                context_var = context_slices[context_idx]
+                target_var = target_slices[target_idx]
+
+                for var in [context_var, target_var]:
+                    assert isinstance(var, (pd.Series, pd.DataFrame)), (
+                        f"If using 'split' sampling strategy for linked context and target sets, "
+                        f"the context and target sets must be pandas DataFrames or Series, "
+                        f"but got {type(var)}."
                     )
 
-                N_context = int(N_obs * split_frac)
-                split_seed = seed + link_i if seed is not None else None
+                N_obs = len(context_var)
+                N_obs_target_check = len(target_var)
+                if N_obs != N_obs_target_check:
+                    raise ValueError(
+                        f"Cannot split context set {context_idx} and target set {target_idx} "
+                        f"because they have different numbers of observations: "
+                        f"{N_obs} and {N_obs_target_check}"
+                    )
+                split_seed = seed + split_i if seed is not None else None
                 rng = np.random.default_rng(split_seed)
+
+                N_context = int(N_obs * split_frac)
                 idxs_context = rng.choice(N_obs, N_context, replace=False)
-                context_slices[link[0]] = context_slices[link[0]].iloc[idxs_context]
-                target_slices[link[1]] = target_slices[link[1]].drop(
-                    context_slices[link[0]].index
+
+                context_var = context_var.iloc[idxs_context]
+                target_var = target_var.drop(context_var.index)
+
+                context_slices[context_idx] = context_var
+                target_slices[target_idx] = target_var
+
+        # TODO move to method
+        if (
+            self.links is not None
+            and "gapfill" in context_sampling
+            and "gapfill" in target_sampling
+        ):
+            # Perform the gapfill sampling strategy for linked context and target sets at this point
+            # while we have the full context and target data in scope
+
+            context_gapfill_idxs = np.where(np.array(context_sampling) == "gapfill")[0]
+            target_gapfill_idxs = np.where(np.array(target_sampling) == "gapfill")[0]
+            assert len(context_gapfill_idxs) == len(target_gapfill_idxs), (
+                f"Number of context sets with 'gapfill' sampling strategy "
+                f"({len(context_gapfill_idxs)}) must match number of target sets "
+                f"with 'gapfill' sampling strategy ({len(target_gapfill_idxs)})"
+            )
+            for gapfill_i, (context_idx, target_idx) in enumerate(
+                zip(context_gapfill_idxs, target_gapfill_idxs)
+            ):
+                assert (context_idx, target_idx) in self.links, (
+                    f"Context set {context_idx} and target set {target_idx} must be linked, "
+                    f"with the `links` attribute if using the 'gapfill' sampling strategy"
                 )
 
         # sample common patch size for context and target set
@@ -1233,8 +1300,10 @@ class TaskLoader:
                 X_c_offrid_all = np.empty((2, 0), dtype=self.dtype)
             else:
                 X_c_offrid_all = np.concatenate(X_c_offgrid, axis=1)
-            Y_c_aux = self.sample_offgrid_aux(
-                X_c_offrid_all, self.aux_at_contexts, sample_patch_size
+            Y_c_aux = (
+                self.sample_offgrid_aux(
+                    X_c_offrid_all, self.time_slice_variable(self.aux_at_contexts, date), sample_patch_size
+                ),
             )
             task["X_c"].append(X_c_offrid_all)
             task["Y_c"].append(Y_c_aux)
@@ -1244,17 +1313,18 @@ class TaskLoader:
             if len(task["X_t"]) > 1:
                 raise ValueError(
                     "Cannot add auxiliary variable to target set when there "
-                    "are multiple target variables"
+                    "are multiple target variables (not supported by default `ConvNP` model)."
                 )
             task["Y_t_aux"] = self.sample_offgrid_aux(
-                task["X_t"][0], self.aux_at_targets
+                task["X_t"][0],
+                self.time_slice_variable(self.aux_at_targets, date),
             )
 
         return Task(task)
 
     def __call__(self, date, *args, **kwargs):
         """
-        Generate a task for a given date.
+        Generate a task for a given date (or a list of task for an iterable of dates).
 
         Parameters
         ----------
