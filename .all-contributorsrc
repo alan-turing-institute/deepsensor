@@ -54,6 +54,17 @@
         "ideas",
         "research"
       ]
+    },
+    {
+      "login": "wesselb",
+      "name": "Wessel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1444448?v=4",
+      "profile": "http://wessel.ai",
+      "contributions": [
+        "research",
+        "code",
+        "ideas"
+      ]
     }
   ]
 }
