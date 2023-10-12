@@ -131,6 +131,15 @@
         "userTesting",
         "bug"
       ]
+    },
+    {
+      "login": "RohitRathore1",
+      "name": "Rohit Singh Rathaur",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42641738?v=4",
+      "profile": "https://rohitrathore.netlify.app/",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
