@@ -368,10 +368,8 @@ class TestTaskLoader(unittest.TestCase):
                 tl_loaded.target_delta_t,
                 "target_delta_t not saved and loaded correctly",
             )
-    @parameterized.expand([
-        [(0.3, 0.3)],
-        [(0.6, 0.4)]
-    ])
+
+    @parameterized.expand([[(0.3, 0.3)], [(0.6, 0.4)]])
     def test_patch_size(self, patch_size: Sequence[float]) -> None:
         """Test patch size sampling."""
         context = [self.da, self.df]
@@ -383,10 +381,12 @@ class TestTaskLoader(unittest.TestCase):
 
         for context_sampling, target_sampling in self._gen_task_loader_call_args(
             len(context), 1
-        ):  
+        ):
             if isinstance(context_sampling[0], np.ndarray):
                 continue
-            task = tl("2020-01-01", context_sampling, target_sampling, patch_size=patch_size)
+            task = tl(
+                "2020-01-01", context_sampling, target_sampling, patch_size=patch_size
+            )
 
 
 if __name__ == "__main__":
