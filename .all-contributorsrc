@@ -1,12 +1,14 @@
 {
   "projectName": "deepsensor",
   "projectOwner": "tom-andersson",
+  "skipCI": true,
   "files": [
     "README.md"
   ],
   "commitType": "docs",
   "commitConvention": "angular",
   "contributorsPerLine": 7,
+  "contributorsSortAlphabetically": true,
   "contributors": [
     {
       "login": "kallewesterling",
@@ -29,7 +31,16 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/26459412?v=4",
       "profile": "https://www.bas.ac.uk/profile/tomand",
       "contributions": [
-        "code"
+        "code",
+        "research",
+        "maintenance",
+        "bug",
+        "test",
+        "tutorial",
+        "doc",
+        "review",
+        "talk",
+        "question"
       ]
     }
   ]
