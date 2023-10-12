@@ -101,6 +101,17 @@
         "bug",
         "ideas"
       ]
+    },
+    {
+      "login": "nilsleh",
+      "name": "Nils Lehmann",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35272119?v=4",
+      "profile": "https://nilsleh.info/",
+      "contributions": [
+        "ideas",
+        "userTesting",
+        "bug"
+      ]
     }
   ]
 }
