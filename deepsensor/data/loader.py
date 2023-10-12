@@ -602,6 +602,7 @@ class TaskLoader:
         self,
         da: Union[xr.DataArray, xr.Dataset],
         sampling_strat: Union[str, int, float, np.ndarray],
+        sample_patch_size: Optional[list[float]] = None,
         seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
         """
@@ -614,6 +615,8 @@ class TaskLoader:
         sampling_strat : str | int | float | :class:`numpy:numpy.ndarray`
             Sampling strategy, either "all" or an integer for random grid cell
             sampling.
+        sample_patch_size: list 
+            desired patch size extent to sample [lat_min, lat_max, lon_min, lon_max]
         seed : int, optional
             Seed for random sampling. Default: None.
 
@@ -633,6 +636,12 @@ class TaskLoader:
         da = da.load()  # Converts dask -> numpy if not already loaded
         if isinstance(da, xr.Dataset):
             da = da.to_array()
+
+        # restric to a certain spatial patch
+        if sample_patch_size is not None:
+            x1_slice = slice(sample_patch_size[0], sample_patch_size[1])
+            x2_slice = slice(sample_patch_size[2], sample_patch_size[3])
+            da = da.sel(x1=x1_slice, x2=x2_slice)
 
         if isinstance(sampling_strat, float):
             sampling_strat = int(sampling_strat * da.size)
@@ -707,6 +716,7 @@ class TaskLoader:
         self,
         df: Union[pd.DataFrame, pd.Series],
         sampling_strat: Union[str, int, float, np.ndarray],
+        sample_patch_size: Optional[list[float]] = None,
         seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
         """
@@ -720,6 +730,8 @@ class TaskLoader:
         sampling_strat : str | int | float | :class:`numpy:numpy.ndarray`
             Sampling strategy, either "all" or an integer for random grid cell
             sampling.
+        sample_patch_size: list[float], optional
+            desired patch size extent to sample [lat_min, lat_max, lon_min, lon_max]
         seed : int, optional
             Seed for random sampling. Default: None.
 
@@ -738,6 +750,12 @@ class TaskLoader:
         """
         df = df.dropna(how="any")  # If any obs are NaN, drop them
 
+        if sample_patch_size is not None:
+            # retrieve desired patch size
+            lat_min, lat_max, lon_min, lon_max = sample_patch_size
+            df = df[(df.index.get_level_values('x1') >= lat_min) & (df.index.get_level_values('x1') <= lat_max) & 
+                        (df.index.get_level_values('x2') >= lon_min) & (df.index.get_level_values('x2') <= lon_max)]
+            
         if isinstance(sampling_strat, float):
             sampling_strat = int(sampling_strat * df.shape[0])
 
@@ -747,7 +765,7 @@ class TaskLoader:
             idx = rng.choice(df.index, N)
             X_c = df.loc[idx].reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
             Y_c = df.loc[idx].values.T
-        elif sampling_strat in ["all", "split"]:
+        elif isinstance(sampling_strat, str) and sampling_strat in ["all", "split"]:
             # NOTE if "split", we assume that the context-target split has already been applied to the df
             # in an earlier scope with access to both the context and target data. This is maybe risky!
             X_c = df.reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
@@ -778,6 +796,7 @@ class TaskLoader:
         self,
         X_t: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]],
         offgrid_aux: Union[xr.DataArray, xr.Dataset],
+        sample_patch_size: Optional[list[float]] = None
     ) -> np.ndarray:
         """
         Sample auxiliary data at off-grid locations.
@@ -789,6 +808,8 @@ class TaskLoader:
             tuple of two numpy arrays, or a single numpy array.
         offgrid_aux : :class:`xarray.DataArray` | :class:`xarray.Dataset`
             Auxiliary data at off-grid locations.
+        sample_patch_size: list[float], optional 
+            desired patch size extent to sample [lat_min, lat_max, lon_min, lon_max]
 
         Returns
         -------
@@ -801,6 +822,12 @@ class TaskLoader:
             xt2 = xt2.ravel()
         else:
             xt1, xt2 = xr.DataArray(X_t[0]), xr.DataArray(X_t[1])
+
+        if sample_patch_size is not None:
+            x1_slice = slice(sample_patch_size[0], sample_patch_size[1])
+            x2_slice = slice(sample_patch_size[2], sample_patch_size[3])
+            offgrid_aux = offgrid_aux.sel(x1=x1_slice, x2=x2_slice)
+
         Y_t_aux = offgrid_aux.sel(x1=xt1, x2=xt2, method="nearest")
         if isinstance(Y_t_aux, xr.Dataset):
             Y_t_aux = Y_t_aux.to_array()
@@ -882,6 +909,7 @@ class TaskLoader:
             List[Union[str, int, float, np.ndarray]],
         ] = "all",
         split_frac: float = 0.5,
+        patch_size: Sequence[float] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
@@ -915,6 +943,9 @@ class TaskLoader:
             "split" sampling strategy for linked context and target set pairs.
             The remaining observations are used for the target set. Default is
             0.5.
+        patch_size: Sequence[float], optional
+            Desired patch size in lat/lon used for patchwise task generation. Usefule when considering
+            the entire available region is computationally prohibitive for model forward pass
         datewise_deterministic : bool
             Whether random sampling is datewise_deterministic based on the
             date. Default is ``False``.
@@ -1034,7 +1065,7 @@ class TaskLoader:
                 raise ValueError(f"Unknown variable type {type(var)}")
             return var
 
-        def sample_variable(var, sampling_strat, seed):
+        def sample_variable(var, sampling_strat, sample_patch_size, seed):
             """
             Sample a variable by a given sampling strategy to get input and
             output data.
@@ -1059,9 +1090,9 @@ class TaskLoader:
                 If the variable is of an unknown type.
             """
             if isinstance(var, (xr.Dataset, xr.DataArray)):
-                X, Y = self.sample_da(var, sampling_strat, seed)
+                X, Y = self.sample_da(var, sampling_strat, sample_patch_size, seed)
             elif isinstance(var, (pd.DataFrame, pd.Series)):
-                X, Y = self.sample_df(var, sampling_strat, seed)
+                X, Y = self.sample_df(var, sampling_strat, sample_patch_size, seed)
             else:
                 raise ValueError(f"Unknown type {type(var)} for context set " f"{var}")
             return X, Y
@@ -1103,6 +1134,12 @@ class TaskLoader:
         else:
             # 'Truly' random sampling
             seed = None
+
+        # check patch size
+        if patch_size is not None:
+            assert len(patch_size) == 2, "Patch size must be a Sequence of two values for lat/lon extent."
+            assert all(0 < x <= 1 for x in patch_size), "Values specified for patch size must satisfy 0 < x <= 1."
+        self.patch_size = patch_size
 
         task = {}
 
@@ -1159,12 +1196,12 @@ class TaskLoader:
             zip(context_slices, context_sampling)
         ):
             context_seed = seed + i if seed is not None else None
-            X_c, Y_c = sample_variable(var, sampling_strat, context_seed)
+            X_c, Y_c = sample_variable(var, sampling_strat, sample_patch_size, context_seed)
             task[f"X_c"].append(X_c)
             task[f"Y_c"].append(Y_c)
         for j, (var, sampling_strat) in enumerate(zip(target_slices, target_sampling)):
             target_seed = seed + i + j if seed is not None else None
-            X_t, Y_t = sample_variable(var, sampling_strat, target_seed)
+            X_t, Y_t = sample_variable(var, sampling_strat, sample_patch_size, target_seed)
             task[f"X_t"].append(X_t)
             task[f"Y_t"].append(Y_t)
 
@@ -1176,7 +1213,7 @@ class TaskLoader:
                 X_c_offrid_all = np.empty((2, 0), dtype=self.dtype)
             else:
                 X_c_offrid_all = np.concatenate(X_c_offgrid, axis=1)
-            Y_c_aux = self.sample_offgrid_aux(X_c_offrid_all, self.aux_at_contexts)
+            Y_c_aux = self.sample_offgrid_aux(X_c_offrid_all, self.aux_at_contexts, sample_patch_size)
             task["X_c"].append(X_c_offrid_all)
             task["Y_c"].append(Y_c_aux)
 
