@@ -88,6 +88,19 @@
         "userTesting",
         "ideas"
       ]
+    },
+    {
+      "login": "jonas-scholz123",
+      "name": "Jonas Scholz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37850411?v=4",
+      "profile": "https://github.com/jonas-scholz123",
+      "contributions": [
+        "userTesting",
+        "research",
+        "code",
+        "bug",
+        "ideas"
+      ]
     }
   ]
 }
