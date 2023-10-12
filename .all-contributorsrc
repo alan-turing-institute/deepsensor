@@ -16,8 +16,12 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/7298727?v=4",
       "profile": "http://www.westerling.nu",
       "contributions": [
-        "code",
-        "doc"
+        "doc",
+        "infra",
+        "ideas",
+        "projectManagement",
+        "promotion",
+        "question"
       ]
     },
     {
