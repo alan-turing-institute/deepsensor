@@ -189,6 +189,7 @@ DeepSensor is funded by [The Alan Turing Institute](https://www.turing.ac.uk/).
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://www.bas.ac.uk/profile/tomand"><img src="https://avatars.githubusercontent.com/u/26459412?v=4?s=100" width="100px;" alt="Tom Andersson"/><br /><sub><b>Tom Andersson</b></sub></a><br /><a href="#code-tom-andersson" title="Code">💻</a> <a href="#research-tom-andersson" title="Research">🔬</a> <a href="#maintenance-tom-andersson" title="Maintenance">🚧</a> <a href="#bug-tom-andersson" title="Bug reports">🐛</a> <a href="#test-tom-andersson" title="Tests">⚠️</a> <a href="#tutorial-tom-andersson" title="Tutorials">✅</a> <a href="#doc-tom-andersson" title="Documentation">📖</a> <a href="#review-tom-andersson" title="Reviewed Pull Requests">👀</a> <a href="#talk-tom-andersson" title="Talks">📢</a> <a href="#question-tom-andersson" title="Answering Questions">💬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.westerling.nu"><img src="https://avatars.githubusercontent.com/u/7298727?v=4?s=100" width="100px;" alt="Kalle Westerling"/><br /><sub><b>Kalle Westerling</b></sub></a><br /><a href="#code-kallewesterling" title="Code">💻</a> <a href="#doc-kallewesterling" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
