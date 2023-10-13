@@ -61,27 +61,7 @@ class TestModel(unittest.TestCase):
         _ = self.dp([self.da, self.df])  # Compute normalisation parameters
 
     def _gen_task_loader_call_args(self, n_context, n_target):
-        """Generate arguments for TaskLoader.__call__
-
-        Loops over all possible combinations of context/target sampling methods
-        and returns a list of arguments for TaskLoader.__call__.
-        Options tested include:
-        - (int): Random number of samples
-        - (float): Fraction of samples
-        - "all": All samples
-
-        Parameters
-        ----------
-        n_context : int
-            Number of context samples.
-        n_target : int
-            Number of target samples.
-
-        Returns
-        -------
-        tuple
-            Arguments for TaskLoader.__call__
-        """
+        """Generate arguments for TaskLoader.__call__"""
         for sampling_method in [
             10,
             0.5,
@@ -92,28 +72,8 @@ class TestModel(unittest.TestCase):
     # TEMP only 1D because non-overlapping target sets are not yet supported
     @parameterized.expand(range(1, 2))
     def test_model_call(self, n_context_and_target):
-        """
-        Check ``ConvNP`` runs with all possible combinations of context/target
-        sampling methods.
-
-        Generates all possible combinations of xarray and pandas context/target
-        sets of length n_context_and_target runs ``ConvNP`` with all possible
-        combinations of context/target sampling methods.
-
-        .. note::
-            TEMP only 1D because non-overlapping target sets are not yet
-            supported
-
-        Parameters
-        ----------
-        n_context_and_target : int
-            Number of context and target sets.
-
-        Returns
-        -------
-        ...
-            ...
-        """
+        """Check ``ConvNP`` runs with all possible combinations of context/target
+        sampling methods."""
         # Convert to list of strings containing every possible combination of "xr" and "pd"
         context_ID_list = list(
             itertools.product(["xr", "pd"], repeat=n_context_and_target)
@@ -151,20 +111,8 @@ class TestModel(unittest.TestCase):
 
     @parameterized.expand(range(1, 4))
     def test_prediction_shapes_lowlevel(self, n_target_sets):
-        """
-        Test low-level model prediction interface over a range of number of
-        target sets.
-
-        Parameters
-        ----------
-        n_target_sets : int
-            Number of target sets.
-
-        Returns
-        -------
-        ...
-            ...
-        """
+        """Test low-level model prediction interface over a range of number of
+        target sets."""
         tl = TaskLoader(
             context=self.da,
             target=[self.da] * n_target_sets,
@@ -237,19 +185,7 @@ class TestModel(unittest.TestCase):
 
     @parameterized.expand(range(1, 4))
     def test_nans_offgrid_context(self, ndim):
-        """
-        Test that ``ConvNP`` can handle ``NaN``s in offgrid context.
-
-        Parameters
-        ----------
-        ndim : int
-            Number of data variables in context.
-
-        Returns
-        -------
-        ...
-            ...
-        """
+        """Test that ``ConvNP`` can handle ``NaN``s in offgrid context."""
 
         tl = TaskLoader(
             context=_gen_data_xr(data_vars=range(ndim)),
@@ -272,19 +208,7 @@ class TestModel(unittest.TestCase):
 
     @parameterized.expand(range(1, 4))
     def test_nans_gridded_context(self, ndim):
-        """
-        Test that ``ConvNP`` can handle ``NaN``s in gridded context.
-
-        Parameters
-        ----------
-        ndim : int
-            Number of data variables in context.
-
-        Returns
-        -------
-        ...
-            ...
-        """
+        """Test that ``ConvNP`` can handle ``NaN``s in gridded context."""
 
         tl = TaskLoader(
             context=_gen_data_xr(data_vars=range(ndim)),
@@ -307,23 +231,8 @@ class TestModel(unittest.TestCase):
 
     @parameterized.expand(range(1, 4))
     def test_prediction_shapes_highlevel(self, target_dim):
-        """
-        Test high-level ``.predict`` interface over a range of number of target
-        sets.
-
-        ..
-            TODO: implement and test multiple target sets for pandas case
-
-        Parameters
-        ----------
-        target_dim : int
-            Number of target sets.
-
-        Returns
-        -------
-        ...
-            ...
-        """
+        """Test high-level ``.predict`` interface over a range of number of target
+        sets."""
 
         if target_dim > 1:
             # Avoid data var name clash in `predict`
@@ -396,14 +305,7 @@ class TestModel(unittest.TestCase):
             assert_shape(samples_df, (n_samples * n_preds, target_dim))
 
     def test_nans_in_context(self):
-        """
-        Test nothing breaks when NaNs present in context.
-
-        Returns
-        -------
-        ...
-            ...
-        """
+        """Test nothing breaks when NaNs present in context."""
         tl = TaskLoader(context=self.da, target=self.da)
         task = tl("2020-01-01", context_sampling=10, target_sampling=10)
 
@@ -416,15 +318,8 @@ class TestModel(unittest.TestCase):
         model(task)
 
     def test_highlevel_predict_coords_align_with_X_t_ongrid(self):
-        """
-        Test coordinates of the xarray returned predictions align with the
-        coordinates of X_t.
-
-        Returns
-        -------
-        ...
-            ...
-        """
+        """Test coordinates of the xarray returned predictions align with the
+        coordinates of X_t."""
 
         # Instantiate an xarray object that would lead to rounding errors
         region_size = (61, 81)
@@ -461,15 +356,8 @@ class TestModel(unittest.TestCase):
         assert np.array_equal(mean_ds["longitude"], da_raw["longitude"])
 
     def test_highlevel_predict_coords_align_with_X_t_offgrid(self):
-        """
-        Test coordinates of the pandas returned predictions align with the
-        coordinates of X_t.
-
-        Returns
-        -------
-        ...
-            ...
-        """
+        """Test coordinates of the pandas returned predictions align with the
+        coordinates of X_t."""
 
         # Instantiate a pandas object that would lead to rounding errors
         region_size = (61, 81)
@@ -522,7 +410,10 @@ class TestModel(unittest.TestCase):
             task_loader = TaskLoader(context=t2m_fpath, target=t2m_fpath)
 
             model = ConvNP(
-                data_processor, task_loader, unet_channels=(5,) * 3, verbose=False
+                data_processor,
+                task_loader,
+                unet_channels=(5,) * 3,
+                verbose=False,
             )
 
             # Train the model for a few iterations to test the trained model is restored correctly later.
@@ -553,24 +444,7 @@ class TestModel(unittest.TestCase):
 
 
 def assert_shape(x, shape: tuple):
-    """
-    Assert that the shape of ``x`` matches ``shape``.
-
-    ..
-        ex: assert_shape(conv_input_array, [8, 3, None, None])
-
-    Parameters
-    ----------
-    x : :class:`numpy:numpy.ndarray`
-        ...
-    shape : tuple
-        The shape to check against.
-
-    Returns
-    -------
-    ...
-        ...
-    """
+    """Assert that the shape of ``x`` matches ``shape``."""
     # TODO put this in a utils module?
     assert len(x.shape) == len(shape), (x.shape, shape)
     for _a, _b in zip(x.shape, shape):
