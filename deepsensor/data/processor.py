@@ -32,25 +32,24 @@ class DataProcessor:
         """
         Initialise a DataProcessor object.
 
-        Parameters
-        ----------
-        folder : str, optional
-            Folder to load normalisation params from. Defaults to None.
-        x1_name : str, optional
-            Name of first spatial coord (e.g. "lat"). Defaults to "x1".
-        x2_name : str, optional
-            Name of second spatial coord (e.g. "lon"). Defaults to "x2".
-        x1_map : tuple, optional
-            2-tuple of raw x1 coords to linearly map to (0, 1), respectively.
-            Defaults to (0, 1) (i.e. no normalisation).
-        x2_map : tuple, optional
-            2-tuple of raw x2 coords to linearly map to (0, 1), respectively.
-            Defaults to (0, 1) (i.e. no normalisation).
-        deepcopy : bool, optional
-            Whether to make a deepcopy of raw data to ensure it is not changed
-            by reference when normalising. Defaults to True.
-        verbose : bool, optional
-            Whether to print verbose output. Defaults to False.
+        Args:
+            folder (str, optional):
+                Folder to load normalisation params from. Defaults to None.
+            x1_name (str, optional):
+                Name of first spatial coord (e.g. "lat"). Defaults to "x1".
+            x2_name (str, optional):
+                Name of second spatial coord (e.g. "lon"). Defaults to "x2".
+            x1_map (tuple, optional):
+                2-tuple of raw x1 coords to linearly map to (0, 1),
+                respectively. Defaults to (0, 1) (i.e. no normalisation).
+            x2_map (tuple, optional):
+                2-tuple of raw x2 coords to linearly map to (0, 1),
+                respectively. Defaults to (0, 1) (i.e. no normalisation).
+            deepcopy (bool, optional):
+                Whether to make a deepcopy of raw data to ensure it is not
+                changed by reference when normalising. Defaults to True.
+            verbose (bool, optional):
+                Whether to print verbose output. Defaults to False.
         """
         if folder is not None:
             fpath = os.path.join(folder, self.config_fname)
@@ -77,13 +76,17 @@ class DataProcessor:
             if (self.x1_none and not self.x2_none) or (
                 not self.x1_none and self.x2_none
             ):
-                raise ValueError("Must provide both x1_map and x2_map, or neither.")
+                raise ValueError(
+                    "Must provide both x1_map and x2_map, or neither."
+                )
             elif not self.x1_none and not self.x2_none:
                 x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
 
             if "coords" not in self.config:
                 # Add coordinate normalisation info to config
-                self.set_coord_params(time_name, x1_name, x1_map, x2_name, x2_map)
+                self.set_coord_params(
+                    time_name, x1_name, x1_map, x2_name, x2_map
+                )
 
         self.raw_spatial_coord_names = [
             self.config["coords"][coord]["name"] for coord in ["x1", "x2"]
@@ -127,7 +130,8 @@ class DataProcessor:
     def _validate_xr(self, data: Union[xr.DataArray, xr.Dataset]):
         def _validate_da(da: xr.DataArray):
             coord_names = [
-                self.config["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
+                self.config["coords"][coord]["name"]
+                for coord in ["time", "x1", "x2"]
             ]
             if coord_names[0] not in da.dims:
                 # We don't have a time dimension.
@@ -146,7 +150,8 @@ class DataProcessor:
 
     def _validate_pandas(self, df: Union[pd.DataFrame, pd.Series]):
         coord_names = [
-            self.config["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
+            self.config["coords"][coord]["name"]
+            for coord in ["time", "x1", "x2"]
         ]
 
         if coord_names[0] not in df.index.names:
@@ -172,15 +177,12 @@ class DataProcessor:
         """
         Load dask data into memory.
 
-        Parameters
-        ----------
-        data : :class:`xarray.DataArray` | :class:`xarray.Dataset`
-            ...
+        Args:
+            data (:class:`xarray.DataArray` | :class:`xarray.Dataset`):
+                Description of the parameter.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type and description of the returned value(s) needed.]
         """
         if isinstance(data, xr.DataArray):
             data.load()
@@ -188,26 +190,26 @@ class DataProcessor:
             data.load()
         return data
 
-    def set_coord_params(self, time_name, x1_name, x1_map, x2_name, x2_map) -> None:
+    def set_coord_params(
+        self, time_name, x1_name, x1_map, x2_name, x2_map
+    ) -> None:
         """
         Set coordinate normalisation params.
 
-        Parameters
-        ----------
-        time_name : ...
-            ...
-        x1_name : ...
-            ...
-        x1_map : ...
-            ...
-        x2_name : ...
-            ...
-        x2_map : ...
-            ...
+        Args:
+            time_name:
+                [Type] Description needed.
+            x1_name:
+                [Type] Description needed.
+            x1_map:
+                [Type] Description needed.
+            x2_name:
+                [Type] Description needed.
+            x2_map:
+                [Type] Description needed.
 
-        Returns
-        -------
-        None.
+        Returns:
+            None.
         """
         self.config["coords"] = {}
         self.config["coords"]["time"] = {"name": time_name}
@@ -222,17 +224,15 @@ class DataProcessor:
         """
         Check if normalisation params computed for a given variable.
 
-        Parameters
-        ----------
-        var_ID : ...
-            ...
-        method : ...
-            ...
+        Args:
+            var_ID:
+                [Type] Description needed.
+            method:
+                [Type] Description needed.
 
-        Returns
-        -------
-        bool
-            Whether normalisation params are computed for a given variable.
+        Returns:
+            bool:
+                Whether normalisation params are computed for a given variable.
         """
         if (
             var_ID in self.config
@@ -252,23 +252,20 @@ class DataProcessor:
         Get pre-computed normalisation params or compute them for variable
         ``var_ID``.
 
-        .. note:
+        .. note::
+            TODO do we need to pass var_ID? Can we just use the name of data?
 
-            TODO do we need to pass var_ID? Can we just use name of data?
+        Args:
+            var_ID:
+                [Type] Description needed.
+            data:
+                [Type] Description needed.
+            method (optional):
+                [Type] Description needed. Defaults to None.
 
-        Parameters
-        ----------
-        var_ID : ...
-            ...
-        data : ...
-            ...
-        method : ..., optional
-            ..., by default None.
-
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type]:
+                Description of the returned value(s) needed.
         """
         if method not in self.valid_methods:
             raise ValueError(
@@ -303,39 +300,39 @@ class DataProcessor:
         """
         Normalise or unnormalise a coordinate array.
 
-        Parameters
-        ----------
-        coord_array : :class:`numpy:numpy.ndarray`
-            Array of shape ``(2, N)`` containing coords.
-        unnorm : bool, optional
-            Whether to unnormalise. Defaults to ``False``.
+        Args:
+            coord_array (:class:`numpy:numpy.ndarray`):
+                Array of shape ``(2, N)`` containing coords.
+            unnorm (bool, optional):
+                Whether to unnormalise. Defaults to ``False``.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type]:
+                Description of the returned value(s) needed.
         """
-        x1, x2 = self.map_x1_and_x2(coord_array[0], coord_array[1], unnorm=unnorm)
+        x1, x2 = self.map_x1_and_x2(
+            coord_array[0], coord_array[1], unnorm=unnorm
+        )
         new_coords = np.stack([x1, x2], axis=0)
         return new_coords
 
-    def map_x1_and_x2(self, x1: np.ndarray, x2: np.ndarray, unnorm: bool = False):
+    def map_x1_and_x2(
+        self, x1: np.ndarray, x2: np.ndarray, unnorm: bool = False
+    ):
         """
-        Normalise or unnormalise spatial coords in a array.
+        Normalise or unnormalise spatial coords in an array.
 
-        Parameters
-        ----------
-        x1 : :class:`numpy:numpy.ndarray`
-            Array of shape ``(N_x1,)`` containing spatial coords of x1.
-        x2 : :class:`numpy:numpy.ndarray`
-            Array of shape ``(N_x2,)`` containing spatial coords of x2.
-        unnorm : bool, optional
-            Whether to unnormalise. Defaults to ``False``.
+        Args:
+            x1 (:class:`numpy:numpy.ndarray`):
+                Array of shape ``(N_x1,)`` containing spatial coords of x1.
+            x2 (:class:`numpy:numpy.ndarray`):
+                Array of shape ``(N_x2,)`` containing spatial coords of x2.
+            unnorm (bool, optional):
+                Whether to unnormalise. Defaults to ``False``.
 
-        Returns
-        -------
-        Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
-            Normalised or unnormalised spatial coords of x1 and x2.
+        Returns:
+            Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]:
+                Normalised or unnormalised spatial coords of x1 and x2.
         """
         x11, x12 = self.config["coords"]["x1"]["map"]
         x21, x22 = self.config["coords"]["x2"]["map"]
@@ -357,17 +354,15 @@ class DataProcessor:
         """
         Normalise spatial coords in a pandas or xarray object.
 
-        Parameters
-        ----------
-        data : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | :class:`pandas.Series`
-            ...
-        unnorm : bool, optional
-            ...
+        Args:
+            data (:class:`xarray.DataArray`, :class:`xarray.Dataset`, :class:`pandas.DataFrame`, or :class:`pandas.Series`):
+                [Description Needed]
+            unnorm (bool, optional):
+                [Description Needed]. Defaults to [Default Value].
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type]:
+                [Description Needed]
         """
         if isinstance(data, (pd.DataFrame, pd.Series)):
             # Reset index to get coords as columns
@@ -438,7 +433,9 @@ class DataProcessor:
 
             # Rename all dimensions.
             rename = {
-                old: new for old, new in zip(old_coord_IDs, new_coord_IDs) if old != new
+                old: new
+                for old, new in zip(old_coord_IDs, new_coord_IDs)
+                if old != new
             }
             data = data.rename(rename)
 
@@ -452,7 +449,9 @@ class DataProcessor:
 
     def map_array(
         self,
-        data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, np.ndarray],
+        data: Union[
+            xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, np.ndarray
+        ],
         var_ID: str,
         method: Optional[str] = None,
         unnorm: bool = False,
@@ -462,27 +461,29 @@ class DataProcessor:
         Normalise or unnormalise the data values in an xarray, pandas, or
         numpy object.
 
-        Parameters
-        ----------
-        data : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`numpy:numpy.ndarray`
-            ...
-        var_ID : str
-            ...
-        method : str, optional
-            ..., by default None.
-        unnorm : bool, optional
-            ..., by default False.
-        add_offset : bool, optional
-            ..., by default True.
+        Args:
+            data (:class:`xarray.DataArray`, :class:`xarray.Dataset`, :class:`pandas.DataFrame`, :class:`pandas.Series`, or :class:`numpy:numpy.ndarray`):
+                [Description Needed]
+            var_ID (str):
+                [Description Needed]
+            method (str, optional):
+                [Description Needed]. Defaults to None.
+            unnorm (bool, optional):
+                [Description Needed]. Defaults to False.
+            add_offset (bool, optional):
+                [Description Needed]. Defaults to True.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type]:
+                [Description Needed]
         """
         if not unnorm and method is None:
             raise ValueError("Must provide `method` if normalising data.")
-        elif unnorm and method is not None and self.config[var_ID]["method"] != method:
+        elif (
+            unnorm
+            and method is not None
+            and self.config[var_ID]["method"] != method
+        ):
             # User has provided a different method to the one used for normalising
             raise ValueError(
                 f"Variable '{var_ID}' has been normalised with method '{self.config[var_ID]['method']}', "
@@ -539,21 +540,19 @@ class DataProcessor:
         Normalise or unnormalise the data values and coords in an xarray or
         pandas object.
 
-        Parameters
-        ----------
-        data : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | :class:`pandas.Series`
-            ...
-        method : str, optional
-            ..., by default ``None``.
-        add_offset : bool, optional
-            ..., by default ``True``.
-        unnorm : bool, optional
-            ..., by default ``False``.
+        Args:
+            data (:class:`xarray.DataArray`, :class:`xarray.Dataset`, :class:`pandas.DataFrame`, or :class:`pandas.Series`):
+                [Description Needed]
+            method (str, optional):
+                [Description Needed]. Defaults to None.
+            add_offset (bool, optional):
+                [Description Needed]. Defaults to True.
+            unnorm (bool, optional):
+                [Description Needed]. Defaults to False.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type]:
+                [Description Needed]
         """
         if self.deepcopy:
             data = deepcopy(data)
@@ -605,27 +604,30 @@ class DataProcessor:
         """
         Normalise data.
 
-        Parameters
-        ----------
-        data : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]
-            Data to normalise.
-        method : str, optional
-            Normalisation method. Defaults to "mean_std". Options:
-                - "mean_std": Normalise to mean=0 and std=1
+        Args:
+            data (:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]):
+                Data to be normalised. Can be an xarray DataArray, xarray
+                Dataset, pandas DataFrame, or a list containing objects of
+                these types.
+            method (str, optional): Normalisation method. Options include:
+                - "mean_std": Normalise to mean=0 and std=1 (default)
                 - "min_max": Normalise to min=-1 and max=1
 
-        Returns
-        -------
-        :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]
-            Normalised data.
+        Returns:
+            :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]:
+                Normalised data. Type or structure depends on the input.
         """
         if isinstance(data, list):
             return [
-                self.map(d, method, unnorm=False, assert_computed=assert_computed)
+                self.map(
+                    d, method, unnorm=False, assert_computed=assert_computed
+                )
                 for d in data
             ]
         else:
-            return self.map(data, method, unnorm=False, assert_computed=assert_computed)
+            return self.map(
+                data, method, unnorm=False, assert_computed=assert_computed
+            )
 
     def unnormalise(
         self,
@@ -660,12 +662,16 @@ class DataProcessor:
             Unnormalised data.
         """
         if isinstance(data, list):
-            return [self.map(d, add_offset=add_offset, unnorm=True) for d in data]
+            return [
+                self.map(d, add_offset=add_offset, unnorm=True) for d in data
+            ]
         else:
             return self.map(data, add_offset=add_offset, unnorm=True)
 
 
-def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]) -> np.ndarray:
+def xarray_to_coord_array_normalised(
+    da: Union[xr.Dataset, xr.DataArray]
+) -> np.ndarray:
     """
     Convert xarray to normalised coordinate array.
 
