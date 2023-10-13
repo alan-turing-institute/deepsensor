@@ -409,7 +409,7 @@ class TestTaskLoader(unittest.TestCase):
             )
 
     @parameterized.expand([[(0.3, 0.3)], [(0.6, 0.4)]])
-    def test_patch_size(self, patch_size: Sequence[float]) -> None:
+    def test_window_size(self, window_size: Sequence[float]) -> None:
         """Test patch size sampling."""
         context = [self.da, self.df]
 
@@ -424,7 +424,7 @@ class TestTaskLoader(unittest.TestCase):
             if isinstance(context_sampling[0], np.ndarray):
                 continue
             task = tl(
-                "2020-01-01", context_sampling, target_sampling, patch_size=patch_size
+                "2020-01-01", context_sampling, target_sampling, window_size=window_size
             )
 
 

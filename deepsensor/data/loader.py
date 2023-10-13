@@ -4,6 +4,7 @@ import os
 import json
 import copy
 import random
+import itertools
 
 import numpy as np
 import xarray as xr
@@ -185,6 +186,8 @@ class TaskLoader:
             self.target_var_IDs_and_delta_t,
             self.aux_at_target_var_IDs,
         ) = self.infer_context_and_target_var_IDs()
+
+        self.coord_bounds = self._compute_global_coordinate_bounds()
 
     def _set_config(self):
         """Instantiate a config dictionary for the TaskLoader object"""
@@ -588,7 +591,6 @@ class TaskLoader:
         self,
         da: Union[xr.DataArray, xr.Dataset],
         sampling_strat: Union[str, int, float, np.ndarray],
-        sample_patch_size: Optional[list[float]] = None,
         seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
         """
@@ -601,8 +603,6 @@ class TaskLoader:
         sampling_strat : str | int | float | :class:`numpy:numpy.ndarray`
             Sampling strategy, either "all" or an integer for random grid cell
             sampling.
-        sample_patch_size: list
-            desired patch size extent to sample [lat_min, lat_max, lon_min, lon_max]
         seed : int, optional
             Seed for random sampling. Default: None.
 
@@ -622,12 +622,6 @@ class TaskLoader:
         da = da.load()  # Converts dask -> numpy if not already loaded
         if isinstance(da, xr.Dataset):
             da = da.to_array()
-
-        # restric to a certain spatial patch
-        if sample_patch_size is not None:
-            x1_slice = slice(sample_patch_size[0], sample_patch_size[1])
-            x2_slice = slice(sample_patch_size[2], sample_patch_size[3])
-            da = da.sel(x1=x1_slice, x2=x2_slice)
 
         if isinstance(sampling_strat, float):
             sampling_strat = int(sampling_strat * da.size)
@@ -697,7 +691,6 @@ class TaskLoader:
         self,
         df: Union[pd.DataFrame, pd.Series],
         sampling_strat: Union[str, int, float, np.ndarray],
-        sample_patch_size: Optional[list[float]] = None,
         seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
         """
@@ -711,8 +704,6 @@ class TaskLoader:
         sampling_strat : str | int | float | :class:`numpy:numpy.ndarray`
             Sampling strategy, either "all" or an integer for random grid cell
             sampling.
-        sample_patch_size: list[float], optional
-            desired patch size extent to sample [lat_min, lat_max, lon_min, lon_max]
         seed : int, optional
             Seed for random sampling. Default: None.
 
@@ -730,16 +721,6 @@ class TaskLoader:
             but the DataFrame does not contain all the requested samples.
         """
         df = df.dropna(how="any")  # If any obs are NaN, drop them
-
-        if sample_patch_size is not None:
-            # retrieve desired patch size
-            lat_min, lat_max, lon_min, lon_max = sample_patch_size
-            df = df[
-                (df.index.get_level_values("x1") >= lat_min)
-                & (df.index.get_level_values("x1") <= lat_max)
-                & (df.index.get_level_values("x2") >= lon_min)
-                & (df.index.get_level_values("x2") <= lon_max)
-            ]
 
         if isinstance(sampling_strat, float):
             sampling_strat = int(sampling_strat * df.shape[0])
@@ -781,7 +762,6 @@ class TaskLoader:
         self,
         X_t: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]],
         offgrid_aux: Union[xr.DataArray, xr.Dataset],
-        sample_patch_size: Optional[list[float]] = None,
     ) -> np.ndarray:
         """
         Sample auxiliary data at off-grid locations.
@@ -793,8 +773,6 @@ class TaskLoader:
             tuple of two numpy arrays, or a single numpy array.
         offgrid_aux : :class:`xarray.DataArray` | :class:`xarray.Dataset`
             Auxiliary data at off-grid locations.
-        sample_patch_size: list[float], optional
-            desired patch size extent to sample [lat_min, lat_max, lon_min, lon_max]
 
         Returns
         -------
@@ -813,11 +791,6 @@ class TaskLoader:
         else:
             xt1, xt2 = xr.DataArray(X_t[0]), xr.DataArray(X_t[1])
 
-        if sample_patch_size is not None:
-            x1_slice = slice(sample_patch_size[0], sample_patch_size[1])
-            x2_slice = slice(sample_patch_size[2], sample_patch_size[3])
-            offgrid_aux = offgrid_aux.sel(x1=x1_slice, x2=x2_slice)
-
         Y_t_aux = offgrid_aux.sel(x1=xt1, x2=xt2, method="nearest")
         if isinstance(Y_t_aux, xr.Dataset):
             Y_t_aux = Y_t_aux.to_array()
@@ -828,64 +801,75 @@ class TaskLoader:
             # Reshape to (variable, *spatial_dims)
             Y_t_aux = Y_t_aux.reshape(1, *Y_t_aux.shape)
         return Y_t_aux
-
-    def sample_patch_size_extent(self) -> Sequence[float]:
-        """Sample patch size.
-
-        :return sequence of patch spatial extent as [lat_min, lat_max, lon_min, lon_max]
+    
+    def _compute_global_coordinate_bounds(self) -> list[float]:
         """
-        # assumption of normalized spatial coordinates between 0 and 1
+        Compute global coordinate bounds in order to sample spatial bounds if desired.
 
-        lat_extend, lon_extend = self.patch_size
+        Returns
+        -------
+        bbox: List[float]
+            sequence of global spatial extent as [x1_min, x1_max, x2_min, x2_max]
+        """
+        x1_min, x1_max, x2_min, x2_max = np.PINF, np.NINF, np.PINF, np.NINF
+        
+        for var in itertools.chain(self.context, self.target):
+            if isinstance(var, (xr.Dataset, xr.DataArray)):
+                var_x1_min = var.x1.min().item()
+                var_x1_max = var.x1.max().item()
+                var_x2_min = var.x2.min().item()
+                var_x2_max = var.x2.max().item()
+            elif isinstance(var, (pd.DataFrame, pd.Series)):
+                var_x1_min = var.index.get_level_values('x1').min()
+                var_x1_max = var.index.get_level_values('x1').max()
+                var_x2_min = var.index.get_level_values('x2').min()
+                var_x2_max = var.index.get_level_values('x2').max()
 
-        lat_side = lat_extend / 2
-        lon_side = lon_extend / 2
+            if var_x1_min < x1_min:
+                x1_min = var_x1_min   
 
-        # sample a point that satisfies the boundary and target conditions
-        continue_looking = True
-        while continue_looking:
-            lat_point = random.uniform(lat_side, 1 - lat_side)
-            lon_point = random.uniform(lon_side, 1 - lon_side)
+            if var_x1_max > x1_max:
+                x1_max = var_x1_max
 
-            # bbox of lat_min, lat_max, lon_min, lon_max
-            bbox = [
-                lat_point - lat_side,
-                lat_point + lat_side,
-                lon_point - lon_side,
-                lon_point + lon_side,
-            ]
+            if var_x2_min < x2_min:
+                x2_min = var_x2_min
 
-            x1_slice = slice(bbox[0], bbox[1])
-            x2_slice = slice(bbox[2], bbox[3])
-            # check whether target is non-empty given this box
-            target_check: list[bool] = []
-            for target_var in self.target:
-                if isinstance(target_var, (pd.DataFrame, pd.Series)):
-                    data = target_var.loc[(slice(None), x1_slice, x2_slice)]
-                else:
-                    data = target_var.sel(x1=x1_slice, x2=x2_slice)
+            if var_x2_max > x2_max:
+                x2_max = var_x2_max
+            
+        return [x1_min, x1_max, x2_min, x2_max]
 
-                target_check.append(True if len(data) > 0 else False)
+    def sample_random_window(self, window_size: tuple[float]) -> Sequence[float]:
+        """
+        Sample random window uniformly from global coordinats to slice data.
 
-            # check whether context is non-empty given this box
-            context_check: list[bool] = []
-            for context_var in self.context:
-                if isinstance(context_var, (pd.DataFrame, pd.Series)):
-                    data = context_var[
-                        (context_var.index.get_level_values("x1") >= bbox[0])
-                        & (context_var.index.get_level_values("x1") <= bbox[1])
-                        & (context_var.index.get_level_values("x2") >= bbox[2])
-                        & (context_var.index.get_level_values("x2") <= bbox[3])
-                    ]
+        Parameters
+        ----------
+        window_size : Tuple[float]
+            Tuple of window extent
 
-                    # data = context_var.loc[(slice(None), x1_slice, x2_slice)]
-                else:
-                    data = context_var.sel(x1=x1_slice, x2=x2_slice)
+        Returns
+        -------
+        bbox: List[float]
+            sequence of patch spatial extent as [x1_min, x1_max, x2_min, x2_max]
+        """
+        x1_extend, x2_extend = window_size
 
-                context_check.append(True if len(data) > 0 else False)
+        x1_side = x1_extend / 2
+        x2_side = x2_extend / 2
 
-            if all(target_check) and all(context_check):
-                continue_looking = False
+        # sample a point that satisfies the context and target global bounds
+        x1_min, x1_max, x2_min, x2_max = self.coord_bounds
+        x1_point = random.uniform(x1_min + x1_side, x1_max - x1_side)
+        x2_point = random.uniform(x2_min + x2_side, x2_max - x2_side)
+
+        # bbox of x1_min, x1_max, x2_min, x2_max
+        bbox = [
+            x1_point - x1_side,
+            x1_point + x1_side,
+            x2_point - x2_side,
+            x2_point + x2_side,
+        ]
 
         return bbox
     
@@ -921,7 +905,46 @@ class TaskLoader:
         else:
             raise ValueError(f"Unknown variable type {type(var)}")
         return var
+    
+    def spatial_slice_variable(self, var, window: list[float]):
+        """
+        Slice a variabel by a given window size.
 
+        Parameters
+        ----------
+        var : ...
+            Variable to slice
+        window : ...
+            list of coordinates specifying the window [x1_min, x1_max, x2_min, x2_max]
+
+        Returns
+        -------
+        var : ...
+            Sliced variable.
+
+        Raises
+        ------
+        ValueError
+            If the variable is of an unknown type.
+        """
+        x1_min, x1_max, x2_min, x2_max = window
+        if isinstance(var, (xr.Dataset, xr.DataArray)):
+            x1_slice = slice(x1_min, x1_max)
+            x2_slice = slice(x2_min, x2_max)
+            var = var.sel(x1=x1_slice, x2=x2_slice)
+        elif isinstance(var, (pd.DataFrame, pd.Series)):
+            # retrieve desired patch size
+            var = var[
+                (var.index.get_level_values("x1") >= x1_min)
+                & (var.index.get_level_values("x1") <= x1_max)
+                & (var.index.get_level_values("x2") >= x2_min)
+                & (var.index.get_level_values("x2") <= x2_max)
+            ]
+        else:
+            raise ValueError(f"Unknown variable type {type(var)}")
+
+        return var
+    
     def task_generation(
         self,
         date: pd.Timestamp,
@@ -940,7 +963,7 @@ class TaskLoader:
             List[Union[str, int, float, np.ndarray]],
         ] = "all",
         split_frac: float = 0.5,
-        patch_size: Sequence[float] = None,
+        window_size: Sequence[float] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
@@ -974,8 +997,8 @@ class TaskLoader:
             "split" sampling strategy for linked context and target set pairs.
             The remaining observations are used for the target set. Default is
             0.5.
-        patch_size: Sequence[float], optional
-            Desired patch size in lat/lon used for patchwise task generation. Usefule when considering
+        window_size : Sequence[float], optional
+            Desired patch size in x1/x2 used for patchwise task generation. Usefule when considering
             the entire available region is computationally prohibitive for model forward pass
         datewise_deterministic : bool
             Whether random sampling is datewise_deterministic based on the
@@ -1067,7 +1090,7 @@ class TaskLoader:
 
             return sampling_strat
 
-        def sample_variable(var, sampling_strat, sample_patch_size, seed):
+        def sample_variable(var, sampling_strat, seed):
             """
             Sample a variable by a given sampling strategy to get input and
             output data.
@@ -1078,8 +1101,6 @@ class TaskLoader:
                 Variable to sample.
             sampling_strat : ...
                 Sampling strategy to use.
-            sample_patch_size: ...
-                Desired sample patch size
             seed : ...
                 Seed for random sampling.
 
@@ -1094,9 +1115,9 @@ class TaskLoader:
                 If the variable is of an unknown type.
             """
             if isinstance(var, (xr.Dataset, xr.DataArray)):
-                X, Y = self.sample_da(var, sampling_strat, sample_patch_size, seed)
+                X, Y = self.sample_da(var, sampling_strat, seed)
             elif isinstance(var, (pd.DataFrame, pd.Series)):
-                X, Y = self.sample_df(var, sampling_strat, sample_patch_size, seed)
+                X, Y = self.sample_df(var, sampling_strat, seed)
             else:
                 raise ValueError(f"Unknown type {type(var)} for context set " f"{var}")
             return X, Y
@@ -1163,16 +1184,6 @@ class TaskLoader:
             # 'Truly' random sampling
             seed = None
 
-        # check patch size
-        if patch_size is not None:
-            assert (
-                len(patch_size) == 2
-            ), "Patch size must be a Sequence of two values for lat/lon extent."
-            assert all(
-                0 < x <= 1 for x in patch_size
-            ), "Values specified for patch size must satisfy 0 < x <= 1."
-        self.patch_size = patch_size
-
         task = {}
 
         task["time"] = date
@@ -1182,6 +1193,7 @@ class TaskLoader:
         task["X_t"] = []
         task["Y_t"] = []
 
+        # temporal slices
         context_slices = [
             self.time_slice_variable(var, date, delta_t)
             for var, delta_t in zip(self.context, self.context_delta_t)
@@ -1190,6 +1202,27 @@ class TaskLoader:
             self.time_slice_variable(var, date, delta_t)
             for var, delta_t in zip(self.target, self.target_delta_t)
         ]
+
+        # check patch size
+        if window_size is not None:
+            assert (
+                len(window_size) == 2
+            ), "Patch size must be a Sequence of two values for x1/x2 extent."
+            assert all(
+                0 < x <= 1 for x in window_size
+            ), "Values specified for patch size must satisfy 0 < x <= 1."
+
+            window = self.sample_random_window(window_size)
+
+            # spatial slices
+            context_slices = [
+                self.spatial_slice_variable(var, window)
+                for var in context_slices
+            ]
+            target_slices = [
+                self.spatial_slice_variable(var, window)
+                for var in target_slices
+            ]
 
         # TODO move to method
         if (
@@ -1311,25 +1344,20 @@ class TaskLoader:
                     context_slices[context_idx] = context_var
                     target_slices[target_idx] = target_var
 
-        # sample common patch size for context and target set
-        if self.patch_size is not None:
-            sample_patch_size = self.sample_patch_size_extent()
-        else:
-            sample_patch_size = None
-
+        
         for i, (var, sampling_strat) in enumerate(
             zip(context_slices, context_sampling)
         ):
             context_seed = seed + i if seed is not None else None
             X_c, Y_c = sample_variable(
-                var, sampling_strat, sample_patch_size, context_seed
+                var, sampling_strat, context_seed
             )
             task[f"X_c"].append(X_c)
             task[f"Y_c"].append(Y_c)
         for j, (var, sampling_strat) in enumerate(zip(target_slices, target_sampling)):
             target_seed = seed + i + j if seed is not None else None
             X_t, Y_t = sample_variable(
-                var, sampling_strat, sample_patch_size, target_seed
+                var, sampling_strat, target_seed
             )
             task[f"X_t"].append(X_t)
             task[f"Y_t"].append(Y_t)
@@ -1344,7 +1372,7 @@ class TaskLoader:
                 X_c_offrid_all = np.concatenate(X_c_offgrid, axis=1)
             Y_c_aux = (
                 self.sample_offgrid_aux(
-                    X_c_offrid_all, self.time_slice_variable(self.aux_at_contexts, date), sample_patch_size
+                    X_c_offrid_all, self.time_slice_variable(self.aux_at_contexts, date)
                 ),
             )
             task["X_c"].append(X_c_offrid_all)
