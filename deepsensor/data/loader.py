@@ -801,7 +801,7 @@ class TaskLoader:
             # Reshape to (variable, *spatial_dims)
             Y_t_aux = Y_t_aux.reshape(1, *Y_t_aux.shape)
         return Y_t_aux
-    
+
     def _compute_global_coordinate_bounds(self) -> list[float]:
         """
         Compute global coordinate bounds in order to sample spatial bounds if desired.
@@ -812,7 +812,7 @@ class TaskLoader:
             sequence of global spatial extent as [x1_min, x1_max, x2_min, x2_max]
         """
         x1_min, x1_max, x2_min, x2_max = np.PINF, np.NINF, np.PINF, np.NINF
-        
+
         for var in itertools.chain(self.context, self.target):
             if isinstance(var, (xr.Dataset, xr.DataArray)):
                 var_x1_min = var.x1.min().item()
@@ -820,13 +820,13 @@ class TaskLoader:
                 var_x2_min = var.x2.min().item()
                 var_x2_max = var.x2.max().item()
             elif isinstance(var, (pd.DataFrame, pd.Series)):
-                var_x1_min = var.index.get_level_values('x1').min()
-                var_x1_max = var.index.get_level_values('x1').max()
-                var_x2_min = var.index.get_level_values('x2').min()
-                var_x2_max = var.index.get_level_values('x2').max()
+                var_x1_min = var.index.get_level_values("x1").min()
+                var_x1_max = var.index.get_level_values("x1").max()
+                var_x2_min = var.index.get_level_values("x2").min()
+                var_x2_max = var.index.get_level_values("x2").max()
 
             if var_x1_min < x1_min:
-                x1_min = var_x1_min   
+                x1_min = var_x1_min
 
             if var_x1_max > x1_max:
                 x1_max = var_x1_max
@@ -836,7 +836,7 @@ class TaskLoader:
 
             if var_x2_max > x2_max:
                 x2_max = var_x2_max
-            
+
         return [x1_min, x1_max, x2_min, x2_max]
 
     def sample_random_window(self, window_size: tuple[float]) -> Sequence[float]:
@@ -872,7 +872,7 @@ class TaskLoader:
         ]
 
         return bbox
-    
+
     def time_slice_variable(self, var, date, delta_t=0):
         """
         Slice a variable by a given time delta.
@@ -905,7 +905,7 @@ class TaskLoader:
         else:
             raise ValueError(f"Unknown variable type {type(var)}")
         return var
-    
+
     def spatial_slice_variable(self, var, window: list[float]):
         """
         Slice a variabel by a given window size.
@@ -944,7 +944,7 @@ class TaskLoader:
             raise ValueError(f"Unknown variable type {type(var)}")
 
         return var
-    
+
     def task_generation(
         self,
         date: pd.Timestamp,
@@ -1216,12 +1216,10 @@ class TaskLoader:
 
             # spatial slices
             context_slices = [
-                self.spatial_slice_variable(var, window)
-                for var in context_slices
+                self.spatial_slice_variable(var, window) for var in context_slices
             ]
             target_slices = [
-                self.spatial_slice_variable(var, window)
-                for var in target_slices
+                self.spatial_slice_variable(var, window) for var in target_slices
             ]
 
         # TODO move to method
@@ -1344,21 +1342,16 @@ class TaskLoader:
                     context_slices[context_idx] = context_var
                     target_slices[target_idx] = target_var
 
-        
         for i, (var, sampling_strat) in enumerate(
             zip(context_slices, context_sampling)
         ):
             context_seed = seed + i if seed is not None else None
-            X_c, Y_c = sample_variable(
-                var, sampling_strat, context_seed
-            )
+            X_c, Y_c = sample_variable(var, sampling_strat, context_seed)
             task[f"X_c"].append(X_c)
             task[f"Y_c"].append(Y_c)
         for j, (var, sampling_strat) in enumerate(zip(target_slices, target_sampling)):
             target_seed = seed + i + j if seed is not None else None
-            X_t, Y_t = sample_variable(
-                var, sampling_strat, target_seed
-            )
+            X_t, Y_t = sample_variable(var, sampling_strat, target_seed)
             task[f"X_t"].append(X_t)
             task[f"Y_t"].append(Y_t)
 
