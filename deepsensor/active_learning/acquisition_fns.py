@@ -13,7 +13,12 @@ class AcquisitionFunction:
     Parent class for acquisition functions.
     """
 
-    def __init__(self, model: ProbabilisticModel):
+    def __init__(
+        self,
+        model: ProbabilisticModel,
+        context_set_idx: int = 0,
+        target_set_idx: int = 0,
+    ):
         """
         Parameters
         ----------
@@ -22,8 +27,12 @@ class AcquisitionFunction:
         context_set_idx : int
             Index of context set to add new observations to when computing the
             acquisition function.
+        target_set_idx : int
+            Index of target set to compute acquisition function for.
         """
         self.model = model
+        self.context_set_idx = context_set_idx
+        self.target_set_idx = target_set_idx
         self.min_or_max = -1
 
     def __call__(self, task: Task) -> np.ndarray:
@@ -102,7 +111,7 @@ class MeanStddev(AcquisitionFunction):
         super().__init__(model)
         self.min_or_max = "min"
 
-    def __call__(self, task: Task, target_set_idx: int = 0):
+    def __call__(self, task: Task):
         """
         ...
 
@@ -110,15 +119,13 @@ class MeanStddev(AcquisitionFunction):
         ----------
         task : :class:`~.data.task.Task`
             ...
-        target_set_idx : int, optional
-            ..., by default 0
 
         Returns
         -------
         ...
             ...
         """
-        return np.mean(self.model.stddev(task)[target_set_idx])
+        return np.mean(self.model.stddev(task)[self.target_set_idx])
 
 
 class MeanVariance(AcquisitionFunction):
@@ -136,7 +143,7 @@ class MeanVariance(AcquisitionFunction):
         super().__init__(model)
         self.min_or_max = "min"
 
-    def __call__(self, task: Task, target_set_idx: int = 0):
+    def __call__(self, task: Task):
         """
         ...
 
@@ -144,15 +151,13 @@ class MeanVariance(AcquisitionFunction):
         ----------
         task : :class:`~.data.task.Task`
             ...
-        target_set_idx : int, optional
-            ..., by default 0
 
         Returns
         -------
         ...
             ...
         """
-        return np.mean(self.model.variance(task)[target_set_idx])
+        return np.mean(self.model.variance(task)[self.target_set_idx])
 
 
 class pNormStddev(AcquisitionFunction):
@@ -171,7 +176,7 @@ class pNormStddev(AcquisitionFunction):
         self.p = p
         self.min_or_max = "min"
 
-    def __call__(self, task: Task, target_set_idx: int = 0):
+    def __call__(self, task: Task):
         """
         ...
 
@@ -179,8 +184,6 @@ class pNormStddev(AcquisitionFunction):
         ----------
         task : :class:`~.data.task.Task`
             ...
-        target_set_idx : int, optional
-            ..., by default 0
 
         Returns
         -------
@@ -188,7 +191,7 @@ class pNormStddev(AcquisitionFunction):
             ...
         """
         return np.linalg.norm(
-            self.model.stddev(task)[target_set_idx].ravel(), ord=self.p
+            self.model.stddev(task)[self.target_set_idx].ravel(), ord=self.p
         )
 
 
@@ -287,7 +290,9 @@ class OracleMAE(AcquisitionFunctionOracle):
             ...
         """
         pred = self.model.mean(task)
-        true = task["Y_t"]
+        if isinstance(pred, list):
+            pred = pred[self.target_set_idx]
+        true = task["Y_t"][self.target_set_idx]
         return np.mean(np.abs(pred - true))
 
 
@@ -321,7 +326,9 @@ class OracleRMSE(AcquisitionFunctionOracle):
             ...
         """
         pred = self.model.mean(task)
-        true = task["Y_t"]
+        if isinstance(pred, list):
+            pred = pred[self.target_set_idx]
+        true = task["Y_t"][self.target_set_idx]
         return np.sqrt(np.mean((pred - true) ** 2))
 
 
@@ -355,7 +362,9 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
             ...
         """
         pred = self.model.mean(task)
-        true = task["Y_t"]
+        if isinstance(pred, list):
+            pred = pred[self.target_set_idx]
+        true = task["Y_t"][self.target_set_idx]
         return -np.mean(norm.logpdf(true, loc=pred, scale=self.model.stddev(task)))
 
 
@@ -428,16 +437,14 @@ class Random(AcquisitionFunctionParallel):
 class ContextDist(AcquisitionFunctionParallel):
     """Distance to closest context point."""
 
-    def __init__(self, context_set_idx: int = 0):
+    def __init__(self):
         """
         ...
 
         Parameters
         ----------
-        context_set_idx : int, optional
-            ..., by default 0
+            ...
         """
-        self.context_set_idx = context_set_idx
         self.min_or_max = "max"
 
     def __call__(self, task: Task, X_s: np.ndarray):
@@ -490,7 +497,7 @@ class Stddev(AcquisitionFunctionParallel):
         super().__init__(model)
         self.min_or_max = "max"
 
-    def __call__(self, task: Task, X_s: np.ndarray, target_set_idx: int = 0):
+    def __call__(self, task: Task, X_s: np.ndarray):
         """
         ...
 
@@ -500,8 +507,6 @@ class Stddev(AcquisitionFunctionParallel):
             ...
         X_s : :class:`numpy:numpy.ndarray`
             ...
-        target_set_idx : int, optional
-            ..., by default 0
 
         Returns
         -------
@@ -512,7 +517,7 @@ class Stddev(AcquisitionFunctionParallel):
         task = copy.deepcopy(task)
         task["X_t"] = X_s
 
-        return self.model.stddev(task)[target_set_idx]
+        return self.model.stddev(task)[self.target_set_idx]
 
 
 class ExpectedImprovement(AcquisitionFunctionParallel):
@@ -525,22 +530,20 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         for maximisation.
     """
 
-    def __init__(self, model: ProbabilisticModel, context_set_idx: int = 0):
+    def __init__(self, model: ProbabilisticModel):
         """
         Parameters
         ----------
         model : :class:`~.model.model.ProbabilisticModel`
             ...
-        context_set_idx : int
-            Index of context set to add new observations to when computing the
-            acquisition function.
         """
         super().__init__(model)
-        self.context_set_idx = context_set_idx
         self.min_or_max = "max"
 
     def __call__(
-        self, task: Task, X_s: np.ndarray, target_set_idx: int = 0
+        self,
+        task: Task,
+        X_s: np.ndarray,
     ) -> np.ndarray:
         """
         Parameters
@@ -549,8 +552,6 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
             Task object containing context and target sets.
         X_s : :class:`numpy:numpy.ndarray`
             Search points. Shape (2, N_search).
-        target_set_idx : int
-            Index of target set to compute acquisition function for.
 
         Returns
         -------
@@ -562,12 +563,12 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         task["X_t"] = X_s
 
         # Compute the predictive mean and variance of the target set
-        mean = self.model.mean(task)[target_set_idx]
+        mean = self.model.mean(task)[self.target_set_idx]
 
         if task["Y_c"][self.context_set_idx].size == 0:
             # No previous context points, so heuristically use the predictive mean as the
             # acquisition function. This will at least select the most positive predicted mean.
-            return self.model.mean(task)[target_set_idx]
+            return self.model.mean(task)[self.target_set_idx]
         else:
             # Determine the best target value seen so far
             best_target_value = task["Y_c"][self.context_set_idx].max()
