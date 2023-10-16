@@ -84,13 +84,9 @@ def create_empty_spatiotemporal_xarray(
 
     # Assert uniform spacing
     if not np.allclose(np.diff(x1_predict), np.diff(x1_predict)[0]):
-        raise ValueError(
-            f"Coordinate {coord_names['x1']} must be uniformly spaced."
-        )
+        raise ValueError(f"Coordinate {coord_names['x1']} must be uniformly spaced.")
     if not np.allclose(np.diff(x2_predict), np.diff(x2_predict)[0]):
-        raise ValueError(
-            f"Coordinate {coord_names['x2']} must be uniformly spaced."
-        )
+        raise ValueError(f"Coordinate {coord_names['x2']} must be uniformly spaced.")
 
     if len(prepend_dims) != len(set(prepend_dims)):
         # TODO unit test
@@ -108,10 +104,7 @@ def create_empty_spatiotemporal_xarray(
     }
 
     pred_ds = xr.Dataset(
-        {
-            data_var: xr.DataArray(dims=dims, coords=coords)
-            for data_var in data_vars
-        }
+        {data_var: xr.DataArray(dims=dims, coords=coords) for data_var in data_vars}
     ).astype("float32")
 
     # Convert time coord to pandas timestamps
@@ -151,12 +144,8 @@ def increase_spatial_resolution(
     assert isinstance(X_t_normalised, (xr.DataArray, xr.Dataset))
     x1_name, x2_name = coord_names["x1"], coord_names["x2"]
     x1, x2 = X_t_normalised.coords[x1_name], X_t_normalised.coords[x2_name]
-    x1 = np.linspace(
-        x1[0], x1[-1], int(x1.size * resolution_factor), dtype="float64"
-    )
-    x2 = np.linspace(
-        x2[0], x2[-1], int(x2.size * resolution_factor), dtype="float64"
-    )
+    x1 = np.linspace(x1[0], x1[-1], int(x1.size * resolution_factor), dtype="float64")
+    x2 = np.linspace(x2[0], x2[-1], int(x2.size * resolution_factor), dtype="float64")
     X_t_normalised = X_t_normalised.interp(
         **{x1_name: x1, x2_name: x2}, method="nearest"
     )
@@ -471,18 +460,14 @@ class DeepSensorModel(ProbabilisticModel):
                 raise ValueError(
                     "ar_subsample_factor can only be used with on-grid predictions."
                 )
-        if not isinstance(
-            X_t, (pd.DataFrame, pd.Series, pd.Index, np.ndarray)
-        ):
+        if not isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index, np.ndarray)):
             if append_indexes is not None:
                 raise ValueError(
                     "append_indexes can only be used with off-grid predictions."
                 )
         if mode == "off-grid" and X_t_mask is not None:
             # TODO: Unit test this
-            raise ValueError(
-                "X_t_mask can only be used with on-grid predictions."
-            )
+            raise ValueError("X_t_mask can only be used with on-grid predictions.")
         if ar_sample and n_samples < 1:
             raise ValueError("Must pass `n_samples` > 0 to use `ar_sample`.")
 
@@ -554,9 +539,7 @@ class DeepSensorModel(ProbabilisticModel):
                 X_t_mask_normalised = self.data_processor.map_coords(X_t_mask)
                 X_t_arr = xarray_to_coord_array_normalised(X_t_normalised)
                 # Remove points that lie outside the mask
-                X_t_arr = mask_coord_array_normalised(
-                    X_t_arr, X_t_mask_normalised
-                )
+                X_t_arr = mask_coord_array_normalised(X_t_arr, X_t_mask_normalised)
             else:
                 X_t_arr = (
                     X_t_normalised["x1"].values,
@@ -572,8 +555,7 @@ class DeepSensorModel(ProbabilisticModel):
         # Make this a subclass of dict like Task? And way to initialise cleanly with target_var_IDs?
         pred = Prediction(
             target_var_IDs, dates, X_t, X_t_mask, coord_names, n_samples=n_samples
-
-                )
+        )
 
         def unnormalise_pred_array(arr, **kwargs):
             """Unnormalise an (N_dims, N_targets) array of predictions."""
@@ -608,9 +590,7 @@ class DeepSensorModel(ProbabilisticModel):
             else:
                 aux_at_targets = self.task_loader.aux_at_targets
 
-        for task in tqdm(
-            tasks, position=0, disable=progress_bar < 1, leave=True
-        ):
+        for task in tqdm(tasks, position=0, disable=progress_bar < 1, leave=True):
             task["X_t"] = [X_t_arr for _ in range(len(self.task_loader.target_var_IDs))]
 
             # If passing auxiliary data, need to sample it at target locations
@@ -639,9 +619,7 @@ class DeepSensorModel(ProbabilisticModel):
                             n_samples=n_samples,
                             ar_subsample_factor=ar_subsample_factor,
                         )
-                        samples_arr = samples_arr.reshape(
-                            (n_samples, *mean_arr.shape)
-                        )
+                        samples_arr = samples_arr.reshape((n_samples, *mean_arr.shape))
                     else:
                         samples_arr = self.sample(dist, n_samples=n_samples)
             # Repeated code not ideal here...
@@ -658,9 +636,7 @@ class DeepSensorModel(ProbabilisticModel):
                             n_samples=n_samples,
                             ar_subsample_factor=ar_subsample_factor,
                         )
-                        samples_arr = samples_arr.reshape(
-                            (n_samples, *mean_arr.shape)
-                        )
+                        samples_arr = samples_arr.reshape((n_samples, *mean_arr.shape))
                     else:
                         samples_arr = self.sample(task, n_samples=n_samples)
 
@@ -711,10 +687,8 @@ def main():  # pragma: no cover
 
     # Normalise data
     data_processor = DataProcessor(x1_name="lat", x2_name="lon")
-    ds = data_processor(ds_raw
-        )
-    ds2 = data_processor(ds_raw2
-        )
+    ds = data_processor(ds_raw)
+    ds2 = data_processor(ds_raw2)
 
     # Set up task loader
     task_loader = TaskLoader(context=ds, target=[ds, ds2])

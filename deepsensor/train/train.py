@@ -33,9 +33,7 @@ def set_gpu_default_device() -> None:
             torch.set_default_device("cuda")
             B.set_global_device("cuda:0")
         else:
-            raise RuntimeError(
-                "No GPU available: torch.cuda.is_available() == False"
-            )
+            raise RuntimeError("No GPU available: torch.cuda.is_available() == False")
     elif deepsensor.backend.str == "tf":
         # Run on GPU if available
         import tensorflow as tf
@@ -47,14 +45,10 @@ def set_gpu_default_device() -> None:
             )
             B.set_global_device("GPU:0")
         else:
-            raise RuntimeError(
-                "No GPU available: tf.test.is_gpu_available() == False"
-            )
+            raise RuntimeError("No GPU available: tf.test.is_gpu_available() == False")
 
     else:
-        raise NotImplementedError(
-            f"Backend {deepsensor.backend.str} not implemented"
-        )
+        raise NotImplementedError(f"Backend {deepsensor.backend.str} not implemented")
 
 
 def train_epoch(
@@ -103,9 +97,7 @@ def train_epoch(
                 for task in tasks:
                     task_losses.append(model.loss_fn(task, normalise=True))
                 mean_batch_loss = B.mean(B.stack(*task_losses))
-            grads = tape.gradient(
-                mean_batch_loss, model.model.trainable_weights
-            )
+            grads = tape.gradient(mean_batch_loss, model.model.trainable_weights)
             opt.apply_gradients(zip(grads, model.model.trainable_weights))
             return mean_batch_loss
 
@@ -128,16 +120,12 @@ def train_epoch(
             return mean_batch_loss.detach().cpu().numpy()
 
     else:
-        raise NotImplementedError(
-            f"Backend {deepsensor.backend.str} not implemented"
-        )
+        raise NotImplementedError(f"Backend {deepsensor.backend.str} not implemented")
 
     tasks = np.random.permutation(tasks)
 
     if batch_size is not None:
-        n_batches = (
-            len(tasks) // batch_size
-        )  # Note that this will drop the remainder
+        n_batches = len(tasks) // batch_size  # Note that this will drop the remainder
     else:
         n_batches = len(tasks)
 

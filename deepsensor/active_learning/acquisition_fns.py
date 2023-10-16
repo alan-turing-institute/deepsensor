@@ -135,7 +135,7 @@ class MeanVariance(AcquisitionFunction):
     def __call__(self, task: Task):
         """
         ...
-        
+
         Args:
             task (:class:`~.data.task.Task`):
                 [Description of the task parameter.]
@@ -526,8 +526,6 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
 
         # Compute the expected improvement
         Z = (mean - best_target_value) / stddev
-        ei = stddev * (mean - best_target_value) * norm.cdf(
-            Z
-        ) + stddev * norm.pdf(Z)
+        ei = stddev * (mean - best_target_value) * norm.cdf(Z) + stddev * norm.pdf(Z)
 
         return ei

@@ -40,9 +40,7 @@ def convert_task_to_nps_args(task: Task):
         yt = task["Y_t"][0]
     elif len(task["X_t"]) > 1 and len(task["Y_t"]) > 1:
         # Multiple target sets, different target locations
-        xt = backend.nps.AggregateInput(
-            *[(xt, i) for i, xt in enumerate(task["X_t"])]
-        )
+        xt = backend.nps.AggregateInput(*[(xt, i) for i, xt in enumerate(task["X_t"])])
         yt = backend.nps.Aggregate(*task["Y_t"])
     elif len(task["X_t"]) == 1 and len(task["Y_t"]) > 1:
         # Multiple target sets, same target locations
@@ -94,9 +92,7 @@ def run_nps_model(
                 context_data, xt, **model_kwargs, num_samples=n_samples
             )
     else:
-        dist = neural_process(
-            context_data, xt, **model_kwargs, num_samples=n_samples
-        )
+        dist = neural_process(context_data, xt, **model_kwargs, num_samples=n_samples)
     return dist
 
 
@@ -253,9 +249,7 @@ def construct_neural_process(
 
         dtype = tf.float32
     else:
-        raise NotImplementedError(
-            f"Backend {backend.str} has no default dtype."
-        )
+        raise NotImplementedError(f"Backend {backend.str} has no default dtype.")
 
     neural_process = backend.nps.construct_convgnp(
         dim_x=dim_x,
@@ -299,9 +293,7 @@ def compute_encoding_tensor(model, task: Task):
         encoding : :class:`numpy:numpy.ndarray`
             Encoding tensor? #TODO
     """
-    neural_process_encoder = backend.nps.Model(
-        model.model.encoder, lambda x: x
-    )
+    neural_process_encoder = backend.nps.Model(model.model.encoder, lambda x: x)
     task = model.modify_task(task)
     encoding = B.to_numpy(run_nps_model(neural_process_encoder, task))
     return encoding

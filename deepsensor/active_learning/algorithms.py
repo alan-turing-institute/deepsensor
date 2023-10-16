@@ -33,12 +33,8 @@ class GreedyAlgorithm:
     def __init__(
         self,
         model: DeepSensorModel,
-        X_s: Union[
-            xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index
-        ],
-        X_t: Union[
-            xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index
-        ],
+        X_s: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
+        X_t: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
         X_s_mask: Optional[Union[xr.Dataset, xr.DataArray]] = None,
         X_t_mask: Optional[Union[xr.Dataset, xr.DataArray]] = None,
         N_new_context: int = 1,
@@ -138,15 +134,11 @@ class GreedyAlgorithm:
             self.X_t_mask = process_X_mask_for_X(self.X_t_mask, self.X_t)
 
         # Interpolate overridden infill datasets at search points if necessary
-        if query_infill is not None and not da1_da2_same_grid(
-            query_infill, X_s
-        ):
+        if query_infill is not None and not da1_da2_same_grid(query_infill, X_s):
             if verbose:
                 print("query_infill not on search grid, interpolating.")
             query_infill = interp_da1_to_da2(query_infill, self.X_s)
-        if proposed_infill is not None and not da1_da2_same_grid(
-            proposed_infill, X_s
-        ):
+        if proposed_infill is not None and not da1_da2_same_grid(proposed_infill, X_s):
             if verbose:
                 print("proposed_infill not on search grid, interpolating.")
             proposed_infill = interp_da1_to_da2(proposed_infill, self.X_s)
@@ -159,9 +151,7 @@ class GreedyAlgorithm:
             self.X_t_arr = xarray_to_coord_array_normalised(X_t)
             if self.X_t_mask is not None:
                 # Remove points that lie outside the mask
-                self.X_t_arr = mask_coord_array_normalised(
-                    self.X_t_arr, self.X_t_mask
-                )
+                self.X_t_arr = mask_coord_array_normalised(self.X_t_arr, self.X_t_mask)
         elif isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index)):
             # Targets off-grid
             self.X_t_arr = X_t.reset_index()[["x1", "x2"]].values.T
@@ -208,9 +198,7 @@ class GreedyAlgorithm:
 
     def _model_infill_at_search_points(
         self,
-        X_s: Union[
-            xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index
-        ],
+        X_s: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
     ):
         """
         Computes and sets the model infill y-values over whole search grid
@@ -356,9 +344,7 @@ class GreedyAlgorithm:
                         and self.task_loader.aux_at_contexts
                     ):
                         # Add auxiliary variable sampled at context set as a new context variable
-                        X_c = task_with_new["X_c"][
-                            self.task_loader.aux_at_contexts[0]
-                        ]
+                        X_c = task_with_new["X_c"][self.task_loader.aux_at_contexts[0]]
                         Y_c_aux = self.task_loader.sample_offgrid_aux(
                             X_c, self.task_loader.aux_at_contexts[1]
                         )
@@ -471,8 +457,7 @@ class GreedyAlgorithm:
         self.min_or_max = acquisition_fn.min_or_max
         if self.min_or_max not in ["min", "max"]:
             raise ValueError(
-                f"min_or_max must be either 'min' or 'max', got "
-                f"{self.min_or_max}."
+                f"min_or_max must be either 'min' or 'max', got " f"{self.min_or_max}."
             )
 
         if diff and isinstance(acquisition_fn, AcquisitionFunctionParallel):
@@ -503,10 +488,7 @@ class GreedyAlgorithm:
                     "Model expects Y_t_aux data but a TaskLoader isn't "
                     "provided to GreedyAlgorithm."
                 )
-            if (
-                self.task_loader is not None
-                and self.task_loader.aux_at_target_dims > 0
-            ):
+            if self.task_loader is not None and self.task_loader.aux_at_target_dims > 0:
                 tasks[i]["Y_t_aux"] = self.task_loader.sample_offgrid_aux(
                     self.X_t_arr, self.task_loader.aux_at_targets
                 )
@@ -542,9 +524,7 @@ class GreedyAlgorithm:
         if self.model_infill_method == "sample":
             total_iterations *= self.n_samples
 
-        with tqdm(
-            total=total_iterations, disable=not self.progress_bar
-        ) as self.pbar:
+        with tqdm(total=total_iterations, disable=not self.progress_bar) as self.pbar:
             for iteration in range(self.N_new_context):
                 self.iteration = iteration
                 x_new = self._single_greedy_iteration(acquisition_fn)

@@ -88,9 +88,7 @@ class DataProcessor:
 
             if "coords" not in self.config:
                 # Add coordinate normalisation info to config
-                self.set_coord_params(
-                    time_name, x1_name, x1_map, x2_name, x2_map
-                )
+                self.set_coord_params(time_name, x1_name, x1_map, x2_name, x2_map)
 
         self.raw_spatial_coord_names = [
             self.config["coords"][coord]["name"] for coord in ["x1", "x2"]
@@ -142,8 +140,7 @@ class DataProcessor:
     def _validate_xr(self, data: Union[xr.DataArray, xr.Dataset]):
         def _validate_da(da: xr.DataArray):
             coord_names = [
-                self.config["coords"][coord]["name"]
-                for coord in ["time", "x1", "x2"]
+                self.config["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
             ]
             if coord_names[0] not in da.dims:
                 # We don't have a time dimension.
@@ -162,8 +159,7 @@ class DataProcessor:
 
     def _validate_pandas(self, df: Union[pd.DataFrame, pd.Series]):
         coord_names = [
-            self.config["coords"][coord]["name"]
-            for coord in ["time", "x1", "x2"]
+            self.config["coords"][coord]["name"] for coord in ["time", "x1", "x2"]
         ]
 
         if coord_names[0] not in df.index.names:
@@ -202,9 +198,7 @@ class DataProcessor:
             data.load()
         return data
 
-    def set_coord_params(
-        self, time_name, x1_name, x1_map, x2_name, x2_map
-    ) -> None:
+    def set_coord_params(self, time_name, x1_name, x1_map, x2_name, x2_map) -> None:
         """
         Set coordinate normalisation params.
 
@@ -322,15 +316,11 @@ class DataProcessor:
             [Type]:
                 Description of the returned value(s) needed.
         """
-        x1, x2 = self.map_x1_and_x2(
-            coord_array[0], coord_array[1], unnorm=unnorm
-        )
+        x1, x2 = self.map_x1_and_x2(coord_array[0], coord_array[1], unnorm=unnorm)
         new_coords = np.stack([x1, x2], axis=0)
         return new_coords
 
-    def map_x1_and_x2(
-        self, x1: np.ndarray, x2: np.ndarray, unnorm: bool = False
-    ):
+    def map_x1_and_x2(self, x1: np.ndarray, x2: np.ndarray, unnorm: bool = False):
         """
         Normalise or unnormalise spatial coords in an array.
 
@@ -450,9 +440,7 @@ class DataProcessor:
 
             # Rename all dimensions.
             rename = {
-                old: new
-                for old, new in zip(old_coord_IDs, new_coord_IDs)
-                if old != new
+                old: new for old, new in zip(old_coord_IDs, new_coord_IDs) if old != new
             }
             data = data.rename(rename)
 
@@ -466,9 +454,7 @@ class DataProcessor:
 
     def map_array(
         self,
-        data: Union[
-            xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, np.ndarray
-        ],
+        data: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, np.ndarray],
         var_ID: str,
         method: Optional[str] = None,
         unnorm: bool = False,
@@ -496,11 +482,7 @@ class DataProcessor:
         """
         if not unnorm and method is None:
             raise ValueError("Must provide `method` if normalising data.")
-        elif (
-            unnorm
-            and method is not None
-            and self.config[var_ID]["method"] != method
-        ):
+        elif unnorm and method is not None and self.config[var_ID]["method"] != method:
             # User has provided a different method to the one used for normalising
             raise ValueError(
                 f"Variable '{var_ID}' has been normalised with method '{self.config[var_ID]['method']}', "
@@ -636,15 +618,11 @@ class DataProcessor:
         """
         if isinstance(data, list):
             return [
-                self.map(
-                    d, method, unnorm=False, assert_computed=assert_computed
-                )
+                self.map(d, method, unnorm=False, assert_computed=assert_computed)
                 for d in data
             ]
         else:
-            return self.map(
-                data, method, unnorm=False, assert_computed=assert_computed
-            )
+            return self.map(data, method, unnorm=False, assert_computed=assert_computed)
 
     def unnormalise(
         self,
@@ -677,16 +655,12 @@ class DataProcessor:
                 Unnormalised data.
         """
         if isinstance(data, list):
-            return [
-                self.map(d, add_offset=add_offset, unnorm=True) for d in data
-            ]
+            return [self.map(d, add_offset=add_offset, unnorm=True) for d in data]
         else:
             return self.map(data, add_offset=add_offset, unnorm=True)
 
 
-def xarray_to_coord_array_normalised(
-    da: Union[xr.Dataset, xr.DataArray]
-) -> np.ndarray:
+def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]) -> np.ndarray:
     """
     Convert xarray to normalised coordinate array.
 
@@ -703,9 +677,7 @@ def xarray_to_coord_array_normalised(
     return np.stack([X1.ravel(), X2.ravel()], axis=0)
 
 
-def process_X_mask_for_X(
-    X_mask: xr.DataArray, X: xr.DataArray
-) -> xr.DataArray:
+def process_X_mask_for_X(X_mask: xr.DataArray, X: xr.DataArray) -> xr.DataArray:
     """Process X_mask by interpolating to X and converting to boolean.
 
     Both X_mask and X are xarray DataArrays with the same spatial coords.

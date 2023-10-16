@@ -73,9 +73,7 @@ def construct_circ_time_ds(dates, freq):
     return ds
 
 
-def compute_xarray_data_resolution(
-    ds: Union[xr.DataArray, xr.Dataset]
-) -> float:
+def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float:
     """
     Computes the resolution of an xarray object with coordinates x1 and x2.
 
@@ -139,14 +137,10 @@ def compute_pandas_data_resolution(
         if X.shape[0] < 2:
             # Skip this time if there are fewer than 2 stationS
             continue
-        X_unique = np.unique(
-            X, axis=0
-        )  # (N_unique, 2) array of unique coordinates
+        X_unique = np.unique(X, axis=0)  # (N_unique, 2) array of unique coordinates
 
         pairwise_distances = scipy.spatial.distance.cdist(X_unique, X_unique)
-        percentile_distances_without_self = np.ma.masked_equal(
-            pairwise_distances, 0
-        )
+        percentile_distances_without_self = np.ma.masked_equal(pairwise_distances, 0)
 
         # Compute the closest distance from each station to each other station
         closest_distances_t = np.min(percentile_distances_without_self, axis=1)

@@ -189,29 +189,21 @@ class ConvNP(DeepSensorModel):
         if "aux_t_mlp_layers" not in kwargs and kwargs["dim_aux_t"] > 0:
             kwargs["aux_t_mlp_layers"] = (64,) * 3
             if verbose:
-                print(
-                    f"Setting aux_t_mlp_layers: {kwargs['aux_t_mlp_layers']}"
-                )
+                print(f"Setting aux_t_mlp_layers: {kwargs['aux_t_mlp_layers']}")
         if "points_per_unit" not in kwargs:
             ppu = gen_ppu(task_loader)
             if verbose:
                 print(f"points_per_unit inferred from TaskLoader: {ppu}")
             kwargs["points_per_unit"] = ppu
         if "encoder_scales" not in kwargs:
-            encoder_scales = gen_encoder_scales(
-                kwargs["points_per_unit"], task_loader
-            )
+            encoder_scales = gen_encoder_scales(kwargs["points_per_unit"], task_loader)
             if verbose:
-                print(
-                    f"encoder_scales inferred from TaskLoader: {encoder_scales}"
-                )
+                print(f"encoder_scales inferred from TaskLoader: {encoder_scales}")
             kwargs["encoder_scales"] = encoder_scales
         if "decoder_scale" not in kwargs:
             decoder_scale = gen_decoder_scale(kwargs["points_per_unit"])
             if verbose:
-                print(
-                    f"decoder_scale inferred from TaskLoader: {decoder_scale}"
-                )
+                print(f"decoder_scale inferred from TaskLoader: {decoder_scale}")
             kwargs["decoder_scale"] = decoder_scale
 
         self.model, self.config = construct_neural_process(*args, **kwargs)
@@ -273,9 +265,7 @@ class ConvNP(DeepSensorModel):
         if backend.str == "torch":
             import torch
 
-            torch.save(
-                self.model.state_dict(), os.path.join(model_ID, "model.pt")
-            )
+            torch.save(self.model.state_dict(), os.path.join(model_ID, "model.pt"))
         elif backend.str == "tf":
             self.model.save_weights(os.path.join(model_ID, "model"))
         else:
@@ -305,9 +295,7 @@ class ConvNP(DeepSensorModel):
         if backend.str == "torch":
             import torch
 
-            self.model.load_state_dict(
-                torch.load(os.path.join(model_ID, "model.pt"))
-            )
+            self.model.load_state_dict(torch.load(os.path.join(model_ID, "model.pt")))
         elif backend.str == "tf":
             self.model.load_weights(os.path.join(model_ID, "model"))
         else:
@@ -803,18 +791,14 @@ class ConvNP(DeepSensorModel):
                     variance,
                     noiseless_samples,
                     noisy_samples,
-                ) = run_nps_model_ar(
-                    self.model, task_arsample, num_samples=n_samples
-                )
+                ) = run_nps_model_ar(self.model, task_arsample, num_samples=n_samples)
         else:
             (
                 mean,
                 variance,
                 noiseless_samples,
                 noisy_samples,
-            ) = run_nps_model_ar(
-                self.model, task_arsample, num_samples=n_samples
-            )
+            ) = run_nps_model_ar(self.model, task_arsample, num_samples=n_samples)
 
         # Slice out first (and assumed only) target entry in nps.Aggregate object
         noiseless_samples = B.to_numpy(noiseless_samples)
@@ -828,9 +812,7 @@ class ConvNP(DeepSensorModel):
                 task_with_sample["X_c"][0] = B.concat(
                     task["X_c"][0], task_arsample["X_t"][0], axis=-1
                 )
-                task_with_sample["Y_c"][0] = B.concat(
-                    task["Y_c"][0], sample, axis=-1
-                )
+                task_with_sample["Y_c"][0] = B.concat(task["Y_c"][0], sample, axis=-1)
 
                 if fill_type == "mean":
                     # Compute the mean conditioned on the AR samples
