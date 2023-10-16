@@ -39,6 +39,8 @@ class AcquisitionFunction:
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         task : :class:`~.data.task.Task`
@@ -75,6 +77,8 @@ class AcquisitionFunctionParallel(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         task : :class:`~.data.task.Task`
@@ -103,6 +107,8 @@ class MeanStddev(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         model : :class:`~.model.model.ProbabilisticModel`
@@ -114,6 +120,8 @@ class MeanStddev(AcquisitionFunction):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -135,6 +143,8 @@ class MeanVariance(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         model : :class:`~.model.model.ProbabilisticModel`
@@ -146,6 +156,8 @@ class MeanVariance(AcquisitionFunction):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -167,6 +179,8 @@ class pNormStddev(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         p : int, optional
@@ -179,6 +193,8 @@ class pNormStddev(AcquisitionFunction):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -202,6 +218,8 @@ class MeanMarginalEntropy(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         model : :class:`~.model.model.ProbabilisticModel`
@@ -213,6 +231,8 @@ class MeanMarginalEntropy(AcquisitionFunction):
     def __call__(self, task):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -235,6 +255,8 @@ class JointEntropy(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         model : :class:`~.model.model.ProbabilisticModel`
@@ -246,6 +268,8 @@ class JointEntropy(AcquisitionFunction):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -267,6 +291,8 @@ class OracleMAE(AcquisitionFunctionOracle):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         model : :class:`~.model.model.ProbabilisticModel`
@@ -278,6 +304,8 @@ class OracleMAE(AcquisitionFunctionOracle):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -303,6 +331,8 @@ class OracleRMSE(AcquisitionFunctionOracle):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         model : :class:`~.model.model.ProbabilisticModel`
@@ -314,6 +344,8 @@ class OracleRMSE(AcquisitionFunctionOracle):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -339,6 +371,8 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         model : :class:`~.model.model.ProbabilisticModel`
@@ -350,6 +384,8 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -365,7 +401,9 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
         if isinstance(pred, list):
             pred = pred[self.target_set_idx]
         true = task["Y_t"][self.target_set_idx]
-        return -np.mean(norm.logpdf(true, loc=pred, scale=self.model.stddev(task)))
+        return -np.mean(
+            norm.logpdf(true, loc=pred, scale=self.model.stddev(task))
+        )
 
 
 class OracleJointNLL(AcquisitionFunctionOracle):
@@ -374,6 +412,8 @@ class OracleJointNLL(AcquisitionFunctionOracle):
     def __init__(self, model: ProbabilisticModel):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -386,6 +426,8 @@ class OracleJointNLL(AcquisitionFunctionOracle):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -407,6 +449,8 @@ class Random(AcquisitionFunctionParallel):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         seed : int, optional
@@ -418,6 +462,8 @@ class Random(AcquisitionFunctionParallel):
     def __call__(self, task: Task, X_s: np.ndarray):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -441,6 +487,8 @@ class ContextDist(AcquisitionFunctionParallel):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
             ...
@@ -450,6 +498,8 @@ class ContextDist(AcquisitionFunctionParallel):
     def __call__(self, task: Task, X_s: np.ndarray):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -489,6 +539,8 @@ class Stddev(AcquisitionFunctionParallel):
         """
         ...
 
+        :no-index:
+
         Parameters
         ----------
         model : :class:`~.model.model.ProbabilisticModel`
@@ -500,6 +552,8 @@ class Stddev(AcquisitionFunctionParallel):
     def __call__(self, task: Task, X_s: np.ndarray):
         """
         ...
+
+        :no-index:
 
         Parameters
         ----------
@@ -532,6 +586,8 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
 
     def __init__(self, model: ProbabilisticModel):
         """
+        :no-index:
+
         Parameters
         ----------
         model : :class:`~.model.model.ProbabilisticModel`
@@ -546,6 +602,8 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         X_s: np.ndarray,
     ) -> np.ndarray:
         """
+        :no-index:
+
         Parameters
         ----------
         task : :class:`~.data.task.Task`
@@ -578,6 +636,8 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
 
         # Compute the expected improvement
         Z = (mean - best_target_value) / stddev
-        ei = stddev * (mean - best_target_value) * norm.cdf(Z) + stddev * norm.pdf(Z)
+        ei = stddev * (mean - best_target_value) * norm.cdf(
+            Z
+        ) + stddev * norm.pdf(Z)
 
         return ei
