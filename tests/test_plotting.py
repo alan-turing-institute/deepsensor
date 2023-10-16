@@ -16,12 +16,7 @@ class TestPlotting(unittest.TestCase):
         # It's safe to share data between tests because the TaskLoader does not modify data
         ds_raw = xr.tutorial.open_dataset("air_temperature")
         self.ds_raw = ds_raw
-        self.data_processor = DataProcessor(
-            x1_name="lat",
-            x2_name="lon",
-            x1_map=(ds_raw["lat"].min(), ds_raw["lat"].max()),
-            x2_map=(ds_raw["lon"].min(), ds_raw["lon"].max()),
-        )
+        self.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
         ds = self.data_processor(ds_raw)
         self.task_loader = TaskLoader(context=ds, target=ds)
         self.model = ConvNP(

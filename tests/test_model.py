@@ -335,12 +335,7 @@ class TestModel(unittest.TestCase):
             name="dummy_data",
         )
 
-        dp = DataProcessor(
-            x1_name="latitude",
-            x1_map=lat_lims,
-            x2_name="longitude",
-            x2_map=lon_lims,
-        )
+        dp = DataProcessor(x1_name="latitude", x2_name="longitude")
         da = dp(da_raw)
 
         tl = TaskLoader(context=da, target=da)

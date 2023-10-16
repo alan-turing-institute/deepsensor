@@ -24,12 +24,7 @@ class TestTraining(unittest.TestCase):
         ds_raw = xr.tutorial.open_dataset("air_temperature")
 
         self.ds_raw = ds_raw
-        self.data_processor = DataProcessor(
-            x1_name="lat",
-            x2_name="lon",
-            x1_map=(ds_raw["lat"].min(), ds_raw["lat"].max()),
-            x2_map=(ds_raw["lon"].min(), ds_raw["lon"].max()),
-        )
+        self.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
 
         self.da = self.data_processor(ds_raw)
 
