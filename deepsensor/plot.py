@@ -213,9 +213,11 @@ def offgrid_context(
         None.
     """
     if markers is None:
-        markers = "ovs^D"
+        # all matplotlib markers
+        markers = "ovs^Dxv<>1234spP*hHd|_"
     if colors is None:
-        colors = "kbrgy"
+        # all one-letter matplotlib colors
+        colors = "kbrgy" * 10
 
     if isinstance(context_set_idxs, int):
         context_set_idxs = [context_set_idxs]
