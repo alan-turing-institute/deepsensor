@@ -317,18 +317,17 @@ class TaskLoader:
         """
         Cast context and target data to the default dtype.
 
-        Parameters
-        ----------
-        var : ...
-            ...
+        ..
+            TODO unit test this by passing in a variety of data types and
+            checking that they are cast correctly.
 
-        TODO unit test this by passing in a variety of data types and checking that they are
-        cast correctly.
+        Args:
+            var : ...
+                ...
 
-        Returns
-        -------
-        context : tuple. Tuple of context data with specified dtype.
-        target : tuple. Tuple of target data with specified dtype.
+        Returns:
+            tuple: Tuple of context data with specified dtype.
+            tuple: Tuple of target data with specified dtype.
         """
 
         def cast_to_dtype(var):
@@ -526,24 +525,21 @@ class TaskLoader:
         """
         Check that the context-target links are valid.
 
-        Parameters
-        ----------
-        links : Tuple[int, int] | List[Tuple[int, int]]
-            Specifies links between context and target data. Each link is a
-            tuple of two integers, where the first integer is the index of the
-            context data and the second integer is the index of the target
-            data. Can be a single tuple in the case of a single link. If None,
-            no links are specified. Default: None.
+        Args:
+            links (Tuple[int, int] | List[Tuple[int, int]]):
+                Specifies links between context and target data. Each link is a
+                tuple of two integers, where the first integer is the index of
+                the context data and the second integer is the index of the
+                target data. Can be a single tuple in the case of a single
+                link. If None, no links are specified. Default: None.
 
-        Returns
-        -------
-        links : Tuple[int, int] | List[Tuple[int, int]]
-            The input links, if valid.
+        Returns:
+            Tuple[int, int] | List[Tuple[int, int]]
+                The input links, if valid.
 
-        Raises
-        ------
-        ValueError
-            If the links are not valid.
+        Raises:
+            ValueError
+                If the links are not valid.
         """
         if links is None:
             return None
@@ -827,22 +823,19 @@ class TaskLoader:
         """
         Slice a variable by a given time delta.
 
-        Parameters
-        ----------
-        var : ...
-            Variable to slice.
-        delta_t : ...
-            Time delta to slice by.
+        Args:
+            var (...):
+                Variable to slice.
+            delta_t (...):
+                Time delta to slice by.
 
-        Returns
-        -------
-        var : ...
-            Sliced variable.
+        Returns:
+            var (...)
+                Sliced variable.
 
-        Raises
-        ------
-        ValueError
-            If the variable is of an unknown type.
+        Raises:
+            ValueError
+                If the variable is of an unknown type.
         """
         # TODO: Does this work with instantaneous time?
         delta_t = pd.Timedelta(delta_t, unit=self.time_freq)

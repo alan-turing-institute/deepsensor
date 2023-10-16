@@ -34,36 +34,33 @@ def create_empty_spatiotemporal_xarray(
     """
     ...
 
-    Parameters
-    ----------
-    X : :class:`xarray.Dataset` | :class:`xarray.DataArray`
-        ...
-    dates : List[...]
-        ...
-    coord_names : dict, optional
-        ..., by default {"x1": "x1", "x2": "x2"}
-    data_vars : List[str], optional
-        ..., by default ["var"]
-    prepend_dims : List[str], optional
-        ..., by default None
-    prepend_coords : dict, optional
-        ..., by default None
+    Args:
+        X (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+            ...
+        dates (List[...]):
+            ...
+        coord_names (dict, optional):
+            ..., by default {"x1": "x1", "x2": "x2"}
+        data_vars (List[str], optional):
+            ..., by default ["var"]
+        prepend_dims (List[str], optional):
+            ..., by default None
+        prepend_coords (dict, optional):
+            ..., by default None
 
-    Returns
-    -------
-    ...
+    Returns:
         ...
+            ...
 
-    Raises
-    ------
-    ValueError
-        If ``data_vars`` contains duplicate values.
-    ValueError
-        If ``coord_names["x1"]`` is not uniformly spaced.
-    ValueError
-        If ``coord_names["x2"]`` is not uniformly spaced.
-    ValueError
-        If ``prepend_dims`` and ``prepend_coords`` are not the same length.
+    Raises:
+        ValueError
+            If ``data_vars`` contains duplicate values.
+        ValueError
+            If ``coord_names["x1"]`` is not uniformly spaced.
+        ValueError
+            If ``coord_names["x2"]`` is not uniformly spaced.
+        ValueError
+            If ``prepend_dims`` and ``prepend_coords`` are not the same length.
     """
     if prepend_dims is None:
         prepend_dims = []
@@ -82,9 +79,13 @@ def create_empty_spatiotemporal_xarray(
 
     # Assert uniform spacing
     if not np.allclose(np.diff(x1_predict), np.diff(x1_predict)[0]):
-        raise ValueError(f"Coordinate {coord_names['x1']} must be uniformly spaced.")
+        raise ValueError(
+            f"Coordinate {coord_names['x1']} must be uniformly spaced."
+        )
     if not np.allclose(np.diff(x2_predict), np.diff(x2_predict)[0]):
-        raise ValueError(f"Coordinate {coord_names['x2']} must be uniformly spaced.")
+        raise ValueError(
+            f"Coordinate {coord_names['x2']} must be uniformly spaced."
+        )
 
     if len(prepend_dims) != len(set(prepend_dims)):
         # TODO unit test
@@ -102,7 +103,10 @@ def create_empty_spatiotemporal_xarray(
     }
 
     pred_ds = xr.Dataset(
-        {data_var: xr.DataArray(dims=dims, coords=coords) for data_var in data_vars}
+        {
+            data_var: xr.DataArray(dims=dims, coords=coords)
+            for data_var in data_vars
+        }
     ).astype("float32")
 
     # Convert time coord to pandas timestamps
@@ -126,26 +130,28 @@ def increase_spatial_resolution(
     ..
         # TODO wasteful to interpolate X_t_normalised
 
-    Parameters
-    ----------
-    X_t_normalised : ...
-        ...
-    resolution_factor : ...
-        ...
-    coord_names : dict, optional
-        ..., by default {"x1": "x1", "x2": "x2"}
+    Args:
+        X_t_normalised (...):
+            ...
+        resolution_factor (...):
+            ...
+        coord_names (dict, optional):
+            ..., by default {"x1": "x1", "x2": "x2"}
 
-    Returns
-    -------
-    ...
+    Returns:
         ...
+            ...
     """
     assert isinstance(resolution_factor, (float, int))
     assert isinstance(X_t_normalised, (xr.DataArray, xr.Dataset))
     x1_name, x2_name = coord_names["x1"], coord_names["x2"]
     x1, x2 = X_t_normalised.coords[x1_name], X_t_normalised.coords[x2_name]
-    x1 = np.linspace(x1[0], x1[-1], int(x1.size * resolution_factor), dtype="float64")
-    x2 = np.linspace(x2[0], x2[-1], int(x2.size * resolution_factor), dtype="float64")
+    x1 = np.linspace(
+        x1[0], x1[-1], int(x1.size * resolution_factor), dtype="float64"
+    )
+    x2 = np.linspace(
+        x2[0], x2[-1], int(x2.size * resolution_factor), dtype="float64"
+    )
     X_t_normalised = X_t_normalised.interp(
         **{x1_name: x1, x2_name: x2}, method="nearest"
     )
@@ -164,20 +170,16 @@ class ProbabilisticModel:
         Computes the model mean prediction over target points based on given context
         data.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task containing context data.
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task containing context data.
 
-        Returns
-        -------
-        mean : :class:`numpy:numpy.ndarray`
-            Should return mean prediction over target points.
+        Returns:
+            :class:`numpy:numpy.ndarray`: Mean prediction over target points.
 
-        Raises
-        ------
-        NotImplementedError
-            If not implemented by child class.
+        Raises:
+            NotImplementedError
+                If not implemented by child class.
         """
         raise NotImplementedError()
 
@@ -186,20 +188,16 @@ class ProbabilisticModel:
         Model marginal variance over target points given context points.
         Shape (N,).
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task containing context data.
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task containing context data.
 
-        Returns
-        -------
-        var : :class:`numpy:numpy.ndarray`
-            Should return marginal variance over target points.
+        Returns:
+            :class:`numpy:numpy.ndarray`: Marginal variance over target points.
 
-        Raises
-        ------
-        NotImplementedError
-            If not implemented by child class.
+        Raises:
+            NotImplementedError
+                If not implemented by child class.
         """
         raise NotImplementedError()
 
@@ -208,15 +206,12 @@ class ProbabilisticModel:
         Model marginal standard deviation over target points given context
         points. Shape (N,).
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task containing context data.
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task containing context data.
 
-        Returns
-        -------
-        std : :class:`numpy:numpy.ndarray`
-            Should return marginal standard deviation over target points.
+        Returns:
+            :class:`numpy:numpy.ndarray`: Marginal standard deviation over target points.
         """
         var = self.variance(task)
         return var**0.5
@@ -226,20 +221,16 @@ class ProbabilisticModel:
         Computes the model covariance matrix over target points based on given
         context data. Shape (N, N).
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task containing context data.
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task containing context data.
 
-        Returns
-        -------
-        cov : :class:`numpy:numpy.ndarray`
-            Should return covariance matrix over target points.
+        Returns:
+            :class:`numpy:numpy.ndarray`: Covariance matrix over target points.
 
-        Raises
-        ------
-        NotImplementedError
-            If not implemented by child class.
+        Raises:
+            NotImplementedError
+                If not implemented by child class.
         """
         raise NotImplementedError()
 
@@ -251,20 +242,17 @@ class ProbabilisticModel:
         .. note::
             Note: Getting a vector of marginal entropies would be useful too.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task containing context data.
 
-        Returns
-        -------
-        mean_marginal_entropy : float
-            Should return mean marginal entropy over target points.
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task containing context data.
 
-        Raises
-        ------
-        NotImplementedError
-            If not implemented by child class.
+        Returns:
+            float: Mean marginal entropy over target points.
+
+        Raises:
+            NotImplementedError
+                If not implemented by child class.
         """
         raise NotImplementedError()
 
@@ -273,20 +261,17 @@ class ProbabilisticModel:
         Computes the model joint entropy over target points based on given
         context data.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task containing context data.
 
-        Returns
-        -------
-        joint_entropy : float
-            Should return joint entropy over target points.
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task containing context data.
 
-        Raises
-        ------
-        NotImplementedError
-            If not implemented by child class.
+        Returns:
+            float: Joint entropy over target points.
+
+        Raises:
+            NotImplementedError
+                If not implemented by child class.
         """
         raise NotImplementedError()
 
@@ -295,20 +280,16 @@ class ProbabilisticModel:
         Computes the joint model logpdf over target points based on given
         context data.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task containing context data.
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task containing context data.
 
-        Returns
-        -------
-        logpdf : float
-            Should return joint logpdf over target points.
+        Returns:
+            float: Joint logpdf over target points.
 
-        Raises
-        ------
-        NotImplementedError
-            If not implemented by child class.
+        Raises:
+            NotImplementedError
+                If not implemented by child class.
         """
         raise NotImplementedError()
 
@@ -316,20 +297,16 @@ class ProbabilisticModel:
         """
         Computes the model loss over target points based on given context data.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task containing context data.
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task containing context data.
 
-        Returns
-        -------
-        loss : float
-            Should return loss over target points.
+        Returns:
+            float: Loss over target points.
 
-        Raises
-        ------
-        NotImplementedError
-            If not implemented by child class.
+        Raises:
+            NotImplementedError
+                If not implemented by child class.
         """
         raise NotImplementedError()
 
@@ -338,22 +315,19 @@ class ProbabilisticModel:
         Draws ``n_samples`` joint samples over target points based on given
         context data. Returned shape is ``(n_samples, n_target)``.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task containing context data.
-        n_samples : int
-            Number of samples to draw.
 
-        Returns
-        -------
-        samples : Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
-            Should return joint samples over target points.
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task containing context data.
+            n_samples (int, optional):
+                Number of samples to draw. Defaults to 1.
 
-        Raises
-        ------
-        NotImplementedError
-            If not implemented by child class.
+        Returns:
+            tuple[:class:`numpy:numpy.ndarray`]: Joint samples over target points.
+
+        Raises:
+            NotImplementedError
+                If not implemented by child class.
         """
         raise NotImplementedError()
 
@@ -373,13 +347,12 @@ class DeepSensorModel(ProbabilisticModel):
         """
         Initialise DeepSensorModel.
 
-        Parameters
-        ----------
-        data_processor : :class:`~.data.processor.DataProcessor`
-            DataProcessor object, used to unnormalise predictions.
-        task_loader : :class:`~.data.loader.TaskLoader`
-            TaskLoader object, used to determine target variables for
-            unnormalising.
+        Args:
+            data_processor (:class:`~.data.processor.DataProcessor`):
+                DataProcessor object, used to unnormalise predictions.
+            task_loader (:class:`~.data.loader.TaskLoader`):
+                TaskLoader object, used to determine target variables for
+                unnormalising.
         """
         self.task_loader = task_loader
         self.data_processor = data_processor
@@ -416,73 +389,77 @@ class DeepSensorModel(ProbabilisticModel):
             TODO:
             - Test with multiple targets model
 
-        Parameters
-        ----------
-        tasks : List[Task] | Task
-            List of tasks containing context data.
-        X_t : :class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`
-            Target locations to predict at. Can be an xarray object containing
-            on-grid locations or a pandas object containing off-grid locations.
-        X_t_mask: :class:`xarray.Dataset` | :class:`xarray.DataArray`
-            Optional 2D mask to apply to X_t (zero/False will be NaNs). Will be interpolated
-            to the same grid as X_t. Default None (no mask).
-        X_t_is_normalised : bool
-            Whether the ``X_t`` coords are normalised. If False, will normalise
-            the coords before passing to model. Default ``False``.
-        aux_at_targets_override : :class:`xarray.Dataset` | :class:`xarray.DataArray`
-            Optional auxiliary xarray data to override from the task_loader.
-        aux_at_targets_override_is_normalised : bool
-            Whether the `aux_at_targets_override` coords are normalised.
-            If False, the DataProcessor will normalise the coords before passing to model.
-            Default False.
-        resolution_factor : float
-            Optional factor to increase the resolution of the target grid by.
-            E.g. 2 will double the target resolution, 0.5 will halve it.
-            Applies to on-grid predictions only. Default 1.
-        n_samples : int
-            Number of joint samples to draw from the model. If 0, will not
-            draw samples. Default 0.
-        ar_sample : bool
-            Whether to use autoregressive sampling. Default ``False``.
-        unnormalise : bool
-            Whether to unnormalise the predictions. Only works if ``self`` has
-            a ``data_processor`` and ``task_loader`` attribute. Default
-            ``True``.
-        seed : int
-            Random seed for deterministic sampling. Default 0.
-        append_indexes : dict
-            Dictionary of index metadata to append to pandas indexes in the
-            off-grid case. Default ``None``.
-        progress_bar : int
-            Whether to display a progress bar over tasks. Default 0.
-        verbose : bool
-            Whether to print time taken for prediction. Default ``False``.
+        Args:
+            tasks (List[Task] | Task):
+                List of tasks containing context data.
+            X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
+                Target locations to predict at. Can be an xarray object
+                containing on-grid locations or a pandas object containing
+                off-grid locations.
+            X_t_mask: :class:`xarray.Dataset` | :class:`xarray.DataArray`
+                Optional 2D mask to apply to X_t (zero/False will be NaNs).
+                Will be interpolated to the same grid as X_t. Default None (no
+                mask).
+            X_t_is_normalised (bool):
+                Whether the ``X_t`` coords are normalised. If False, will
+                normalise
+                the coords before passing to model. Default ``False``.
+            aux_at_targets_override (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+                Optional auxiliary xarray data to override from the
+                task_loader.
+            aux_at_targets_override_is_normalised (bool):
+                Whether the `aux_at_targets_override` coords are normalised.
+                If False, the DataProcessor will normalise the coords before
+                passing to model.
+                Default False.
+            resolution_factor (float):
+                Optional factor to increase the resolution of the target grid
+                by. E.g. 2 will double the target resolution, 0.5 will halve
+                it. Applies to on-grid predictions only. Default 1.
+            n_samples (int):
+                Number of joint samples to draw from the model. If 0, will not
+                draw samples. Default 0.
+            ar_sample (bool):
+                Whether to use autoregressive sampling. Default ``False``.
+            unnormalise (bool):
+                Whether to unnormalise the predictions. Only works if ``self``
+                has a ``data_processor`` and ``task_loader`` attribute. Default
+                ``True``.
+            seed (int):
+                Random seed for deterministic sampling. Default 0.
+            append_indexes (dict):
+                Dictionary of index metadata to append to pandas indexes in the
+                off-grid case. Default ``None``.
+            progress_bar (int):
+                Whether to display a progress bar over tasks. Default 0.
+            verbose (bool):
+                Whether to print time taken for prediction. Default ``False``.
 
-        Returns
-        -------
-        predictions : :class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index`
-            If ``X_t`` is a pandas object, returns pandas objects containing
-            off-grid predictions.
+        Returns:=
+            :class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index`
+                If ``X_t`` is a pandas object, returns pandas objects
+                containing off-grid predictions.
 
-            If ``X_t`` is an xarray object, returns xarray object containing
-            on-grid predictions.
+                If ``X_t`` is an xarray object, returns xarray object
+                containing on-grid predictions.
 
-            If ``n_samples`` == 0, returns only mean and std predictions.
+                If ``n_samples`` == 0, returns only mean and std predictions.
 
-            If ``n_samples`` > 0, returns mean, std and samples predictions.
+                If ``n_samples`` > 0, returns mean, std and samples
+                predictions.
 
-        Raises
-        ------
-        ValueError
-            If ``X_t`` is not an xarray object and
-            ``resolution_factor`` is not 1 or ``ar_subsample_factor`` is not 1.
-        ValueError
-            If ``X_t`` is not a pandas object and ``append_indexes`` is not
-            ``None``.
-        ValueError
-            If ``X_t`` is not an xarray, pandas or numpy object.
-        ValueError
-            If ``append_indexes`` are not all the same length as ``X_t``.
+        Raises:
+            ValueError
+                If ``X_t`` is not an xarray object and
+                ``resolution_factor`` is not 1 or ``ar_subsample_factor`` is
+                not 1.
+            ValueError
+                If ``X_t`` is not a pandas object and ``append_indexes`` is not
+                ``None``.
+            ValueError
+                If ``X_t`` is not an xarray, pandas or numpy object.
+            ValueError
+                If ``append_indexes`` are not all the same length as ``X_t``.
         """
         tic = time.time()
 
@@ -495,7 +472,9 @@ class DeepSensorModel(ProbabilisticModel):
                 raise ValueError(
                     "ar_subsample_factor can only be used with on-grid predictions."
                 )
-        if not isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index, np.ndarray)):
+        if not isinstance(
+            X_t, (pd.DataFrame, pd.Series, pd.Index, np.ndarray)
+        ):
             if append_indexes is not None:
                 raise ValueError(
                     "append_indexes can only be used with off-grid predictions."
@@ -512,7 +491,9 @@ class DeepSensorModel(ProbabilisticModel):
 
         if mode == "off-grid" and X_t_mask is not None:
             # TODO: Unit test this
-            raise ValueError("X_t_mask can only be used with on-grid predictions.")
+            raise ValueError(
+                "X_t_mask can only be used with on-grid predictions."
+            )
 
         if type(tasks) is Task:
             tasks = [tasks]
@@ -571,9 +552,14 @@ class DeepSensorModel(ProbabilisticModel):
                 X_t_mask_normalised = self.data_processor.map_coords(X_t_mask)
                 X_t_arr = xarray_to_coord_array_normalised(X_t_normalised)
                 # Remove points that lie outside the mask
-                X_t_arr = mask_coord_array_normalised(X_t_arr, X_t_mask_normalised)
+                X_t_arr = mask_coord_array_normalised(
+                    X_t_arr, X_t_mask_normalised
+                )
             else:
-                X_t_arr = (X_t_normalised["x1"].values, X_t_normalised["x2"].values)
+                X_t_arr = (
+                    X_t_normalised["x1"].values,
+                    X_t_normalised["x2"].values,
+                )
 
         elif mode == "off-grid":
             X_t_arr = X_t_normalised.reset_index()[["x1", "x2"]].values.T
@@ -617,7 +603,9 @@ class DeepSensorModel(ProbabilisticModel):
         elif mode == "off-grid":
             # Repeat target locs for each date to create multiindex
             idxs = [(date, *idxs) for date in dates for idxs in X_t.index]
-            index = pd.MultiIndex.from_tuples(idxs, names=["time", *X_t.index.names])
+            index = pd.MultiIndex.from_tuples(
+                idxs, names=["time", *X_t.index.names]
+            )
             mean = pd.DataFrame(index=index, columns=target_var_IDs)
             std = pd.DataFrame(index=index, columns=target_var_IDs)
             if n_samples >= 1:
@@ -630,7 +618,9 @@ class DeepSensorModel(ProbabilisticModel):
                 index_samples = pd.MultiIndex.from_tuples(
                     idxs_samples, names=["sample", "time", *X_t.index.names]
                 )
-                samples = pd.DataFrame(index=index_samples, columns=target_var_IDs)
+                samples = pd.DataFrame(
+                    index=index_samples, columns=target_var_IDs
+                )
 
         def unnormalise_pred_array(arr, **kwargs):
             var_IDs_flattened = [
@@ -663,7 +653,9 @@ class DeepSensorModel(ProbabilisticModel):
             else:
                 aux_at_targets = self.task_loader.aux_at_targets
 
-        for task in tqdm(tasks, position=0, disable=progress_bar < 1, leave=True):
+        for task in tqdm(
+            tasks, position=0, disable=progress_bar < 1, leave=True
+        ):
             task["X_t"] = [X_t_arr for _ in range(len(task["X_t"]))]
 
             # If passing auxiliary data, need to sample it at target locations
@@ -692,7 +684,9 @@ class DeepSensorModel(ProbabilisticModel):
                             n_samples=n_samples,
                             ar_subsample_factor=ar_subsample_factor,
                         )
-                        samples_arr = samples_arr.reshape((n_samples, *mean_arr.shape))
+                        samples_arr = samples_arr.reshape(
+                            (n_samples, *mean_arr.shape)
+                        )
                     else:
                         samples_arr = self.sample(dist, n_samples=n_samples)
             else:
@@ -708,7 +702,9 @@ class DeepSensorModel(ProbabilisticModel):
                             n_samples=n_samples,
                             ar_subsample_factor=ar_subsample_factor,
                         )
-                        samples_arr = samples_arr.reshape((n_samples, *mean_arr.shape))
+                        samples_arr = samples_arr.reshape(
+                            (n_samples, *mean_arr.shape)
+                        )
                     else:
                         samples_arr = self.sample(task, n_samples=n_samples)
 
@@ -734,12 +730,16 @@ class DeepSensorModel(ProbabilisticModel):
                     std.loc[:, task["time"], :, :] = std_arr
                     if n_samples >= 1:
                         for sample_i in range(n_samples):
-                            samples.loc[:, sample_i, task["time"], :, :] = samples_arr[
-                                sample_i
-                            ]
+                            samples.loc[
+                                :, sample_i, task["time"], :, :
+                            ] = samples_arr[sample_i]
                 else:
-                    mean.loc[:, task["time"], :, :].data[:, X_t_mask.data] = mean_arr
-                    std.loc[:, task["time"], :, :].data[:, X_t_mask.data] = std_arr
+                    mean.loc[:, task["time"], :, :].data[
+                        :, X_t_mask.data
+                    ] = mean_arr
+                    std.loc[:, task["time"], :, :].data[
+                        :, X_t_mask.data
+                    ] = std_arr
                     if n_samples >= 1:
                         for sample_i in range(n_samples):
                             samples.loc[:, sample_i, task["time"], :, :].data[
@@ -751,7 +751,9 @@ class DeepSensorModel(ProbabilisticModel):
                 std.loc[task["time"]] = std_arr.T
                 if n_samples >= 1:
                     for sample_i in range(n_samples):
-                        samples.loc[sample_i, task["time"]] = samples_arr[sample_i].T
+                        samples.loc[sample_i, task["time"]] = samples_arr[
+                            sample_i
+                        ].T
 
         if mode == "on-grid":
             mean = mean.to_dataset(dim="data_var")
@@ -777,6 +779,36 @@ def create_empty_spatiotemporal_xarray(
     prepend_dims: List[str] = None,
     prepend_coords: dict = None,
 ):
+    """
+    ...
+
+    Args:
+        X (xr.Dataset | xr.DataArray):
+            _description_
+        dates (List):
+            _description_
+        coord_names (..., optional):
+            _description_, by default {"x1": "x1", "x2": "x2"}
+        data_vars (List, optional):
+            _description_, by default ["var"]
+        prepend_dims (List[str], optional):
+            _description_, by default None
+        prepend_coords (dict, optional):
+            _description_, by default None
+
+    Returns:
+        ...: ...
+
+    Raises:
+        ValueError
+            ...
+        ValueError
+            ...
+        ValueError
+            ...
+        ValueError
+            ...
+    """
     if prepend_dims is None:
         prepend_dims = []
     if prepend_coords is None:
@@ -794,9 +826,13 @@ def create_empty_spatiotemporal_xarray(
 
     # Assert uniform spacing
     if not np.allclose(np.diff(x1_predict), np.diff(x1_predict)[0]):
-        raise ValueError(f"Coordinate {coord_names['x1']} must be uniformly spaced.")
+        raise ValueError(
+            f"Coordinate {coord_names['x1']} must be uniformly spaced."
+        )
     if not np.allclose(np.diff(x2_predict), np.diff(x2_predict)[0]):
-        raise ValueError(f"Coordinate {coord_names['x2']} must be uniformly spaced.")
+        raise ValueError(
+            f"Coordinate {coord_names['x2']} must be uniformly spaced."
+        )
 
     if len(prepend_dims) != len(set(prepend_dims)):
         # TODO unit test
@@ -814,7 +850,10 @@ def create_empty_spatiotemporal_xarray(
     }
 
     pred_ds = xr.Dataset(
-        {data_var: xr.DataArray(dims=dims, coords=coords) for data_var in data_vars}
+        {
+            data_var: xr.DataArray(dims=dims, coords=coords)
+            for data_var in data_vars
+        }
     ).astype("float32")
 
     # Convert time coord to pandas timestamps
@@ -828,15 +867,35 @@ def create_empty_spatiotemporal_xarray(
 
 
 def increase_spatial_resolution(
-    X_t_normalised, resolution_factor, coord_names: dict = {"x1": "x1", "x2": "x2"}
+    X_t_normalised,
+    resolution_factor,
+    coord_names: dict = {"x1": "x1", "x2": "x2"},
 ):
+    """
+    ...
+
+    Args:
+        X_t_normalised (...):
+            ...
+        resolution_factor (...):
+            ...
+        coord_names (..., optional):
+            ..., by default {"x1": "x1", "x2": "x2"}
+
+    Returns:
+        ...: ...
+    """
     # TODO wasteful to interpolate X_t_normalised
     assert isinstance(resolution_factor, (float, int))
     assert isinstance(X_t_normalised, (xr.DataArray, xr.Dataset))
     x1_name, x2_name = coord_names["x1"], coord_names["x2"]
     x1, x2 = X_t_normalised.coords[x1_name], X_t_normalised.coords[x2_name]
-    x1 = np.linspace(x1[0], x1[-1], int(x1.size * resolution_factor), dtype="float64")
-    x2 = np.linspace(x2[0], x2[-1], int(x2.size * resolution_factor), dtype="float64")
+    x1 = np.linspace(
+        x1[0], x1[-1], int(x1.size * resolution_factor), dtype="float64"
+    )
+    x2 = np.linspace(
+        x2[0], x2[-1], int(x2.size * resolution_factor), dtype="float64"
+    )
     X_t_normalised = X_t_normalised.interp(
         **{x1_name: x1, x2_name: x2}, method="nearest"
     )

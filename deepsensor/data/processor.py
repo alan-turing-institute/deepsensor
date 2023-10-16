@@ -647,19 +647,17 @@ class DataProcessor:
         """
         Unnormalise data.
 
-        Parameters
-        ----------
-        data : :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]
-            Data to unnormalise.
-        add_offset : bool, optional
-            Whether to add the offset to the data when unnormalising. Set to
-            False to unnormalise uncertainty values (e.g. std dev). Defaults to
-            True.
+        Args:
+            data (:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]):
+                Data to unnormalise.
+            add_offset (bool, optional):
+                Whether to add the offset to the data when unnormalising. Set
+                to False to unnormalise uncertainty values (e.g. std dev).
+                Defaults to True.
 
-        Returns
-        -------
-        :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]
-            Unnormalised data.
+        Returns:
+            :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]:
+                Unnormalised data.
         """
         if isinstance(data, list):
             return [
@@ -675,25 +673,35 @@ def xarray_to_coord_array_normalised(
     """
     Convert xarray to normalised coordinate array.
 
-    Parameters
-    ----------
-    da : :class:`xarray.Dataset` | :class:`xarray.DataArray`
-        ...
+    Args:
+        da (:class:`xarray.Dataset` | :class:`xarray.DataArray`)
+            ...
 
-    Returns
-    -------
-    :class:`numpy:numpy.ndarray`
-        A normalised coordinate array of shape ``(2, N)``.
+    Returns:
+        :class:`numpy:numpy.ndarray`
+            A normalised coordinate array of shape ``(2, N)``.
     """
     x1, x2 = da["x1"].values, da["x2"].values
     X1, X2 = np.meshgrid(x1, x2, indexing="ij")
     return np.stack([X1.ravel(), X2.ravel()], axis=0)
 
 
-def process_X_mask_for_X(X_mask: xr.DataArray, X: xr.DataArray):
+def process_X_mask_for_X(
+    X_mask: xr.DataArray, X: xr.DataArray
+) -> xr.DataArray:
     """Process X_mask by interpolating to X and converting to boolean.
 
     Both X_mask and X are xarray DataArrays with the same spatial coords.
+
+    Args:
+        X_mask (:class:`xarray.DataArray`):
+            ...
+        X (:class:`xarray.DataArray`):
+            ...
+
+    Returns:
+        :class:`xarray.DataArray`
+            ...
     """
     X_mask = X_mask.astype(float).interp_like(
         X, method="nearest", kwargs={"fill_value": 0}
@@ -705,24 +713,23 @@ def process_X_mask_for_X(X_mask: xr.DataArray, X: xr.DataArray):
 
 def mask_coord_array_normalised(
     coord_arr: np.ndarray, mask_da: Union[xr.DataArray, xr.Dataset, None]
-):
+) -> np.ndarray:
     """
-    Remove points from (2, N) numpy array that are outside gridded xarray boolean mask.
+    Remove points from (2, N) numpy array that are outside gridded xarray
+    boolean mask.
 
-    If `coord_arr` is shape `(2, N)`, then `mask_da` is a shape `(N,)` boolean array
-    (True if point is inside mask, False if outside).
+    If `coord_arr` is shape `(2, N)`, then `mask_da` is a shape `(N,)` boolean
+    array (True if point is inside mask, False if outside).
 
-    Parameters
-    ----------
-    coord_arr : ...
-        ...
-    mask_da : ...
-        ...
+    Args:
+        coord_arr (:class:`numpy:numpy.ndarray`):
+            ...
+        mask_da (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+            ...
 
-    Returns
-    -------
-    ...
-        ...
+    Returns:
+        :class:`numpy:numpy.ndarray`
+            ...
     """
     if mask_da is None:
         return coord_arr
@@ -739,17 +746,15 @@ def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
     .. note::
         ``da1`` and ``da2`` are assumed normalised by ``DataProcessor``.
 
-    Parameters
-    ----------
-    da1 : :class:`xarray.DataArray`
-        ...
-    da2 : :class:`xarray.DataArray`
-        ...
+    Args:
+        da1 (:class:`xarray.DataArray`):
+            ...
+        da2 (:class:`xarray.DataArray`):
+            ...
 
-    Returns
-    -------
-    bool
-        Whether ``da1`` and ``da2`` are on the same grid.
+    Returns:
+        bool
+            Whether ``da1`` and ``da2`` are on the same grid.
     """
     x1equal = np.array_equal(da1["x1"].values, da2["x1"].values)
     x2equal = np.array_equal(da1["x2"].values, da2["x2"].values)
@@ -763,16 +768,14 @@ def interp_da1_to_da2(da1: xr.DataArray, da2: xr.DataArray) -> xr.DataArray:
     .. note::
         ``da1`` and ``da2`` are assumed normalised by ``DataProcessor``.
 
-    Parameters
-    ----------
-    da1 : :class:`xarray.DataArray`
-        ...
-    da2 : :class:`xarray.DataArray`
-        ...
+    Args:
+        da1 (:class:`xarray.DataArray`):
+            ...
+        da2 (:class:`xarray.DataArray`):
+            ...
 
-    Returns
-    -------
-    :class:`xarray.DataArray`
-        Interpolated xarray.
+    Returns:
+        :class:`xarray.DataArray`
+            Interpolated xarray.
     """
     return da1.interp(x1=da2["x1"], x2=da2["x2"], method="nearest")
