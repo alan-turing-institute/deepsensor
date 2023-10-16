@@ -42,15 +42,15 @@ class TestPlotting(unittest.TestCase):
         figs = deepsensor.plot.feature_maps(self.model, self.task)
 
     def test_offgrid_context(self):
-        mean_ds, std_ds = self.model.predict(self.task, X_t=self.ds_raw)
-        fig = mean_ds.isel(time=0).air.plot(cmap="seismic")
+        pred = self.model.predict(self.task, X_t=self.ds_raw)
+        fig = pred["air"]["mean"].isel(time=0).plot(cmap="seismic")
         deepsensor.plot.offgrid_context(
             fig.axes, self.task, self.data_processor, self.task_loader
         )
 
     def test_offgrid_context_observations(self):
-        mean_ds, std_ds = self.model.predict(self.task, X_t=self.ds_raw)
-        fig = mean_ds.isel(time=0).air.plot(cmap="seismic")
+        pred = self.model.predict(self.task, X_t=self.ds_raw)
+        fig = pred["air"]["mean"].isel(time=0).plot(cmap="seismic")
         deepsensor.plot.offgrid_context_observations(
             fig.axes,
             self.task,

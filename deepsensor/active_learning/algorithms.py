@@ -10,8 +10,8 @@ from deepsensor.data.processor import (
 )
 from deepsensor.model.model import (
     DeepSensorModel,
-    create_empty_spatiotemporal_xarray,
 )
+from deepsensor.model.pred import create_empty_spatiotemporal_xarray
 from deepsensor.data.task import Task, append_obs_to_task
 from deepsensor.active_learning.acquisition_fns import (
     AcquisitionFunction,
@@ -230,12 +230,13 @@ class GreedyAlgorithm:
         importance values of the placement criterion.
         """
         if self.model_infill_method == "mean":
-            infill_ds, _ = self.model.predict(
+            pred = self.model.predict(
                 self.tasks,
                 X_s,
                 X_t_is_normalised=True,
                 unnormalise=False,
             )
+            infill_ds = pred[self.target_set_idx]["mean"]
 
         elif self.model_infill_method == "sample":
             # _, _, infill_ds = self.model.predict(
@@ -291,7 +292,7 @@ class GreedyAlgorithm:
 
         return acquisition_fn_ds
 
-    def _init_acquisition_fn_ds(self, X_s: xr.Dataset) -> xr.Dataset:
+    def _init_acquisition_fn_ds(self, X_s: xr.Dataset):
         """Instantiate acquisition function object"""
         # Unnormalise before instantiating
         X_s = self.model.data_processor.map_coords(X_s, unnorm=True)
@@ -488,7 +489,7 @@ class GreedyAlgorithm:
 
         # Add target set to tasks
         for i, task in enumerate(tasks):
-            tasks[i]["X_t"][self.target_set_idx] = self.X_t_arr
+            tasks[i]["X_t"] = [self.X_t_arr]
             if isinstance(acquisition_fn, AcquisitionFunctionOracle):
                 # Sample ground truth y-values at target points `self.X_t_arr` using `self.task_loader`
                 date = tasks[i]["time"]

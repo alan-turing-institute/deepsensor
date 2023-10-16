@@ -80,6 +80,7 @@ from deepsensor.train.train import Trainer
 import xarray as xr
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 
 # Load raw data
 ds_raw = xr.tutorial.open_dataset("air_temperature")
@@ -103,17 +104,17 @@ for date in pd.date_range("2013-01-01", "2014-11-30")[::7]:
 
 # Train model
 trainer = Trainer(model, lr=5e-5)
-for epoch in range(10):
-    trainer(train_tasks, progress_bar=True)
+for epoch in tqdm(range(10)):
+    batch_losses = trainer(train_tasks)
 
 # Predict on new task with 10% of context data and a dense grid of target points
 test_task = task_loader("2014-12-31", 0.1)
-mean_ds, std_ds = model.predict(test_task, X_t=ds_raw)
+pred = model.predict(test_task, X_t=ds_raw)
 ```
 
 After training, the model can predict directly to `xarray` in your data's original units and coordinate system:
 ```python
->>> mean_ds
+>>> pred["air"]
 <xarray.Dataset>
 Dimensions:  (time: 1, lat: 25, lon: 53)
 Coordinates:
@@ -121,27 +122,35 @@ Coordinates:
   * lat      (lat) float32 75.0 72.5 70.0 67.5 65.0 ... 25.0 22.5 20.0 17.5 15.0
   * lon      (lon) float32 200.0 202.5 205.0 207.5 ... 322.5 325.0 327.5 330.0
 Data variables:
-    air      (time, lat, lon) float32 246.7 244.4 245.5 ... 290.2 289.8 289.4
+    mean     (time, lat, lon) float32 267.7 267.2 266.4 ... 297.5 297.8 297.9
+    std      (time, lat, lon) float32 9.855 9.845 9.848 ... 1.356 1.36 1.487
 ```
 
 We can also predict directly to `pandas` containing a timeseries of predictions at off-grid locations
 by passing a `numpy` array of target locations to the `X_t` argument of `.predict`:
 ```python
-# Predict at two off-grid locations for three days in December 2014
-test_tasks = task_loader(pd.date_range("2014-12-01", "2014-12-31"), 0.1)
-mean_df, std_df = model.predict(test_tasks, X_t=np.array([[50, 280], [40, 250]]).T)
+# Predict at two off-grid locations over December 2014 with 50 random, fixed context points
+test_tasks = task_loader(pd.date_range("2014-12-01", "2014-12-31"), 50, seed_override=42)
+pred = model.predict(test_tasks, X_t=np.array([[50, 280], [40, 250]]).T)
 ```
 
 ```python
->>> mean_df
-                              air
-time       lat  lon              
-2014-12-01 50.0 280.0  260.183056
-           40.0 250.0  277.947373
-2014-12-02 50.0 280.0   261.08943
-           40.0 250.0  278.219599
-2014-12-03 50.0 280.0  257.128185
-           40.0 250.0  278.444229
+>>> pred["air"]
+                          mean       std
+time       lat lon                      
+2014-12-01 50  280  260.282562  5.743976
+           40  250  270.770111  4.271546
+2014-12-02 50  280  255.572098  6.165956
+           40  250  277.588745  3.727404
+2014-12-03 50  280  260.894196   6.02924
+...                        ...       ...
+2014-12-29 40  250  266.594421  4.268469
+2014-12-30 50  280  250.936386  7.048379
+           40  250  262.225464  4.662592
+2014-12-31 50  280  249.397919  7.167142
+           40  250  257.955505  4.697775
+
+[62 rows x 2 columns]
 ```
 
 This quickstart example is also available as a [Jupyter notebook](https://github.com/tom-andersson/deepsensor_demos/blob/main/demonstrators/quickstart.ipynb) with added visualisations.

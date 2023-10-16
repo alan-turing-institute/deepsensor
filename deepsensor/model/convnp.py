@@ -829,9 +829,8 @@ class ConvNP(DeepSensorModel):
 
                 if fill_type == "mean":
                     # Compute the mean conditioned on the AR samples
-                    pred = self.mean(
-                        task_with_sample
-                    )  # Should this be a `.sample` call?
+                    # Should this be a `.sample` call?
+                    pred = self.mean(task_with_sample)
                 elif fill_type == "sample":
                     # Sample from joint distribution over all target locations
                     pred = self.sample(task_with_sample, n_samples=1)
