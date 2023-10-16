@@ -207,12 +207,6 @@ def create_empty_spatiotemporal_xarray(
     x1_predict = X.coords[coord_names["x1"]]
     x2_predict = X.coords[coord_names["x2"]]
 
-    # Assert uniform spacing
-    if not np.allclose(np.diff(x1_predict), np.diff(x1_predict)[0]):
-        raise ValueError(f"Coordinate {coord_names['x1']} must be uniformly spaced.")
-    if not np.allclose(np.diff(x2_predict), np.diff(x2_predict)[0]):
-        raise ValueError(f"Coordinate {coord_names['x2']} must be uniformly spaced.")
-
     if len(prepend_dims) != len(set(prepend_dims)):
         # TODO unit test
         raise ValueError(
