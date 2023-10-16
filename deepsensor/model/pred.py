@@ -39,17 +39,17 @@ class Prediction(dict):
         Initialise an empty prediction object.
 
         Args:
-            target_var_IDs: List[str]
+            target_var_IDs (List[str])
                 List of target variable IDs.
-            dates: List[Union[str, pd.Timestamp]]
+            dates (List[Union[str, pd.Timestamp]])
                 List of dates corresponding to the predictions.
-            X_t : :class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`
+            X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`)
                 Target locations to predict at. Can be an xarray object containing
                 on-grid locations or a pandas object containing off-grid locations.
-            X_t_mask: :class:`xarray.Dataset` | :class:`xarray.DataArray`, optional
+            X_t_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional)
                 2D mask to apply to gridded ``X_t`` (zero/False will be NaNs). Will be interpolated
                 to the same grid as ``X_t``. Default None (no mask).
-            n_samples : int
+            n_samples (int)
                 Number of joint samples to draw from the model. If 0, will not
                 draw samples. Default 0.
         """
@@ -108,11 +108,11 @@ class Prediction(dict):
         """
 
         Args:
-            prediction_parameter: str
+            prediction_parameter (str)
                 ...
-            date: Union[str, pd.Timestamp]
+            date (Union[str, pd.Timestamp])
                 ...
-            data: np.ndarray
+            data (np.ndarray)
                 If off-grid: Shape (N_var, N_targets) or (N_samples, N_var, N_targets).
                 If on-grid: Shape (N_var, N_x1, N_x2) or (N_samples, N_var, N_x1, N_x2).
         """
@@ -151,46 +151,46 @@ def create_empty_spatiotemporal_xarray(
     X: Union[xr.Dataset, xr.DataArray],
     dates: List,
     coord_names: dict = None,
-    data_vars: List[str] = ["var"],
+    data_vars: List[str] = None,
     prepend_dims: Optional[List[str]] = None,
     prepend_coords: Optional[dict] = None,
 ):
     """
-    ...
-
-    Parameters
-    ----------
-    X : :class:`xarray.Dataset` | :class:`xarray.DataArray`
-        ...
-    dates : List[...]
-        ...
-    coord_names : dict, optional
-        ..., by default {"x1": "x1", "x2": "x2"}
-    data_vars : List[str], optional
-        ..., by default ["var"]
-    prepend_dims : List[str], optional
-        ..., by default None
-    prepend_coords : dict, optional
-        ..., by default None
-
-    Returns
-    -------
-    ...
         ...
 
-    Raises
-    ------
-    ValueError
-        If ``data_vars`` contains duplicate values.
-    ValueError
-        If ``coord_names["x1"]`` is not uniformly spaced.
-    ValueError
-        If ``coord_names["x2"]`` is not uniformly spaced.
-    ValueError
-        If ``prepend_dims`` and ``prepend_coords`` are not the same length.
+    Args:
+        X (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+            ...
+        dates (List[...]):
+            ...
+        coord_names (dict, optional):
+            Dict mapping from normalised coord names to raw coord names,
+            by default {"x1": "x1", "x2": "x2"}
+        data_vars (List[str], optional):
+            ..., by default ["var"]
+        prepend_dims (List[str], optional):
+            ..., by default None
+        prepend_coords (dict, optional):
+            ..., by default None
+
+    Returns:
+        ...
+            ...
+
+    Raises:
+        ValueError
+            If ``data_vars`` contains duplicate values.
+        ValueError
+            If ``coord_names["x1"]`` is not uniformly spaced.
+        ValueError
+            If ``coord_names["x2"]`` is not uniformly spaced.
+        ValueError
+            If ``prepend_dims`` and ``prepend_coords`` are not the same length.
     """
     if coord_names is None:
         coord_names = {"x1": "x1", "x2": "x2"}
+    if data_vars is None:
+        data_vars = ["var"]
 
     if prepend_dims is None:
         prepend_dims = []
@@ -253,19 +253,19 @@ def increase_spatial_resolution(
     ..
         # TODO wasteful to interpolate X_t_normalised
 
-    Parameters
-    ----------
-    X_t_normalised : ...
-        ...
-    resolution_factor : ...
-        ...
-    coord_names : dict, optional
-        ..., by default {"x1": "x1", "x2": "x2"}
+    Args:
+        X_t_normalised (...):
+            ...
+        resolution_factor (...):
+            ...
+        coord_names (dict, optional):
+            Dict mapping from normalised coord names to raw coord names,
+            by default {"x1": "x1", "x2": "x2"}
 
-    Returns
-    -------
-    ...
+    Returns:
         ...
+            ...
+
     """
     assert isinstance(resolution_factor, (float, int))
     assert isinstance(X_t_normalised, (xr.DataArray, xr.Dataset))
