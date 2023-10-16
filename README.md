@@ -72,10 +72,10 @@ We can go from imports to predictions with a trained model in less than 30 lines
 
 ```python
 import deepsensor.torch
-from deepsensor.data.processor import DataProcessor
-from deepsensor.data.loader import TaskLoader
-from deepsensor.model.convnp import ConvNP
-from deepsensor.train.train import Trainer
+from deepsensor.data import DataProcessor
+from deepsensor.data import TaskLoader
+from deepsensor.model import ConvNP
+from deepsensor.train import Trainer
 
 import xarray as xr
 import pandas as pd

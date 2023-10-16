@@ -10,22 +10,20 @@ import warnings
 from matrix import Diagonal
 from plum import ModuleType, dispatch
 
-from .. import backend
-from ..data.loader import TaskLoader
-from ..data.processor import DataProcessor
-from ..data.task import (
+from deepsensor import backend
+from deepsensor.data.loader import TaskLoader
+from deepsensor.data.processor import DataProcessor
+from deepsensor.data.task import (
     Task,
     flatten_gridded_data_in_task,
-    flatten_X,
-    flatten_Y,
 )
-from ..model.defaults import (
+from deepsensor.model.defaults import (
     gen_ppu,
     gen_encoder_scales,
     gen_decoder_scale,
 )
-from ..model.model import DeepSensorModel
-from ..model.nps import (
+from deepsensor.model.model import DeepSensorModel
+from deepsensor.model.nps import (
     construct_neural_process,
     convert_task_to_nps_args,
     run_nps_model,

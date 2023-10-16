@@ -1,5 +1,6 @@
-from .data import *
-from .model import *
+from .data.processor import DataProcessor
+from .data.loader import TaskLoader
+
 from .plot import *
 
 
