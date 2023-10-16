@@ -20,15 +20,14 @@ class AcquisitionFunction:
         target_set_idx: int = 0,
     ):
         """
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
-        context_set_idx : int
-            Index of context set to add new observations to when computing the
-            acquisition function.
-        target_set_idx : int
-            Index of target set to compute acquisition function for.
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
+            context_set_idx (int):
+                Index of context set to add new observations to when computing
+                the acquisition function.
+          target_set_idx (int):
+                Index of target set to compute acquisition function for.
         """
         self.model = model
         self.context_set_idx = context_set_idx
@@ -39,21 +38,18 @@ class AcquisitionFunction:
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task object containing context and target sets.
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task object containing context and target sets.
 
-        Returns
-        -------
-        :class:`numpy:numpy.ndarray`
-            Acquisition function value/s. Shape ().
+        Returns:
+            :class:`numpy:numpy.ndarray`:
+                Acquisition function value/s. Shape ().
 
-        Raises
-        ------
-        NotImplementedError
-            Because this is an abstract method, it must be implemented by the
-            subclass.
+        Raises:
+            NotImplementedError:
+                Because this is an abstract method, it must be implemented by
+                the subclass.
         """
         raise NotImplementedError
 
@@ -75,23 +71,20 @@ class AcquisitionFunctionParallel(AcquisitionFunction):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task object containing context and target sets.
-        X_s : :class:`numpy:numpy.ndarray`
-            Search points. Shape (2, N_search).
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task object containing context and target sets.
+            X_s (:class:`numpy:numpy.ndarray`):
+                Search points. Shape (2, N_search).
 
-        Returns
-        -------
-        :class:`numpy:numpy.ndarray`
-            Should return acquisition function value/s. Shape (N_search,).
+        Returns:
+            :class:`numpy:numpy.ndarray`:
+                Should return acquisition function value/s. Shape (N_search,).
 
-        Raises
-        ------
-        NotImplementedError
-            Because this is an abstract method, it must be implemented by the
-            subclass.
+        Raises:
+            NotImplementedError:
+                Because this is an abstract method, it must be implemented by
+                the subclass.
         """
         raise NotImplementedError
 
@@ -103,10 +96,9 @@ class MeanStddev(AcquisitionFunction):
         """
         ...
 
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
         """
         super().__init__(model)
         self.min_or_max = "min"
@@ -115,15 +107,13 @@ class MeanStddev(AcquisitionFunction):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                [Description of the task parameter.]
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         return np.mean(self.model.stddev(task)[self.target_set_idx])
 
@@ -135,10 +125,9 @@ class MeanVariance(AcquisitionFunction):
         """
         ...
 
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
         """
         super().__init__(model)
         self.min_or_max = "min"
@@ -146,16 +135,14 @@ class MeanVariance(AcquisitionFunction):
     def __call__(self, task: Task):
         """
         ...
+        
+        Args:
+            task (:class:`~.data.task.Task`):
+                [Description of the task parameter.]
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
-
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         return np.mean(self.model.variance(task)[self.target_set_idx])
 
@@ -167,10 +154,9 @@ class pNormStddev(AcquisitionFunction):
         """
         ...
 
-        Parameters
-        ----------
-        p : int, optional
-            ..., by default 1
+        Args:
+            p (int, optional):
+                [Description of the parameter p.], default is 1
         """
         super().__init__(*args, **kwargs)
         self.p = p
@@ -180,15 +166,13 @@ class pNormStddev(AcquisitionFunction):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                [Description of the task parameter.]
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         return np.linalg.norm(
             self.model.stddev(task)[self.target_set_idx].ravel(), ord=self.p
@@ -202,10 +186,9 @@ class MeanMarginalEntropy(AcquisitionFunction):
         """
         ...
 
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
         """
         super().__init__(model)
         self.min_or_max = "min"
@@ -214,15 +197,13 @@ class MeanMarginalEntropy(AcquisitionFunction):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task object containing context and target sets.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         marginal_entropy = self.model.mean_marginal_entropy(task)
         return marginal_entropy
@@ -235,10 +216,9 @@ class JointEntropy(AcquisitionFunction):
         """
         ...
 
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
         """
         super().__init__(model)
         self.min_or_max = "min"
@@ -247,15 +227,13 @@ class JointEntropy(AcquisitionFunction):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task object containing context and target sets.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         return self.model.joint_entropy(task)
 
@@ -267,10 +245,9 @@ class OracleMAE(AcquisitionFunctionOracle):
         """
         ...
 
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
         """
         super().__init__(model)
         self.min_or_max = "min"
@@ -279,15 +256,13 @@ class OracleMAE(AcquisitionFunctionOracle):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task object containing context and target sets.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         pred = self.model.mean(task)
         if isinstance(pred, list):
@@ -303,10 +278,9 @@ class OracleRMSE(AcquisitionFunctionOracle):
         """
         ...
 
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
         """
         super().__init__(model)
         self.min_or_max = "min"
@@ -315,15 +289,13 @@ class OracleRMSE(AcquisitionFunctionOracle):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task object containing context and target sets.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         pred = self.model.mean(task)
         if isinstance(pred, list):
@@ -339,10 +311,9 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
         """
         ...
 
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
         """
         super().__init__(model)
         self.min_or_max = "min"
@@ -351,15 +322,13 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task object containing context and target sets.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         pred = self.model.mean(task)
         if isinstance(pred, list):
@@ -375,10 +344,9 @@ class OracleJointNLL(AcquisitionFunctionOracle):
         """
         ...
 
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
         """
         super().__init__(model)
         self.min_or_max = "min"
@@ -387,15 +355,13 @@ class OracleJointNLL(AcquisitionFunctionOracle):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task object containing context and target sets.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         return -self.model.logpdf(task)
 
@@ -407,10 +373,9 @@ class Random(AcquisitionFunctionParallel):
         """
         ...
 
-        Parameters
-        ----------
-        seed : int, optional
-            Random seed, by default 42.
+        Args:
+            seed (int, optional):
+                Random seed, defaults to 42.
         """
         self.rng = np.random.default_rng(seed)
         self.min_or_max = "max"
@@ -419,17 +384,15 @@ class Random(AcquisitionFunctionParallel):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
-        X_s : :class:`numpy:numpy.ndarray`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                [Description of the task parameter.]
+            X_s (:class:`numpy:numpy.ndarray`):
+                [Description of the X_s parameter.]
 
-        Returns
-        -------
-        float
-            A random acquisition function value.
+        Returns:
+            float:
+                A random acquisition function value.
         """
         return self.rng.random(X_s.shape[1])
 
@@ -438,30 +401,21 @@ class ContextDist(AcquisitionFunctionParallel):
     """Distance to closest context point."""
 
     def __init__(self):
-        """
-        ...
-
-        Parameters
-        ----------
-            ...
-        """
         self.min_or_max = "max"
 
     def __call__(self, task: Task, X_s: np.ndarray):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
-        X_s : :class:`numpy:numpy.ndarray`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                [Description of the task parameter.]
+            X_s (:class:`numpy:numpy.ndarray`):
+                [Description of the X_s parameter.]
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         X_c = task["X_c"][self.context_set_idx]
 
@@ -489,10 +443,9 @@ class Stddev(AcquisitionFunctionParallel):
         """
         ...
 
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
         """
         super().__init__(model)
         self.min_or_max = "max"
@@ -501,17 +454,15 @@ class Stddev(AcquisitionFunctionParallel):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
-        X_s : :class:`numpy:numpy.ndarray`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                [Description of the task parameter.]
+            X_s (:class:`numpy:numpy.ndarray`):
+                [Description of the X_s parameter.]
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            [Type of the return value]:
+                [Description of the return value.]
         """
         # Set the target points to the search points
         task = copy.deepcopy(task)
@@ -532,10 +483,9 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
 
     def __init__(self, model: ProbabilisticModel):
         """
-        Parameters
-        ----------
-        model : :class:`~.model.model.ProbabilisticModel`
-            ...
+        Args:
+            model (:class:`~.model.model.ProbabilisticModel`):
+                [Description of the model parameter.]
         """
         super().__init__(model)
         self.min_or_max = "max"
@@ -546,17 +496,15 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         X_s: np.ndarray,
     ) -> np.ndarray:
         """
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            Task object containing context and target sets.
-        X_s : :class:`numpy:numpy.ndarray`
-            Search points. Shape (2, N_search).
+        Args:
+            task (:class:`~.data.task.Task`):
+                Task object containing context and target sets.
+            X_s (:class:`numpy:numpy.ndarray`):
+                Search points. Shape (2, N_search).
 
-        Returns
-        -------
-        :class:`numpy:numpy.ndarray`
-            Acquisition function value/s. Shape (N_search,).
+        Returns:
+            :class:`numpy:numpy.ndarray`:
+                Acquisition function value/s. Shape (N_search,).
         """
         # Set the target points to the search points
         task = copy.deepcopy(task)
@@ -578,6 +526,8 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
 
         # Compute the expected improvement
         Z = (mean - best_target_value) / stddev
-        ei = stddev * (mean - best_target_value) * norm.cdf(Z) + stddev * norm.pdf(Z)
+        ei = stddev * (mean - best_target_value) * norm.cdf(
+            Z
+        ) + stddev * norm.pdf(Z)
 
         return ei

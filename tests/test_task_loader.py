@@ -74,7 +74,9 @@ class TestTaskLoader(unittest.TestCase):
             "all",
             np.zeros((2, 1)),
         ]:
-            yield [sampling_method] * n_context_sets, [sampling_method] * n_target_sets
+            yield [sampling_method] * n_context_sets, [
+                sampling_method
+            ] * n_target_sets
 
     def test_load_dask(self):
         """Test loading dask data"""
@@ -107,16 +109,6 @@ class TestTaskLoader(unittest.TestCase):
 
             E.g. ["xr", "pd", "xr"] -> [self.da, self.df, self.da]
             E.g. "xr" -> self.da
-
-            Parameters
-            ----------
-            set_list : list[str] | str
-                List of data type IDs or single data type ID.
-
-            Returns
-            -------
-            list[xr.DataArray] | list[pd.DataFrame] | xr.DataArray | pd.DataFrame
-                List of data objects or single data object.
             """
             if set_list == "xr":
                 return self.da
@@ -198,7 +190,9 @@ class TestTaskLoader(unittest.TestCase):
                 target=self.df,
             ),
         ]:
-            for invalid_sampling_strategy in invalid_context_sampling_strategies:
+            for (
+                invalid_sampling_strategy
+            ) in invalid_context_sampling_strategies:
                 with self.assertRaises(InvalidSamplingStrategyError):
                     task = tl("2020-01-01", invalid_sampling_strategy)
 
@@ -212,7 +206,9 @@ class TestTaskLoader(unittest.TestCase):
         da_with_nans = copy.deepcopy(self.da)
         nan_idxs = np.random.randint(0, da_with_nans.size, size=10_000)
         da_with_nans.data.ravel()[nan_idxs] = np.nan
-        tl = TaskLoader(context=da_with_nans, target=da_with_nans, links=[(0, 0)])
+        tl = TaskLoader(
+            context=da_with_nans, target=da_with_nans, links=[(0, 0)]
+        )
 
         # This should not raise an error
         task = tl("2020-01-01", "gapfill", "gapfill")

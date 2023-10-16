@@ -21,16 +21,14 @@ def gen_ppu(task_loader: TaskLoader) -> int:
     computes the data resolution for each. The model ppu is then set to the
     maximum data ppu.
 
-    Parameters
-    ----------
-    task_loader : :class:`~.data.loader.TaskLoader`
-        TaskLoader object containing context and target sets.
+    Args:
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            TaskLoader object containing context and target sets.
 
-    Returns
-    -------
-    model_ppu : int
-        Model ppu (points per unit), i.e. the number of points per unit of
-        input space.
+    Returns:
+        int:
+            Model ppu (points per unit), i.e. the number of points per unit of
+            input space.
     """
     # List of data resolutions for each context/target variable (in points-per-unit)
     data_ppus = []
@@ -63,16 +61,13 @@ def gen_decoder_scale(model_ppu: int) -> float:
     internal grid. The value chosen is 1 / model_ppu (i.e. the length scale is
     equal to the model's internal grid spacing).
 
-    Parameters
-    ----------
-    model_ppu : int
-        Model ppu (points per unit), i.e. the number of points per unit of
-        input space.
+    Args:
+        model_ppu (int):
+            Model ppu (points per unit), i.e. the number of points per unit of
+            input space.
 
-    Returns
-    -------
-    decoder_scale : float
-        Decoder scale.
+    Returns:
+        float: Decoder scale.
     """
     return 1 / model_ppu
 
@@ -95,18 +90,15 @@ def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> List[float]:
     points) for each context variable. The encoder scale is then set to 0.5 *
     data_resolution.
 
-    Parameters
-    ----------
-    model_ppu : int
-        Model ppu (points per unit), i.e. the number of points per unit of
-        input space.
-    task_loader : :class:`~.data.loader.TaskLoader`
-        TaskLoader object containing context and target sets.
+    Args:
+        model_ppu (int):
+            Model ppu (points per unit), i.e. the number of points per unit of
+            input space.
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            TaskLoader object containing context and target sets.
 
-    Returns
-    -------
-    encoder_scales : list[float]
-        List of encoder scales for each context set.
+    Returns:
+        list[float]: List of encoder scales for each context set.
     """
     encoder_scales = []
     for var in task_loader.context:

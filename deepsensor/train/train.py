@@ -13,18 +13,16 @@ def set_gpu_default_device() -> None:
     """
     Set default GPU device for the backend.
 
-    Raises
-    ------
-    RuntimeError
-        If no GPU is available.
-    RuntimeError
-        If backend is not supported.
-    NotImplementedError
-        If backend is not supported.
+    Raises:
+        RuntimeError
+            If no GPU is available.
+        RuntimeError
+            If backend is not supported.
+        NotImplementedError
+            If backend is not supported.
 
-    Returns
-    -------
-    None.
+    Returns:
+        None.
     """
     if deepsensor.backend.str == "torch":
         # Run on GPU if available
@@ -35,7 +33,9 @@ def set_gpu_default_device() -> None:
             torch.set_default_device("cuda")
             B.set_global_device("cuda:0")
         else:
-            raise RuntimeError("No GPU available: torch.cuda.is_available() == False")
+            raise RuntimeError(
+                "No GPU available: torch.cuda.is_available() == False"
+            )
     elif deepsensor.backend.str == "tf":
         # Run on GPU if available
         import tensorflow as tf
@@ -47,10 +47,14 @@ def set_gpu_default_device() -> None:
             )
             B.set_global_device("GPU:0")
         else:
-            raise RuntimeError("No GPU available: tf.test.is_gpu_available() == False")
+            raise RuntimeError(
+                "No GPU available: tf.test.is_gpu_available() == False"
+            )
 
     else:
-        raise NotImplementedError(f"Backend {deepsensor.backend.str} not implemented")
+        raise NotImplementedError(
+            f"Backend {deepsensor.backend.str} not implemented"
+        )
 
 
 def train_epoch(
@@ -65,28 +69,25 @@ def train_epoch(
     """
     Train model for one epoch.
 
-    Parameters
-    ----------
-    model : :class:`~.model.convnp.ConvNP`
-        Model to train.
-    tasks : List[:class:`~.data.task.Task`]
-        List of tasks to train on.
-    lr : float, optional
-        Learning rate, by default 5e-5.
-    batch_size : int, optional
-        Batch size. Defaults to None. If None, no batching is performed.
-    opt : Optimizer, optional
-        TF or Torch optimizer. Defaults to None. If None,
-        :class:`tensorflow:tensorflow.keras.optimizer.Adam` is used.
-    progress_bar : bool, optional
-        Whether to display a progress bar. Defaults to False.
-    tqdm_notebook : bool, optional
-        Whether to use a notebook progress bar. Defaults to False.
+    Args:
+        model (:class:`~.model.convnp.ConvNP`):
+            Model to train.
+        tasks (List[:class:`~.data.task.Task`]):
+            List of tasks to train on.
+        lr (float, optional):
+            Learning rate, by default 5e-5.
+        batch_size (int, optional):
+            Batch size. Defaults to None. If None, no batching is performed.
+        opt (Optimizer, optional):
+            TF or Torch optimizer. Defaults to None. If None,
+            :class:`tensorflow:tensorflow.keras.optimizer.Adam` is used.
+        progress_bar (bool, optional):
+            Whether to display a progress bar. Defaults to False.
+        tqdm_notebook (bool, optional):
+            Whether to use a notebook progress bar. Defaults to False.
 
-    Returns
-    -------
-    List[float]
-        List of losses for each task/batch.
+    Returns:
+        List[float]: List of losses for each task/batch.
     """
     if deepsensor.backend.str == "tf":
         import tensorflow as tf
@@ -102,7 +103,9 @@ def train_epoch(
                 for task in tasks:
                     task_losses.append(model.loss_fn(task, normalise=True))
                 mean_batch_loss = B.mean(B.stack(*task_losses))
-            grads = tape.gradient(mean_batch_loss, model.model.trainable_weights)
+            grads = tape.gradient(
+                mean_batch_loss, model.model.trainable_weights
+            )
             opt.apply_gradients(zip(grads, model.model.trainable_weights))
             return mean_batch_loss
 
@@ -125,12 +128,16 @@ def train_epoch(
             return mean_batch_loss.detach().cpu().numpy()
 
     else:
-        raise NotImplementedError(f"Backend {deepsensor.backend.str} not implemented")
+        raise NotImplementedError(
+            f"Backend {deepsensor.backend.str} not implemented"
+        )
 
     tasks = np.random.permutation(tasks)
 
     if batch_size is not None:
-        n_batches = len(tasks) // batch_size  # Note that this will drop the remainder
+        n_batches = (
+            len(tasks) // batch_size
+        )  # Note that this will drop the remainder
     else:
         n_batches = len(tasks)
 
