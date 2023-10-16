@@ -183,7 +183,9 @@ class TestActiveLearning(unittest.TestCase):
         X_s = self.data_processor.map_coords(X_s)
         X_s_arr = xarray_to_coord_array_normalised(X_s)
 
-        task = self.task_loader("2014-12-31", context_sampling=10)
+        task = self.task_loader(
+            "2014-12-31", context_sampling=10, target_sampling="all"
+        )
 
         for acquisition_fn in sequential_acquisition_fns:
             importance = acquisition_fn(task)
@@ -321,7 +323,9 @@ class TestActiveLearning(unittest.TestCase):
             X_t=X_s,
             X_s=X_s,
         )
-        task = self.task_loader("2014-12-31", context_sampling=10)
+        task = self.task_loader(
+            "2014-12-31", context_sampling=10, target_sampling="all"
+        )
 
         # This should work
         _ = alg(acquisition_fn, task)

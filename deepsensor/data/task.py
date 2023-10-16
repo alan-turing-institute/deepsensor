@@ -60,7 +60,9 @@ class Task(dict):
             str:
                 String representation of the task.
         """
-        if plum.isinstance(v, B.Numeric):
+        if v is None:
+            return "None"
+        elif plum.isinstance(v, B.Numeric):
             return f"{type(v).__name__}/{v.dtype}/{v.shape}"
         if plum.isinstance(v, deepsensor.backend.nps.mask.Masked):
             return f"{type(v).__name__}/(y={v.y.dtype}/{v.y.shape})/(mask={v.mask.dtype}/{v.mask.shape})"
@@ -80,6 +82,8 @@ class Task(dict):
         """
         s = ""
         for k, v in self.items():
+            if v is None:
+                continue
             s += f"{k}: {Task.summarise_str(k, v)}\n"
         return s
 
@@ -399,8 +403,10 @@ def flatten_gridded_data_in_task(task: Task) -> Task:
 
     task_flattened["X_c"] = [flatten_X(X) for X in task["X_c"]]
     task_flattened["Y_c"] = [flatten_Y(Y) for Y in task["Y_c"]]
-    task_flattened["X_t"] = [flatten_X(X) for X in task["X_t"]]
-    task_flattened["Y_t"] = [flatten_Y(Y) for Y in task["Y_t"]]
+    if task_flattened["X_t"] is not None:
+        task_flattened["X_t"] = [flatten_X(X) for X in task["X_t"]]
+    if task_flattened["Y_t"] is not None:
+        task_flattened["Y_t"] = [flatten_Y(Y) for Y in task["Y_t"]]
 
     return task_flattened
 
@@ -530,7 +536,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     return merged_task
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # print working directory
     import os
 

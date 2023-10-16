@@ -859,13 +859,15 @@ class TaskLoader:
             np.ndarray,
             List[Union[str, int, float, np.ndarray]],
         ] = "all",
-        target_sampling: Union[
-            str,
-            int,
-            float,
-            np.ndarray,
-            List[Union[str, int, float, np.ndarray]],
-        ] = "all",
+        target_sampling: Optional[
+            Union[
+                str,
+                int,
+                float,
+                np.ndarray,
+                List[Union[str, int, float, np.ndarray]],
+            ]
+        ] = None,
         split_frac: float = 0.5,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
@@ -893,7 +895,8 @@ class TaskLoader:
             target_sampling (str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`], optional):
                 Sampling strategy for the target data, either a list of
                 sampling strategies for each target set, or a single strategy
-                applied to all target sets. Default is ``"all"``.
+                applied to all target sets. Default is ``None``, meaning no target
+                data is returned.
             split_frac (float, optional):
                 The fraction of observations to use for the context set with
                 the "split" sampling strategy for linked context and target set
@@ -940,6 +943,8 @@ class TaskLoader:
                     - If the sampling strategy is an int but not positive.
                     - If the sampling strategy is a numpy array but not of shape (2, N).
             """
+            if sampling_strat is None:
+                return None
             if not isinstance(sampling_strat, (list, tuple)):
                 sampling_strat = tuple([sampling_strat] * len(set))
             elif isinstance(sampling_strat, (list, tuple)) and len(
@@ -1029,13 +1034,16 @@ class TaskLoader:
                     if isinstance(strat, str)
                 ]
             )
-            b2 = any(
-                [
-                    strat in ["split", "gapfill"]
-                    for strat in target_sampling
-                    if isinstance(strat, str)
-                ]
-            )
+            if target_sampling is None:
+                b2 = False
+            else:
+                b2 = any(
+                    [
+                        strat in ["split", "gapfill"]
+                        for strat in target_sampling
+                        if isinstance(strat, str)
+                    ]
+                )
             if b1 or b2:
                 raise ValueError(
                     "If using 'split' or 'gapfill' sampling strategies, the context and target "
@@ -1043,10 +1051,12 @@ class TaskLoader:
                 )
         if self.links is not None:
             for context_idx, target_idx in self.links:
-                link_strats = (
-                    context_sampling[context_idx],
-                    target_sampling[target_idx],
-                )
+                context_sampling_i = context_sampling[context_idx]
+                if target_sampling is None:
+                    target_sampling_i = None
+                else:
+                    target_sampling_i = target_sampling[target_idx]
+                link_strats = (context_sampling_i, target_sampling_i)
                 if any(
                     [
                         strat in ["split", "gapfill"]
@@ -1083,8 +1093,12 @@ class TaskLoader:
         task["ops"] = []
         task["X_c"] = []
         task["Y_c"] = []
-        task["X_t"] = []
-        task["Y_t"] = []
+        if target_sampling is not None:
+            task["X_t"] = []
+            task["Y_t"] = []
+        else:
+            task["X_t"] = None
+            task["Y_t"] = None
 
         context_slices = [
             self.time_slice_variable(var, date, delta_t)
@@ -1236,13 +1250,14 @@ class TaskLoader:
             X_c, Y_c = sample_variable(var, sampling_strat, context_seed)
             task[f"X_c"].append(X_c)
             task[f"Y_c"].append(Y_c)
-        for j, (var, sampling_strat) in enumerate(
-            zip(target_slices, target_sampling)
-        ):
-            target_seed = seed + i + j if seed is not None else None
-            X_t, Y_t = sample_variable(var, sampling_strat, target_seed)
-            task[f"X_t"].append(X_t)
-            task[f"Y_t"].append(Y_t)
+        if target_sampling is not None:
+            for j, (var, sampling_strat) in enumerate(
+                zip(target_slices, target_sampling)
+            ):
+                target_seed = seed + i + j if seed is not None else None
+                X_t, Y_t = sample_variable(var, sampling_strat, target_seed)
+                task[f"X_t"].append(X_t)
+                task[f"Y_t"].append(Y_t)
 
         if self.aux_at_contexts is not None:
             # Add auxiliary variable sampled at context set as a new context variable
@@ -1263,7 +1278,9 @@ class TaskLoader:
             task["X_c"].append(X_c_offrid_all)
             task["Y_c"].append(Y_c_aux)
 
-        if self.aux_at_targets is not None:
+        if self.aux_at_targets is not None and target_sampling is None:
+            task["Y_t_aux"] = None
+        elif self.aux_at_targets is not None and target_sampling is not None:
             # Add auxiliary variable to target set
             if len(task["X_t"]) > 1:
                 raise ValueError(

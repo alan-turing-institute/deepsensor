@@ -417,7 +417,7 @@ class TestModel(unittest.TestCase):
             )
 
             # Train the model for a few iterations to test the trained model is restored correctly later.
-            task = task_loader("2014-12-31", 40, datewise_deterministic=True)
+            task = task_loader("2014-12-31", 40, "all", datewise_deterministic=True)
             trainer = Trainer(model)
             for _ in range(10):
                 trainer([task])
@@ -441,6 +441,15 @@ class TestModel(unittest.TestCase):
 
             xr.testing.assert_allclose(std_ds_before, std_ds_loaded)
             print("Standard deviations match")
+
+    def test_running_convnp_without_X_t_raises_value_error(self):
+        """Test that running ConvNP with Task not containing X_t raises a ValueError"""
+        tl = TaskLoader(context=self.da, target=self.da)
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        # Task with `None` for X_t entry
+        task = tl("2020-01-01", context_sampling=10, target_sampling=None)
+        with self.assertRaises(ValueError):
+            _ = model(task)
 
 
 def assert_shape(x, shape: tuple):

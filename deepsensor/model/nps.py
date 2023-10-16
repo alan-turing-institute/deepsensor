@@ -20,10 +20,21 @@ def convert_task_to_nps_args(task: Task):
         tuple[list[tuple[numpy.ndarray, numpy.ndarray]], numpy.ndarray, numpy.ndarray, dict]:
             ...
     """
-
     context_data = list(zip(task["X_c"], task["Y_c"]))
 
-    if len(task["X_t"]) == 1 and len(task["Y_t"]) == 1:
+    if task["X_t"] is None:
+        raise ValueError(
+            f"Running `neuralprocesses` model with no target locations (got {task['X_t']}). "
+            f"Have you not provided a `target_sampling` argument to `TaskLoader`?"
+        )
+    elif len(task["X_t"]) == 1 and task["Y_t"] is None:
+        xt = task["X_t"][0]
+        yt = None
+    elif len(task["X_t"]) > 1 and task["Y_t"] is None:
+        # Multiple target sets, different target locations
+        xt = backend.nps.AggregateInput(*[(xt, i) for i, xt in enumerate(task["X_t"])])
+        yt = None
+    elif len(task["X_t"]) == 1 and len(task["Y_t"]) == 1:
         # Single target set
         xt = task["X_t"][0]
         yt = task["Y_t"][0]

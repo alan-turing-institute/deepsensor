@@ -31,7 +31,9 @@ class TestPlotting(unittest.TestCase):
             verbose=False,
         )
         # Sample a task with 10 random context points
-        self.task = self.task_loader("2014-12-31", context_sampling=10)
+        self.task = self.task_loader(
+            "2014-12-31", context_sampling=10, target_sampling="all"
+        )
 
     def test_context_encoding(self):
         fig = deepsensor.plot.context_encoding(self.model, self.task, self.task_loader)
