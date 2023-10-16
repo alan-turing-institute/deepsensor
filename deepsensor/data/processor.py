@@ -2,6 +2,7 @@ import numpy as np
 import os
 import json
 
+import warnings
 import xarray as xr
 import pandas as pd
 
@@ -67,18 +68,23 @@ class DataProcessor:
                     self.config["coords"]["x2"]["map"]
                 )
 
-            self.x1_none = self.config["coords"]["x1"]["map"] is None
-            self.x2_none = self.config["coords"]["x2"]["map"] is None
+            self.x1_name = self.config["coords"]["x1"]["name"]
+            self.x2_name = self.config["coords"]["x2"]["name"]
+            self.x1_map = self.config["coords"]["x1"]["map"]
+            self.x2_map = self.config["coords"]["x2"]["map"]
         else:
             self.config = {}
+            self.x1_name = x1_name
+            self.x2_name = x2_name
+            self.x1_map = x1_map
+            self.x2_map = x2_map
 
-            self.x1_none = x1_map is None
-            self.x2_none = x2_map is None
-            if (self.x1_none and not self.x2_none) or (
-                not self.x1_none and self.x2_none
-            ):
+            # rewrite below more concisely
+            if self.x1_map is None and not self.x2_map is None:
                 raise ValueError("Must provide both x1_map and x2_map, or neither.")
-            elif not self.x1_none and not self.x2_none:
+            elif not self.x1_map is None and self.x2_map is None:
+                raise ValueError("Must provide both x1_map and x2_map, or neither.")
+            elif not self.x1_map is None and not self.x2_map is None:
                 x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
 
             if "coords" not in self.config:
@@ -120,6 +126,14 @@ class DataProcessor:
         if np.diff(x2_map) == 0:
             raise ValueError(
                 f"x2_map must be a 2-tuple of different numbers, not {x2_map}"
+            )
+        if np.diff(x1_map) != np.diff(x2_map):
+            warnings.warn(
+                f"x1_map={x1_map} and x2_map={x2_map} have different ranges ({float(np.diff(x1_map))} "
+                f"and {float(np.diff(x2_map))}, respectively). "
+                "This can lead to stretching/squashing of data, which may "
+                "impact model performance.",
+                UserWarning,
             )
 
         return x1_map, x2_map
@@ -393,19 +407,24 @@ class DataProcessor:
         )
 
         # Infer x1 and x2 mappings from min/max of data coords if not provided by user
-        if self.x1_none and self.x2_none:
-            x1_map = (x1.min(), x1.max())
-            x2_map = (x2.min(), x2.max())
-            x1_map, x2_map = self._validate_coord_mappings(x1_map, x2_map)
-            self.config["coords"]["x1"]["map"] = x1_map
-            self.config["coords"]["x2"]["map"] = x2_map
+        if self.x1_map is None and self.x2_map is None:
+            # Ensure scalings are the same for x1 and x2
+            x1_range = x1.max() - x1.min()
+            x2_range = x2.max() - x2.min()
+            range = np.max([x1_range, x2_range])
+            self.x1_map = (x1.min(), x1.min() + range)
+            self.x2_map = (x2.min(), x2.min() + range)
+
+            self.x1_map, self.x2_map = self._validate_coord_mappings(
+                self.x1_map, self.x2_map
+            )
+            self.config["coords"]["x1"]["map"] = self.x1_map
+            self.config["coords"]["x2"]["map"] = self.x2_map
+
             if self.verbose:
                 print(
-                    f"Inferring x1_map={x1_map} and x2_map={x2_map} from data min/max"
+                    f"Inferring x1_map={self.x1_map} and x2_map={self.x2_map} from data min/max"
                 )
-
-            self.x2_none = False
-            self.x1_none = False
 
         new_x1, new_x2 = self.map_x1_and_x2(x1, x2, unnorm=unnorm)
 
