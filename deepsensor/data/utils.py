@@ -58,9 +58,7 @@ def construct_circ_time_ds(dates, freq):
         time_var = dates.month
         mod = 12
     else:
-        raise ValueError(
-            "Circular time variable not implemented " "for this frequency."
-        )
+        raise ValueError("Circular time variable not implemented for this frequency.")
 
     cos_time = np.cos(2 * np.pi * time_var / mod)
     sin_time = np.sin(2 * np.pi * time_var / mod)

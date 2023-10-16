@@ -113,14 +113,9 @@ class TestActiveLearning(unittest.TestCase):
         super().__init__(*args, **kwargs)
 
         # It's safe to share data between tests because the TaskLoader does not modify data
-        ds_raw = xr.tutorial.open_dataset("air_temperature")
+        ds_raw = xr.tutorial.open_dataset("air_temperature")["air"]
         self.ds_raw = ds_raw
-        self.data_processor = DataProcessor(
-            x1_name="lat",
-            x2_name="lon",
-            x1_map=(ds_raw["lat"].min(), ds_raw["lat"].max()),
-            x2_map=(ds_raw["lon"].min(), ds_raw["lon"].max()),
-        )
+        self.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
         self.ds = self.data_processor(ds_raw)
         self.task_loader = TaskLoader(context=self.ds, target=self.ds)
         self.model = ConvNP(
@@ -179,7 +174,7 @@ class TestActiveLearning(unittest.TestCase):
         ]
 
         # Coarsen search points to speed up computation
-        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+        X_s = self.ds_raw.coarsen(lat=10, lon=10, boundary="trim").mean()
         X_s = self.data_processor.map_coords(X_s)
         X_s_arr = xarray_to_coord_array_normalised(X_s)
 
@@ -202,7 +197,7 @@ class TestActiveLearning(unittest.TestCase):
             Stddev(self.model),
         ]
         # Coarsen search points to speed up computation
-        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+        X_s = self.ds_raw.coarsen(lat=10, lon=10, boundary="trim").mean()
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
@@ -221,7 +216,7 @@ class TestActiveLearning(unittest.TestCase):
             Stddev(self.model_with_aux),
         ]
         # Coarsen search points to speed up computation
-        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+        X_s = self.ds_raw.coarsen(lat=10, lon=10, boundary="trim").mean()
         alg = GreedyAlgorithm(
             model=self.model_with_aux,
             X_t=X_s,
@@ -236,7 +231,7 @@ class TestActiveLearning(unittest.TestCase):
     def test_greedy_alg_with_oracle_acquisition_fn(self):
         acquisition_fn = OracleMAE(self.model)
         # Coarsen search points to speed up computation
-        X_s = self.ds_raw.air.coarsen(lat=10, lon=10, boundary="trim").mean()
+        X_s = self.ds_raw.coarsen(lat=10, lon=10, boundary="trim").mean()
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
@@ -249,7 +244,7 @@ class TestActiveLearning(unittest.TestCase):
 
     def test_greedy_alg_with_sequential_acquisition_fn(self):
         acquisition_fn = Stddev(self.model)
-        X_s = self.ds_raw.air
+        X_s = self.ds_raw
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
@@ -264,7 +259,7 @@ class TestActiveLearning(unittest.TestCase):
         self,
     ):
         acquisition_fn = MeanStddev(self.model)
-        X_s = self.ds_raw.air
+        X_s = self.ds_raw
         alg = GreedyAlgorithm(
             model=self.model_with_aux,
             X_t=X_s,
@@ -280,7 +275,7 @@ class TestActiveLearning(unittest.TestCase):
         self,
     ):
         acquisition_fn = OracleMAE(self.model)
-        X_s = self.ds_raw.air
+        X_s = self.ds_raw
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
@@ -303,7 +298,7 @@ class TestActiveLearning(unittest.TestCase):
 
         acquisition_fn = DummyAcquisitionFn(self.model)
 
-        X_s = self.ds_raw.air
+        X_s = self.ds_raw
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
@@ -317,7 +312,7 @@ class TestActiveLearning(unittest.TestCase):
         self,
     ):
         acquisition_fn = Stddev(self.model)
-        X_s = self.ds_raw.air
+        X_s = self.ds_raw
         alg = GreedyAlgorithm(
             model=self.model,
             X_t=X_s,
