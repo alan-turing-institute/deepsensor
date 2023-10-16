@@ -737,7 +737,8 @@ class ConvNP(DeepSensorModel):
         the model mean or joint sample conditioned on the AR samples.
 
         .. note::
-            AR sampling only works for 0th context/target set
+            AR sampling only works for 0th context/target set, and only for models with
+            a single target set.
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -759,6 +760,10 @@ class ConvNP(DeepSensorModel):
             :class:`numpy:numpy.ndarray`
                 The samples.
         """
+        if len(task["X_t"]) > 1 or (task["Y_t"] is not None and len(task["Y_t"]) > 1):
+            raise NotImplementedError(
+                "AR sampling with multiple target sets is not supported."
+            )
 
         # AR sampling requires gridded data to be flattened, not coordinate tuples
         task_arsample = copy.deepcopy(task)

@@ -454,6 +454,36 @@ class TestModel(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = model(task)
 
+    def test_ar_sample(self):
+        """Test autoregressive sampling in the high-level ``.predict`` interface."""
+        tl = TaskLoader(context=self.da, target=self.da)
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        dates = ["2020-01-01", "2020-01-02", "2020-01-03"]
+        task = tl(dates, context_sampling=10)
+        n_samples = 5
+
+        pred = model.predict(
+            task,
+            X_t=self.da,
+            n_samples=n_samples,
+            ar_sample=True,
+            ar_subsample_factor=4,
+        )
+        for var_ID in pred:
+            for sample_i in range(n_samples):
+                assert_shape(
+                    pred[var_ID][f"sample_{sample_i}"],
+                    (len(dates), self.da.x1.size, self.da.x2.size),
+                )
+
+        with self.assertRaises(ValueError):
+            # Not passing `n_samples` along with `ar_sample=True` should raise a ValueError
+            pred = model.predict(
+                task,
+                X_t=self.da,
+                ar_sample=True,
+            )
+
 
 def assert_shape(x, shape: tuple):
     """Assert that the shape of ``x`` matches ``shape``."""
