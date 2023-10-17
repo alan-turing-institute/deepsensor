@@ -16,6 +16,7 @@ data with neural processes</p>
 ![Tests](https://github.com/tom-andersson/deepsensor/actions/workflows/tests.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/tom-andersson/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/tom-andersson/deepsensor?branch=main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![slack](https://img.shields.io/badge/slack-deepsensor-purple.svg?logo=slack)](https://ai4environment.slack.com/archives/C05NQ76L87R)
 [![All Contributors](https://img.shields.io/github/all-contributors/tom-andersson/deepsensor?color=ee8449&style=flat-square)](#contributors)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/tom-andersson/deepsensor/blob/main/LICENSE)
 
