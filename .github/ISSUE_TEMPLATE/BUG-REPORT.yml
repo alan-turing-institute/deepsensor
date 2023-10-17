@@ -9,15 +9,15 @@ body:
     id: description
     attributes:
       label: "Description"
-      description: Please enter an explicit description of your issue
-      placeholder: Short and explicit description of your incident...
+      description: Please enter a specific description of your issue
+      placeholder: Short and specific description of your incident...
     validations:
       required: true
   - type: textarea
     id: reprod
     attributes:
       label: "Reproduction steps"
-      description: Please enter an explicit description of your issue
+      description: Please enter the steps that you took so we can try to reproduce the issue.
       value: |
         1. Go to '...'
         2. Click on '....'
@@ -47,7 +47,7 @@ body:
     id: os
     attributes:
       label: "OS"
-      description: What is the impacted OS environment?
+      description: Which OS are you using?
       multiple: true
       options:
         - Windows
