@@ -158,7 +158,47 @@ class Task(dict):
         """
         return self.op(lambda x: x.astype(np.float32), op_flag="float32")
 
-    def remove_any_nans_from_Y_t(self):
+    def remove_context_nans(self):
+        """
+        If NaNs are present in task["Y_c"], remove them (and corresponding task["X_c"])
+
+        Returns:
+            :class:`deepsensor.data.task.Task`:
+                ...
+        """
+        if "batch_dim" in self["ops"]:
+            raise ValueError(
+                "Cannot remove NaNs from task if a batch dim has been added."
+            )
+
+        # First check whether there are any NaNs that we need to remove
+        nans_present = False
+        for Y_c in self["Y_c"]:
+            if B.any(B.isnan(Y_c)):
+                nans_present = True
+                break
+
+        if not nans_present:
+            return self
+
+        # NaNs present in self - remove NaNs
+        for i, (X, Y) in enumerate(zip(self["X_c"], self["Y_c"])):
+            Y_c_nans = B.isnan(Y)
+            if B.any(Y_c_nans):
+                if isinstance(X, tuple):
+                    # Gridded data - need to flatten to remove NaNs
+                    X = flatten_X(X)
+                    Y = flatten_Y(Y)
+                    Y_c_nans = flatten_Y(Y_c_nans)
+                Y_c_nans = B.any(Y_c_nans, axis=0)  # shape (n_cargets,)
+                self["X_c"][i] = X[:, ~Y_c_nans]
+                self["Y_c"][i] = Y[:, ~Y_c_nans]
+
+        self["ops"].append("context_nans_removed")
+
+        return self
+
+    def remove_target_nans(self):
         """
         If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"])
 
@@ -445,7 +485,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
                 "Masking will be applied automatically after concatenation."
             )
         if "target_nans_removed" not in task["ops"]:
-            task = task.remove_any_nans_from_Y_t()
+            task = task.remove_target_nans()
         if "batch_dim" not in task["ops"]:
             task = task.add_batch_dim()
         if "float32" not in task["ops"]:
