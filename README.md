@@ -177,28 +177,50 @@ Extending DeepSensor with new models
 To extend DeepSensor with a new model, simply create a new class that inherits
 from `deepsensor.model.DeepSensorModel`
 and implement the low-level prediction methods defined
-in `deepsensor.model.model.ProbabilisticModel`,
+in `deepsensor.model.ProbabilisticModel`,
 such as `.mean` and `.stddev`.
 
 ```python
+from deepsensor.model import DeepSensorModel
+from deepsensor.data import DataProcessor, TaskLoader, Task
+import numpy as np
+
 class NewModel(DeepSensorModel):
     """A very naive model that predicts the mean of the first context set with a fixed stddev"""
-
+    
     def __init__(self, data_processor: DataProcessor, task_loader: TaskLoader):
         super().__init__(data_processor, task_loader)
-
+        
     def mean(self, task: Task):
         """Compute mean at target locations"""
-        return np.mean(task["Y_c"][0])
-
+        task = task.flatten_gridded_data()
+        shape = (task["Y_c"][0].shape[0], task["X_t"][0].shape[1])
+        return np.ones(shape) * task["Y_c"][0].mean()
+    
     def stddev(self, task: Task):
         """Compute stddev at target locations"""
-        return 0.1
+        task = task.flatten_gridded_data()
+        shape = (task["Y_c"][0].shape[0], task["X_t"][0].shape[1])
+        return np.ones(shape) * 0.1
 
-    ...
+model = NewModel(data_processor, task_loader)  # Using the same data as in the quickstart example
+task = task_loader("2014-01-01", 100)
 ```
 
-`NewModel` can then be used in the same way as the built-in `ConvNP` model.
+`NewModel` can then be used in the same way as the built-in `ConvNP` model, for example:
+```python
+>>> model.predict(task, X_t=ds_raw)
+{'air': <xarray.Dataset>
+Dimensions:  (time: 1, lat: 25, lon: 53)
+Coordinates:
+  * time     (time) datetime64[ns] 2014-01-01
+  * lat      (lat) float32 75.0 72.5 70.0 67.5 65.0 ... 25.0 22.5 20.0 17.5 15.0
+  * lon      (lon) float32 200.0 202.5 205.0 207.5 ... 322.5 325.0 327.5 330.0
+Data variables:
+    mean     (time, lat, lon) float32 273.2 273.2 273.2 ... 273.2 273.2 273.2
+    std      (time, lat, lon) float32 1.632 1.632 1.632 ... 1.632 1.632 1.632}
+```
+
 See [this Jupyter notebook](https://github.com/tom-andersson/deepsensor_gallery/blob/main/demonstrators/extending_models.ipynb)
 for more details.
 
