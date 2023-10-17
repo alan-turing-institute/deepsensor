@@ -38,6 +38,8 @@ class AcquisitionFunction:
         """
         ...
 
+        :no-index:
+
         Args:
             task (:class:`~.data.task.Task`):
                 Task object containing context and target sets.
@@ -71,6 +73,8 @@ class AcquisitionFunctionParallel(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Args:
             task (:class:`~.data.task.Task`):
                 Task object containing context and target sets.
@@ -96,6 +100,8 @@ class MeanStddev(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Args:
             model (:class:`~.model.model.ProbabilisticModel`):
                 [Description of the model parameter.]
@@ -106,6 +112,8 @@ class MeanStddev(AcquisitionFunction):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -125,6 +133,8 @@ class MeanVariance(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Args:
             model (:class:`~.model.model.ProbabilisticModel`):
                 [Description of the model parameter.]
@@ -135,6 +145,8 @@ class MeanVariance(AcquisitionFunction):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -154,6 +166,8 @@ class pNormStddev(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Args:
             p (int, optional):
                 [Description of the parameter p.], default is 1
@@ -165,6 +179,8 @@ class pNormStddev(AcquisitionFunction):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -186,6 +202,8 @@ class MeanMarginalEntropy(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Args:
             model (:class:`~.model.model.ProbabilisticModel`):
                 [Description of the model parameter.]
@@ -196,6 +214,8 @@ class MeanMarginalEntropy(AcquisitionFunction):
     def __call__(self, task):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -216,6 +236,8 @@ class JointEntropy(AcquisitionFunction):
         """
         ...
 
+        :no-index:
+
         Args:
             model (:class:`~.model.model.ProbabilisticModel`):
                 [Description of the model parameter.]
@@ -226,6 +248,8 @@ class JointEntropy(AcquisitionFunction):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -245,6 +269,8 @@ class OracleMAE(AcquisitionFunctionOracle):
         """
         ...
 
+        :no-index:
+
         Args:
             model (:class:`~.model.model.ProbabilisticModel`):
                 [Description of the model parameter.]
@@ -255,6 +281,8 @@ class OracleMAE(AcquisitionFunctionOracle):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -278,6 +306,8 @@ class OracleRMSE(AcquisitionFunctionOracle):
         """
         ...
 
+        :no-index:
+
         Args:
             model (:class:`~.model.model.ProbabilisticModel`):
                 [Description of the model parameter.]
@@ -288,6 +318,8 @@ class OracleRMSE(AcquisitionFunctionOracle):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -311,6 +343,8 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
         """
         ...
 
+        :no-index:
+
         Args:
             model (:class:`~.model.model.ProbabilisticModel`):
                 [Description of the model parameter.]
@@ -321,6 +355,8 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -344,6 +380,8 @@ class OracleJointNLL(AcquisitionFunctionOracle):
         """
         ...
 
+        :no-index:
+
         Args:
             model (:class:`~.model.model.ProbabilisticModel`):
                 [Description of the model parameter.]
@@ -354,6 +392,8 @@ class OracleJointNLL(AcquisitionFunctionOracle):
     def __call__(self, task: Task):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -373,6 +413,8 @@ class Random(AcquisitionFunctionParallel):
         """
         ...
 
+        :no-index:
+
         Args:
             seed (int, optional):
                 Random seed, defaults to 42.
@@ -383,6 +425,8 @@ class Random(AcquisitionFunctionParallel):
     def __call__(self, task: Task, X_s: np.ndarray):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -401,11 +445,18 @@ class ContextDist(AcquisitionFunctionParallel):
     """Distance to closest context point."""
 
     def __init__(self):
+        """
+        ...
+
+        :no-index:
+        """
         self.min_or_max = "max"
 
     def __call__(self, task: Task, X_s: np.ndarray):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -443,6 +494,8 @@ class Stddev(AcquisitionFunctionParallel):
         """
         ...
 
+        :no-index:
+
         Args:
             model (:class:`~.model.model.ProbabilisticModel`):
                 [Description of the model parameter.]
@@ -453,6 +506,8 @@ class Stddev(AcquisitionFunctionParallel):
     def __call__(self, task: Task, X_s: np.ndarray):
         """
         ...
+
+        :no-index:
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -483,6 +538,8 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
 
     def __init__(self, model: ProbabilisticModel):
         """
+        :no-index:
+
         Args:
             model (:class:`~.model.model.ProbabilisticModel`):
                 [Description of the model parameter.]
@@ -496,6 +553,8 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         X_s: np.ndarray,
     ) -> np.ndarray:
         """
+        :no-index:
+
         Args:
             task (:class:`~.data.task.Task`):
                 Task object containing context and target sets.
