@@ -107,16 +107,6 @@ class TestTaskLoader(unittest.TestCase):
 
             E.g. ["xr", "pd", "xr"] -> [self.da, self.df, self.da]
             E.g. "xr" -> self.da
-
-            Parameters
-            ----------
-            set_list : list[str] | str
-                List of data type IDs or single data type ID.
-
-            Returns
-            -------
-            list[xr.DataArray] | list[pd.DataFrame] | xr.DataArray | pd.DataFrame
-                List of data objects or single data object.
             """
             if set_list == "xr":
                 return self.da

@@ -11,23 +11,21 @@ def gen_random_data_xr(
     """
     Generate random xarray data.
 
-    Parameters
-    ----------
-    coords : dict
-        Coordinates of the data.
-    dims : list, optional
-        Dimensions of the data. Defaults to None. If None, dims is inferred
-        from coords. This arg can be used to change the order of the
-        dimensions.
-    data_vars : list, optional
-        Data variables. Defaults to None. If None, variable is an
-        :class:`xarray.DataArray`. If not None, variable is an
-        :class:`xarray.Dataset` containing the data_vars.
+    Args:
+        coords (dict):
+            Coordinates of the data.
+        dims (list, optional):
+            Dimensions of the data. Defaults to None. If None, dims is inferred
+            from coords. This arg can be used to change the order of the
+            dimensions.
+        data_vars (list, optional):
+            Data variables. Defaults to None. If None, variable is an
+            :class:`xarray.DataArray`. If not None, variable is an
+            :class:`xarray.Dataset` containing the data_vars.
 
-    Returns
-    -------
-    da : :class:`xarray.DataArray` | :class:`xarray.Dataset`
-        Random xarray data.
+    Returns:
+        da (:class:`xarray.DataArray` | :class:`xarray.Dataset`):
+            Random xarray data.
     """
     if dims is None:
         shape = tuple([len(coords[dim]) for dim in coords])
@@ -47,24 +45,22 @@ def gen_random_data_pandas(coords: dict, dims: list = None, cols: list = None):
     """
     Generate random pandas data.
 
-    Parameters
-    ----------
-    coords : dict
-        Coordinates of the data. This will be used to construct a MultiIndex
-        using pandas.MultiIndex.from_product.
-    dims : list, optional
-        Dimensions of the data. Defaults to None. If None, dims is inferred
-        from coords. This arg can be used to change the order of the
-        MultiIndex.
-    cols : list, optional
-        Columns of the data. Defaults to None. If None, generate a
-        :class:`pandas.Series` with an arbitrary name. If not None, cols is
-        used to construct a :class:`pandas.DataFrame`.
+    Args:
+        coords (dict):
+            Coordinates of the data. This will be used to construct a
+            MultiIndex using pandas.MultiIndex.from_product.
+        dims (list, optional):
+            Dimensions of the data. Defaults to None. If None, dims is inferred
+            from coords. This arg can be used to change the order of the
+            MultiIndex.
+        cols (list, optional):
+            Columns of the data. Defaults to None. If None, generate a
+            :class:`pandas.Series` with an arbitrary name. If not None, cols is
+            used to construct a :class:`pandas.DataFrame`.
 
-    Returns
-    -------
-    df : :class:`pandas.Series` | :class:`pandas.DataFrame`
-        Random pandas data.
+    Returns:
+        :class:`pandas.Series` | :class:`pandas.DataFrame`
+            Random pandas data.
     """
     if dims is None:
         dims = list(coords.keys())

@@ -1,6 +1,6 @@
 import deepsensor
 
-from typing import Union, Tuple, List
+from typing import Callable, Union, Tuple, List, Optional
 import numpy as np
 import lab as B
 import plum
@@ -21,10 +21,9 @@ class Task(dict):
         """
         Initialise a Task object.
 
-        Parameters
-        ----------
-        task_dict : dict
-            Dictionary containing the task.
+        Args:
+            task_dict (dict):
+                Dictionary containing the task.
         """
         super().__init__(task_dict)
 
@@ -45,8 +44,25 @@ class Task(dict):
             return v
 
     @classmethod
-    def summarise_repr(cls, k, v):
-        if plum.isinstance(v, B.Numeric):
+    def summarise_repr(cls, k, v) -> str:
+        """
+        Summarise the task in a representation that can be printed.
+
+        Args:
+            cls (:class:`deepsensor.data.task.Task`:):
+                Task class.
+            k (str):
+                Key of the task dictionary.
+            v (object):
+                Value of the task dictionary.
+
+        Returns:
+            str:
+                String representation of the task.
+        """
+        if v is None:
+            return "None"
+        elif plum.isinstance(v, B.Numeric):
             return f"{type(v).__name__}/{v.dtype}/{v.shape}"
         if plum.isinstance(v, deepsensor.backend.nps.mask.Masked):
             return f"{type(v).__name__}/(y={v.y.dtype}/{v.y.shape})/(mask={v.mask.dtype}/{v.mask.shape})"
@@ -58,7 +74,7 @@ class Task(dict):
         else:
             return f"{type(v).__name__}/{v}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Print a convenient summary of the task dictionary.
 
@@ -66,10 +82,12 @@ class Task(dict):
         """
         s = ""
         for k, v in self.items():
+            if v is None:
+                continue
             s += f"{k}: {Task.summarise_str(k, v)}\n"
         return s
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Print a convenient summary of the task dictionary.
 
@@ -81,26 +99,23 @@ class Task(dict):
             s += f"{k}: {Task.summarise_repr(k, v)}\n"
         return s
 
-    def op(self, f, op_flag=None):
-        """Apply function f to the array elements of a task dictionary.
+    def op(self, f: Callable, op_flag: Optional[str] = None):
+        """
+        Apply function f to the array elements of a task dictionary.
 
         Useful for recasting to a different dtype or reshaping (e.g. adding a
         batch dimension).
 
-        Parameters
-        ----------
-        f : function
-            Function to apply to the array elements of the task.
-        task : dict
-            Task dictionary.
-        op_flag : str
-            Flag to set in the task dictionary's `ops` key.
+        Args:
+            f (callable):
+                Function to apply to the array elements of the task.
+            op_flag (str):
+                Flag to set in the task dictionary's `ops` key.
 
-        Returns
-        -------
-        task : dict.
-            Task dictionary with f applied to the array elements and
-            op_flag set in the ``ops`` key.
+        Returns:
+            :class:`deepsensor.data.task.Task`:
+                Task with f applied to the array elements and op_flag set in
+                the ``ops`` key.
         """
 
         def recurse(k, v):
@@ -109,7 +124,8 @@ class Task(dict):
             elif type(v) is tuple:
                 return (recurse(k, v[0]), recurse(k, v[1]))
             elif isinstance(
-                v, (np.ndarray, np.ma.MaskedArray, deepsensor.backend.nps.Masked)
+                v,
+                (np.ndarray, np.ma.MaskedArray, deepsensor.backend.nps.Masked),
             ):
                 return f(v)
             else:
@@ -123,25 +139,33 @@ class Task(dict):
         return self  # altered by reference, but return anyway
 
     def add_batch_dim(self):
-        """Add a batch dimension to the arrays in the task dictionary.
+        """
+        Add a batch dimension to the arrays in the task dictionary.
 
-        Returns
-        -------
-        task : dict. Task dictionary with batch dimension added to the array elements.
+        Returns:
+            :class:`deepsensor.data.task.Task`:
+                Task with batch dimension added to the array elements.
         """
         return self.op(lambda x: x[None, ...], op_flag="batch_dim")
 
     def cast_to_float32(self):
-        """Cast the arrays in the task dictionary to float32.
+        """
+        Cast the arrays in the task dictionary to float32.
 
-        Returns
-        -------
-        task : dict. Task dictionary with arrays cast to float32.
+        Returns:
+            :class:`deepsensor.data.task.Task`:
+                Task with arrays cast to float32.
         """
         return self.op(lambda x: x.astype(np.float32), op_flag="float32")
 
     def remove_any_nans_from_Y_t(self):
-        """If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"])"""
+        """
+        If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"])
+
+        Returns:
+            :class:`deepsensor.data.task.Task`:
+                ...
+        """
         if "batch_dim" in self["ops"]:
             raise ValueError(
                 "Cannot remove NaNs from task if a batch dim has been added."
@@ -179,11 +203,14 @@ class Task(dict):
         return self
 
     def mask_nans_numpy(self):
-        """Replace NaNs with zeroes and set a mask to indicate where the NaNs were.
+        """
+        Replace NaNs with zeroes and set a mask to indicate where the NaNs
+        were.
 
-        Returns
-        -------
-        task : dict. Task with NaNs set to zeros and a mask indicating where the missing values are.
+        Returns:
+            :class:`deepsensor.data.task.Task`:
+                Task with NaNs set to zeros and a mask indicating where the
+                missing values are.
         """
         if "batch_dim" not in self["ops"]:
             raise ValueError("Must call `add_batch_dim` before `mask_nans_numpy`")
@@ -207,6 +234,13 @@ class Task(dict):
         return self.op(lambda x: f(x), op_flag="numpy_mask")
 
     def mask_nans_nps(self):
+        """
+        ...
+
+        Returns:
+            :class:`deepsensor.data.task.Task`:
+                ...
+        """
         if "batch_dim" not in self["ops"]:
             raise ValueError("Must call `add_batch_dim` before `mask_nans_nps`")
         if "numpy_mask" not in self["ops"]:
@@ -223,10 +257,12 @@ class Task(dict):
         return self.op(lambda x: f(x), op_flag="nps_mask")
 
     def convert_to_tensor(self):
-        """Convert to tensor object based on deep learning backend
+        """
+        Convert to tensor object based on deep learning backend.
 
-        Returns
-            task: dict. Task dictionary with arrays converted to deep learning tensor objects
+        Returns:
+            :class:`deepsensor.data.task.Task`:
+                Task with arrays converted to deep learning tensor objects.
         """
 
         def f(arr):
@@ -257,6 +293,20 @@ def append_obs_to_task(
     ..
         TODO: for speed during active learning algs, consider a shallow copy
         option plus ability to remove observations.
+
+    Args:
+        task (:class:`deepsensor.data.task.Task`:):
+            The task to modify.
+        X_new (array-like):
+            New observation coordinates.
+        Y_new (array-like):
+            New observation values.
+        context_set_idx (int):
+            Index of the context set to append to.
+
+    Returns:
+        :class:`deepsensor.data.task.Task`:
+            Task with new observation appended to the context set.
     """
     if not 0 <= context_set_idx <= len(task["X_c"]) - 1:
         raise TaskSetIndexError(context_set_idx, len(task["X_c"]), "context")
@@ -293,15 +343,13 @@ def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
     """
     Convert tuple of gridded coords to (2, N) array if necessary.
 
-    Parameters
-    ----------
-    X : :class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
-        ...
+    Args:
+        X (:class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]):
+            ...
 
-    Returns
-    ----------
-    :class:`numpy:numpy.ndarray`
-        ...
+    Returns:
+        :class:`numpy:numpy.ndarray`
+            ...
     """
     if type(X) is tuple:
         X1, X2 = np.meshgrid(X[0], X[1], indexing="ij")
@@ -314,15 +362,13 @@ def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
     Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2)
     array if necessary.
 
-    Parameters
-    ----------
-    Y : :class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]
-        ...
+    Args:
+        Y (:class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]):
+            ...
 
-    Returns
-    -------
-    :class:`numpy:numpy.ndarray`
-        ...
+    Returns:
+        :class:`numpy:numpy.ndarray`
+            ...
     """
     if Y.ndim == 3:
         Y = Y.reshape(*Y.shape[:-2], -1)
@@ -335,22 +381,22 @@ def flatten_gridded_data_in_task(task: Task) -> Task:
 
     Necessary for AR sampling, which doesn't yet permit gridded context sets.
 
-    Parameters
-    ----------
-    task : :class:`~.data.task.Task`
-        ...
+    Args:
+        task : :class:`~.data.task.Task`
+            ...
 
-    Returns
-    -------
-    Task
-        ...
+    Returns:
+        :class:`deepsensor.data.task.Task`:
+            ...
     """
     task_flattened = copy.deepcopy(task)
 
     task_flattened["X_c"] = [flatten_X(X) for X in task["X_c"]]
     task_flattened["Y_c"] = [flatten_Y(Y) for Y in task["Y_c"]]
-    task_flattened["X_t"] = [flatten_X(X) for X in task["X_t"]]
-    task_flattened["Y_t"] = [flatten_Y(Y) for Y in task["Y_t"]]
+    if task_flattened["X_t"] is not None:
+        task_flattened["X_t"] = [flatten_X(X) for X in task["X_t"]]
+    if task_flattened["Y_t"] is not None:
+        task_flattened["Y_t"] = [flatten_Y(Y) for Y in task["Y_t"]]
 
     return task_flattened
 
@@ -365,31 +411,29 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
           functionality.
         - Raise error if ``aux_t`` values passed (not supported I don't think)
 
-    Parameters
-    ----------
-    tasks : List[Task]
-        List of tasks to concatenate into a single task.
-    multiple : int, optional
-        Contexts are padded to the smallest multiple of this number that is
-        greater than the number of contexts in each task. Defaults to 1
-        (padded to the largest number of contexts in the tasks). Setting to a
-        larger number will increase the amount of padding but decrease the
-        range of tensor shapes presented to the model, which simplifies the
-        computational graph in graph mode.
+    Args:
+        tasks (List[:class:`deepsensor.data.task.Task`:]):
+            List of tasks to concatenate into a single task.
+        multiple (int, optional):
+            Contexts are padded to the smallest multiple of this number that is
+            greater than the number of contexts in each task. Defaults to 1
+            (padded to the largest number of contexts in the tasks). Setting
+            to a larger number will increase the amount of padding but decrease
+            the range of tensor shapes presented to the model, which simplifies
+            the computational graph in graph mode.
 
-    Returns
-    -------
-    merged_task : :class:`~.data.task.Task`
-        Task containing multiple batches.
+    Returns:
+        :class:`~.data.task.Task`
+            Task containing multiple batches.
 
-    Raises
-    ------
-    ValueError
-        If the tasks have different numbers of target sets.
-    ValueError
-        If the tasks have different numbers of targets.
-    ValueError
-        If the tasks have different types of target sets (gridded/non-gridded).
+    Raises:
+        ValueError
+            If the tasks have different numbers of target sets.
+        ValueError
+            If the tasks have different numbers of targets.
+        ValueError
+            If the tasks have different types of target sets (gridded/
+            non-gridded).
     """
     if len(tasks) == 1:
         return tasks[0]
@@ -480,7 +524,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     return merged_task
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # print working directory
     import os
 

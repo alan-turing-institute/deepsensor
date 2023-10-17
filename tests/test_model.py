@@ -184,6 +184,77 @@ class TestModel(unittest.TestCase):
             assert x.size == 1 and x.shape == ()
 
     @parameterized.expand(range(1, 4))
+    def test_prediction_shapes_highlevel(self, target_dim):
+        """Test high-level ``.predict`` interface over a range of number of target"""
+
+        if target_dim > 1:
+            # Avoid data var name clash in `predict`
+            target_names = [f"target_{i}" for i in range(target_dim)]
+            target = [self.da] * target_dim
+            for i, name in enumerate(target_names):
+                target[i] = copy.deepcopy(target[i])
+                target[i].name = name
+        elif target_dim == 1:
+            target = self.da
+        tl = TaskLoader(
+            context=self.da,
+            target=target,
+        )
+
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+
+        dates = pd.date_range("2020-01-01", "2020-01-07", freq="D")
+        tasks = [tl(date) for date in dates]
+
+        # Gridded predictions
+        n_samples = 5
+        pred = model.predict(
+            tasks,
+            X_t=self.da,
+            n_samples=n_samples,
+            unnormalise=True
+            if target_dim == 1
+            else False,  # TODO fix unnormalising for multiple equally named targets
+        )
+        assert [isinstance(ds, xr.Dataset) for ds in pred.values()]
+        for var_ID in pred:
+            assert_shape(
+                pred[var_ID]["mean"],
+                (len(dates), self.da.x1.size, self.da.x2.size),
+            )
+            assert_shape(
+                pred[var_ID]["std"],
+                (len(dates), self.da.x1.size, self.da.x2.size),
+            )
+            for sample_i in range(n_samples):
+                assert_shape(
+                    pred[var_ID][f"sample_{sample_i}"],
+                    (len(dates), self.da.x1.size, self.da.x2.size),
+                )
+
+        # Offgrid predictions: test pandas `X_t` and numpy `X_t`
+        n_samples = 5
+        for X_t in [self.df.loc[dates[0]], np.zeros((2, 4))]:
+            pred = model.predict(
+                tasks,
+                X_t=X_t,
+                n_samples=n_samples,
+                unnormalise=False if target_dim > 1 else True,
+            )
+            assert [isinstance(df, pd.DataFrame) for df in pred.values()]
+            if isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index)):
+                N_t = len(X_t)
+            elif isinstance(X_t, np.ndarray):
+                N_t = X_t.shape[-1]
+            n_preds = len(dates) * N_t
+
+            for var_ID in pred:
+                assert_shape(pred[var_ID]["mean"], (n_preds,))
+                assert_shape(pred[var_ID]["std"], (n_preds,))
+                for sample_i in range(n_samples):
+                    assert_shape(pred[var_ID][f"sample_{sample_i}"], (n_preds,))
+
+    @parameterized.expand(range(1, 4))
     def test_nans_offgrid_context(self, ndim):
         """Test that ``ConvNP`` can handle ``NaN``s in offgrid context."""
 
@@ -229,81 +300,6 @@ class TestModel(unittest.TestCase):
         model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
         _ = model(task)
 
-    @parameterized.expand(range(1, 4))
-    def test_prediction_shapes_highlevel(self, target_dim):
-        """Test high-level ``.predict`` interface over a range of number of target
-        sets."""
-
-        if target_dim > 1:
-            # Avoid data var name clash in `predict`
-            target_names = [f"target_{i}" for i in range(target_dim)]
-            target = [self.da] * target_dim
-            for i, name in enumerate(target_names):
-                target[i] = copy.deepcopy(target[i])
-                target[i].name = name
-        elif target_dim == 1:
-            target = self.da
-        tl = TaskLoader(
-            context=self.da,
-            target=target,
-        )
-
-        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
-
-        dates = pd.date_range("2020-01-01", "2020-01-07", freq="D")
-        tasks = [tl(date) for date in dates]
-
-        # Gridded predictions
-        n_samples = 5
-        mean_ds, std_ds, samples_ds = model.predict(
-            tasks,
-            X_t=self.da,
-            n_samples=n_samples,
-            unnormalise=True
-            if target_dim == 1
-            else False,  # TODO fix unnormalising for multiple equally named targets
-        )
-        assert [isinstance(ds, xr.Dataset) for ds in [mean_ds, std_ds, samples_ds]]
-        assert_shape(
-            mean_ds.to_array(),
-            (target_dim, len(dates), self.da.x1.size, self.da.x2.size),
-        )
-        assert_shape(
-            std_ds.to_array(),
-            (target_dim, len(dates), self.da.x1.size, self.da.x2.size),
-        )
-        assert_shape(
-            samples_ds.to_array(),
-            (
-                target_dim,
-                n_samples,
-                len(dates),
-                self.da.x1.size,
-                self.da.x2.size,
-            ),
-        )
-
-        # Offgrid predictions: test pandas `X_t` and numpy `X_t`
-        n_samples = 5
-        for X_t in [self.df.loc[dates[0]], np.zeros((2, 4))]:
-            mean_df, std_df, samples_df = model.predict(
-                tasks,
-                X_t=X_t,
-                n_samples=n_samples,
-                unnormalise=False if target_dim > 1 else True,
-            )
-            assert [
-                isinstance(df, pd.DataFrame) for df in [mean_df, std_df, samples_df]
-            ]
-            if isinstance(X_t, (pd.DataFrame, pd.Series, pd.Index)):
-                N_t = len(X_t)
-            elif isinstance(X_t, np.ndarray):
-                N_t = X_t.shape[-1]
-            n_preds = len(dates) * N_t
-            assert_shape(mean_df, (n_preds, target_dim))
-            assert_shape(std_df, (n_preds, target_dim))
-            assert_shape(samples_df, (n_samples * n_preds, target_dim))
-
     def test_nans_in_context(self):
         """Test nothing breaks when NaNs present in context."""
         tl = TaskLoader(context=self.da, target=self.da)
@@ -339,21 +335,20 @@ class TestModel(unittest.TestCase):
             name="dummy_data",
         )
 
-        dp = DataProcessor(
-            x1_name="latitude",
-            x1_map=lat_lims,
-            x2_name="longitude",
-            x2_map=lon_lims,
-        )
+        dp = DataProcessor(x1_name="latitude", x2_name="longitude")
         da = dp(da_raw)
 
         tl = TaskLoader(context=da, target=da)
         model = ConvNP(dp, tl, unet_channels=(5, 5, 5), verbose=False)
         task = tl("2020-01-01")
-        mean_ds, _ = model.predict(task, X_t=da_raw)
+        pred = model.predict(task, X_t=da_raw)
 
-        assert np.array_equal(mean_ds["latitude"], da_raw["latitude"])
-        assert np.array_equal(mean_ds["longitude"], da_raw["longitude"])
+        assert np.array_equal(
+            pred["dummy_data"]["mean"]["latitude"], da_raw["latitude"]
+        )
+        assert np.array_equal(
+            pred["dummy_data"]["mean"]["longitude"], da_raw["longitude"]
+        )
 
     def test_highlevel_predict_coords_align_with_X_t_offgrid(self):
         """Test coordinates of the pandas returned predictions align with the
@@ -386,13 +381,14 @@ class TestModel(unittest.TestCase):
         tl = TaskLoader(context=df, target=df)
         model = ConvNP(dp, tl, unet_channels=(5, 5, 5), verbose=False)
         task = tl("2020-01-01")
-        mean_df, _ = model.predict(task, X_t=df_raw.loc["2020-01-01"])
+        pred = model.predict(task, X_t=df_raw.loc["2020-01-01"])
 
         assert np.array_equal(
-            mean_df.reset_index()["latitude"], df_raw.reset_index()["latitude"]
+            pred["dummy_data"]["mean"].reset_index()["latitude"],
+            df_raw.reset_index()["latitude"],
         )
         assert np.array_equal(
-            mean_df.reset_index()["longitude"],
+            pred["dummy_data"]["mean"].reset_index()["longitude"],
             df_raw.reset_index()["longitude"],
         )
 
@@ -417,12 +413,11 @@ class TestModel(unittest.TestCase):
             )
 
             # Train the model for a few iterations to test the trained model is restored correctly later.
-            task = task_loader("2014-12-31", 40, datewise_deterministic=True)
+            task = task_loader("2014-12-31", 40, "all", datewise_deterministic=True)
             trainer = Trainer(model)
             for _ in range(10):
                 trainer([task])
-            mean_ds_before, std_ds_before = model.predict(task, X_t=ds_raw)
-            mean_ds_before["air"].plot()
+            pred_before = model.predict(task, X_t=ds_raw)
 
             data_processor.save(folder)
             task_loader.save(folder)
@@ -433,14 +428,56 @@ class TestModel(unittest.TestCase):
             model_loaded = ConvNP(data_processor_loaded, task_loader_loaded, folder)
 
             task = task_loader_loaded("2014-12-31", 40, datewise_deterministic=True)
-            mean_ds_loaded, std_ds_loaded = model_loaded.predict(task, X_t=ds_raw)
-            mean_ds_loaded["air"].plot()
+            pred_loaded = model_loaded.predict(task, X_t=ds_raw)
 
-            xr.testing.assert_allclose(mean_ds_before, mean_ds_loaded)
+            xr.testing.assert_allclose(
+                pred_loaded["air"]["mean"], pred_before["air"]["mean"]
+            )
             print("Means match")
 
-            xr.testing.assert_allclose(std_ds_before, std_ds_loaded)
+            xr.testing.assert_allclose(
+                pred_loaded["air"]["std"], pred_before["air"]["std"]
+            )
             print("Standard deviations match")
+
+    def test_running_convnp_without_X_t_raises_value_error(self):
+        """Test that running ConvNP with Task not containing X_t raises a ValueError"""
+        tl = TaskLoader(context=self.da, target=self.da)
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        # Task with `None` for X_t entry
+        task = tl("2020-01-01", context_sampling=10, target_sampling=None)
+        with self.assertRaises(ValueError):
+            _ = model(task)
+
+    def test_ar_sample(self):
+        """Test autoregressive sampling in the high-level ``.predict`` interface."""
+        tl = TaskLoader(context=self.da, target=self.da)
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        dates = ["2020-01-01", "2020-01-02", "2020-01-03"]
+        task = tl(dates, context_sampling=10)
+        n_samples = 5
+
+        pred = model.predict(
+            task,
+            X_t=self.da,
+            n_samples=n_samples,
+            ar_sample=True,
+            ar_subsample_factor=4,
+        )
+        for var_ID in pred:
+            for sample_i in range(n_samples):
+                assert_shape(
+                    pred[var_ID][f"sample_{sample_i}"],
+                    (len(dates), self.da.x1.size, self.da.x2.size),
+                )
+
+        with self.assertRaises(ValueError):
+            # Not passing `n_samples` along with `ar_sample=True` should raise a ValueError
+            pred = model.predict(
+                task,
+                X_t=self.da,
+                ar_sample=True,
+            )
 
 
 def assert_shape(x, shape: tuple):
