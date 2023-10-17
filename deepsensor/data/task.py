@@ -440,7 +440,6 @@ def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
     return Y
 
 
-
 def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     """
     Concatenate a list of tasks into a single task containing multiple batches.
