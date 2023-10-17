@@ -21,7 +21,7 @@ Every contributor is expected to adhere to our Code of Conduct. It outlines our 
 If you'd like to find out more about DeepSensor, make sure to check out:
 
 1. **README**: For a project overview, setup, and usage, please refer to our README.
-2. **Project Roadmap**: Familiarize yourself with our direction and goals by checking out [the project's roadmap](./ROADMAP.md).
+2. **Project Roadmap**: Familiarize yourself with our direction and goals by checking out [the project's roadmap](https://tom-andersson.github.io/deepsensor/community/roadmap.html).
 
 ## Get in touch
 
