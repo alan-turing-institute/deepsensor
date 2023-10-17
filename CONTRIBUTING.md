@@ -6,7 +6,7 @@
 
 Firstly, some background. The DeepSensor Python package streamlines the application of neural
 processes (NPs) to environmental sciences, including sensor placement, forecasting, downscaling, and
-satellite gap-filling. NPs are well-suited to environmetnal data: they can efficiently fuse
+satellite gap-filling. NPs are well-suited to environmental data: they can efficiently fuse
 multi-modal and multi-resolution data, handle missing observations, and capture prediction
 uncertainty. DeepSensor aims to bring this powerful modelling paradigm to practitioners by plugging
 together the `xarray`, `pandas`, and `neuralprocesses` packages with a user-friendly interface that
@@ -53,7 +53,7 @@ Slack workspace, where conversation about when to hold the community calls in th
 place.
 
 **Slack Workspace**: Join
-our [DeepSensor Slack channel](https://ai4environment.slack.com/archives/C05NQ76L87R) for
+our [DeepSensor Slack channel](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform) for
 discussions, queries, and community interactions. Send us an email at kwesterling@turing.ac.uk to
 request an invite.
 
