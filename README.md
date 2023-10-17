@@ -20,37 +20,47 @@ data with neural processes</p>
 [![All Contributors](https://img.shields.io/github/all-contributors/tom-andersson/deepsensor?color=ee8449&style=flat-square)](#contributors)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/tom-andersson/deepsensor/blob/main/LICENSE)
 
+DeepSensor streamlines the application of neural processes (NPs) to environmental sciences by
+providing a simple interface for building, training, and evaluating NPs using `xarray` and `pandas`
+data. Our developers and users form an open-source community whose vision is to accelerate the next
+generation of environmental ML research. The DeepSensor Python package facilitates this by
+drastically reducing the time and effort required to apply NPs to environmental prediction tasks.
+This allows DeepSensor users to focus on the science and rapidly iterate on ideas.
 
-**NOTE**: This package is a work in progress and breaking changes are likely. If you are interested
-in using DeepSensor, please get in touch first (tomand@bas.ac.uk).
+DeepSensor is an experimental package, and we
+welcome [contributions from the community](https://github.com/tom-andersson/deepsensor/blob/main/CONTRIBUTING.md).
+We have an active Slack channel for code and research discussions; you can request to
+join [via this Google Form](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform).
 
-For demonstrators, use cases, and videos showcasing the functionality of DeepSensor, check out the
-[DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_gallery)!
+For demonstrators, use cases, and videos showcasing the functionality of DeepSensor, as well as
+resources for learning about NPs, check out the
+[DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_gallery).
+
+![DeepSensor example application figures](figs/deepsensor_application_examples.png)
 
 Why neural processes?
 -----------
-NPs are a highly flexible class of probabilistic models that can:
-- ingest multiple context sets (i.e. data streams) containing gridded or pointwise observations
-- handle multiple gridded resolutions
+NPs are a highly flexible class of probabilistic models that offer unique opportunities to model
+satellite observations, climate model output, and in-situ measurements.
+Their key features are the ability to:
+
+- ingest multiple data streams of pointwise or gridded modalities
+- handle missing data and varying resolutions
 - predict at arbitrary target locations
 - quantify prediction uncertainty
 
-These capabilities make NPs well suited to modelling spatio-temporal data, such as
-satellite observations, climate model output, and in-situ measurements.
-NPs have been used for range of environmental applications, including:
-- downscaling (i.e. super-resolution)
-- forecasting
-- infilling missing satellite data
-- sensor placement
+These capabilities make NPs well suited to a range of
+spatio-temporal data fusion tasks such as downscaling, gap-filling, and forecasting.
 
 Why DeepSensor?
 -----------
-DeepSensor aims to faithfully match the flexibility of NPs with a simple and intuitive
-interface.
-DeepSensor wraps around the powerful [neuralprocessess](https://github.com/wesselb/neuralprocesses)
-package for the core modelling functionality, while allowing users to stay in
-the familiar [xarray](https://xarray.pydata.org) and [pandas](https://pandas.pydata.org) world
-and avoid the murky depths of tensors!
+This package aims to faithfully match the flexibility of NPs with a simple and intuitive interface.
+Under the hood, DeepSensor wraps around the
+powerful [neuralprocessess](https://github.com/wesselb/neuralprocesses) package for core modelling
+functionality, while allowing users to stay in the familiar [xarray](https://xarray.pydata.org)
+and [pandas](https://pandas.pydata.org) world from end-to-end and the murky depths of tensors!
+DeepSensor also provides convenient plotting tools and active learning functionality for finding
+optimal [sensor placements](https://doi.org/10.1017/eds.2023.22).
 
 Deep learning library agnosticism
 -----------
@@ -62,8 +72,9 @@ Quick start
 ----------
 
 Here we will demonstrate a simple example of training a convolutional conditional neural process
-(ConvCNP) to spatially interpolate ERA5 data.
-First, pip install the package. In this case we will use the PyTorch backend.
+(ConvCNP) to spatially interpolate random grid cells of NCEP reanalysis air temperature data
+over the US. First, pip install the package. In this case we will use the PyTorch backend.
+
 ```bash
 pip install deepsensor
 pip install torch
@@ -112,7 +123,9 @@ test_task = task_loader("2014-12-31", 0.1)
 pred = model.predict(test_task, X_t=ds_raw)
 ```
 
-After training, the model can predict directly to `xarray` in your data's original units and coordinate system:
+After training, the model can predict directly to `xarray` in your data's original units and
+coordinate system:
+
 ```python
 >>> pred["air"]
 <xarray.Dataset>
@@ -126,8 +139,10 @@ Data variables:
     std      (time, lat, lon) float32 9.855 9.845 9.848 ... 1.356 1.36 1.487
 ```
 
-We can also predict directly to `pandas` containing a timeseries of predictions at off-grid locations
+We can also predict directly to `pandas` containing a timeseries of predictions at off-grid
+locations
 by passing a `numpy` array of target locations to the `X_t` argument of `.predict`:
+
 ```python
 # Predict at two off-grid locations over December 2014 with 50 random, fixed context points
 test_tasks = task_loader(pd.date_range("2014-12-01", "2014-12-31"), 50, seed_override=42)
@@ -153,43 +168,57 @@ time       lat lon
 [62 rows x 2 columns]
 ```
 
-This quickstart example is also available as a [Jupyter notebook](https://github.com/tom-andersson/deepsensor_demos/blob/main/demonstrators/quickstart.ipynb) with added visualisations.
+This quickstart example is also available as
+a [Jupyter notebook](https://github.com/tom-andersson/deepsensor_demos/blob/main/demonstrators/quickstart.ipynb)
+with added visualisations.
 
 Extending DeepSensor with new models
 ----------
-To extend DeepSensor with a new model, simply create a new class that inherits from `deepsensor.model.DeepSensorModel`
-and implement the low-level prediction methods defined in `deepsensor.model.model.ProbabilisticModel`,
+To extend DeepSensor with a new model, simply create a new class that inherits
+from `deepsensor.model.DeepSensorModel`
+and implement the low-level prediction methods defined
+in `deepsensor.model.model.ProbabilisticModel`,
 such as `.mean` and `.stddev`.
+
 ```python
 class NewModel(DeepSensorModel):
     """A very naive model that predicts the mean of the first context set with a fixed stddev"""
+
     def __init__(self, data_processor: DataProcessor, task_loader: TaskLoader):
         super().__init__(data_processor, task_loader)
-        
+
     def mean(self, task: Task):
         """Compute mean at target locations"""
         return np.mean(task["Y_c"][0])
-    
+
     def stddev(self, task: Task):
         """Compute stddev at target locations"""
         return 0.1
-    
+
     ...
 ```
+
 `NewModel` can then be used in the same way as the built-in `ConvNP` model.
 See [this Jupyter notebook](https://github.com/tom-andersson/deepsensor_gallery/blob/main/demonstrators/extending_models.ipynb)
 for more details.
 
-
 ## Citing DeepSensor
+
 If you use DeepSensor in your research, please consider citing this repository.
 You can generate a BiBTeX entry by clicking the 'Cite this repository' button
 on the top right of this page.
 
 ## Acknowledgements
+
 DeepSensor is funded by [The Alan Turing Institute](https://www.turing.ac.uk/).
 
 ## Contributors
+
+We appreciate all contributions to DeepSensor, big or small, code-related or not, and we thank all
+contributors below for supporting open-source software and research.
+For code-specific contributions, check out our graph of [code contributions](https://github.com/tom-andersson/deepsensor/graphs/contributors).
+See our [contribution guidelines](https://github.com/tom-andersson/deepsensor/blob/main/CONTRIBUTING.md)
+if you would like to join this list!
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
