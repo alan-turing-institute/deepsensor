@@ -13,10 +13,7 @@ from plum import ModuleType, dispatch
 from deepsensor import backend
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
-from deepsensor.data.task import (
-    Task,
-    flatten_gridded_data_in_task,
-)
+from deepsensor.data.task import Task
 from deepsensor.model.defaults import (
     gen_ppu,
     gen_encoder_scales,
@@ -773,8 +770,8 @@ class ConvNP(DeepSensorModel):
         else:
             task_arsample = copy.deepcopy(task)
 
-        task = flatten_gridded_data_in_task(task)
-        task_arsample = flatten_gridded_data_in_task(task_arsample)
+        task = task.flatten_gridded_data()
+        task_arsample = task_arsample.flatten_gridded_data()
 
         task_arsample = ConvNP.modify_task(task_arsample)
         task = ConvNP.modify_task(task)

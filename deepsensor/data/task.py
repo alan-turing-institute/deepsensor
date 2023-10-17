@@ -158,6 +158,31 @@ class Task(dict):
         """
         return self.op(lambda x: x.astype(np.float32), op_flag="float32")
 
+    def flatten_gridded_data(self):
+        """
+        Convert any gridded data in ``Task`` to flattened arrays.
+
+        Necessary for AR sampling, which doesn't yet permit gridded context sets.
+
+        Args:
+            task : :class:`~.data.task.Task`
+                ...
+
+        Returns:
+            :class:`deepsensor.data.task.Task`:
+                ...
+        """
+        self["X_c"] = [flatten_X(X) for X in self["X_c"]]
+        self["Y_c"] = [flatten_Y(Y) for Y in self["Y_c"]]
+        if self["X_t"] is not None:
+            self["X_t"] = [flatten_X(X) for X in self["X_t"]]
+        if self["Y_t"] is not None:
+            self["Y_t"] = [flatten_Y(Y) for Y in self["Y_t"]]
+
+        self["ops"].append("gridded_data_flattened")
+
+        return self
+
     def remove_context_nans(self):
         """
         If NaNs are present in task["Y_c"], remove them (and corresponding task["X_c"])
@@ -414,31 +439,6 @@ def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
         Y = Y.reshape(*Y.shape[:-2], -1)
     return Y
 
-
-def flatten_gridded_data_in_task(task: Task) -> Task:
-    """
-    Convert any gridded data in ``Task`` to flattened arrays.
-
-    Necessary for AR sampling, which doesn't yet permit gridded context sets.
-
-    Args:
-        task : :class:`~.data.task.Task`
-            ...
-
-    Returns:
-        :class:`deepsensor.data.task.Task`:
-            ...
-    """
-    task_flattened = copy.deepcopy(task)
-
-    task_flattened["X_c"] = [flatten_X(X) for X in task["X_c"]]
-    task_flattened["Y_c"] = [flatten_Y(Y) for Y in task["Y_c"]]
-    if task_flattened["X_t"] is not None:
-        task_flattened["X_t"] = [flatten_X(X) for X in task["X_t"]]
-    if task_flattened["Y_t"] is not None:
-        task_flattened["Y_t"] = [flatten_Y(Y) for Y in task["Y_t"]]
-
-    return task_flattened
 
 
 def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
