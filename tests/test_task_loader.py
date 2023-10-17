@@ -200,8 +200,12 @@ class TestTaskLoader(unittest.TestCase):
     def test_links_gapfill_da(self) -> None:
         """TODO"""
         da_with_nans = copy.deepcopy(self.da)
-        nan_idxs = np.random.randint(0, da_with_nans.size, size=10_000)
+        # Convert 10% of data to NaNs
+        nan_idxs = np.random.randint(
+            0, da_with_nans.size, size=int(da_with_nans.size * 0.1)
+        )
         da_with_nans.data.ravel()[nan_idxs] = np.nan
+
         tl = TaskLoader(context=da_with_nans, target=da_with_nans, links=[(0, 0)])
 
         # This should not raise an error
