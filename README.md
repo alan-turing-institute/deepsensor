@@ -58,7 +58,7 @@ This package aims to faithfully match the flexibility of NPs with a simple and i
 Under the hood, DeepSensor wraps around the
 powerful [neuralprocessess](https://github.com/wesselb/neuralprocesses) package for core modelling
 functionality, while allowing users to stay in the familiar [xarray](https://xarray.pydata.org)
-and [pandas](https://pandas.pydata.org) world from end-to-end and the murky depths of tensors!
+and [pandas](https://pandas.pydata.org) world from end-to-end.
 DeepSensor also provides convenient plotting tools and active learning functionality for finding
 optimal [sensor placements](https://doi.org/10.1017/eds.2023.22).
 
