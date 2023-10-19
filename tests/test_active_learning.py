@@ -4,26 +4,25 @@ import numpy as np
 
 import deepsensor.tensorflow as deepsensor
 from deepsensor.active_learning.acquisition_fns import (
+    AcquisitionFunction,
     MeanVariance,
     MeanStddev,
     pNormStddev,
     MeanMarginalEntropy,
     JointEntropy,
-    Stddev,
-    ExpectedImprovement,
-    Random,
     OracleMAE,
     OracleRMSE,
     OracleMarginalNLL,
     OracleJointNLL,
-    AcquisitionFunction,
+    Stddev,
+    ExpectedImprovement,
+    Random,
+    ContextDist,
 )
 from deepsensor.active_learning.algorithms import GreedyAlgorithm
 
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor, xarray_to_coord_array_normalised
-from deepsensor.data.task import append_obs_to_task
-from deepsensor.errors import TaskSetIndexError, GriddedDataError
 from deepsensor.model.convnp import ConvNP
 
 
@@ -39,7 +38,10 @@ class TestActiveLearning(unittest.TestCase):
         self.ds_raw = ds_raw
         self.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
         self.ds = self.data_processor(ds_raw)
-        self.task_loader = TaskLoader(context=self.ds, target=self.ds)
+        # Set up a model with two context sets and two target sets for generality
+        self.task_loader = TaskLoader(
+            context=[self.ds, self.ds], target=[self.ds, self.ds]
+        )
         self.model = ConvNP(
             self.data_processor,
             self.task_loader,
@@ -78,38 +80,40 @@ class TestActiveLearning(unittest.TestCase):
 
     def test_acquisition_fns_run(self):
         """Run each acquisition function to check that it runs and returns correct shape"""
-        sequential_acquisition_fns = [
-            MeanStddev(self.model),
-            MeanVariance(self.model),
-            pNormStddev(self.model, p=3),
-            MeanMarginalEntropy(self.model),
-            JointEntropy(self.model),
-            OracleMAE(self.model),
-            OracleRMSE(self.model),
-            OracleMarginalNLL(self.model),
-            OracleJointNLL(self.model),
-        ]
-        parallel_acquisition_fns = [
-            Stddev(self.model),
-            ExpectedImprovement(self.model),
-            Random(),
-        ]
+        for context_set_idx, target_set_idx in [(0, 0), (0, 1), (1, 0), (1, 1)]:
+            sequential_acquisition_fns = [
+                MeanStddev(self.model, context_set_idx, target_set_idx),
+                MeanVariance(self.model, context_set_idx, target_set_idx),
+                pNormStddev(self.model, context_set_idx, target_set_idx, p=3),
+                MeanMarginalEntropy(self.model, context_set_idx, target_set_idx),
+                JointEntropy(self.model, context_set_idx, target_set_idx),
+                OracleMAE(self.model, context_set_idx, target_set_idx),
+                OracleRMSE(self.model, context_set_idx, target_set_idx),
+                OracleMarginalNLL(self.model, context_set_idx, target_set_idx),
+                OracleJointNLL(self.model, context_set_idx, target_set_idx),
+            ]
+            parallel_acquisition_fns = [
+                Stddev(self.model, context_set_idx, target_set_idx),
+                ExpectedImprovement(self.model, context_set_idx, target_set_idx),
+                ContextDist(self.model, context_set_idx, target_set_idx),
+                Random(self.model, context_set_idx, target_set_idx),
+            ]
 
-        # Coarsen search points to speed up computation
-        X_s = self.ds_raw.coarsen(lat=10, lon=10, boundary="trim").mean()
-        X_s = self.data_processor.map_coords(X_s)
-        X_s_arr = xarray_to_coord_array_normalised(X_s)
+            # Coarsen search points to speed up computation
+            X_s = self.ds_raw.coarsen(lat=10, lon=10, boundary="trim").mean()
+            X_s = self.data_processor.map_coords(X_s)
+            X_s_arr = xarray_to_coord_array_normalised(X_s)
 
-        task = self.task_loader(
-            "2014-12-31", context_sampling=10, target_sampling="all"
-        )
+            task = self.task_loader(
+                "2014-12-31", context_sampling=10, target_sampling="all"
+            )
 
-        for acquisition_fn in sequential_acquisition_fns:
-            importance = acquisition_fn(task)
-            assert importance.size == 1
-        for acquisition_fn in parallel_acquisition_fns:
-            importances = acquisition_fn(task, X_s_arr)
-            assert importances.size == X_s_arr.shape[-1]
+            for acquisition_fn in sequential_acquisition_fns:
+                importance = acquisition_fn(task)
+                assert importance.size == 1
+            for acquisition_fn in parallel_acquisition_fns:
+                importances = acquisition_fn(task, X_s_arr)
+                assert importances.size == X_s_arr.shape[-1]
 
     def test_greedy_alg_runs(self):
         """Run the greedy algorithm to check that it runs without error"""
