@@ -224,6 +224,7 @@ class ConvNP(DeepSensorModel):
         super().__init__(data_processor, task_loader)
 
         self.model = neural_process
+        self.config = None
 
     @dispatch
     def __init__(self, model_ID: str):
@@ -295,6 +296,9 @@ class ConvNP(DeepSensorModel):
             self.model.load_weights(os.path.join(model_ID, "model"))
         else:
             raise NotImplementedError(f"Backend {backend.str} not supported.")
+
+    def __str__(self):
+        return f"ConvNP with config:" + "\n" + json.dumps(self.config, indent=4, sort_keys=False)
 
     @classmethod
     def modify_task(cls, task: Task):
