@@ -1,6 +1,6 @@
 =========================
-Developer Code of Conduct
+Code of Conduct
 =========================
 
-..
-    TODO: write a code of conduct for DeepSensor/mirror the CODE-OF-CONDUCT.md document?
+We want DeepSensor to be an open, welcoming, diverse, inclusive, and healthy community.
+To see our Code of Conduct, please see our `CODE_OF_CONDUCT.md document <https://github.com/tom-andersson/deepsensor/blob/main/CODE_OF_CONDUCT.md>`_.
