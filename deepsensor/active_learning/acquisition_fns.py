@@ -1,4 +1,5 @@
 import copy
+from typing import Optional
 
 import numpy as np
 
@@ -13,9 +14,13 @@ class AcquisitionFunction:
     Parent class for acquisition functions.
     """
 
+    # Class attribute to indicate whether the acquisition function should be
+    #   minimised or maximised
+    min_or_max = None
+
     def __init__(
         self,
-        model: ProbabilisticModel,
+        model: Optional[ProbabilisticModel] = None,
         context_set_idx: int = 0,
         target_set_idx: int = 0,
     ):
@@ -32,9 +37,8 @@ class AcquisitionFunction:
         self.model = model
         self.context_set_idx = context_set_idx
         self.target_set_idx = target_set_idx
-        self.min_or_max = -1
 
-    def __call__(self, task: Task) -> np.ndarray:
+    def __call__(self, task: Task, *args, **kwargs) -> np.ndarray:
         """
         ...
 
@@ -69,10 +73,11 @@ class AcquisitionFunctionParallel(AcquisitionFunction):
     points in parallel.
     """
 
-    def __call__(self, task: Task, X_s: np.ndarray) -> np.ndarray:
+    def __call__(self, task: Task, X_s: np.ndarray, **kwargs) -> np.ndarray:
         """
         ...
 
+        :param **kwargs:
         :no-index:
 
         Args:
@@ -96,18 +101,7 @@ class AcquisitionFunctionParallel(AcquisitionFunction):
 class MeanStddev(AcquisitionFunction):
     """Mean of the marginal variances."""
 
-    def __init__(self, model: ProbabilisticModel):
-        """
-        ...
-
-        :no-index:
-
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
-        """
-        super().__init__(model)
-        self.min_or_max = "min"
+    min_or_max = "min"
 
     def __call__(self, task: Task):
         """
@@ -129,18 +123,7 @@ class MeanStddev(AcquisitionFunction):
 class MeanVariance(AcquisitionFunction):
     """Mean of the marginal variances."""
 
-    def __init__(self, model: ProbabilisticModel):
-        """
-        ...
-
-        :no-index:
-
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
-        """
-        super().__init__(model)
-        self.min_or_max = "min"
+    min_or_max = "min"
 
     def __call__(self, task: Task):
         """
@@ -162,6 +145,8 @@ class MeanVariance(AcquisitionFunction):
 class pNormStddev(AcquisitionFunction):
     """p-norm of the vector of marginal standard deviations."""
 
+    min_or_max = "min"
+
     def __init__(self, *args, p: int = 1, **kwargs):
         """
         ...
@@ -174,7 +159,6 @@ class pNormStddev(AcquisitionFunction):
         """
         super().__init__(*args, **kwargs)
         self.p = p
-        self.min_or_max = "min"
 
     def __call__(self, task: Task):
         """
@@ -198,18 +182,7 @@ class pNormStddev(AcquisitionFunction):
 class MeanMarginalEntropy(AcquisitionFunction):
     """Mean of the entropies of the marginal predictive distributions."""
 
-    def __init__(self, model: ProbabilisticModel):
-        """
-        ...
-
-        :no-index:
-
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
-        """
-        super().__init__(model)
-        self.min_or_max = "min"
+    min_or_max = "min"
 
     def __call__(self, task):
         """
@@ -232,18 +205,7 @@ class MeanMarginalEntropy(AcquisitionFunction):
 class JointEntropy(AcquisitionFunction):
     """Joint entropy of the predictive distribution."""
 
-    def __init__(self, model: ProbabilisticModel):
-        """
-        ...
-
-        :no-index:
-
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
-        """
-        super().__init__(model)
-        self.min_or_max = "min"
+    min_or_max = "min"
 
     def __call__(self, task: Task):
         """
@@ -265,18 +227,7 @@ class JointEntropy(AcquisitionFunction):
 class OracleMAE(AcquisitionFunctionOracle):
     """Oracle mean absolute error."""
 
-    def __init__(self, model: ProbabilisticModel):
-        """
-        ...
-
-        :no-index:
-
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
-        """
-        super().__init__(model)
-        self.min_or_max = "min"
+    min_or_max = "min"
 
     def __call__(self, task: Task):
         """
@@ -302,18 +253,7 @@ class OracleMAE(AcquisitionFunctionOracle):
 class OracleRMSE(AcquisitionFunctionOracle):
     """Oracle root mean squared error."""
 
-    def __init__(self, model: ProbabilisticModel):
-        """
-        ...
-
-        :no-index:
-
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
-        """
-        super().__init__(model)
-        self.min_or_max = "min"
+    min_or_max = "min"
 
     def __call__(self, task: Task):
         """
@@ -339,18 +279,7 @@ class OracleRMSE(AcquisitionFunctionOracle):
 class OracleMarginalNLL(AcquisitionFunctionOracle):
     """Oracle marginal negative log-likelihood."""
 
-    def __init__(self, model: ProbabilisticModel):
-        """
-        ...
-
-        :no-index:
-
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
-        """
-        super().__init__(model)
-        self.min_or_max = "min"
+    min_or_max = "min"
 
     def __call__(self, task: Task):
         """
@@ -376,18 +305,7 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
 class OracleJointNLL(AcquisitionFunctionOracle):
     """Oracle joint negative log-likelihood."""
 
-    def __init__(self, model: ProbabilisticModel):
-        """
-        ...
-
-        :no-index:
-
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
-        """
-        super().__init__(model)
-        self.min_or_max = "min"
+    min_or_max = "min"
 
     def __call__(self, task: Task):
         """
@@ -409,7 +327,9 @@ class OracleJointNLL(AcquisitionFunctionOracle):
 class Random(AcquisitionFunctionParallel):
     """Random acquisition function."""
 
-    def __init__(self, seed: int = 42):
+    min_or_max = "max"
+
+    def __init__(self, *args, seed: int = 42, **kwargs):
         """
         ...
 
@@ -419,13 +339,14 @@ class Random(AcquisitionFunctionParallel):
             seed (int, optional):
                 Random seed, defaults to 42.
         """
+        super().__init__(*args, **kwargs)
         self.rng = np.random.default_rng(seed)
-        self.min_or_max = "max"
 
-    def __call__(self, task: Task, X_s: np.ndarray):
+    def __call__(self, task: Task, X_s: np.ndarray, **kwargs):
         """
         ...
 
+        :param **kwargs:
         :no-index:
 
         Args:
@@ -444,18 +365,13 @@ class Random(AcquisitionFunctionParallel):
 class ContextDist(AcquisitionFunctionParallel):
     """Distance to closest context point."""
 
-    def __init__(self):
+    min_or_max = "max"
+
+    def __call__(self, task: Task, X_s: np.ndarray, **kwargs):
         """
         ...
 
-        :no-index:
-        """
-        self.min_or_max = "max"
-
-    def __call__(self, task: Task, X_s: np.ndarray):
-        """
-        ...
-
+        :param **kwargs:
         :no-index:
 
         Args:
@@ -479,7 +395,8 @@ class ContextDist(AcquisitionFunctionParallel):
             # Use broadcasting to get matrix of distances from each possible
             #   new sensor location to each existing sensor location
             dists_all = np.linalg.norm(
-                X_s[..., np.newaxis] - X_c[..., np.newaxis, :], axis
+                X_s[..., np.newaxis] - X_c[..., np.newaxis, :],
+                axis=0,
             )  # Shape (n_possible_locs, n_context + n_placed_sensors)
 
             # Compute distance to nearest sensor
@@ -490,23 +407,13 @@ class ContextDist(AcquisitionFunctionParallel):
 class Stddev(AcquisitionFunctionParallel):
     """Model standard deviation."""
 
-    def __init__(self, model: ProbabilisticModel):
+    min_or_max = "max"
+
+    def __call__(self, task: Task, X_s: np.ndarray, **kwargs):
         """
         ...
 
-        :no-index:
-
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
-        """
-        super().__init__(model)
-        self.min_or_max = "max"
-
-    def __call__(self, task: Task, X_s: np.ndarray):
-        """
-        ...
-
+        :param **kwargs:
         :no-index:
 
         Args:
@@ -536,23 +443,11 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         for maximisation.
     """
 
-    def __init__(self, model: ProbabilisticModel):
-        """
-        :no-index:
+    min_or_max = "max"
 
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
+    def __call__(self, task: Task, X_s: np.ndarray, **kwargs) -> np.ndarray:
         """
-        super().__init__(model)
-        self.min_or_max = "max"
-
-    def __call__(
-        self,
-        task: Task,
-        X_s: np.ndarray,
-    ) -> np.ndarray:
-        """
+        :param **kwargs:
         :no-index:
 
         Args:
