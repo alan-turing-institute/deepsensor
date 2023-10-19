@@ -14,8 +14,6 @@ from deepsensor.data.loader import TaskLoader
 from deepsensor.model.convnp import ConvNP
 from deepsensor.data.task import concat_tasks
 
-from tests.utils import gen_random_data_xr, gen_random_data_pandas
-
 
 class TestTraining(unittest.TestCase):
     def __init__(self, *args, **kwargs):
