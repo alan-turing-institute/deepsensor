@@ -14,14 +14,6 @@ from deepsensor.data.processor import DataProcessor
 from pandas import DataFrame
 from matplotlib.colors import Colormap
 from matplotlib.axes import Axes
-from matplotlib.projections import (
-    PolarAxes,
-    AitoffAxes,
-    HammerAxes,
-    LambertAxes,
-    MollweideAxes,
-    Axes3D,
-)
 
 
 def context_encoding(
@@ -357,17 +349,9 @@ def offgrid_context_observations(
 def receptive_field(
     receptive_field,
     data_processor: DataProcessor,
-    crs: Union[
-        Axes,
-        PolarAxes,
-        AitoffAxes,
-        HammerAxes,
-        LambertAxes,
-        MollweideAxes,
-        Axes3D,
-    ],
+    crs,
     extent: str = "global",
-) -> plt.Figure:
+) -> plt.Figure:  # pragma: no cover
     """
     ...
 
@@ -376,7 +360,7 @@ def receptive_field(
             Receptive field to plot.
         data_processor (:class:`~.data.processor.DataProcessor`):
             Data processor used to unnormalise the context set.
-        crs (:class:`matplotlib:matplotlib.axes.Axes` | :class:`matplotlib:matplotlib.projections.polar.PolarAxes` | :class:`matplotlib:matplotlib.projections.geo.AitoffAxes` | :class:`matplotlib:matplotlib.projections.geo.HammerAxes` | :class:`matplotlib:matplotlib.projections.geo.LambertAxes` | :class:`matplotlib:matplotlib.projections.geo.MollweideAxes` | :class:`mpl_toolkits.mplot3d.Axes3D`):
+        crs (cartopy CRS):
             Coordinate reference system for the plots.
         extent (str, optional):
             Extent of the plot, by default "global".
@@ -439,12 +423,6 @@ def feature_maps(
     """
     Plot the feature maps of a ``ConvNP`` model's decoder layers after a
     forward pass with a ``Task``.
-
-    Currently only plots feature maps for the downsampling path.
-
-    ..
-        TODO: Work out how to construct partial U-Net including the upsample
-        path.
 
     Args:
         model (:class:`~.model.model.convnp.ConvNP`):
@@ -570,19 +548,11 @@ def placements(
     task: Task,
     X_new_df: DataFrame,
     data_processor: DataProcessor,
-    crs: Union[
-        Axes,
-        PolarAxes,
-        AitoffAxes,
-        HammerAxes,
-        LambertAxes,
-        MollweideAxes,
-        Axes3D,
-    ],
+    crs,
     extent: Optional[Union[Tuple[int, int, int, int], str]] = None,
     figsize: int = 3,
     **scatter_kwargs,
-) -> plt.Figure:
+) -> plt.Figure:  # pragma: no cover
     """
     ...
 
@@ -595,7 +565,7 @@ def placements(
         data_processor (:class:`~.data.processor.DataProcessor`):
             Data processor used to unnormalise the context set and placement
             locations.
-        crs (:class:`matplotlib:matplotlib.axes.Axes` | :class:`matplotlib:matplotlib.projections.polar.PolarAxes` | :class:`matplotlib:matplotlib.projections.geo.AitoffAxes` | :class:`matplotlib:matplotlib.projections.geo.HammerAxes` | :class:`matplotlib:matplotlib.projections.geo.LambertAxes` | :class:`matplotlib:matplotlib.projections.geo.MollweideAxes` | :class:`mpl_toolkits.mplot3d.Axes3D`):
+        crs (cartopy CRS):
             Coordinate reference system for the plots.
         extent (Tuple[int, int, int, int] | str, optional):
             Extent of the plots, by default None.
@@ -626,21 +596,13 @@ def acquisition_fn(
     acquisition_fn_ds: np.ndarray,
     X_new_df: DataFrame,
     data_processor: DataProcessor,
-    crs: Union[
-        Axes,
-        PolarAxes,
-        AitoffAxes,
-        HammerAxes,
-        LambertAxes,
-        MollweideAxes,
-        Axes3D,
-    ],
+    crs,
     col_dim: str = "iteration",
     cmap: Union[str, Colormap] = "Greys_r",
     figsize: int = 3,
     add_colorbar: bool = True,
     max_ncol: int = 5,
-) -> plt.Figure:
+) -> plt.Figure:  # pragma: no cover
     """
 
     Args:
@@ -654,7 +616,7 @@ def acquisition_fn(
         data_processor (:class:`~.data.processor.DataProcessor`):
             Data processor used to unnormalise the context set and placement
             locations.
-        crs (:class:`matplotlib:matplotlib.axes.Axes` | :class:`matplotlib:matplotlib.projections.polar.PolarAxes` | :class:`matplotlib:matplotlib.projections.geo.AitoffAxes` | :class:`matplotlib:matplotlib.projections.geo.HammerAxes` | :class:`matplotlib:matplotlib.projections.geo.LambertAxes` | :class:`matplotlib:matplotlib.projections.geo.MollweideAxes` | :class:`mpl_toolkits.mplot3d.Axes3D`):
+        crs (cartopy CRS):
             Coordinate reference system for the plots.
         col_dim (str, optional):
             Column dimension to plot over, by default "iteration".
