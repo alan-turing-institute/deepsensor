@@ -1,6 +1,7 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
+import pandas as pd
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.patches as mpatches
 
@@ -11,6 +12,7 @@ from typing import Optional, Union, List, Tuple
 from deepsensor.data.task import Task
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
+from deepsensor.model.pred import Prediction
 from pandas import DataFrame
 from matplotlib.colors import Colormap
 from matplotlib.axes import Axes
@@ -723,4 +725,86 @@ def acquisition_fn(
     for ax in axes[len(col_vals) :]:
         ax.remove()
 
+    return fig
+
+
+def prediction(
+    pred: Prediction,
+    date: Union[str, pd.Timestamp],
+    data_processor: Optional[DataProcessor] = None,
+    task_loader: Optional[TaskLoader] = None,
+    task: Optional[Task] = None,
+    crs=None,
+) -> plt.Figure:  # pragma: no cover
+    """
+    Plot the mean and standard deviation of a prediction.
+
+    Args:
+        pred (:class:`~.model.prediction.Prediction`):
+            Prediction to plot.
+        date (str | :class:`pandas:pandas.Timestamp`):
+            Date of the prediction.
+        data_processor (:class:`~.data.processor.DataProcessor`):
+            Data processor used to unnormalise the context set.
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            Task loader used to load the data, containing context set metadata
+            used for plotting.
+        task (:class:`~.data.task.Task`, optional):
+            Task containing the context data to overlay.
+        crs (cartopy CRS, optional):
+            Coordinate reference system for the plots, by default None.
+    """
+
+    cbar_kwargs = None
+    n_vars = len(pred.target_var_IDs)
+    n_params = max(len(pred[var]) for var in pred)
+    size = 5
+    fig, axes = plt.subplots(
+        n_vars,
+        n_params,
+        figsize=(size * n_params, size * n_vars),
+        subplot_kw=dict(projection=crs),
+    )
+    if n_vars == 1:
+        axes = np.expand_dims(axes, axis=0)
+    for row_i, var_ID in enumerate(pred.target_var_IDs):
+        for col_i, param in enumerate(pred[var_ID]):
+            ax = axes[row_i, col_i]
+            if param == "std":
+                cmap = "Greys"
+                vmin = 0
+            else:
+                cmap = "viridis"
+                vmin = None
+            pred[var_ID][param].sel(time=date).plot(
+                ax=ax,
+                cbar_kwargs=cbar_kwargs,
+                cmap=cmap,
+                vmin=vmin,
+                add_colorbar=False,
+                center=False,
+            )
+            ax.set_aspect("auto")
+            im = ax.get_children()[0]
+            # add axis to right
+            cax = fig.add_axes(
+                [
+                    ax.get_position().x1 + 0.01,
+                    ax.get_position().y0,
+                    0.02,
+                    ax.get_position().height,
+                ]
+            )
+            cbar = plt.colorbar(
+                im, cax=cax
+            )  # specify axis for colorbar to occupy with cax
+            ax.coastlines()
+            ax.set_title(f"{var_ID} {param}")
+            if task is not None:
+                da = pred[var_ID][param]
+                ax.set_extent(
+                    [da["lon"].min(), da["lon"].max(), da["lat"].min(), da["lat"].max()]
+                )
+                offgrid_context(ax, task, data_processor, task_loader, linewidths=0.5)
+    plt.subplots_adjust(wspace=0.3)
     return fig
