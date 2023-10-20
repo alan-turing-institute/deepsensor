@@ -11,12 +11,10 @@ jobs:
             - uses: nikeee/setup-pandoc@v1
             - name: "Install dependencies"
               run: pip install -r requirements.txt
-            - name: "Install sphinx"
+            - name: "Install jupyterbook"
               run: pip install -r requirements.docs.txt
-            - name: "Sphinx link check"
-              run: sphinx-build docs -d docs/_build/doctrees docs/_build/html
-            - name: "Sphinx build"
-              run: sphinx-build docs docs/_build
+            - name: "Run jupyterbook"
+              run: jupyter-book build docs --all
             - name: "Deploy"
               uses: peaceiris/actions-gh-pages@v3
               if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/docs') }}
