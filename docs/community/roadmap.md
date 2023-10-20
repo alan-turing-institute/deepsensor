@@ -1,12 +1,12 @@
-==================
-DeepSensor Roadmap
-==================
+# DeepSensor Roadmap
 
-.. note::
-    We will soon create a GitHub project board to track progress on these items, which will provide a more up-to-date view of the roadmap.
+```{note}
+We will soon create a GitHub project board to track progress on these items, which will provide a more up-to-date view of the roadmap.
+```
 
-.. note::
-    We are unable to provide a timetable for the roadmap due to maintainer time constraints. If you are interested in contributing to the project, check out :doc:`Contributing Guide <contributing>`.
+```{note}
+We are unable to provide a timetable for the roadmap due to maintainer time constraints. If you are interested in contributing to the project, check out :doc:`Contributing Guide <contributing>`.
+```
 
 * Improve documentation
 * Support patch-wise training and inference

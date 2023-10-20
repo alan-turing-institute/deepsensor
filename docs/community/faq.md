@@ -1,15 +1,12 @@
-=============
-Community FAQ
-=============
+# Community FAQ
 
-This FAQ aims to answer common questions about the DeepSensor library. It is our way to streamline the onboarding process and clarify expectations. 
+This FAQ aims to answer common questions about the DeepSensor library. It is our way to streamline the onboarding process and clarify expectations.
 
-.. note::
+```{note}
+If you have a question that is not answered here, please open an issue or submit a pull request.
+```
 
-    If you have a question that is not answered here, please open an issue or submit a pull request.
-
-Questions
----------
+## Questions
 
 **Q: What is the purpose of this project?**
 
@@ -99,6 +96,6 @@ Questions
 
 **Answer:** Contributors are acknowledged in our release notes, and their contributions are forever recorded in the project's history.
 
-
-..
-    TODO: write more questions and answers here.
+<!--
+TODO: write more questions and answers here.
+-->
