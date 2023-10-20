@@ -10,6 +10,7 @@ email: tomandersson3@gmail.com
 # See https://jupyterbook.org/content/execute.html
 execute:
   execute_notebooks: cache
+  timeout: 1200  # 20 mins
 
 # Define the name of the latex output file for PDF builds
 latex:
