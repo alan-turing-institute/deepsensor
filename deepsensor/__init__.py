@@ -1,9 +1,3 @@
-from .data.processor import DataProcessor
-from .data.loader import TaskLoader
-
-from .plot import *
-
-
 class Backend:
     """Backend for deepsensor
 
@@ -22,3 +16,7 @@ class Backend:
 
 
 backend = Backend()
+
+from .data.processor import DataProcessor
+from .data.loader import TaskLoader
+from .plot import *
