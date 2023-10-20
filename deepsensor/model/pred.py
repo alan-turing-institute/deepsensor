@@ -57,6 +57,8 @@ class Prediction(dict):
         self.X_t_mask = X_t_mask
         if coord_names is None:
             coord_names = {"x1": "x1", "x2": "x2"}
+        self.x1_name = coord_names["x1"]
+        self.x2_name = coord_names["x2"]
 
         self.mode = infer_prediction_modality_from_X_t(X_t)
 

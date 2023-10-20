@@ -730,11 +730,12 @@ def acquisition_fn(
 
 def prediction(
     pred: Prediction,
-    date: Union[str, pd.Timestamp],
+    date: Optional[Union[str, pd.Timestamp]] = None,
     data_processor: Optional[DataProcessor] = None,
     task_loader: Optional[TaskLoader] = None,
     task: Optional[Task] = None,
     crs=None,
+    size: int = 5,
 ) -> plt.Figure:  # pragma: no cover
     """
     Plot the mean and standard deviation of a prediction.
@@ -753,12 +754,31 @@ def prediction(
             Task containing the context data to overlay.
         crs (cartopy CRS, optional):
             Coordinate reference system for the plots, by default None.
+        size (int, optional):
+            Size of the figure in inches per axis, by default 5.
     """
+    if pred.mode == "off-grid":
+        assert date is None, "Cannot pass a `date` for off-grid predictions"
+        assert (
+            data_processor is None
+        ), "Cannot pass a `data_processor` for off-grid predictions"
+        assert (
+            task_loader is None
+        ), "Cannot pass a `task_loader` for off-grid predictions"
+        assert task is None, "Cannot pass a `task` for off-grid predictions"
+        assert crs is None, "Cannot pass a `crs` for off-grid predictions"
 
-    cbar_kwargs = None
+    x1_name = pred.x1_name
+    x2_name = pred.x2_name
+
     n_vars = len(pred.target_var_IDs)
-    n_params = max(len(pred[var]) for var in pred)
-    size = 5
+    if pred.mode == "on-grid":
+        n_params = max(len(pred[var]) for var in pred)
+    elif pred.mode == "off-grid":
+        n_params = max(len(pred[var].columns) for var in pred)
+    else:
+        raise ValueError(f"Unknown prediction mode: {pred.mode}")
+
     fig, axes = plt.subplots(
         n_vars,
         n_params,
@@ -770,41 +790,77 @@ def prediction(
     for row_i, var_ID in enumerate(pred.target_var_IDs):
         for col_i, param in enumerate(pred[var_ID]):
             ax = axes[row_i, col_i]
-            if param == "std":
-                cmap = "Greys"
-                vmin = 0
-            else:
-                cmap = "viridis"
-                vmin = None
-            pred[var_ID][param].sel(time=date).plot(
-                ax=ax,
-                cbar_kwargs=cbar_kwargs,
-                cmap=cmap,
-                vmin=vmin,
-                add_colorbar=False,
-                center=False,
-            )
-            ax.set_aspect("auto")
-            im = ax.get_children()[0]
-            # add axis to right
-            cax = fig.add_axes(
-                [
-                    ax.get_position().x1 + 0.01,
-                    ax.get_position().y0,
-                    0.02,
-                    ax.get_position().height,
-                ]
-            )
-            cbar = plt.colorbar(
-                im, cax=cax
-            )  # specify axis for colorbar to occupy with cax
-            ax.coastlines()
-            ax.set_title(f"{var_ID} {param}")
-            if task is not None:
-                da = pred[var_ID][param]
-                ax.set_extent(
-                    [da["lon"].min(), da["lon"].max(), da["lat"].min(), da["lat"].max()]
+
+            if pred.mode == "on-grid":
+                if param == "std":
+                    cmap = "Greys"
+                    vmin = 0
+                else:
+                    cmap = "viridis"
+                    vmin = None
+                pred[var_ID][param].sel(time=date).plot(
+                    ax=ax,
+                    cmap=cmap,
+                    vmin=vmin,
+                    add_colorbar=False,
+                    center=False,
                 )
-                offgrid_context(ax, task, data_processor, task_loader, linewidths=0.5)
+                # ax.set_aspect("auto")
+                im = ax.get_children()[0]
+                # add axis to right
+                cax = fig.add_axes(
+                    [
+                        ax.get_position().x1 + 0.01,
+                        ax.get_position().y0,
+                        0.02,
+                        ax.get_position().height,
+                    ]
+                )
+                cbar = plt.colorbar(
+                    im, cax=cax
+                )  # specify axis for colorbar to occupy with cax
+                if task is not None:
+                    offgrid_context(
+                        ax,
+                        task,
+                        data_processor,
+                        task_loader,
+                        linewidths=0.5,
+                        add_legend=False,
+                    )
+                if crs is not None:
+                    da = pred[var_ID][param]
+                    ax.coastlines()
+                    # ax.set_extent(
+                    #     [da["lon"].min(), da["lon"].max(), da["lat"].min(), da["lat"].max()]
+                    # )
+
+            elif pred.mode == "off-grid":
+                import seaborn as sns
+
+                hue = (
+                    pred[var_ID]
+                    .reset_index()[[x1_name, x2_name]]
+                    .apply(lambda row: f"({row[x1_name]}, {row[x2_name]})", axis=1)
+                )
+                hue.name = f"{x1_name}, {x2_name}"
+
+                sns.lineplot(
+                    data=pred[var_ID],
+                    x="time",
+                    y=param,
+                    ax=ax,
+                    hue=hue.values,
+                )
+                # set legend title
+                ax.legend(title=hue.name, loc="best")
+
+                # rotate date times
+                ax.set_xticklabels(
+                    ax.get_xticklabels(), rotation=45, horizontalalignment="right"
+                )
+
+            ax.set_title(f"{var_ID} {param}")
+
     plt.subplots_adjust(wspace=0.3)
     return fig
