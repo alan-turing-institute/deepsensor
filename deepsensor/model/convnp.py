@@ -298,7 +298,11 @@ class ConvNP(DeepSensorModel):
             raise NotImplementedError(f"Backend {backend.str} not supported.")
 
     def __str__(self):
-        return f"ConvNP with config:" + "\n" + json.dumps(self.config, indent=4, sort_keys=False)
+        return (
+            f"ConvNP with config:"
+            + "\n"
+            + json.dumps(self.config, indent=4, sort_keys=False)
+        )
 
     @classmethod
     def modify_task(cls, task: Task):
