@@ -5,7 +5,7 @@ We will soon create a GitHub project board to track progress on these items, whi
 ```
 
 ```{note}
-We are unable to provide a timetable for the roadmap due to maintainer time constraints. If you are interested in contributing to the project, check out :doc:`Contributing Guide <contributing>`.
+We are unable to provide a timetable for the roadmap due to maintainer time constraints. If you are interested in contributing to the project, check out our :doc:`Contributing Guide <contributing>`.
 ```
 
 * Improve documentation
