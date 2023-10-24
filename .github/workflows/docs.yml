@@ -10,13 +10,13 @@ jobs:
             - uses: actions/setup-python@v3
             - uses: nikeee/setup-pandoc@v1
             - name: "Install dependencies"
-              run: pip install -r requirements.txt
+              run: pip install -r requirements/requirements.txt
             - name: Install GEOS for cartopy (https://scitools.org.uk/cartopy/docs/latest/installing.html#required-dependencies)
               run: sudo apt-get install libgeos-dev
             - name: Pip install cartopy for testing plotting
               run: pip install cartopy
             - name: "Install jupyterbook"
-              run: pip install -r requirements.docs.txt
+              run: pip install -r requirements/requirements.docs.txt
             - name: "Run jupyterbook"
               run: jupyter-book build docs --all
             - name: "Deploy"
