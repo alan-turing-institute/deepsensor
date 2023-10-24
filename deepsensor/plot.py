@@ -864,3 +864,32 @@ def prediction(
 
     plt.subplots_adjust(wspace=0.3)
     return fig
+
+
+def extent_str_to_tuple(extent: str) -> Tuple[float, float, float, float]:
+    """
+    Convert extent string to (lon_min, lon_max, lat_min, lat_max) tuple.
+
+    Args:
+        extent: str
+            String of region name. Options are: "global", "usa", "uk", "europe".
+
+    Returns:
+        tuple
+            Tuple of (lon_min, lon_max, lat_min, lat_max).
+    """
+    if extent == "global":
+        return (-180, 180, -90, 90)
+    elif extent == "usa":
+        return (-160, -60, 15, 75)
+    elif extent == "uk":
+        return (-12, 3, 50, 60)
+    elif extent == "europe":
+        return (-15, 40, 35, 70)
+    elif extent == "germany":
+        return (5, 15, 47, 55)
+    else:
+        raise ValueError(
+            f"Region {extent} not in supported list of regions with default bounds. "
+            f"Options are: 'global', 'usa', 'uk', 'europe'."
+        )
