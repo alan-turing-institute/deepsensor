@@ -631,9 +631,6 @@ class TaskLoader:
                 Y_c = da.sel(x1=xr.DataArray(x1), x2=xr.DataArray(x2), method="nearest")
                 Y_c = np.array(Y_c, dtype=self.dtype)
             X_c = np.array([x1, x2], dtype=self.dtype)
-            if Y_c.ndim == 1:
-                # returned a 1D array, but we need a 2D array of shape (variable, N)
-                Y_c = Y_c.reshape(1, *Y_c.shape)
 
         elif isinstance(sampling_strat, np.ndarray):
             X_c = sampling_strat.astype(self.dtype)
@@ -650,9 +647,6 @@ class TaskLoader:
                     f"but the coordinates are out of bounds."
                 )
             Y_c = np.array(Y_c, dtype=self.dtype)
-            if Y_c.ndim == 1:
-                # returned a 1D array, but we need a 2D array of shape (variable, N)
-                Y_c = Y_c.reshape(1, *Y_c.shape)
 
         elif sampling_strat in ["all", "gapfill"]:
             X_c = (
@@ -667,6 +661,10 @@ class TaskLoader:
             raise InvalidSamplingStrategyError(
                 f"Unknown sampling strategy {sampling_strat}"
             )
+
+        if Y_c.ndim == 1:
+            # returned a 1D array, but we need a 2D array of shape (variable, N)
+            Y_c = Y_c.reshape(1, *Y_c.shape)
 
         return X_c, Y_c
 
@@ -737,6 +735,10 @@ class TaskLoader:
             raise InvalidSamplingStrategyError(
                 f"Unknown sampling strategy {sampling_strat}"
             )
+
+        if Y_c.ndim == 1:
+            # returned a 1D array, but we need a 2D array of shape (variable, N)
+            Y_c = Y_c.reshape(1, *Y_c.shape)
 
         return X_c, Y_c
 
