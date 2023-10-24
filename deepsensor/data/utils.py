@@ -48,6 +48,8 @@ def construct_circ_time_ds(dates, freq):
         :class:`xarray.Dataset`
             ...
     """
+    # Ensure dates are pandas
+    dates = pd.DatetimeIndex(dates)
     if freq == "D":
         time_var = dates.dayofyear
         mod = 365.25
