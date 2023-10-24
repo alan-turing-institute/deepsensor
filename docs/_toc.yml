@@ -23,10 +23,6 @@ chapters:
 
 - file: reference/index
   sections:
-  - file: reference/active_learning/index
-    sections:
-    - file: reference/active_learning/acquisition_fns
-    - file: reference/active_learning/algorithms
   - file: reference/data/index
     sections:
     - file: reference/data/loader
@@ -39,9 +35,11 @@ chapters:
     - file: reference/model/defaults
     - file: reference/model/model
     - file: reference/model/nps
-  - file: reference/tensorflow/index
-  - file: reference/torch/index
   - file: reference/train/index
     sections:
     - file: reference/train/train
+  - file: reference/active_learning/index
+    sections:
+      - file: reference/active_learning/acquisition_fns
+      - file: reference/active_learning/algorithms
   - file: reference/plot

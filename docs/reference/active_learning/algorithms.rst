@@ -1,7 +1,7 @@
-``deepsensor.active_learning.algorithms``
+deepsensor.active_learning.algorithms
 =========================================
 
-.. automodule:: deepsensor.active_learning.acquisition_fns
+.. automodule:: deepsensor.active_learning.algorithms
    :members:
    :show-inheritance:
    :special-members: __init__, __call__

@@ -1,4 +1,4 @@
-``deepsensor.model.model``
+deepsensor.model.model
 ==========================
 
 .. automodule:: deepsensor.model.model

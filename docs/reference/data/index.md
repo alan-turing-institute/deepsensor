@@ -1,1 +1,1 @@
-# `data` module
+# `deepsensor.data`

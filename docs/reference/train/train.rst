@@ -1,4 +1,4 @@
-``deepsensor.train.train``
+deepsensor.train.train
 ==========================
 
 .. automodule:: deepsensor.train.train

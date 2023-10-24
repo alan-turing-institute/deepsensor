@@ -1,4 +1,4 @@
-``deepsensor.model.nps``
+deepsensor.model.nps
 ========================
 
 .. automodule:: deepsensor.model.nps

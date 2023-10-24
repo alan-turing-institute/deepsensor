@@ -1,1 +1,1 @@
-# `active_learning` module
+# `deepsensor.active_learning`

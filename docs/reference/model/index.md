@@ -1,1 +1,1 @@
-# `model` module
+# `deepsensor.model`

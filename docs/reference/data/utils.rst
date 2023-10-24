@@ -1,4 +1,4 @@
-``deepsensor.data.utils``
+deepsensor.data.utils
 =========================
 
 .. automodule:: deepsensor.data.utils

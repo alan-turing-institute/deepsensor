@@ -1,4 +1,4 @@
-``deepsensor.data.task``
+deepsensor.data.task
 ========================
 
 .. automodule:: deepsensor.data.task

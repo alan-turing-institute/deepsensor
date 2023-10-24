@@ -1,4 +1,4 @@
-``deepsensor.data.processor``
+deepsensor.data.processor
 =============================
 
 .. automodule:: deepsensor.data.processor

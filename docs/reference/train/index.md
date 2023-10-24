@@ -1,1 +1,1 @@
-# `train` module
+# `deepsensor.train`

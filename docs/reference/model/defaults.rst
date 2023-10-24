@@ -1,4 +1,4 @@
-``deepsensor.model.defaults``
+deepsensor.model.defaults
 =============================
 
 .. automodule:: deepsensor.model.defaults

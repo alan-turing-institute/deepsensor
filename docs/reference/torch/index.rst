@@ -1,4 +1,4 @@
-``deepsensor.torch``
+deepsensor.torch
 ====================
 
 ..

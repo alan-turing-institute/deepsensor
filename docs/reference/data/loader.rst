@@ -1,4 +1,4 @@
-``deepsensor.data.loader``
+deepsensor.data.loader
 ==========================
 
 ..

@@ -1,4 +1,4 @@
-``deepsensor.active_learning.acquisition_fns``
+deepsensor.active_learning.acquisition_fns
 ==============================================
 
 .. automodule:: deepsensor.active_learning.acquisition_fns

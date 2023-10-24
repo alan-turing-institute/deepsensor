@@ -1,4 +1,4 @@
-``deepsensor.plot``
+deepsensor.plot
 ===================
 
 .. automodule:: deepsensor.plot

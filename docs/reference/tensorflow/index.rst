@@ -1,4 +1,4 @@
-``deepsensor.tensorflow``
+deepsensor.tensorflow
 =========================
 
 ..
