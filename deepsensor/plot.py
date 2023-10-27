@@ -352,7 +352,7 @@ def receptive_field(
     receptive_field,
     data_processor: DataProcessor,
     crs,
-    extent: str = "global",
+    extent: Union[str, Tuple[float, float, float, float]] = "global",
 ) -> plt.Figure:  # pragma: no cover
     """
     ...
@@ -364,18 +364,21 @@ def receptive_field(
             Data processor used to unnormalise the context set.
         crs (cartopy CRS):
             Coordinate reference system for the plots.
-        extent (str, optional):
-            Extent of the plot, by default "global".
+        extent (str | Tuple[float, float, float, float], optional):
+            Extent of the plot, in format (x2_min, x2_max, x1_min, x1_max), e.g. in
+            lat-lon format (lon_min, lon_max, lat_min, lat_max). By default "global".
 
     Returns:
         None.
     """
     fig, ax = plt.subplots(subplot_kw=dict(projection=crs))
 
-    if extent == "global":
-        ax.set_global()
+    if isinstance(extent, str):
+        extent = extent_str_to_tuple(extent)
     else:
-        ax.set_extent(extent, crs=crs)
+        extent = tuple([float(x) for x in extent])
+    x2_min, x2_max, x1_min, x1_max = extent
+    ax.set_extent(extent, crs=crs)
 
     x11, x12 = data_processor.config["coords"]["x1"]["map"]
     x21, x22 = data_processor.config["coords"]["x2"]["map"]
@@ -383,8 +386,8 @@ def receptive_field(
     x1_rf_raw = receptive_field * (x12 - x11)
     x2_rf_raw = receptive_field * (x22 - x21)
 
-    x1_midpoint_raw = (x12 + x11) / 2
-    x2_midpoint_raw = (x22 + x21) / 2
+    x1_midpoint_raw = (x1_max + x1_min) / 2
+    x2_midpoint_raw = (x2_max + x2_min) / 2
 
     # Compute bottom left corner of receptive field
     x1_corner = x1_midpoint_raw - x1_rf_raw / 2
@@ -831,6 +834,9 @@ def prediction(
                 if crs is not None:
                     da = pred[var_ID][param]
                     ax.coastlines()
+                    import cartopy.feature as cfeature
+
+                    ax.add_feature(cfeature.BORDERS)
                     # ax.set_extent(
                     #     [da["lon"].min(), da["lon"].max(), da["lat"].min(), da["lat"].max()]
                     # )
