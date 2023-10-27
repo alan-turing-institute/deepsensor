@@ -15,7 +15,7 @@ from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.task import Task
 from deepsensor.model.defaults import (
-    gen_ppu,
+    compute_greatest_data_density,
     gen_encoder_scales,
     gen_decoder_scale,
 )
@@ -53,13 +53,32 @@ class ConvNP(DeepSensorModel):
         - a ``TaskLoader`` object to infer sensible default model parameters
           from the data.
 
-    These additional parameters can be passed to the ``__init__`` method to
-    customise the model, which will override any defaults inferred from a
-    ``TaskLoader``.
+    Examples:
+        Instantiate a ``ConvNP`` with all hyperparameters set to their default values:
+            >>> ConvNP(data_processor, task_loader)
+        Instantiate a ``ConvNP`` and override some hyperparameters:
+            >>> ConvNP(data_processor, task_loader, internal_density=250, unet_channels=(128,) * 6)
+        Instantiate a ``ConvNP`` with a pre-trained model saved in the folder ``my_trained_model``:
+            >>> ConvNP(data_processor, task_loader, model_ID="my_trained_model")
+        Instantiate a ``ConvNP`` with an existing ``neuralprocesses`` model object:
+            >>> ConvNP(data_processor, task_loader, neural_process=my_neural_process_model)
 
     Args:
-        points_per_unit (int, optional):
-            Density of the internal discretisation. Defaults to 100.
+        data_processor (:class:`~.data.processor.DataProcessor`, optional):
+            dataprocessor object. used for unnormalising model predictions in
+            ``.predict`` method.
+        task_loader (:class:`~.data.loader.TaskLoader`, optional):
+            taskloader object. used for inferring sensible defaults for hyperparameters
+            that are not set by the user.
+        model_ID (str, optional):
+            Folder to load the model config and weights from. This argument can only
+            be used alongside the ``data_processor`` and ``task_loader`` arguments.
+        neural_process (TFModel | TorchModel, optional):
+            Pre-defined neural process PyTorch/TensorFlow model object. This argument can
+            only be used alongside the ``data_processor`` and ``task_loader`` arguments.
+        internal_density (int, optional):
+            Density of the ConvNP's internal grid (in terms of number of points
+            per 1x1 unit square). Defaults to 100.
         likelihood (str, optional):
             Likelihood. Must be one of ``"cnp"`` (equivalently ``"het"``),
             ``"gnp"`` (equivalently ``"lowrank"``), or ``"cnp-spikes-beta"``
@@ -86,7 +105,7 @@ class ConvNP(DeepSensorModel):
             ``"unet[-res][-sep]"`` or ``"conv[-res][-sep]"``. Defaults to
             ``"unet"``.
         unet_channels (tuple[int], optional):
-            Channels of every layer of the UNet. Defaults to six layers each with
+            Channels of every layer of the UNet. Defaults to four layers each with
             64 channels.
         unet_kernels (int or tuple[int], optional):
             Sizes of the kernels in the UNet. Defaults to 5.
@@ -107,13 +126,13 @@ class ConvNP(DeepSensorModel):
             context sets embeddings. Set to a tuple equal to the number of context
             sets to use different values for each set. Set to a single value to use
             the same value for all context sets. Defaults to
-            ``1 / points_per_unit``.
+            ``1 / internal_density``.
         encoder_scales_learnable (bool, optional):
             Whether the encoder SetConv length scale(s) are learnable. Defaults to
             ``False``.
         decoder_scale (float, optional):
             Initial value for the length scale of the set convolution in the
-            decoder. Defaults to ``1 / points_per_unit``.
+            decoder. Defaults to ``1 / internal_density``.
         decoder_scale_learnable (bool, optional):
             Whether the decoder SetConv length scale(s) are learnable. Defaults to
             ``False``.
@@ -158,9 +177,11 @@ class ConvNP(DeepSensorModel):
 
         Args:
             data_processor (:class:`~.data.processor.DataProcessor`):
-                DataProcessor object.
+                DataProcessor object. Used for unnormalising model predictions in
+                ``.predict`` method.
             task_loader (:class:`~.data.loader.TaskLoader`):
-                TaskLoader object.
+                TaskLoader object. Used for inferring sensible defaults for hyperparameters
+                that are not set by the user.
             verbose (bool, optional):
                 Whether to print inferred model parameters, by default True.
         """
@@ -185,18 +206,18 @@ class ConvNP(DeepSensorModel):
             kwargs["aux_t_mlp_layers"] = (64,) * 3
             if verbose:
                 print(f"Setting aux_t_mlp_layers: {kwargs['aux_t_mlp_layers']}")
-        if "points_per_unit" not in kwargs:
-            ppu = gen_ppu(task_loader)
+        if "internal_density" not in kwargs:
+            internal_density = compute_greatest_data_density(task_loader)
             if verbose:
-                print(f"points_per_unit inferred from TaskLoader: {ppu}")
-            kwargs["points_per_unit"] = ppu
+                print(f"internal_density inferred from TaskLoader: {internal_density}")
+            kwargs["internal_density"] = internal_density
         if "encoder_scales" not in kwargs:
-            encoder_scales = gen_encoder_scales(kwargs["points_per_unit"], task_loader)
+            encoder_scales = gen_encoder_scales(kwargs["internal_density"], task_loader)
             if verbose:
                 print(f"encoder_scales inferred from TaskLoader: {encoder_scales}")
             kwargs["encoder_scales"] = encoder_scales
         if "decoder_scale" not in kwargs:
-            decoder_scale = gen_decoder_scale(kwargs["points_per_unit"])
+            decoder_scale = gen_decoder_scale(kwargs["internal_density"])
             if verbose:
                 print(f"decoder_scale inferred from TaskLoader: {decoder_scale}")
             kwargs["decoder_scale"] = decoder_scale
@@ -215,11 +236,13 @@ class ConvNP(DeepSensorModel):
 
         Args:
             data_processor (:class:`~.data.processor.DataProcessor`):
-                DataProcessor object.
+                DataProcessor object. Used for unnormalising model predictions in
+                ``.predict`` method.
             task_loader (:class:`~.data.loader.TaskLoader`):
-                TaskLoader object.
+                TaskLoader object. Used for inferring sensible defaults for hyperparameters
+                that are not set by the user.
             neural_process (TFModel | TorchModel):
-                Pre-defined neural process model.
+                Pre-defined neural process PyTorch/TensorFlow model object.
         """
         super().__init__(data_processor, task_loader)
 
@@ -240,7 +263,18 @@ class ConvNP(DeepSensorModel):
         task_loader: TaskLoader,
         model_ID: str,
     ):
-        """Instantiate a model from a folder containing model weights and config."""
+        """Instantiate a model from a folder containing model weights and config.
+
+        Args:
+            data_processor (:class:`~.data.processor.DataProcessor`):
+                dataprocessor object. used for unnormalising model predictions in
+                ``.predict`` method.
+            task_loader (:class:`~.data.loader.TaskLoader`):
+                taskloader object. used for inferring sensible defaults for hyperparameters
+                that are not set by the user.
+            model_ID (str):
+                folder to load the model config and weights from.
+        """
         super().__init__(data_processor, task_loader)
 
         self.load(model_ID)

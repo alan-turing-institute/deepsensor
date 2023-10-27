@@ -138,7 +138,7 @@ def construct_neural_process(
     aux_t_mlp_layers: Optional[Tuple[int, ...]] = None,
     likelihood: Literal["cnp", "gnp", "cnp-spikes-beta"] = "cnp",
     unet_kernels: int = 5,
-    points_per_unit: int = 100,
+    internal_density: int = 100,
     encoder_scales: float = 1 / 100,
     encoder_scales_learnable: bool = False,
     decoder_scale: float = 1 / 100,
@@ -173,8 +173,9 @@ def construct_neural_process(
             equal to the dimensionality of the outputs of the context set.
         dim_aux_t (int, optional):
             Dimensionality of target-specific auxiliary variables.
-        points_per_unit (int, optional):
-            Density of the internal discretisation. Defaults to 100.
+        internal_density (int, optional):
+            Density of the ConvNP's internal grid (in terms of number of points
+            per 1x1 unit square). Defaults to 100.
         likelihood (str, optional):
             Likelihood. Must be one of ``"cnp"`` (equivalently ``"het"``),
             ``"gnp"`` (equivalently ``"lowrank"``), or ``"cnp-spikes-beta"``
@@ -205,13 +206,13 @@ def construct_neural_process(
             context sets embeddings. Set to a tuple equal to the number of
             context sets to use different values for each set. Set to a single
             value to use the same value for all context sets. Defaults to
-            ``1 / points_per_unit``.
+            ``1 / internal_density``.
         encoder_scales_learnable (bool, optional):
             Whether the encoder SetConv length scale(s) are learnable.
             Defaults to ``False``.
         decoder_scale (float, optional):
             Initial value for the length scale of the set convolution in the
-            decoder. Defaults to ``1 / points_per_unit``.
+            decoder. Defaults to ``1 / internal_density``.
         decoder_scale_learnable (bool, optional):
             Whether the decoder SetConv length scale(s) are learnable. Defaults
             to ``False``.
@@ -266,7 +267,7 @@ def construct_neural_process(
         unet_kernels=unet_kernels,
         # Use a stride of 1 for the first layer and 2 for all other layers
         unet_strides=(1, *(2,) * (len(unet_channels) - 1)),
-        points_per_unit=points_per_unit,
+        points_per_unit=internal_density,
         encoder_scales=encoder_scales,
         encoder_scales_learnable=encoder_scales_learnable,
         decoder_scale=decoder_scale,
