@@ -620,10 +620,7 @@ class TaskLoader:
                 if N == 0:
                     # Catch zero-context edge case before interp fails
                     X_c = np.zeros((2, 0), dtype=self.dtype)
-                    if isinstance(da, xr.Dataset):
-                        dim = len(da.data_vars)  # Multiple data variables
-                    elif isinstance(da, xr.DataArray):
-                        dim = 1  # Single data variable
+                    dim = da.shape[0] if da.ndim == 3 else 1
                     Y_c = np.zeros((dim, 0), dtype=self.dtype)
                     return X_c, Y_c
                 x1 = rng.uniform(da.coords["x1"].min(), da.coords["x1"].max(), N)
