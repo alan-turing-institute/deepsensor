@@ -291,7 +291,8 @@ def offgrid_context_observations(
         context_set_idx (int):
             Index of the context set to plot.
         format_str (str, optional):
-            Format string for the context observation values, by default None.
+            Format string for the context observation values. By default
+            ``"{:.2f}"``.
         extent (Tuple[int, int, int, int], optional):
             Extent of the plot, by default None.
         color (str, optional):
@@ -317,7 +318,7 @@ def offgrid_context_observations(
         axes = [axes]
 
     if format_str is None:
-        format_str = ""
+        format_str = "{:.2f}"
 
     var_ID = task_loader.context_var_IDs[
         context_set_idx
