@@ -1,1 +1,1 @@
-# `deepsensor.active_learning`
+# deepsensor.active_learning

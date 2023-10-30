@@ -1,4 +1,4 @@
-``deepsensor.model.convnp``
+deepsensor.model.convnp
 ===========================
 
 .. automodule:: deepsensor.model.convnp
