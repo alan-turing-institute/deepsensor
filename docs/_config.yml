@@ -45,6 +45,9 @@ sphinx:
     - 'sphinx.ext.napoleon'
     - 'sphinx.ext.viewcode'
   config:
+    add_module_names: False
+    autodoc_typehints: "none"
+    autoclass_content: "class"
     intersphinx_mapping:
       python:
         - https://docs.python.org/3
