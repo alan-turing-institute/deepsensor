@@ -25,6 +25,7 @@ chapters:
   sections:
   - file: reference/data/index
     sections:
+    - file: reference/data/sources
     - file: reference/data/loader
     - file: reference/data/processor
     - file: reference/data/task
