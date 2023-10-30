@@ -9,8 +9,12 @@ email: tomandersson3@gmail.com
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
 execute:
-  execute_notebooks: cache
-  timeout: 1200  # 20 mins
+  execute_notebooks: off  # Don't run notebooks during doc compilation
+#  execute_notebooks: force
+#  timeout: 1200  # 20 mins
+#  # Exclude notebooks with model training
+#  exclude_patterns:
+#    - "*quickstart*"
 
 # Define the name of the latex output file for PDF builds
 latex:
@@ -38,8 +42,8 @@ html:
 sphinx:
   extra_extensions:
     - 'sphinx.ext.autodoc'
-    # - 'sphinx.ext.napoleon'
-    # - 'sphinx.ext.viewcode'
+    - 'sphinx.ext.napoleon'
+    - 'sphinx.ext.viewcode'
   config:
     intersphinx_mapping:
       python:
