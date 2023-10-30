@@ -15,7 +15,28 @@ from typing import Union, Optional, List
 
 
 class DataProcessor:
-    """Normalise xarray and pandas data for use in deepsensor models"""
+    """
+    Normalise xarray and pandas data for use in deepsensor models
+
+    Args:
+        folder (str, optional):
+            Folder to load normalisation params from. Defaults to None.
+        x1_name (str, optional):
+            Name of first spatial coord (e.g. "lat"). Defaults to "x1".
+        x2_name (str, optional):
+            Name of second spatial coord (e.g. "lon"). Defaults to "x2".
+        x1_map (tuple, optional):
+            2-tuple of raw x1 coords to linearly map to (0, 1),
+            respectively. Defaults to (0, 1) (i.e. no normalisation).
+        x2_map (tuple, optional):
+            2-tuple of raw x2 coords to linearly map to (0, 1),
+            respectively. Defaults to (0, 1) (i.e. no normalisation).
+        deepcopy (bool, optional):
+            Whether to make a deepcopy of raw data to ensure it is not
+            changed by reference when normalising. Defaults to True.
+        verbose (bool, optional):
+            Whether to print verbose output. Defaults to False.
+    """
 
     config_fname = "data_processor_config.json"
 
@@ -30,28 +51,6 @@ class DataProcessor:
         deepcopy: bool = True,
         verbose: bool = False,
     ):
-        """
-        Initialise a DataProcessor object.
-
-        Args:
-            folder (str, optional):
-                Folder to load normalisation params from. Defaults to None.
-            x1_name (str, optional):
-                Name of first spatial coord (e.g. "lat"). Defaults to "x1".
-            x2_name (str, optional):
-                Name of second spatial coord (e.g. "lon"). Defaults to "x2".
-            x1_map (tuple, optional):
-                2-tuple of raw x1 coords to linearly map to (0, 1),
-                respectively. Defaults to (0, 1) (i.e. no normalisation).
-            x2_map (tuple, optional):
-                2-tuple of raw x2 coords to linearly map to (0, 1),
-                respectively. Defaults to (0, 1) (i.e. no normalisation).
-            deepcopy (bool, optional):
-                Whether to make a deepcopy of raw data to ensure it is not
-                changed by reference when normalising. Defaults to True.
-            verbose (bool, optional):
-                Whether to print verbose output. Defaults to False.
-        """
         if folder is not None:
             fpath = os.path.join(folder, self.config_fname)
             if not os.path.exists(fpath):

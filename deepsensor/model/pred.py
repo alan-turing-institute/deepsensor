@@ -17,6 +17,21 @@ class Prediction(dict):
 
     If using a ``Prediction`` to store model samples, there is only a ``samples`` entry, and the
     xarray/pandas objects will have an additional ``sample`` dimension.
+
+    Args:
+        target_var_IDs (List[str])
+            List of target variable IDs.
+        dates (List[Union[str, pd.Timestamp]])
+            List of dates corresponding to the predictions.
+        X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`)
+            Target locations to predict at. Can be an xarray object containing
+            on-grid locations or a pandas object containing off-grid locations.
+        X_t_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional)
+            2D mask to apply to gridded ``X_t`` (zero/False will be NaNs). Will be interpolated
+            to the same grid as ``X_t``. Default None (no mask).
+        n_samples (int)
+            Number of joint samples to draw from the model. If 0, will not
+            draw samples. Default 0.
     """
 
     def __init__(
@@ -35,24 +50,6 @@ class Prediction(dict):
         coord_names: dict = None,
         n_samples: int = 0,
     ):
-        """
-        Initialise an empty prediction object.
-
-        Args:
-            target_var_IDs (List[str])
-                List of target variable IDs.
-            dates (List[Union[str, pd.Timestamp]])
-                List of dates corresponding to the predictions.
-            X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`)
-                Target locations to predict at. Can be an xarray object containing
-                on-grid locations or a pandas object containing off-grid locations.
-            X_t_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional)
-                2D mask to apply to gridded ``X_t`` (zero/False will be NaNs). Will be interpolated
-                to the same grid as ``X_t``. Default None (no mask).
-            n_samples (int)
-                Number of joint samples to draw from the model. If 0, will not
-                draw samples. Default 0.
-        """
         self.target_var_IDs = target_var_IDs
         self.X_t_mask = X_t_mask
         if coord_names is None:

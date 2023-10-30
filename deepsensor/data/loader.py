@@ -14,6 +14,70 @@ from deepsensor.errors import InvalidSamplingStrategyError
 
 
 class TaskLoader:
+    """
+    Generates :class:`~.data.task.Task` objects for training, testing, and inference with DeepSensor models.
+
+    Provides a suite of sampling methods for generating :class:`~.data.task.Task` objects for different kinds of
+    predictions, such as: spatial interpolation, forecasting, downscaling, or some combination
+    of these.
+
+    The behaviour is the following:
+        - If all data passed as paths, load the data and overwrite the paths with the loaded data
+        - Either all data is passed as paths, or all data is passed as loaded data (else ``ValueError``)
+        - If all data passed as paths, the TaskLoader can be saved with the ``save`` method
+        (using config)
+
+    Args:
+        task_loader_ID:
+            If loading a TaskLoader from a config file, this is the folder the
+            TaskLoader was saved in (using `.save`). If this argument is passed, all other
+            arguments are ignored.
+        context (:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset`, :class:`pandas.DataFrame`]):
+            Context data. Can be a single :class:`xarray.DataArray`,
+            :class:`xarray.Dataset` or :class:`pandas.DataFrame`, or a
+            list/tuple of these.
+        target (:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset`, :class:`pandas.DataFrame`]):
+            Target data. Can be a single :class:`xarray.DataArray`,
+            :class:`xarray.Dataset` or :class:`pandas.DataFrame`, or a
+            list/tuple of these.
+        aux_at_contexts (Tuple[int, :class:`xarray.DataArray` | :class:`xarray.Dataset`], optional):
+            Auxiliary data at context locations. Tuple of two elements, where
+            the first element is the index of the context set for which the
+            auxiliary data will be sampled at, and the second element is the
+            auxiliary data, which can be a single :class:`xarray.DataArray` or
+            :class:`xarray.Dataset`. Default: None.
+        aux_at_targets (:class:`xarray.DataArray` | :class:`xarray.Dataset`, optional):
+            Auxiliary data at target locations. Can be a single
+            :class:`xarray.DataArray` or :class:`xarray.Dataset`. Default:
+            None.
+        links (Tuple[int, int] | List[Tuple[int, int]], optional):
+            Specifies links between context and target data. Each link is a
+            tuple of two integers, where the first integer is the index of the
+            context data and the second integer is the index of the target
+            data. Can be a single tuple in the case of a single link. If None,
+            no links are specified. Default: None.
+        context_delta_t (int | List[int], optional):
+            Time difference between context data and t=0 (task init time). Can
+            be a single int (same for all context data) or a list/tuple of
+            ints. Default is 0.
+        target_delta_t (int | List[int], optional):
+            Time difference between target data and t=0 (task init time). Can
+            be a single int (same for all target data) or a list/tuple of ints.
+            Default is 0.
+        time_freq (str, optional):
+            Time frequency of the data. Default: ``'D'`` (daily).
+        xarray_interp_method (str, optional):
+            Interpolation method to use when interpolating
+            :class:`xarray.DataArray`. Default is ``'linear'``.
+        discrete_xarray_sampling (bool, optional):
+            When randomly sampling xarray variables, whether to sample at
+            discrete points defined at grid cell centres, or at continuous
+            points within the grid. Default is ``False``.
+        dtype (object, optional):
+            Data type of the data. Used to cast the data to the specified
+            dtype. Default: ``'float32'``.
+    """
+
     config_fname = "task_loader_config.json"
 
     def __init__(
@@ -48,64 +112,6 @@ class TaskLoader:
         discrete_xarray_sampling: bool = False,
         dtype: object = "float32",
     ) -> None:
-        """
-        Initialise a TaskLoader object.
-
-        The behaviour is the following:
-        - If all data passed as paths, load the data and overwrite the paths with the loaded data
-        - Either all data is passed as paths, or all data is passed as loaded data (else ValueError)
-        - If all data passed as paths, the TaskLoader can be saved with the `save` method (using config)
-
-        Args:
-            task_loader_ID:
-                If loading a TaskLoader from a config file, this is the folder the
-                TaskLoader was saved in (using `.save`). If this argument is passed, all other
-                arguments are ignored.
-            context (:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset`, :class:`pandas.DataFrame`]):
-                Context data. Can be a single :class:`xarray.DataArray`,
-                :class:`xarray.Dataset` or :class:`pandas.DataFrame`, or a
-                list/tuple of these.
-            target (:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset`, :class:`pandas.DataFrame`]):
-                Target data. Can be a single :class:`xarray.DataArray`,
-                :class:`xarray.Dataset` or :class:`pandas.DataFrame`, or a
-                list/tuple of these.
-            aux_at_contexts (Tuple[int, :class:`xarray.DataArray` | :class:`xarray.Dataset`], optional):
-                Auxiliary data at context locations. Tuple of two elements, where
-                the first element is the index of the context set for which the
-                auxiliary data will be sampled at, and the second element is the
-                auxiliary data, which can be a single :class:`xarray.DataArray` or
-                :class:`xarray.Dataset`. Default: None.
-            aux_at_targets (:class:`xarray.DataArray` | :class:`xarray.Dataset`, optional):
-                Auxiliary data at target locations. Can be a single
-                :class:`xarray.DataArray` or :class:`xarray.Dataset`. Default:
-                None.
-            links (Tuple[int, int] | List[Tuple[int, int]], optional):
-                Specifies links between context and target data. Each link is a
-                tuple of two integers, where the first integer is the index of the
-                context data and the second integer is the index of the target
-                data. Can be a single tuple in the case of a single link. If None,
-                no links are specified. Default: None.
-            context_delta_t (int | List[int], optional):
-                Time difference between context data and t=0 (task init time). Can
-                be a single int (same for all context data) or a list/tuple of
-                ints. Default is 0.
-            target_delta_t (int | List[int], optional):
-                Time difference between target data and t=0 (task init time). Can
-                be a single int (same for all target data) or a list/tuple of ints.
-                Default is 0.
-            time_freq (str, optional):
-                Time frequency of the data. Default: ``'D'`` (daily).
-            xarray_interp_method (str, optional):
-                Interpolation method to use when interpolating
-                :class:`xarray.DataArray`. Default is ``'linear'``.
-            discrete_xarray_sampling (bool, optional):
-                When randomly sampling xarray variables, whether to sample at
-                discrete points defined at grid cell centres, or at continuous
-                points within the grid. Default is ``False``.
-            dtype (object, optional):
-                Data type of the data. Used to cast the data to the specified
-                dtype. Default: ``'float32'``.
-        """
         if task_loader_ID is not None:
             self.task_loader_ID = task_loader_ID
             # Load TaskLoader from config file

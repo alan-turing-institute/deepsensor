@@ -207,6 +207,12 @@ class DeepSensorModel(ProbabilisticModel):
     Implements DeepSensor prediction functionality of a ProbabilisticModel.
     Allows for outputting an xarray object containing on-grid predictions or a
     pandas object containing off-grid predictions.
+
+    Args:
+        data_processor (:class:`~.data.processor.DataProcessor`):
+            DataProcessor object, used to unnormalise predictions.
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            TaskLoader object, used to determine target variables for unnormalising.
     """
 
     def __init__(
@@ -214,16 +220,6 @@ class DeepSensorModel(ProbabilisticModel):
         data_processor: Optional[DataProcessor] = None,
         task_loader: Optional[TaskLoader] = None,
     ):
-        """
-        Initialise DeepSensorModel.
-
-        Args:
-            data_processor (:class:`~.data.processor.DataProcessor`):
-                DataProcessor object, used to unnormalise predictions.
-            task_loader (:class:`~.data.loader.TaskLoader`):
-                TaskLoader object, used to determine target variables for
-                unnormalising.
-        """
         self.task_loader = task_loader
         self.data_processor = data_processor
 
@@ -381,6 +377,10 @@ class DeepSensorModel(ProbabilisticModel):
                 index_names = self.data_processor.raw_spatial_coord_names
             X_t = pd.DataFrame(X_t.T, columns=index_names)
             X_t = X_t.set_index(index_names)
+        elif isinstance(X_t, (xr.DataArray, xr.Dataset)):
+            # Remove time dimension if present
+            if "time" in X_t.coords:
+                X_t = X_t.isel(time=0).drop("time")
 
         if mode == "off-grid" and append_indexes is not None:
             # Check append_indexes are all same length as X_t
