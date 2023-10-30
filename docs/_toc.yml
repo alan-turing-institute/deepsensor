@@ -31,9 +31,10 @@ chapters:
     - file: reference/data/utils
   - file: reference/model/index
     sections:
+    - file: reference/model/model
+    - file: reference/model/pred
     - file: reference/model/convnp
     - file: reference/model/defaults
-    - file: reference/model/model
     - file: reference/model/nps
   - file: reference/train/index
     sections:
