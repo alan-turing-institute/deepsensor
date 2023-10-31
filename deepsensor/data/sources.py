@@ -174,7 +174,7 @@ def get_era5_reanalysis_data(
         See the list of available variable IDs here: https://console.cloud.google.com/storage/browser/gcp-public-data-arco-era5/ar/1959-2022-full_37-1h-0p25deg-chunk-1.zarr-v2?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&prefix=&forceOnObjectsSortingFiltering=false
 
     .. note::
-        The aggregation method for the 6-hourly dataset is "average" (which may not be
+        The aggregation method for when freq = "D" is "mean" (which may not be
         appropriate for accumulated variables like precipitation).
 
     .. warning::
@@ -193,8 +193,8 @@ def get_era5_reanalysis_data(
             Tuple of (start_date, end_date) in format "YYYY-MM-DD".
         freq: str
             Frequency of data to download. Options are: "D" (daily) or "H" (hourly).
-            If "D", the data is downloaded from the 6-hourly dataset and then resampled
-            to daily averages. If "H", the data is downloaded from the hourly dataset.
+            If "D", the data is downloaded from the 1-hourly dataset and then resampled
+            to daily averages. If "H", the 1-hourly data is returned as-is.
         num_processes (Optional[int], optional):
             Number of CPUs to use for downloading years of ERA5 data in parallel.
             Defaults to 75% of all available CPUs or 8 CPUs, whichever is smaller.
@@ -230,8 +230,12 @@ def get_era5_reanalysis_data(
     date_range = pd.to_datetime(date_range)
     start_date = date_range[0]
     # End of month at 1 minute before midnight
-    end_date = start_date + pd.offsets.MonthEnd() + pd.offsets.MonthBegin() - pd.DateOffset(
-        seconds=1)
+    end_date = (
+        start_date
+        + pd.offsets.MonthEnd()
+        + pd.offsets.MonthBegin()
+        - pd.DateOffset(seconds=1)
+    )
     date_ranges = []
     while True:
         if end_date > date_range[1]:
@@ -241,9 +245,15 @@ def get_era5_reanalysis_data(
             stop = False
         date_ranges.append((start_date, end_date))
         # Start of next month
-        start_date = (end_date + pd.offsets.MonthBegin()).replace(hour=0, minute=0, second=0)
-        end_date = start_date + pd.offsets.MonthEnd() + pd.offsets.MonthBegin() - pd.DateOffset(
-            seconds=1)
+        start_date = (end_date + pd.offsets.MonthBegin()).replace(
+            hour=0, minute=0, second=0
+        )
+        end_date = (
+            start_date
+            + pd.offsets.MonthEnd()
+            + pd.offsets.MonthBegin()
+            - pd.DateOffset(seconds=1)
+        )
         if stop:
             break
 
@@ -254,7 +264,9 @@ def get_era5_reanalysis_data(
         num_processes = min(num_processes, len(date_ranges))
         num_processes = min(num_processes, max_num_processes)
         if verbose:
-            print(f"Using {num_processes} CPUs out of {multiprocessing.cpu_count()}... ")
+            print(
+                f"Using {num_processes} CPUs out of {multiprocessing.cpu_count()}... "
+            )
 
     with multiprocessing.Pool(num_processes) as pool:
         partial_era5 = partial(
@@ -288,7 +300,7 @@ def _get_era5_reanalysis_data_parallel(
     freq="D",
     extent="global",
     cache=False,
-    cache_dir=".datacache"
+    cache_dir=".datacache",
 ):
     """
     Helper function for downloading ERA5 data in parallel with caching.
@@ -310,12 +322,11 @@ def _get_era5_reanalysis_data_parallel(
         lon_min, lon_max, lat_min, lat_max = extent
 
         if freq == "D":
-            # Use 6-hourly data for computing average to increase download speed.
-            #   Note: To compute more accurate daily averages using all 24 hourly
-            #   values, use freq="H" and then resample to daily with ``.resample(time="1D").mean()``
-            source = "gs://gcp-public-data-arco-era5/ar/1959-2022-full_37-6h-0p25deg-chunk-1.zarr-v2"
+            # Need to download hourly data and then resample to daily
+            #   See https://github.com/google-research/arco-era5/issues/62
+            source = "gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3/"
         elif freq == "H":
-            source = "gs://gcp-public-data-arco-era5/ar/1959-2022-full_37-1h-0p25deg-chunk-1.zarr-v2"
+            source = "gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3/"
         else:
             raise ValueError(f"Invalid freq: {freq}")
 
@@ -541,3 +552,14 @@ def get_earthenv_auxiliary_data(
         return ds
 
     return _get_auxiliary_data_cached(var_IDs, extent, resolution, verbose)
+
+
+if __name__ == "__main__":
+    # Using the same settings allows use to use pre-downloaded cached data
+    data_range = ("2015-06-25", "2015-06-30")
+    extent = "europe"
+    era5_var_IDs = ["2m_temperature", "10m_u_component_of_wind", "10m_v_component_of_wind"]
+    cache_dir = "tmp/"
+
+    era5_raw_ds = get_era5_reanalysis_data(
+        era5_var_IDs, extent, date_range=data_range, cache=True, cache_dir=cache_dir, verbose=True)
