@@ -55,7 +55,7 @@ def get_ghcnd_station_data(
             See the list of available variable IDs above.
         extent: tuple[float, float, float, float] | str
             Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.
-            Options are: "global", "usa", "uk", "europe".
+            Options are: "global", "north_america", "uk", "europe".
         date_range: tuple[str, str]
             Tuple of (start_date, end_date) in format "YYYY-MM-DD".
         subsample_frac: float
@@ -188,7 +188,7 @@ def get_era5_reanalysis_data(
             See the list of available variable IDs above.
         extent: tuple[float, float, float, float] | str
             Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.
-            Options are: "global", "usa", "uk", "europe".
+            Options are: "global", "north_america", "uk", "europe".
         date_range: tuple
             Tuple of (start_date, end_date) in format "YYYY-MM-DD".
         freq: str
@@ -368,7 +368,7 @@ def get_gldas_land_mask(
     Args:
         extent: tuple[float, float, float, float] | str
             Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.
-            Options are: "global", "usa", "uk", "europe".
+            Options are: "global", "north_america", "uk", "europe".
         verbose: bool
             Whether to print status messages. Default is ``False``.
         cache: bool
@@ -467,7 +467,7 @@ def get_earthenv_auxiliary_data(
             List of variable IDs. Options are: "elevation", "tpi".
         extent: tuple[float, float, float, float] | str
             Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.
-            Options are: "global", "usa", "uk", "europe".
+            Options are: "global", "north_america", "uk", "europe".
         resolution: str
             Resolution of data. Options are: "1KM", "5KM", "10KM", "50KM", "100KM".
         verbose: bool
