@@ -20,4 +20,4 @@ jupyter
 pooch
 gcsfs
 zarr
-git+https://github.com/tom-andersson/get-station-data.git
+git+https://github.com/scott-hosking/get-station-data.git
