@@ -869,7 +869,7 @@ def prediction(
     task_loader: Optional[TaskLoader] = None,
     task: Optional[Task] = None,
     prediction_parameters: Union[List[str], str] = "all",
-    crs = None,
+    crs=None,
     colorbar: bool = True,
     cmap: str = "viridis",
     size: int = 5,
@@ -921,7 +921,9 @@ def prediction(
     x2_name = pred.x2_name
 
     if prediction_parameters == "all":
-        prediction_parameters = {var_ID: [param for param in pred[var_ID]] for var_ID in pred}
+        prediction_parameters = {
+            var_ID: [param for param in pred[var_ID]] for var_ID in pred
+        }
     else:
         prediction_parameters = {var_ID: prediction_parameters for var_ID in pred}
 

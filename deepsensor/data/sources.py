@@ -324,9 +324,13 @@ def _get_era5_reanalysis_data_parallel(
         if freq == "D":
             # Need to download hourly data and then resample to daily
             #   See https://github.com/google-research/arco-era5/issues/62
-            source = "gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3/"
+            source = (
+                "gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3/"
+            )
         elif freq == "H":
-            source = "gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3/"
+            source = (
+                "gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3/"
+            )
         else:
             raise ValueError(f"Invalid freq: {freq}")
 
@@ -558,8 +562,18 @@ if __name__ == "__main__":
     # Using the same settings allows use to use pre-downloaded cached data
     data_range = ("2015-06-25", "2015-06-30")
     extent = "europe"
-    era5_var_IDs = ["2m_temperature", "10m_u_component_of_wind", "10m_v_component_of_wind"]
+    era5_var_IDs = [
+        "2m_temperature",
+        "10m_u_component_of_wind",
+        "10m_v_component_of_wind",
+    ]
     cache_dir = "tmp/"
 
     era5_raw_ds = get_era5_reanalysis_data(
-        era5_var_IDs, extent, date_range=data_range, cache=True, cache_dir=cache_dir, verbose=True)
+        era5_var_IDs,
+        extent,
+        date_range=data_range,
+        cache=True,
+        cache_dir=cache_dir,
+        verbose=True,
+    )
