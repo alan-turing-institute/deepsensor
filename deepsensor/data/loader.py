@@ -853,8 +853,20 @@ class TaskLoader:
             - int: Sample N observations uniformly at random.
             - float: Sample a fraction of observations uniformly at random.
             - :class:`numpy:numpy.ndarray`, shape (2, N): Sample N observations
-            at the given x1, x2 coordinates. Coords are assumed to be
-            unnormalized.
+                at the given x1, x2 coordinates. Coords are assumed to be
+                unnormalised.
+            - "split": Split pandas observations into disjoint context and target sets.
+                `split_frac` determines the fraction of observations
+                to use for the context set. The remaining observations are used
+                for the target set.
+                The context set and target set must be linked through the ``TaskLoader``
+                ``links`` argument. Only valid for pandas data.
+            - "gapfill": Generates a training task for filling NaNs in xarray data.
+                Randomly samples a missing data (NaN) mask from another timestamp and
+                adds it to the context set (i.e. increases the number of NaNs).
+                The target set is then true values of the data at the added missing locations.
+                The context set and target set must be linked through the ``TaskLoader``
+                ``links`` argument. Only valid for xarray data.
 
         Args:
             date (:class:`pandas.Timestamp`):

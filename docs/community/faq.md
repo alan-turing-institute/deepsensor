@@ -14,6 +14,15 @@ If you have a question that is not answered here, please open an issue or submit
 
 ---
 
+**Q: Why doesn't the package name `DeepSensor` mention NPs if it's all about neural processes?**
+
+**Answer:**
+We didn't specify NPs in the title because we want DeepSensor to be extensible to potential
+future models that are not NPs. We also want to keep the name short and easy to remember.
+The name `DeepSensor` is a reference to the fact that the library is about deep learning and sensor data.
+
+---
+
 **Q: How can I contribute?**
 
 **Answer:** There are many ways to contribute, from writing code and fixing bugs to improving documentation or translating content. Check our :doc:`contribution guide <contributing>` for detailed steps.

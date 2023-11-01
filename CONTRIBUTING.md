@@ -1,19 +1,8 @@
-# DeepSensor: Contributing Guidelines
-
-🌞🎉 Welcome to DeepSensor repository! 🎉🌞
+# Contributing to DeepSensor
 
 🌍💫 We're excited that you're here and want to contribute. 💫🌍
 
-Firstly, some background. The DeepSensor Python package streamlines the application of neural
-processes (NPs) to environmental sciences, including sensor placement, forecasting, downscaling, and
-satellite gap-filling. NPs are well-suited to environmental data: they can efficiently fuse
-multi-modal and multi-resolution data, handle missing observations, and capture prediction
-uncertainty. DeepSensor aims to bring this powerful modelling paradigm to practitioners by plugging
-together the `xarray`, `pandas`, and `neuralprocesses` packages with a user-friendly interface that
-enables rapid experimentation. Now, our developers and users form an open-source community whose
-vision is to accelerate the next generation of environmental ML research. We are eager to grow
-DeepSensor from a young Python package into a large and dedicated software community. By joining our
-efforts, you will be helping to push the frontiers of environmental sciences.
+By joining our efforts, you will be helping to push the frontiers of environmental sciences.
 
 We want to ensure that every user and contributor feels welcome, included and supported to
 participate in DeepSensor community. Whether you're a seasoned developer, a machine learning
@@ -24,15 +13,6 @@ perspectives you bring to the project.
 We hope that the information provided in this document will make it as easy as possible for you to
 get involved. If you find that you have questions that are not discussed below, please let us know
 through one of the many ways to [get in touch](#get-in-touch).
-
-## Inclusivity
-
-We aim to make DeepSensor a collaboratively developed project. We, therefore, require that all our
-members and their contributions **adhere to our [Code of Conduct](./CODE_OF_CONDUCT.md)**. Please
-familiarize yourself with our Code of Conduct that lists the expected behaviours.
-
-Every contributor is expected to adhere to our Code of Conduct. It outlines our expectations and
-ensures a safe, respectful environment for everyone.
 
 ## Important Resources
 
@@ -60,7 +40,10 @@ request an invite.
 **Email**: If you prefer a more formal communication method or have specific concerns, please reach
 us at tomandersson3@gmail.com.
 
-If you want to follow along with project developments, you can do so in a number of different ways:
+## How to Contribute
+
+We welcome contributions of all kinds, be it code, documentation, or community engagement. We
+encourage you to read through the following sections to learn more about how you can contribute to
 
 ## How to Submit Changes
 
@@ -80,19 +63,19 @@ Once you have [created a fork of the repository](https://github.com/tom-andersso
 you now have your own unique local copy of DeepSensor. Changes here won't affect anyone else's work,
 so it's a safe space to explore edits to the code!
 
-Make sure to [keep your fork up to date][github-syncfork] with the main repository, otherwise, you
-can end up with lots of dreaded [merge conflicts][github-mergeconflicts].
+Make sure to [keep your fork up to date](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork) with the main repository, otherwise, you
+can end up with lots of dreaded [merge conflicts](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/about-merge-conflicts).
 
-If you prefer working in the
+If you prefer working with GitHub in the
 browser, [these instructions](https://github.com/KirstieJane/STEMMRoleModels/wiki/Syncing-your-fork-to-the-original-repository-via-the-browser)
-describe how to sync your fork to the original repository via GitHub.
+describe how to sync your fork to the original repository.
 
 ### 2. Make Changes
 
 Try to keep the changes focused.
 If you submit a large amount of work all in one go it will be much more work for whoever is
 reviewing your pull request.
-[Help them help you.][jerry-maguire] :wink:
+Help them help you! :wink:
 
 Are you new to Git and GitHub or just want a detailed guide on getting started with version control?
 Check out
@@ -120,7 +103,7 @@ This allows everyone to see what is currently being worked on.
 It also provides you, the contributor, feedback in real-time from both the community and the
 continuous integration as you make commits (which will help prevent stuff from breaking).
 
-GitHub has a [nice introduction][(https://guides.github.com/introduction/flow) to the pull request
+GitHub has a [nice introduction](https://guides.github.com/introduction/flow) to the pull request
 workflow, but please [get in touch](#get-in-touch) if you have any questions :balloon:.
 
 ## First-timers' Corner
@@ -152,9 +135,10 @@ issues, so make sure you follow the correct format and ensure you include:
 
 ## Recognising Contributions
 
-We value and recognize every contribution. All contributors will be acknowledged in our
-CONTRIBUTORS.md file. Notable contributions will also be highlighted in our regular community
-updates.
+We value and recognize every contribution. All contributors will be acknowledged in the
+[contributors](https://github.com/tom-andersson/deepsensor/tree/main#contributors) section of the
+README.
+Notable contributions will also be highlighted in our fortnightly community meetings.
 
 DeepSensor follows the [all-contributors](https://github.com/kentcdodds/all-contributors#emoji-key)
 specifications. The all-contributors bot usage is
@@ -196,8 +180,17 @@ If you're stuck or need assistance:
 - Consider pairing up with a another contributor for guidance. You can always find us in the Slack
   channel and we're happy to chat!
 
-**Once again, thank you for considering contributing to DeepSensor. Together, we're shaping the
-future of environmental machine learning.**
+**Once again, thank you for considering contributing to DeepSensor! We hope you enjoy your
+contributing experience.**
+
+## Inclusivity
+
+We aim to make DeepSensor a collaboratively developed project. We, therefore, require that all our
+members and their contributions **adhere to our [Code of Conduct](./CODE_OF_CONDUCT.md)**. Please
+familiarize yourself with our Code of Conduct that lists the expected behaviours.
+
+Every contributor is expected to adhere to our Code of Conduct. It outlines our expectations and
+ensures a safe, respectful environment for everyone.
 
 ----
 

@@ -50,7 +50,7 @@ Their key features are the ability to:
 - quantify prediction uncertainty
 
 These capabilities make NPs well suited to a range of
-spatio-temporal data fusion tasks such as downscaling, gap-filling, and forecasting.
+spatio-temporal data fusion tasks such as downscaling, sensor placement, gap-filling, and forecasting.
 
 Why DeepSensor?
 -----------
@@ -68,12 +68,20 @@ DeepSensor leverages the [backends](https://github.com/wesselb/lab) package to b
 either [PyTorch](https://pytorch.org/) or [TensorFlow](https://www.tensorflow.org/).
 Simply `import deepsensor.torch` or `import deepsensor.tensorflow` to choose between them!
 
+Documentation
+-----------
+We have an extensive documentation page [here](https://tom-andersson.github.io/deepsensor/),
+containing steps for getting started, a user guide, learning resources, a list of research ideas,
+community information, and more!
+
 Quick start
 ----------
 
 Here we will demonstrate a simple example of training a convolutional conditional neural process
 (ConvCNP) to spatially interpolate random grid cells of NCEP reanalysis air temperature data
-over the US. First, pip install the package. In this case we will use the PyTorch backend.
+over the US. First, pip install the package. In this case we will use the PyTorch backend
+(note: follow the [PyTorch installation instructions](https://pytorch.org/) if you
+want GPU support).
 
 ```bash
 pip install deepsensor
@@ -167,62 +175,6 @@ time       lat lon
 
 [62 rows x 2 columns]
 ```
-
-This quickstart example is also available as
-a [Jupyter notebook](https://github.com/tom-andersson/deepsensor_demos/blob/main/demonstrators/quickstart.ipynb)
-with added visualisations.
-
-Extending DeepSensor with new models
-----------
-To extend DeepSensor with a new model, simply create a new class that inherits
-from `deepsensor.model.DeepSensorModel`
-and implement the low-level prediction methods defined
-in `deepsensor.model.ProbabilisticModel`,
-such as `.mean` and `.stddev`.
-
-```python
-from deepsensor.model import DeepSensorModel
-from deepsensor.data import DataProcessor, TaskLoader, Task
-import numpy as np
-
-class NewModel(DeepSensorModel):
-    """A very naive model that predicts the mean of the first context set with a fixed stddev"""
-    
-    def __init__(self, data_processor: DataProcessor, task_loader: TaskLoader):
-        super().__init__(data_processor, task_loader)
-        
-    def mean(self, task: Task):
-        """Compute mean at target locations"""
-        task = task.flatten_gridded_data()
-        shape = (task["Y_c"][0].shape[0], task["X_t"][0].shape[1])
-        return np.ones(shape) * task["Y_c"][0].mean()
-    
-    def stddev(self, task: Task):
-        """Compute stddev at target locations"""
-        task = task.flatten_gridded_data()
-        shape = (task["Y_c"][0].shape[0], task["X_t"][0].shape[1])
-        return np.ones(shape) * 0.1
-
-model = NewModel(data_processor, task_loader)  # Using the same data as in the quickstart example
-task = task_loader("2014-01-01", 100)
-```
-
-`NewModel` can then be used in the same way as the built-in `ConvNP` model, for example:
-```python
->>> model.predict(task, X_t=ds_raw)
-{'air': <xarray.Dataset>
-Dimensions:  (time: 1, lat: 25, lon: 53)
-Coordinates:
-  * time     (time) datetime64[ns] 2014-01-01
-  * lat      (lat) float32 75.0 72.5 70.0 67.5 65.0 ... 25.0 22.5 20.0 17.5 15.0
-  * lon      (lon) float32 200.0 202.5 205.0 207.5 ... 322.5 325.0 327.5 330.0
-Data variables:
-    mean     (time, lat, lon) float32 273.2 273.2 273.2 ... 273.2 273.2 273.2
-    std      (time, lat, lon) float32 1.632 1.632 1.632 ... 1.632 1.632 1.632}
-```
-
-See [this Jupyter notebook](https://github.com/tom-andersson/deepsensor_gallery/blob/main/demonstrators/extending_models.ipynb)
-for more details.
 
 ## Citing DeepSensor
 

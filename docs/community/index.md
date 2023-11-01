@@ -4,4 +4,4 @@ The DeepSensor community is a group of users and contributors who are interested
 
 If you are interested in joining the community, please join our Slack channel at https://deepsensor.slack.com. You can request an invitation to the Slack channel at https://ai4environment.slack.com/signup. <!-- TODO fix links -->
 
-We welcome contributions from the community. If you are interested in contributing to DeepSensor, please read the :doc:`contributing` guide.
+We welcome contributions from the community. If you are interested in contributing to DeepSensor, please read the [Contributing Guide](./contributing.md).

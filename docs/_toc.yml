@@ -6,18 +6,33 @@ root: index
 chapters:
 - file: getting-started/index
   sections:
+  - file: getting-started/overview
+  - file: getting-started/data_requirements
   - file: getting-started/installation
-  - file: getting-started/extending
-  - file: getting-started/tutorials/index
-    sections:
-    - file: getting-started/tutorials/quickstart
+
+- file: user-guide/index
+  sections:
+    - file: user-guide/deepsensor_design
+    - file: user-guide/data_processor
+    - file: user-guide/task
+    - file: user-guide/task_loader
+    - file: user-guide/convnp
+    - file: user-guide/training
+    - file: user-guide/prediction
+    - file: user-guide/active_learning
+    - file: user-guide/acquisition_functions
+    - file: user-guide/extending
 
 - file: community/index
   sections:
   - file: community/contributing
-  - file: community/code-of-conduct
+  - file: community/code_of_conduct
   - file: community/roadmap
   - file: community/faq
+
+- file: resources
+
+- file: research_ideas
 
 - file: contact
 

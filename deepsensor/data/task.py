@@ -15,16 +15,13 @@ class Task(dict):
 
     Inherits from ``dict`` and adds methods for printing and modifying the
     data.
+
+    Args:
+        task_dict (dict):
+            Dictionary containing the task.
     """
 
     def __init__(self, task_dict: dict) -> None:
-        """
-        Initialise a Task object.
-
-        Args:
-            task_dict (dict):
-                Dictionary containing the task.
-        """
         super().__init__(task_dict)
 
         if "ops" not in self:

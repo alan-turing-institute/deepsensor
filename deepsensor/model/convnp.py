@@ -105,8 +105,10 @@ class ConvNP(DeepSensorModel):
             ``"unet[-res][-sep]"`` or ``"conv[-res][-sep]"``. Defaults to
             ``"unet"``.
         unet_channels (tuple[int], optional):
-            Channels of every layer of the UNet. Defaults to four layers each with
-            64 channels.
+            Number of channels in the downsampling path of the UNet (including the bottleneck).
+            Defaults to four downsampling layers, each with 64 channels. I.e. (64, 64, 64, 64).
+            Note: The downsampling path is followed by an upsampling path with the same number of
+            channels in the reverse order (plus extra channels for the skip connections).
         unet_kernels (int or tuple[int], optional):
             Sizes of the kernels in the UNet. Defaults to 5.
         unet_resize_convs (bool, optional):
@@ -149,15 +151,12 @@ class ConvNP(DeepSensorModel):
     @dispatch
     def __init__(self, *args, **kwargs):
         """
-        Generate a new model using ``nps.construct_convgnp`` with default or
+        Generate a new model using ``construct_neural_process`` with default or
         specified parameters.
 
         This method does not take a ``TaskLoader`` or ``DataProcessor`` object,
         so the model will not auto-unnormalise predictions at inference time.
         """
-        # The parent class will instantiate with `task_loader` and
-        # `data_processor` set to None, so unnormalisation will not be
-        # performed at inference time.
         super().__init__()
 
         self.model, self.config = construct_neural_process(*args, **kwargs)

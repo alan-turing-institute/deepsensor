@@ -1,5 +1,10 @@
 # Code of Conduct
 
+We want DeepSensor to be an open, welcoming, diverse, inclusive, and healthy community.
+We do not tolerate rude or disrespectful behavior toward anyone.
+For most people, this should be enough information to just know what we mean.
+However, for more specific expectations, see our code of conduct below.
+
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in our community a
