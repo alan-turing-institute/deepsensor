@@ -163,11 +163,11 @@ def context_encoding(
     size: int = 3,
     return_axes: bool = False,
 ):
-    """Plot the encoding of a context set in a task.
+    """Plot the ``ConvNP`` SetConv encoding of a context set in a task.
 
     Args:
-        model (:class:`~.model.model.DeepSensorModel`):
-            DeepSensor model.
+        model (:class:`~.model.convnp.ConvNP`):
+            ConvNP model.
         task (:class:`~.data.task.Task`):
             Task containing context set to plot encoding of ...
         task_loader (:class:`~.data.loader.TaskLoader`):
@@ -868,8 +868,12 @@ def prediction(
     data_processor: Optional[DataProcessor] = None,
     task_loader: Optional[TaskLoader] = None,
     task: Optional[Task] = None,
-    crs=None,
+    prediction_parameters: Union[List[str], str] = "all",
+    crs = None,
+    colorbar: bool = True,
+    cmap: str = "viridis",
     size: int = 5,
+    extent: Optional[Union[Tuple[float, float, float, float], str]] = None,
 ) -> plt.Figure:  # pragma: no cover
     """
     Plot the mean and standard deviation of a prediction.
@@ -886,10 +890,21 @@ def prediction(
             used for plotting.
         task (:class:`~.data.task.Task`, optional):
             Task containing the context data to overlay.
+        prediction_parameters (List[str] | str, optional):
+            Prediction parameters to plot, by default "all".
         crs (cartopy CRS, optional):
             Coordinate reference system for the plots, by default None.
+        colorbar (bool, optional):
+            Whether to add a colorbar to the plots, by default True.
+        cmap (str):
+            Colormap to use for the plots. By default "viridis".
         size (int, optional):
             Size of the figure in inches per axis, by default 5.
+        extent: (tuple | str, optional):
+            Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.
+            Options are: "global", "usa", "uk", "europe". Defaults to None (no
+            setting of extent).
+        c
     """
     if pred.mode == "off-grid":
         assert date is None, "Cannot pass a `date` for off-grid predictions"
@@ -905,13 +920,18 @@ def prediction(
     x1_name = pred.x1_name
     x2_name = pred.x2_name
 
-    n_vars = len(pred.target_var_IDs)
-    if pred.mode == "on-grid":
-        n_params = max(len(pred[var]) for var in pred)
-    elif pred.mode == "off-grid":
-        n_params = max(len(pred[var].columns) for var in pred)
+    if prediction_parameters == "all":
+        prediction_parameters = {var_ID: [param for param in pred[var_ID]] for var_ID in pred}
     else:
-        raise ValueError(f"Unknown prediction mode: {pred.mode}")
+        prediction_parameters = {var_ID: prediction_parameters for var_ID in pred}
+
+    n_vars = len(pred.target_var_IDs)
+    n_params = max(len(params) for params in prediction_parameters.values())
+
+    if isinstance(extent, str):
+        extent = extent_str_to_tuple(extent)
+    elif isinstance(extent, tuple):
+        extent = tuple([float(x) for x in extent])
 
     fig, axes = plt.subplots(
         n_vars,
@@ -919,18 +939,19 @@ def prediction(
         figsize=(size * n_params, size * n_vars),
         subplot_kw=dict(projection=crs),
     )
+    axes = np.array(axes)
     if n_vars == 1:
         axes = np.expand_dims(axes, axis=0)
+    if n_params == 1:
+        axes = np.expand_dims(axes, axis=1)
     for row_i, var_ID in enumerate(pred.target_var_IDs):
-        for col_i, param in enumerate(pred[var_ID]):
+        for col_i, param in enumerate(prediction_parameters[var_ID]):
             ax = axes[row_i, col_i]
 
             if pred.mode == "on-grid":
                 if param == "std":
-                    cmap = "Greys"
                     vmin = 0
                 else:
-                    cmap = "viridis"
                     vmin = None
                 pred[var_ID][param].sel(time=date).plot(
                     ax=ax,
@@ -940,19 +961,20 @@ def prediction(
                     center=False,
                 )
                 # ax.set_aspect("auto")
-                im = ax.get_children()[0]
-                # add axis to right
-                cax = fig.add_axes(
-                    [
-                        ax.get_position().x1 + 0.01,
-                        ax.get_position().y0,
-                        0.02,
-                        ax.get_position().height,
-                    ]
-                )
-                cbar = plt.colorbar(
-                    im, cax=cax
-                )  # specify axis for colorbar to occupy with cax
+                if colorbar:
+                    im = ax.get_children()[0]
+                    # add axis to right
+                    cax = fig.add_axes(
+                        [
+                            ax.get_position().x1 + 0.01,
+                            ax.get_position().y0,
+                            0.02,
+                            ax.get_position().height,
+                        ]
+                    )
+                    cbar = plt.colorbar(
+                        im, cax=cax
+                    )  # specify axis for colorbar to occupy with cax
                 if task is not None:
                     offgrid_context(
                         ax,
@@ -999,6 +1021,9 @@ def prediction(
 
             ax.set_title(f"{var_ID} {param}")
 
+            if extent is not None:
+                ax.set_extent(extent, crs=crs)
+
     plt.subplots_adjust(wspace=0.3)
     return fig
 
@@ -1017,7 +1042,7 @@ def extent_str_to_tuple(extent: str) -> Tuple[float, float, float, float]:
     """
     if extent == "global":
         return (-180, 180, -90, 90)
-    elif extent == "usa":
+    elif extent == "north_america":
         return (-160, -60, 15, 75)
     elif extent == "uk":
         return (-12, 3, 50, 60)
@@ -1028,5 +1053,5 @@ def extent_str_to_tuple(extent: str) -> Tuple[float, float, float, float]:
     else:
         raise ValueError(
             f"Region {extent} not in supported list of regions with default bounds. "
-            f"Options are: 'global', 'usa', 'uk', 'europe'."
+            f"Options are: 'global', 'north_america', 'uk', 'europe'."
         )
