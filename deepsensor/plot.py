@@ -9,13 +9,143 @@ import lab as B
 
 from typing import Optional, Union, List, Tuple
 
-from deepsensor.data.task import Task
+from deepsensor.data.task import Task, flatten_X
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
 from deepsensor.model.pred import Prediction
 from pandas import DataFrame
 from matplotlib.colors import Colormap
 from matplotlib.axes import Axes
+
+
+def task(
+    task: Task,
+    task_loader: TaskLoader,
+    figsize=3,
+    markersize=None,
+    equal_aspect=False,
+    plot_ticks=False,
+    extent=None,
+) -> plt.Figure:
+    """
+    Plot the context and target sets of a task.
+
+    Args:
+        task (:class:`~.data.task.Task`):
+            Task to plot.
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            Task loader used to load ``task``, containing variable IDs used for
+            plotting.
+        figsize (int, optional):
+            Figure size in inches, by default 3.
+        markersize (int, optional):
+            Marker size (in units of points squared), by default None. If None,
+            the marker size is set to ``(2**2) * figsize / 3``.
+        equal_aspect (bool, optional):
+            Whether to set the aspect ratio of the plots to be equal, by
+            default False.
+        plot_ticks (bool, optional):
+            Whether to plot the coordinate ticks on the axes, by default False.
+        extent (Tuple[int, int, int, int], optional):
+            Extent of the plot in format (x2_min, x2_max, x1_min, x1_max).
+            Defaults to None (uses the smallest extent that contains all data points
+            across all context and target sets).
+
+    Returns:
+        :class:`matplotlib:matplotlib.figure.Figure`:
+    """
+    if markersize is None:
+        markersize = (2**2) * figsize / 3
+
+    # Scale font size with figure size
+    fontsize = 10 * figsize / 3
+    params = {
+        "axes.labelsize": fontsize,
+        "axes.titlesize": fontsize,
+        "font.size": fontsize,
+        "figure.titlesize": fontsize,
+        "legend.fontsize": fontsize,
+        "xtick.labelsize": fontsize,
+        "ytick.labelsize": fontsize,
+    }
+
+    var_IDs = task_loader.context_var_IDs + task_loader.target_var_IDs
+    Y_c = task["Y_c"]
+    X_c = task["X_c"]
+    if task["Y_t"] is not None:
+        Y_t = task["Y_t"]
+        X_t = task["X_t"]
+    else:
+        Y_t = []
+        X_t = []
+    n_context = len(Y_c)
+    n_target = len(Y_t)
+    if "Y_t_aux" in task and task["Y_t_aux"] is not None:
+        # Assumes only 1 target set
+        X_t = X_t + [task["X_t"][-1]]
+        Y_t = Y_t + [task["Y_t_aux"]]
+        var_IDs = var_IDs + (task_loader.aux_at_target_var_IDs,)
+        ncols = n_context + n_target + 1
+    else:
+        ncols = n_context + n_target
+    nrows = max([Y.shape[0] for Y in Y_c + Y_t])
+
+    if extent is None:
+        x1_min = np.min([np.min(X[0]) for X in X_c + X_t])
+        x1_max = np.max([np.max(X[0]) for X in X_c + X_t])
+        x2_min = np.min([np.min(X[1]) for X in X_c + X_t])
+        x2_max = np.max([np.max(X[1]) for X in X_c + X_t])
+        extent = (x2_min, x2_max, x1_min, x1_max)
+
+    with plt.rc_context(params):
+        fig, axes = plt.subplots(
+            nrows=nrows, ncols=ncols, figsize=(ncols * figsize, nrows * figsize)
+        )
+        if nrows == 1:
+            axes = axes[np.newaxis]
+        if ncols == 1:
+            axes = axes[:, np.newaxis]
+        # j = loop index over columns/context sets
+        # i = loop index over rows/variables within context sets
+        for j, (X, Y) in enumerate(zip(X_c + X_t, Y_c + Y_t)):
+            for i in range(Y.shape[0]):
+                if i == 0:
+                    if j < n_context:
+                        axes[0, j].set_title(f"Context set {j}")
+                    elif j < n_context + n_target:
+                        axes[0, j].set_title(f"Target set {j - n_context}")
+                    else:
+                        axes[0, j].set_title(f"Auxiliary at targets")
+                if isinstance(X, tuple):
+                    X = flatten_X(X)
+                    Y = Y.reshape(Y.shape[0], -1)
+                axes[i, j].scatter(X[1, :], X[0, :], c=Y[i], s=markersize, marker=".")
+                if equal_aspect:
+                    # Don't warp aspect ratio
+                    axes[i, j].set_aspect("equal")
+                if not plot_ticks:
+                    axes[i, j].set_xticks([])
+                    axes[i, j].set_yticks([])
+                axes[i, j].set_ylabel(var_IDs[j][i])
+
+                axes[i, j].set_xlim(extent[0], extent[1])
+                axes[i, j].set_ylim(extent[2], extent[3])
+
+                # Add colorbar with same height as axis
+                divider = make_axes_locatable(axes[i, j])
+                box = axes[i, j].get_position()
+                ratio = 0.3
+                pad = 0.1
+                width = box.width * ratio
+                cax = divider.append_axes("right", size=width, pad=pad)
+                fig.colorbar(axes[i, j].collections[0], cax=cax)
+
+            for i in range(Y.shape[0], nrows):
+                axes[i, j].axis("off")
+
+        plt.tight_layout()
+
+    return fig
 
 
 def context_encoding(
