@@ -852,9 +852,9 @@ class TaskLoader:
             - "all": Sample all observations.
             - int: Sample N observations uniformly at random.
             - float: Sample a fraction of observations uniformly at random.
-            - :class:`numpy:numpy.ndarray`, shape (2, N): Sample N observations
-                at the given x1, x2 coordinates. Coords are assumed to be
-                unnormalised.
+            - :class:`numpy:numpy.ndarray`, shape (2, N):
+                Sample N observations at the given x1, x2 coordinates. Coords are assumed to be
+                normalised.
             - "split": Split pandas observations into disjoint context and target sets.
                 `split_frac` determines the fraction of observations
                 to use for the context set. The remaining observations are used
