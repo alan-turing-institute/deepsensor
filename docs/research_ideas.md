@@ -1,10 +1,11 @@
-# ConvNP research ideas
+# DeepSensor research ideas
 
-Are you at a point of wanting to undertake a research project using DeepSensor?
-Thankfully there are many interesting research directions to explore with ConvNPs.
-Below are just a few research ideas for inspiration.
-These assume you have a working knowledge of the literature and resources in the [](resources.md)
-page.
+Are you interested in using DeepSensor for a research project?
+Thankfully there are many interesting open questions with ConvNPs and their application
+to environmental science.
+Below are a non-exhaustive selection of research ideas that you could explore.
+It would be helpful to ensure you are familiar with the literature and
+resources in the [](resources.md) page before starting.
 
 Why not [join our Slack channel](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform)
 and start a conversation around these ideas or your own? :-)
