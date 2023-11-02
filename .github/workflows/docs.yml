@@ -7,7 +7,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-            - uses: actions/setup-python@v3
+            - uses: actions/setup-python@v2
+              with:
+                python-version: 3.11
             - uses: nikeee/setup-pandoc@v1
             - name: "Upgrade pip"
               run: pip install --upgrade pip
