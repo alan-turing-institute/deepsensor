@@ -97,9 +97,7 @@ class TaskLoader:
             str,
             List[Union[xr.DataArray, xr.Dataset, pd.DataFrame, str]],
         ] = None,
-        aux_at_contexts: Optional[
-            Tuple[int, Union[xr.DataArray, xr.Dataset]]
-        ] = None,
+        aux_at_contexts: Optional[Tuple[int, Union[xr.DataArray, xr.Dataset]]] = None,
         aux_at_targets: Optional[
             Union[
                 xr.DataArray,
@@ -132,9 +130,7 @@ class TaskLoader:
             self.target_delta_t = self.config["target_delta_t"]
             self.time_freq = self.config["time_freq"]
             self.xarray_interp_method = self.config["xarray_interp_method"]
-            self.discrete_xarray_sampling = self.config[
-                "discrete_xarray_sampling"
-            ]
+            self.discrete_xarray_sampling = self.config["discrete_xarray_sampling"]
             self.dtype = self.config["dtype"]
         else:
             self.context = context
@@ -287,9 +283,7 @@ class TaskLoader:
 
         def _load_data(data):
             if isinstance(data, (tuple, list)):
-                data = tuple(
-                    [_load_pandas_or_xarray(data_i) for data_i in data]
-                )
+                data = tuple([_load_pandas_or_xarray(data_i) for data_i in data])
             else:
                 data = _load_pandas_or_xarray(data)
             return data
@@ -350,9 +344,7 @@ class TaskLoader:
                 # Note: Numeric pandas indexes are always cast to float64, so we have to cast
                 #   x1/x2 coord dtypes during task sampling
             else:
-                raise ValueError(
-                    f"Unknown type {type(var)} for context set {var}"
-                )
+                raise ValueError(f"Unknown type {type(var)} for context set {var}")
             return var
 
         if var is None:
@@ -417,28 +409,22 @@ class TaskLoader:
                 elif isinstance(var, xr.DataArray):
                     dim = 1  # Single data variable
                 elif isinstance(var, pd.DataFrame):
-                    dim = len(
-                        var.columns
-                    )  # Assumes all columns are data variables
+                    dim = len(var.columns)  # Assumes all columns are data variables
                 elif isinstance(var, pd.Series):
                     dim = 1  # Single data variable
                 else:
-                    raise ValueError(
-                        f"Unknown type {type(var)} for context set {var}"
-                    )
+                    raise ValueError(f"Unknown type {type(var)} for context set {var}")
                 dims.append(dim)
             return dims
 
         context_dims = count_data_dims_of_tuple_of_sets(self.context)
         target_dims = count_data_dims_of_tuple_of_sets(self.target)
         if self.aux_at_contexts is not None:
-            context_dims += count_data_dims_of_tuple_of_sets(
-                self.aux_at_contexts
-            )
+            context_dims += count_data_dims_of_tuple_of_sets(self.aux_at_contexts)
         if self.aux_at_targets is not None:
-            aux_at_target_dims = count_data_dims_of_tuple_of_sets(
-                self.aux_at_targets
-            )[0]
+            aux_at_target_dims = count_data_dims_of_tuple_of_sets(self.aux_at_targets)[
+                0
+            ]
         else:
             aux_at_target_dims = 0
 
@@ -469,17 +455,13 @@ class TaskLoader:
                 if isinstance(var, xr.DataArray):
                     var_ID = (var.name,)  # Single data variable
                 elif isinstance(var, xr.Dataset):
-                    var_ID = tuple(
-                        var.data_vars.keys()
-                    )  # Multiple data variables
+                    var_ID = tuple(var.data_vars.keys())  # Multiple data variables
                 elif isinstance(var, pd.DataFrame):
                     var_ID = tuple(var.columns)
                 elif isinstance(var, pd.Series):
                     var_ID = (var.name,)
                 else:
-                    raise ValueError(
-                        f"Unknown type {type(var)} for context set {var}"
-                    )
+                    raise ValueError(f"Unknown type {type(var)} for context set {var}")
 
                 if delta_ts is not None:
                     # Add delta_t to the variable ID
@@ -503,17 +485,15 @@ class TaskLoader:
         )
 
         if self.aux_at_contexts is not None:
-            context_var_IDs += infer_var_IDs_of_tuple_of_sets(
-                self.aux_at_contexts
-            )
+            context_var_IDs += infer_var_IDs_of_tuple_of_sets(self.aux_at_contexts)
             context_var_IDs_and_delta_t += infer_var_IDs_of_tuple_of_sets(
                 self.aux_at_contexts, [0]
             )
 
         if self.aux_at_targets is not None:
-            aux_at_target_var_IDs = infer_var_IDs_of_tuple_of_sets(
-                self.aux_at_targets
-            )[0]
+            aux_at_target_var_IDs = infer_var_IDs_of_tuple_of_sets(self.aux_at_targets)[
+                0
+            ]
         else:
             aux_at_target_var_IDs = None
 
@@ -525,9 +505,7 @@ class TaskLoader:
             aux_at_target_var_IDs,
         )
 
-    def _check_links(
-        self, links: Union[Tuple[int, int], List[Tuple[int, int]]]
-    ):
+    def _check_links(self, links: Union[Tuple[int, int], List[Tuple[int, int]]]):
         """
         Check that the context-target links are valid.
 
@@ -553,9 +531,7 @@ class TaskLoader:
         assert isinstance(
             links, list
         ), f"Links must be a list of length-2 tuples, but got {type(links)}"
-        assert (
-            len(links) > 0
-        ), "If links is not None, it must be a non-empty list"
+        assert len(links) > 0, "If links is not None, it must be a non-empty list"
         assert all(
             isinstance(link, tuple) for link in links
         ), f"Links must be a list of tuples, but got {[type(link) for link in links]}"
@@ -653,15 +629,9 @@ class TaskLoader:
                     dim = da.shape[0] if da.ndim == 3 else 1
                     Y_c = np.zeros((dim, 0), dtype=self.dtype)
                     return X_c, Y_c
-                x1 = rng.uniform(
-                    da.coords["x1"].min(), da.coords["x1"].max(), N
-                )
-                x2 = rng.uniform(
-                    da.coords["x2"].min(), da.coords["x2"].max(), N
-                )
-                Y_c = da.sel(
-                    x1=xr.DataArray(x1), x2=xr.DataArray(x2), method="nearest"
-                )
+                x1 = rng.uniform(da.coords["x1"].min(), da.coords["x1"].max(), N)
+                x2 = rng.uniform(da.coords["x2"].min(), da.coords["x2"].max(), N)
+                Y_c = da.sel(x1=xr.DataArray(x1), x2=xr.DataArray(x2), method="nearest")
                 Y_c = np.array(Y_c, dtype=self.dtype)
             X_c = np.array([x1, x2], dtype=self.dtype)
 
@@ -739,11 +709,7 @@ class TaskLoader:
             N = sampling_strat
             rng = np.random.default_rng(seed)
             idx = rng.choice(df.index, N)
-            X_c = (
-                df.loc[idx]
-                .reset_index()[["x1", "x2"]]
-                .values.T.astype(self.dtype)
-            )
+            X_c = df.loc[idx].reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
             Y_c = df.loc[idx].values.T
         elif isinstance(sampling_strat, str) and sampling_strat in [
             "all",
@@ -973,9 +939,7 @@ class TaskLoader:
                 )
 
             for strat in sampling_strat:
-                if not isinstance(
-                    strat, (str, int, np.integer, float, np.ndarray)
-                ):
+                if not isinstance(strat, (str, int, np.integer, float, np.ndarray)):
                     raise InvalidSamplingStrategyError(
                         f"Unknown sampling strategy {strat} of type {type(strat)}"
                     )
@@ -1030,9 +994,7 @@ class TaskLoader:
             elif isinstance(var, (pd.DataFrame, pd.Series)):
                 X, Y = self.sample_df(var, sampling_strat, seed)
             else:
-                raise ValueError(
-                    f"Unknown type {type(var)} for context set " f"{var}"
-                )
+                raise ValueError(f"Unknown type {type(var)} for context set " f"{var}")
             return X, Y
 
         # Check that the sampling strategies are valid
@@ -1040,9 +1002,7 @@ class TaskLoader:
         target_sampling = check_sampling_strat(target_sampling, self.target)
         # Check `split_frac
         if split_frac < 0 or split_frac > 1:
-            raise ValueError(
-                f"split_frac must be between 0 and 1, got {split_frac}"
-            )
+            raise ValueError(f"split_frac must be between 0 and 1, got {split_frac}")
         if self.links is None:
             b1 = any(
                 [
@@ -1135,12 +1095,8 @@ class TaskLoader:
             # Perform the split sampling strategy for linked context and target sets at this point
             # while we have the full context and target data in scope
 
-            context_split_idxs = np.where(
-                np.array(context_sampling) == "split"
-            )[0]
-            target_split_idxs = np.where(np.array(target_sampling) == "split")[
-                0
-            ]
+            context_split_idxs = np.where(np.array(context_sampling) == "split")[0]
+            target_split_idxs = np.where(np.array(target_sampling) == "split")[0]
             assert len(context_split_idxs) == len(target_split_idxs), (
                 f"Number of context sets with 'split' sampling strategy "
                 f"({len(context_split_idxs)}) must match number of target sets "
@@ -1193,12 +1149,8 @@ class TaskLoader:
             # Perform the gapfill sampling strategy for linked context and target sets at this point
             # while we have the full context and target data in scope
 
-            context_gapfill_idxs = np.where(
-                np.array(context_sampling) == "gapfill"
-            )[0]
-            target_gapfill_idxs = np.where(
-                np.array(target_sampling) == "gapfill"
-            )[0]
+            context_gapfill_idxs = np.where(np.array(context_sampling) == "gapfill")[0]
+            target_gapfill_idxs = np.where(np.array(target_sampling) == "gapfill")[0]
             assert len(context_gapfill_idxs) == len(target_gapfill_idxs), (
                 f"Number of context sets with 'gapfill' sampling strategy "
                 f"({len(context_gapfill_idxs)}) must match number of target sets "
@@ -1228,13 +1180,9 @@ class TaskLoader:
                 # Keep trying until we get a target set with at least one target point
                 keep_searching = True
                 while keep_searching:
-                    added_mask_date = rng.choice(
-                        self.context[context_idx].time
-                    )
+                    added_mask_date = rng.choice(self.context[context_idx].time)
                     added_mask = (
-                        self.context[context_idx]
-                        .sel(time=added_mask_date)
-                        .isnull()
+                        self.context[context_idx].sel(time=added_mask_date).isnull()
                     )
                     curr_mask = context_var.isnull()
 
@@ -1245,9 +1193,7 @@ class TaskLoader:
                     #   when we could just slice the target values here
                     target_mask = added_mask & ~curr_mask
                     if isinstance(target_var, xr.Dataset):
-                        keep_searching = np.all(
-                            target_mask.to_array().data == False
-                        )
+                        keep_searching = np.all(target_mask.to_array().data == False)
                     else:
                         keep_searching = np.all(target_mask.data == False)
                     if keep_searching:
@@ -1278,9 +1224,7 @@ class TaskLoader:
 
         if self.aux_at_contexts is not None:
             # Add auxiliary variable sampled at context set as a new context variable
-            X_c_offgrid = [
-                X_c for X_c in task["X_c"] if not isinstance(X_c, tuple)
-            ]
+            X_c_offgrid = [X_c for X_c in task["X_c"] if not isinstance(X_c, tuple)]
             if len(X_c_offgrid) == 0:
                 # No offgrid context sets
                 X_c_offrid_all = np.empty((2, 0), dtype=self.dtype)
@@ -1325,9 +1269,7 @@ class TaskLoader:
                 Task object or list of task objects for each date containing
                 the context and target data.
         """
-        if isinstance(
-            date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)
-        ):
+        if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
             return [self.task_generation(d, *args, **kwargs) for d in date]
         else:
             return self.task_generation(date, *args, **kwargs)

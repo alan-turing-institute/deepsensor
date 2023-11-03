@@ -299,9 +299,7 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
         if isinstance(pred, list):
             pred = pred[self.target_set_idx]
         true = task["Y_t"][self.target_set_idx]
-        return -np.mean(
-            norm.logpdf(true, loc=pred, scale=self.model.stddev(task))
-        )
+        return -np.mean(norm.logpdf(true, loc=pred, scale=self.model.stddev(task)))
 
 
 class OracleJointNLL(AcquisitionFunctionOracle):
@@ -482,8 +480,6 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
 
         # Compute the expected improvement
         Z = (mean - best_target_value) / stddev
-        ei = stddev * (mean - best_target_value) * norm.cdf(
-            Z
-        ) + stddev * norm.pdf(Z)
+        ei = stddev * (mean - best_target_value) * norm.cdf(Z) + stddev * norm.pdf(Z)
 
         return ei
