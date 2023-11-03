@@ -843,61 +843,6 @@ class TaskLoader:
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
-        """
-        Generate a task for a given date.
-
-        There are several sampling strategies available for the context and
-        target data:
-
-            - "all": Sample all observations.
-            - int: Sample N observations uniformly at random.
-            - float: Sample a fraction of observations uniformly at random.
-            - :class:`numpy:numpy.ndarray`, shape (2, N):
-                Sample N observations at the given x1, x2 coordinates. Coords are assumed to be
-                normalised.
-            - "split": Split pandas observations into disjoint context and target sets.
-                `split_frac` determines the fraction of observations
-                to use for the context set. The remaining observations are used
-                for the target set.
-                The context set and target set must be linked through the ``TaskLoader``
-                ``links`` argument. Only valid for pandas data.
-            - "gapfill": Generates a training task for filling NaNs in xarray data.
-                Randomly samples a missing data (NaN) mask from another timestamp and
-                adds it to the context set (i.e. increases the number of NaNs).
-                The target set is then true values of the data at the added missing locations.
-                The context set and target set must be linked through the ``TaskLoader``
-                ``links`` argument. Only valid for xarray data.
-
-        Args:
-            date (:class:`pandas.Timestamp`):
-                Date for which to generate the task.
-            context_sampling (str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`], optional):
-                Sampling strategy for the context data, either a list of
-                sampling strategies for each context set, or a single strategy
-                applied to all context sets. Default is ``"all"``.
-            target_sampling (str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`], optional):
-                Sampling strategy for the target data, either a list of
-                sampling strategies for each target set, or a single strategy
-                applied to all target sets. Default is ``None``, meaning no target
-                data is returned.
-            split_frac (float, optional):
-                The fraction of observations to use for the context set with
-                the "split" sampling strategy for linked context and target set
-                pairs. The remaining observations are used for the target set.
-                Default is 0.5.
-            datewise_deterministic (bool, optional):
-                Whether random sampling is datewise deterministic based on the
-                date. Default is ``False``.
-            seed_override (Optional[int], optional):
-                Override the seed for random sampling. This can be used to use
-                the same random sampling at different ``date``. Default is
-                None.
-
-        Returns:
-            :class:`~.data.task.Task`:
-                Task object containing the context and target data.
-        """
-
         def check_sampling_strat(sampling_strat, set):
             """
             Check the sampling strategy.
@@ -1255,21 +1200,103 @@ class TaskLoader:
 
         return Task(task)
 
-    def __call__(self, date, *args, **kwargs):
+    def __call__(
+        self,
+        date: pd.Timestamp,
+        context_sampling: Union[
+            str,
+            int,
+            float,
+            np.ndarray,
+            List[Union[str, int, float, np.ndarray]],
+        ] = "all",
+        target_sampling: Optional[
+            Union[
+                str,
+                int,
+                float,
+                np.ndarray,
+                List[Union[str, int, float, np.ndarray]],
+            ]
+        ] = None,
+        split_frac: float = 0.5,
+        datewise_deterministic: bool = False,
+        seed_override: Optional[int] = None,
+    ) -> Union[Task, List[Task]]:
         """
-        Generate a task for a given date (or a list of task for an iterable of
-        dates).
+        Generate a task for a given date (or a list of
+        :class:`.data.task.Task` objects for a list of dates).
+
+        There are several sampling strategies available for the context and
+        target data:
+
+            - "all": Sample all observations.
+            - int: Sample N observations uniformly at random.
+            - float: Sample a fraction of observations uniformly at random.
+            - :class:`numpy:numpy.ndarray`, shape (2, N):
+                Sample N observations at the given x1, x2 coordinates. Coords are assumed to be
+                normalised.
+            - "split": Split pandas observations into disjoint context and target sets.
+                `split_frac` determines the fraction of observations
+                to use for the context set. The remaining observations are used
+                for the target set.
+                The context set and target set must be linked through the ``TaskLoader``
+                ``links`` argument. Only valid for pandas data.
+            - "gapfill": Generates a training task for filling NaNs in xarray data.
+                Randomly samples a missing data (NaN) mask from another timestamp and
+                adds it to the context set (i.e. increases the number of NaNs).
+                The target set is then true values of the data at the added missing locations.
+                The context set and target set must be linked through the ``TaskLoader``
+                ``links`` argument. Only valid for xarray data.
 
         Args:
-            date:
+            date (:class:`pandas.Timestamp`):
                 Date for which to generate the task.
+            context_sampling (str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`], optional):
+                Sampling strategy for the context data, either a list of
+                sampling strategies for each context set, or a single strategy
+                applied to all context sets. Default is ``"all"``.
+            target_sampling (str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`], optional):
+                Sampling strategy for the target data, either a list of
+                sampling strategies for each target set, or a single strategy
+                applied to all target sets. Default is ``None``, meaning no target
+                data is returned.
+            split_frac (float, optional):
+                The fraction of observations to use for the context set with
+                the "split" sampling strategy for linked context and target set
+                pairs. The remaining observations are used for the target set.
+                Default is 0.5.
+            datewise_deterministic (bool, optional):
+                Whether random sampling is datewise deterministic based on the
+                date. Default is ``False``.
+            seed_override (Optional[int], optional):
+                Override the seed for random sampling. This can be used to use
+                the same random sampling at different ``date``. Default is
+                None.
 
         Returns:
-            Task | List[Task]:
+            :class:`~.data.task.Task` | List[:class:`~.data.task.Task`]:
                 Task object or list of task objects for each date containing
                 the context and target data.
         """
         if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
-            return [self.task_generation(d, *args, **kwargs) for d in date]
+            return [
+                self.task_generation(
+                    d,
+                    context_sampling,
+                    target_sampling,
+                    split_frac,
+                    datewise_deterministic,
+                    seed_override,
+                )
+                for d in date
+            ]
         else:
-            return self.task_generation(date, *args, **kwargs)
+            return self.task_generation(
+                date,
+                context_sampling,
+                target_sampling,
+                split_frac,
+                datewise_deterministic,
+                seed_override,
+            )

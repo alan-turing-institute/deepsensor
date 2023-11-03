@@ -62,17 +62,17 @@ and [pandas](https://pandas.pydata.org) world from end-to-end.
 DeepSensor also provides convenient plotting tools and active learning functionality for finding
 optimal [sensor placements](https://doi.org/10.1017/eds.2023.22).
 
-Deep learning library agnosticism
------------
-DeepSensor leverages the [backends](https://github.com/wesselb/lab) package to be compatible with
-either [PyTorch](https://pytorch.org/) or [TensorFlow](https://www.tensorflow.org/).
-Simply `import deepsensor.torch` or `import deepsensor.tensorflow` to choose between them!
-
 Documentation
 -----------
 We have an extensive documentation page [here](https://tom-andersson.github.io/deepsensor/),
 containing steps for getting started, a user guide, learning resources, a list of research ideas,
 community information, and more!
+
+Deep learning library agnosticism
+-----------
+DeepSensor leverages the [backends](https://github.com/wesselb/lab) package to be compatible with
+either [PyTorch](https://pytorch.org/) or [TensorFlow](https://www.tensorflow.org/).
+Simply `import deepsensor.torch` or `import deepsensor.tensorflow` to choose between them!
 
 Quick start
 ----------
@@ -114,11 +114,12 @@ task_loader = TaskLoader(context=ds, target=ds)
 # Set up model
 model = ConvNP(data_processor, task_loader)
 
-# Generate training tasks with up to 10% of grid cells passed as context and all grid cells
-# passed as targets
+# Generate training tasks with up 100 grid cells as context and all grid cells
+#   as targets
 train_tasks = []
 for date in pd.date_range("2013-01-01", "2014-11-30")[::7]:
-    task = task_loader(date, context_sampling=np.random.uniform(0.0, 0.1), target_sampling="all")
+    N_context = np.random.randint(0, 100)
+    task = task_loader(date, context_sampling=N_context, target_sampling="all")
     train_tasks.append(task)
 
 # Train model
@@ -126,8 +127,8 @@ trainer = Trainer(model, lr=5e-5)
 for epoch in tqdm(range(10)):
     batch_losses = trainer(train_tasks)
 
-# Predict on new task with 10% of context data and a dense grid of target points
-test_task = task_loader("2014-12-31", 0.1)
+# Predict on new task with 50 context points and a dense grid of target points
+test_task = task_loader("2014-12-31", context_sampling=50)
 pred = model.predict(test_task, X_t=ds_raw)
 ```
 
@@ -176,13 +177,18 @@ time       lat lon
 [62 rows x 2 columns]
 ```
 
+DeepSensor offers far more functionality than this simple example demonstrates.
+For more information on the package's capabilities, check out the
+[User Guide](https://tom-andersson.github.io/deepsensor/user-guide/index.html)
+in the documentation.
+
 ## Citing DeepSensor
 
 If you use DeepSensor in your research, please consider citing this repository.
 You can generate a BiBTeX entry by clicking the 'Cite this repository' button
 on the top right of this page.
 
-## Acknowledgements
+## Funding
 
 DeepSensor is funded by [The Alan Turing Institute](https://www.turing.ac.uk/) under the [Environmental monitoring: blending satellite and surface data](https://www.turing.ac.uk/research/research-projects/environmental-monitoring-blending-satellite-and-surface-data) and [Scivision](https://www.turing.ac.uk/research/research-projects/scivision) projects, led by PI [Dr Scott Hosking](https://www.turing.ac.uk/people/researchers/scott-hosking).
 

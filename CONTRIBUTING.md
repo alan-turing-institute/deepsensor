@@ -42,10 +42,37 @@ us at tomandersson3@gmail.com.
 
 ## How to Contribute
 
-We welcome contributions of all kinds, be it code, documentation, or community engagement. We
+We welcome contributions of all kinds, be it code, documentation, raising issues, or community engagement. We
 encourage you to read through the following sections to learn more about how you can contribute to
 
-## How to Submit Changes
+### Contributing to the documentation
+
+We use the Jupyter Book framework to build our documentation in the `docs/` folder.
+The documentation is written in
+Markdown and Jupyter Notebooks. The documentation is hosted on GitHub Pages and is automatically
+built and deployed using GitHub Actions after every commit to the `main` branch.
+
+DeepSensor requires slightly unique documentation, because demonstrating the package requires
+both data and trained models.
+This makes it compute- and data-hungry to run some of the notebooks, and they cannot
+run on GitHub Actions.
+Therefore, all the notebooks are run locally - the code cell outputs are saved
+Please be careful about not clearing the outputs of the notebooks if you don't intend to.
+If DeepSensor is updated, some of the notebooks may
+become out of date and will need to be re-run.
+
+Guide to regenerating the notebooks:
+* Install `cartopy` using `conda install -c conda-forge cartopy`
+* `pip install -r requirements/requirements.docs.txt`
+* Run the notebooks locally, noting that some of them may require a GPU and some
+assume that previous notebooks have been run.
+
+Some relevant links for Juptyer Book and MyST:
+* https://jupyterbook.org/en/stable/intro.html
+* https://jupyterbook.org/en/stable/content/myst.html
+* https://jupyterbook.org/en/stable/reference/cheatsheet.html
+
+### How to Submit Changes
 
 We follow the same instructions for submitting changes to the project as those developed
 by [The Turing Way](https://github.com/the-turing-way/the-turing-way/blob/main/CONTRIBUTING.md#making-a-change-with-a-pull-request).
@@ -57,7 +84,7 @@ In short, there are five steps to adding changes to this repository:
 3. **Commit and Push**: Use clear commit messages.
 4. **Open a Pull Request**: Ensure you describe the changes made and any additional details.
 
-### 1. Fork the Repository
+#### 1. Fork the Repository
 
 Once you have [created a fork of the repository](https://github.com/tom-andersson/deepsensor/fork),
 you now have your own unique local copy of DeepSensor. Changes here won't affect anyone else's work,
@@ -70,7 +97,7 @@ If you prefer working with GitHub in the
 browser, [these instructions](https://github.com/KirstieJane/STEMMRoleModels/wiki/Syncing-your-fork-to-the-original-repository-via-the-browser)
 describe how to sync your fork to the original repository.
 
-### 2. Make Changes
+#### 2. Make Changes
 
 Try to keep the changes focused.
 If you submit a large amount of work all in one go it will be much more work for whoever is
@@ -82,7 +109,7 @@ Check out
 our [Version Control chapter](https://the-turing-way.netlify.com/version_control/version_control.html)
 in _The Turing Way_ Book!
 
-### 3. Commit and Push
+#### 3. Commit and Push
 
 While making your changes, commit often and write good, detailed commit messages.
 [This blog](https://chris.beams.io/posts/git-commit/) explains how to write a good Git commit
@@ -96,7 +123,7 @@ That is, please do not use the [rebase](https://help.github.com/en/articles/abou
 command to edit previous commit messages, combine multiple commits into one, or delete or revert
 commits that are no longer necessary.
 
-### 4. Open a Pull Request
+#### 4. Open a Pull Request
 
 We encourage you to open a pull request as early in your contributing process as possible.
 This allows everyone to see what is currently being worked on.

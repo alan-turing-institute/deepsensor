@@ -28,7 +28,48 @@ from typing import Union, List, Tuple, Optional
 
 
 class GreedyAlgorithm:
-    """Greedy algorithm for active learning"""
+    """Greedy algorithm for active learning
+
+    Args:
+        model (:class:`~.model.model.DeepSensorModel`):
+            Trained model to use for proposing new context points.
+        X_s (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index`):
+            Search coordinates.
+        X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+            Target coordinates.
+        X_s_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):
+            Mask for search coordinates. If provided, only points where mask
+            is True will be considered. Defaults to None.
+        X_t_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):
+            [Description of the X_t_mask parameter.], defaults to None.
+        N_new_context (int, optional):
+            [Description of the N_new_context parameter.], defaults to 1.
+        X_normalised (bool, optional):
+            [Description of the X_normalised parameter.], defaults to False.
+        model_infill_method (str, optional):
+            [Description of the model_infill_method parameter.], defaults to "mean".
+        query_infill (:class:`xarray.DataArray`, optional):
+            [Description of the query_infill parameter.], defaults to None.
+        proposed_infill (:class:`xarray.DataArray`, optional):
+            [Description of the proposed_infill parameter.], defaults to None.
+        context_set_idx (int, optional):
+            [Description of the context_set_idx parameter.], defaults to 0.
+        target_set_idx (int, optional):
+            [Description of the target_set_idx parameter.], defaults to 0.
+        progress_bar (bool, optional):
+            [Description of the progress_bar parameter.], defaults to False.
+        min_or_max (str, optional):
+            [Description of the min_or_max parameter.], defaults to "min".
+        task_loader (:class:`~.data.loader.TaskLoader`, optional):
+            [Description of the task_loader parameter.], defaults to None.
+        verbose (bool, optional):
+            [Description of the verbose parameter.], defaults to False.
+
+    Raises:
+        ValueError:
+            If the ``model`` passed does not inherit from
+            :class:`~.model.model.DeepSensorModel`.
+    """
 
     def __init__(
         self,
@@ -50,49 +91,6 @@ class GreedyAlgorithm:
         ] = None,  # OPTIONAL for oracle acquisition functions only
         verbose: bool = False,
     ):
-        """
-        ...
-
-        Args:
-            model (:class:`~.model.model.DeepSensorModel`):
-                Trained model to use for proposing new context points.
-            X_s (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index`):
-                Search coordinates.
-            X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
-                Target coordinates.
-            X_s_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):
-                Mask for search coordinates. If provided, only points where mask
-                is True will be considered. Defaults to None.
-            X_t_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):
-                [Description of the X_t_mask parameter.], defaults to None.
-            N_new_context (int, optional):
-                [Description of the N_new_context parameter.], defaults to 1.
-            X_normalised (bool, optional):
-                [Description of the X_normalised parameter.], defaults to False.
-            model_infill_method (str, optional):
-                [Description of the model_infill_method parameter.], defaults to "mean".
-            query_infill (:class:`xarray.DataArray`, optional):
-                [Description of the query_infill parameter.], defaults to None.
-            proposed_infill (:class:`xarray.DataArray`, optional):
-                [Description of the proposed_infill parameter.], defaults to None.
-            context_set_idx (int, optional):
-                [Description of the context_set_idx parameter.], defaults to 0.
-            target_set_idx (int, optional):
-                [Description of the target_set_idx parameter.], defaults to 0.
-            progress_bar (bool, optional):
-                [Description of the progress_bar parameter.], defaults to False.
-            min_or_max (str, optional):
-                [Description of the min_or_max parameter.], defaults to "min".
-            task_loader (:class:`~.data.loader.TaskLoader`, optional):
-                [Description of the task_loader parameter.], defaults to None.
-            verbose (bool, optional):
-                [Description of the verbose parameter.], defaults to False.
-
-        Raises:
-            ValueError:
-                If the ``model`` passed does not inherit from
-                :class:`~.model.model.DeepSensorModel`.
-        """
         if not isinstance(model, DeepSensorModel):
             raise ValueError(
                 "`model` must inherit from DeepSensorModel, but parent "

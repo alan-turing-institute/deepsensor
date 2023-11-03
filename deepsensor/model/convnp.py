@@ -65,10 +65,10 @@ class ConvNP(DeepSensorModel):
 
     Args:
         data_processor (:class:`~.data.processor.DataProcessor`, optional):
-            dataprocessor object. used for unnormalising model predictions in
+            Used for unnormalising model predictions in
             ``.predict`` method.
         task_loader (:class:`~.data.loader.TaskLoader`, optional):
-            taskloader object. used for inferring sensible defaults for hyperparameters
+            Used for inferring sensible defaults for hyperparameters
             that are not set by the user.
         model_ID (str, optional):
             Folder to load the model config and weights from. This argument can only
