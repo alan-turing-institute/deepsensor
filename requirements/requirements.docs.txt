@@ -1,2 +1,2 @@
-jupyter-book==15
+jupyter-book==15.*
 sphinx>=5.0.3,<6
