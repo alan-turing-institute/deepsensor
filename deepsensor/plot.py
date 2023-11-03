@@ -99,7 +99,9 @@ def task(
 
     with plt.rc_context(params):
         fig, axes = plt.subplots(
-            nrows=nrows, ncols=ncols, figsize=(ncols * figsize, nrows * figsize)
+            nrows=nrows,
+            ncols=ncols,
+            figsize=(ncols * figsize, nrows * figsize),
         )
         if nrows == 1:
             axes = axes[np.newaxis]
@@ -119,7 +121,9 @@ def task(
                 if isinstance(X, tuple):
                     X = flatten_X(X)
                     Y = Y.reshape(Y.shape[0], -1)
-                axes[i, j].scatter(X[1, :], X[0, :], c=Y[i], s=markersize, marker=".")
+                axes[i, j].scatter(
+                    X[1, :], X[0, :], c=Y[i], s=markersize, marker="."
+                )
                 if equal_aspect:
                     # Don't warp aspect ratio
                     axes[i, j].set_aspect("equal")
@@ -216,7 +220,8 @@ def context_encoding(
         context_set_idxs = np.array(range(len(task_loader.context_dims)))
 
     context_var_ID_set_sizes = [
-        ndim + 1 for ndim in np.array(task_loader.context_dims)[context_set_idxs]
+        ndim + 1
+        for ndim in np.array(task_loader.context_dims)[context_set_idxs]
     ]  # Add density channel to each set size
     max_context_set_size = max(context_var_ID_set_sizes)
     ncols = max_context_set_size
@@ -238,7 +243,9 @@ def context_encoding(
         else:
             var_IDs = task_loader.context_var_IDs[ctx_i]
 
-        ncols_row_i = task_loader.context_dims[ctx_i] + 1  # Add density channel
+        ncols_row_i = (
+            task_loader.context_dims[ctx_i] + 1
+        )  # Add density channel
         for col_i in range(ncols_row_i):
             ax = axes[row_i, col_i]
             # Need `origin="lower"` because encoding has `x1` increasing from top to bottom,
@@ -303,13 +310,14 @@ def offgrid_context(
     colors: Optional[str] = None,
     **scatter_kwargs,
 ) -> None:
-    """Plot the off-grid context points on ``axes``.
+    """
+    Plot the off-grid context points on ``axes``.
 
     Uses a provided :class:`~.data.processor.DataProcessor` to unnormalise the
     context coordinates if provided.
 
     Args:
-        axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]:
+        axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]):
             Axes to plot on.
         task (:class:`~.data.task.Task`):
             Task containing the context set to plot.
@@ -334,7 +342,7 @@ def offgrid_context(
             Additional keyword arguments to pass to the scatter plot.
 
     Returns:
-        None.
+        None
     """
     if markers is None:
         # all matplotlib markers
@@ -379,7 +387,9 @@ def offgrid_context(
         elif plot_target and set_i >= len(task["X_c"]):
             label += f"Target set {set_i - len(task['X_c'])} "
             if task_loader is not None:
-                label += f"({task_loader.target_var_IDs[set_i - len(task['X_c'])]})"
+                label += (
+                    f"({task_loader.target_var_IDs[set_i - len(task['X_c'])]})"
+                )
 
         for ax in axes:
             ax.scatter(
@@ -472,7 +482,8 @@ def offgrid_context_observations(
     for x_c, y_c in zip(X_c.T, Y_c):
         if extent is not None:
             if not (
-                extent[0] <= x_c[0] <= extent[1] and extent[2] <= x_c[1] <= extent[3]
+                extent[0] <= x_c[0] <= extent[1]
+                and extent[2] <= x_c[1] <= extent[3]
             ):
                 continue
         for ax in axes:
@@ -646,7 +657,9 @@ def feature_maps(
     for layer_i, feature_map in enumerate(feature_maps):
         n_features = feature_map.shape[1]
         n_features_to_plot = min(n_features_per_layer, n_features)
-        feature_idxs = rng.choice(n_features, n_features_to_plot, replace=False)
+        feature_idxs = rng.choice(
+            n_features, n_features_to_plot, replace=False
+        )
 
         fig, axes = plt.subplots(
             nrows=1,
@@ -712,8 +725,12 @@ def placements(
         :class:`matplotlib:matplotlib.figure.Figure`
             A figure containing the placement plots.
     """
-    fig, ax = plt.subplots(subplot_kw={"projection": crs}, figsize=(figsize, figsize))
-    ax.scatter(*X_new_df.values.T[::-1], c="r", linewidths=0.5, **scatter_kwargs)
+    fig, ax = plt.subplots(
+        subplot_kw={"projection": crs}, figsize=(figsize, figsize)
+    )
+    ax.scatter(
+        *X_new_df.values.T[::-1], c="r", linewidths=0.5, **scatter_kwargs
+    )
     offgrid_context(ax, task, data_processor, linewidths=0.5, **scatter_kwargs)
 
     ax.coastlines()
@@ -779,7 +796,9 @@ def acquisition_fn(
     """
     # Remove spatial dims using data_processor.raw_spatial_coords_names
     plot_dims = [col_dim, *data_processor.raw_spatial_coord_names]
-    non_plot_dims = [dim for dim in acquisition_fn_ds.dims if dim not in plot_dims]
+    non_plot_dims = [
+        dim for dim in acquisition_fn_ds.dims if dim not in plot_dims
+    ]
     valid_avg_dims = ["time", "sample"]
     for dim in non_plot_dims:
         if dim not in valid_avg_dims:
@@ -791,7 +810,8 @@ def acquisition_fn(
     if len(non_plot_dims) > 0:
         # Average over non-plot dims
         print(
-            "Averaging acquisition function over dims for plotting: " f"{non_plot_dims}"
+            "Averaging acquisition function over dims for plotting: "
+            f"{non_plot_dims}"
         )
         acquisition_fn_ds = acquisition_fn_ds.mean(dim=non_plot_dims)
 
@@ -834,7 +854,9 @@ def acquisition_fn(
         if add_colorbar and final_axis:
             im = ax.get_children()[0]
             label = acquisition_fn_ds.name
-            cax = plt.axes([0.93, 0.035, 0.02, 0.91])  # add a small custom axis
+            cax = plt.axes(
+                [0.93, 0.035, 0.02, 0.91]
+            )  # add a small custom axis
             cbar = plt.colorbar(
                 im, cax=cax, label=label
             )  # specify axis for colorbar to occupy with cax
@@ -925,7 +947,9 @@ def prediction(
             var_ID: [param for param in pred[var_ID]] for var_ID in pred
         }
     else:
-        prediction_parameters = {var_ID: prediction_parameters for var_ID in pred}
+        prediction_parameters = {
+            var_ID: prediction_parameters for var_ID in pred
+        }
 
     n_vars = len(pred.target_var_IDs)
     n_params = max(len(params) for params in prediction_parameters.values())
@@ -1002,7 +1026,9 @@ def prediction(
                 hue = (
                     pred[var_ID]
                     .reset_index()[[x1_name, x2_name]]
-                    .apply(lambda row: f"({row[x1_name]}, {row[x2_name]})", axis=1)
+                    .apply(
+                        lambda row: f"({row[x1_name]}, {row[x2_name]})", axis=1
+                    )
                 )
                 hue.name = f"{x1_name}, {x2_name}"
 
@@ -1018,7 +1044,9 @@ def prediction(
 
                 # rotate date times
                 ax.set_xticklabels(
-                    ax.get_xticklabels(), rotation=45, horizontalalignment="right"
+                    ax.get_xticklabels(),
+                    rotation=45,
+                    horizontalalignment="right",
                 )
 
             ax.set_title(f"{var_ID} {param}")

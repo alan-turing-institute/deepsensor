@@ -31,7 +31,7 @@ class AcquisitionFunction:
             context_set_idx (int):
                 Index of context set to add new observations to when computing
                 the acquisition function.
-          target_set_idx (int):
+            target_set_idx (int):
                 Index of target set to compute acquisition function for.
         """
         self.model = model
@@ -299,7 +299,9 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
         if isinstance(pred, list):
             pred = pred[self.target_set_idx]
         true = task["Y_t"][self.target_set_idx]
-        return -np.mean(norm.logpdf(true, loc=pred, scale=self.model.stddev(task)))
+        return -np.mean(
+            norm.logpdf(true, loc=pred, scale=self.model.stddev(task))
+        )
 
 
 class OracleJointNLL(AcquisitionFunctionOracle):
@@ -480,6 +482,8 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
 
         # Compute the expected improvement
         Z = (mean - best_target_value) / stddev
-        ei = stddev * (mean - best_target_value) * norm.cdf(Z) + stddev * norm.pdf(Z)
+        ei = stddev * (mean - best_target_value) * norm.cdf(
+            Z
+        ) + stddev * norm.pdf(Z)
 
         return ei
