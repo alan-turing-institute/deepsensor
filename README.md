@@ -184,7 +184,7 @@ on the top right of this page.
 
 ## Acknowledgements
 
-DeepSensor is funded by [The Alan Turing Institute](https://www.turing.ac.uk/).
+DeepSensor is funded by [The Alan Turing Institute](https://www.turing.ac.uk/) under the [Environmental monitoring: blending satellite and surface data](https://www.turing.ac.uk/research/research-projects/environmental-monitoring-blending-satellite-and-surface-data) and [Scivision](https://www.turing.ac.uk/research/research-projects/scivision) projects, led by PI [Dr Scott Hosking](https://www.turing.ac.uk/people/researchers/scott-hosking).
 
 ## Contributors
 
