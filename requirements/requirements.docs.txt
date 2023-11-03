@@ -1,2 +1,2 @@
 jupyter-book
-sphinx==6
+sphinx>=5.0.3
