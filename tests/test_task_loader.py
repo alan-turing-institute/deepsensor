@@ -1,5 +1,7 @@
 import itertools
 
+from typing import Sequence
+
 from parameterized import parameterized
 
 import xarray as xr

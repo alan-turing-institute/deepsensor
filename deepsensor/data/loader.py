@@ -4,6 +4,7 @@ import os
 import json
 import copy
 import random
+import itertools
 
 import numpy as np
 import xarray as xr
@@ -190,6 +191,8 @@ class TaskLoader:
             self.target_var_IDs_and_delta_t,
             self.aux_at_target_var_IDs,
         ) = self.infer_context_and_target_var_IDs()
+
+        self.coord_bounds = self._compute_global_coordinate_bounds()
 
     def _set_config(self):
         """Instantiate a config dictionary for the TaskLoader object"""
@@ -780,6 +783,7 @@ class TaskLoader:
             xt2 = xt2.ravel()
         else:
             xt1, xt2 = xr.DataArray(X_t[0]), xr.DataArray(X_t[1])
+
         Y_t_aux = offgrid_aux.sel(x1=xt1, x2=xt2, method="nearest")
         if isinstance(Y_t_aux, xr.Dataset):
             Y_t_aux = Y_t_aux.to_array()
@@ -790,57 +794,76 @@ class TaskLoader:
             # Reshape to (variable, *spatial_dims)
             Y_t_aux = Y_t_aux.reshape(1, *Y_t_aux.shape)
         return Y_t_aux
-    
-    def sample_patch_size_extent(self) -> Sequence[float]:
-        """Sample patch size.
 
-        :return sequence of patch spatial extent as [lat_min, lat_max, lon_min, lon_max]
+    def _compute_global_coordinate_bounds(self) -> List[float]:
         """
-        # assumption of normalized spatial coordinates between 0 and 1
+        Compute global coordinate bounds in order to sample spatial bounds if desired.
 
-        lat_extend, lon_extend = self.patch_size
+        Returns
+        -------
+        bbox: List[float]
+            sequence of global spatial extent as [x1_min, x1_max, x2_min, x2_max]
+        """
+        x1_min, x1_max, x2_min, x2_max = np.PINF, np.NINF, np.PINF, np.NINF
 
-        lat_side = lat_extend / 2
-        lon_side = lon_extend / 2
+        for var in itertools.chain(self.context, self.target):
+            if isinstance(var, (xr.Dataset, xr.DataArray)):
+                var_x1_min = var.x1.min().item()
+                var_x1_max = var.x1.max().item()
+                var_x2_min = var.x2.min().item()
+                var_x2_max = var.x2.max().item()
+            elif isinstance(var, (pd.DataFrame, pd.Series)):
+                var_x1_min = var.index.get_level_values("x1").min()
+                var_x1_max = var.index.get_level_values("x1").max()
+                var_x2_min = var.index.get_level_values("x2").min()
+                var_x2_max = var.index.get_level_values("x2").max()
 
-        # sample a point that satisfies the boundary and target conditions
-        continue_looking = True
-        while continue_looking:
-            lat_point = random.uniform(lat_side, 1 - lat_side)
-            lon_point = random.uniform(lon_side, 1 - lon_side)
+            if var_x1_min < x1_min:
+                x1_min = var_x1_min
 
-            # bbox of lat_min, lat_max, lon_min, lon_max
-            bbox = [lat_point - lat_side, lat_point + lat_side, lon_point - lon_side, lon_point + lon_side]
+            if var_x1_max > x1_max:
+                x1_max = var_x1_max
 
-            x1_slice = slice(bbox[0], bbox[1])
-            x2_slice = slice(bbox[2], bbox[3])
-            # check whether target is non-empty given this box
-            target_check: list[bool] = []
-            for target_var in self.target:
-                if isinstance(target_var, (pd.DataFrame, pd.Series)):
-                    data = target_var.loc[(slice(None), x1_slice, x2_slice)]
-                else:
-                    data = target_var.sel(x1=x1_slice, x2=x2_slice)
+            if var_x2_min < x2_min:
+                x2_min = var_x2_min
 
-                target_check.append(True if len(data)>0 else False)
+            if var_x2_max > x2_max:
+                x2_max = var_x2_max
 
-            # check whether context is non-empty given this box
-            context_check: list[bool] = []
-            for context_var in self.context:
-                if isinstance(context_var, (pd.DataFrame, pd.Series)):
-                    data = context_var[(context_var.index.get_level_values('x1') >= bbox[0]) & (context_var.index.get_level_values('x1') <= bbox[1]) & 
-                        (context_var.index.get_level_values('x2') >= bbox[2]) & (context_var.index.get_level_values('x2') <= bbox[3])]
+        return [x1_min, x1_max, x2_min, x2_max]
 
-                    # data = context_var.loc[(slice(None), x1_slice, x2_slice)]
-                else:
-                    data = context_var.sel(x1=x1_slice, x2=x2_slice)
+    def sample_random_window(self, window_size: Tuple[float]) -> Sequence[float]:
+        """
+        Sample random window uniformly from global coordinats to slice data.
 
-                context_check.append(True if len(data)>0 else False)
+        Parameters
+        ----------
+        window_size : Tuple[float]
+            Tuple of window extent
 
+        Returns
+        -------
+        bbox: List[float]
+            sequence of patch spatial extent as [x1_min, x1_max, x2_min, x2_max]
+        """
+        x1_extend, x2_extend = window_size
 
-            if all(target_check) and all(context_check):
-                continue_looking = False
-        
+        x1_side = x1_extend / 2
+        x2_side = x2_extend / 2
+
+        # sample a point that satisfies the context and target global bounds
+        x1_min, x1_max, x2_min, x2_max = self.coord_bounds
+        x1_point = random.uniform(x1_min + x1_side, x1_max - x1_side)
+        x2_point = random.uniform(x2_min + x2_side, x2_max - x2_side)
+
+        # bbox of x1_min, x1_max, x2_min, x2_max
+        bbox = [
+            x1_point - x1_side,
+            x1_point + x1_side,
+            x2_point - x2_side,
+            x2_point + x2_side,
+        ]
+
         return bbox
 
     def time_slice_variable(self, var, date, delta_t=0):
@@ -910,6 +933,45 @@ class TaskLoader:
 
         return var
 
+    def spatial_slice_variable(self, var, window: List[float]):
+        """
+        Slice a variabel by a given window size.
+
+        Parameters
+        ----------
+        var : ...
+            Variable to slice
+        window : ...
+            list of coordinates specifying the window [x1_min, x1_max, x2_min, x2_max]
+
+        Returns
+        -------
+        var : ...
+            Sliced variable.
+
+        Raises
+        ------
+        ValueError
+            If the variable is of an unknown type.
+        """
+        x1_min, x1_max, x2_min, x2_max = window
+        if isinstance(var, (xr.Dataset, xr.DataArray)):
+            x1_slice = slice(x1_min, x1_max)
+            x2_slice = slice(x2_min, x2_max)
+            var = var.sel(x1=x1_slice, x2=x2_slice)
+        elif isinstance(var, (pd.DataFrame, pd.Series)):
+            # retrieve desired patch size
+            var = var[
+                (var.index.get_level_values("x1") >= x1_min)
+                & (var.index.get_level_values("x1") <= x1_max)
+                & (var.index.get_level_values("x2") >= x2_min)
+                & (var.index.get_level_values("x2") <= x2_max)
+            ]
+        else:
+            raise ValueError(f"Unknown variable type {type(var)}")
+
+        return var
+
     def task_generation(
         self,
         date: pd.Timestamp,
@@ -934,7 +996,52 @@ class TaskLoader:
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
-        
+        """
+        Generate a task for a given date.
+
+        There are several sampling strategies available for the context and
+        target data:
+
+            - "all": Sample all observations.
+            - int: Sample N observations uniformly at random.
+            - float: Sample a fraction of observations uniformly at random.
+            - :class:`numpy:numpy.ndarray`, shape (2, N): Sample N observations
+              at the given x1, x2 coordinates. Coords are assumed to be
+              unnormalised.
+
+        Parameters
+        ----------
+        date : :class:`pandas.Timestamp`
+            Date for which to generate the task.
+        context_sampling : str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`]
+            Sampling strategy for the context data, either a list of sampling
+            strategies for each context set, or a single strategy applied to
+            all context sets. Default is ``"all"``.
+        target_sampling : str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`]
+            Sampling strategy for the target data, either a list of sampling
+            strategies for each target set, or a single strategy applied to all
+            target sets. Default is ``"all"``.
+        split_frac : float
+            The fraction of observations to use for the context set with the
+            "split" sampling strategy for linked context and target set pairs.
+            The remaining observations are used for the target set. Default is
+            0.5.
+        window_size : Sequence[float], optional
+            Desired patch size in x1/x2 used for patchwise task generation. Usefule when considering
+            the entire available region is computationally prohibitive for model forward pass
+        datewise_deterministic : bool
+            Whether random sampling is datewise_deterministic based on the
+            date. Default is ``False``.
+        seed_override : Optional[int]
+            Override the seed for random sampling. This can be used to use the
+            same random sampling at different ``date``. Default is None.
+
+        Returns
+        -------
+        task : :class:`~.data.task.Task`
+            Task object containing the context and target data.
+        """
+
         def check_sampling_strat(sampling_strat, set):
             """
             Check the sampling strategy.
@@ -1114,6 +1221,7 @@ class TaskLoader:
             task["X_t"] = None
             task["Y_t"] = None
 
+        # temporal slices
         context_slices = [
             self.time_slice_variable(var, date, delta_t)
             for var, delta_t in zip(self.context, self.context_delta_t)
@@ -1123,6 +1231,7 @@ class TaskLoader:
             for var, delta_t in zip(self.target, self.target_delta_t)
         ]
 
+        # check patch size
         if window_size is not None:
             assert (
                 len(window_size) == 2
@@ -1218,12 +1327,6 @@ class TaskLoader:
                     f"Context set {context_idx} and target set {target_idx} must be linked, "
                     f"with the `links` attribute if using the 'gapfill' sampling strategy"
                 )
-
-        # sample common patch size for context and target set
-        if self.patch_size is not None:
-            sample_patch_size = self.sample_patch_size_extent()
-        else:
-            sample_patch_size = None
 
         for i, (var, sampling_strat) in enumerate(
             zip(context_slices, context_sampling)
