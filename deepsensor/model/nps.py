@@ -12,20 +12,29 @@ def convert_task_to_nps_args(task: Task):
     ..
         TODO move to ConvNP class?
 
-    Parameters
-    ----------
-    task : :class:`~.data.task.Task`
-        Task object containing context and target sets.
+    Args:
+        task (:class:`~.data.task.Task`):
+            Task object containing context and target sets.
 
-    Returns
-    -------
-    ...
-        ...
+    Returns:
+        tuple[list[tuple[numpy.ndarray, numpy.ndarray]], numpy.ndarray, numpy.ndarray, dict]:
+            ...
     """
-
     context_data = list(zip(task["X_c"], task["Y_c"]))
 
-    if len(task["X_t"]) == 1 and len(task["Y_t"]) == 1:
+    if task["X_t"] is None:
+        raise ValueError(
+            f"Running `neuralprocesses` model with no target locations (got {task['X_t']}). "
+            f"Have you not provided a `target_sampling` argument to `TaskLoader`?"
+        )
+    elif len(task["X_t"]) == 1 and task["Y_t"] is None:
+        xt = task["X_t"][0]
+        yt = None
+    elif len(task["X_t"]) > 1 and task["Y_t"] is None:
+        # Multiple target sets, different target locations
+        xt = backend.nps.AggregateInput(*[(xt, i) for i, xt in enumerate(task["X_t"])])
+        yt = None
+    elif len(task["X_t"]) == 1 and len(task["Y_t"]) == 1:
         # Single target set
         xt = task["X_t"][0]
         yt = task["Y_t"][0]
@@ -58,22 +67,20 @@ def run_nps_model(
     """
     Run ``neuralprocesses`` model.
 
-    Parameters
-    ----------
-    neural_process : neuralprocesses.Model
-        Neural process model.
-    task : :class:`~.data.task.Task`
-        Task object containing context and target sets.
-    n_samples : int, optional
-        Number of samples to draw from the model. Defaults to ``None`` (single
-        sample).
-    requires_grad : bool, optional
-        Whether to require gradients. Defaults to ``False``.
+    Args:
+        neural_process (neuralprocesses.Model):
+            Neural process model.
+        task (:class:`~.data.task.Task`):
+            Task object containing context and target sets.
+        n_samples (int, optional):
+            Number of samples to draw from the model. Defaults to ``None``
+            (single sample).
+        requires_grad (bool, optional):
+            Whether to require gradients. Defaults to ``False``.
 
-    Returns
-    -------
-    dist : neuralprocesses.distributions.Distribution
-        Distribution object containing the model's predictions.
+    Returns:
+        neuralprocesses.distributions.Distribution:
+            Distribution object containing the model's predictions.
     """
     context_data, xt, _, model_kwargs = convert_task_to_nps_args(task)
     if backend.str == "torch" and not requires_grad:
@@ -93,19 +100,17 @@ def run_nps_model_ar(neural_process, task: Task, num_samples: int = 1):
     """
     Run ``neural_process`` in AR mode.
 
-    Parameters
-    ----------
-    neural_process : neuralprocesses.Model
-        Neural process model.
-    task : :class:`~.data.task.Task`
-        Task object containing context and target sets.
-    num_samples : int, optional
-        Number of samples to draw from the model. Defaults to 1.
+    Args:
+        neural_process (neuralprocesses.Model):
+            Neural process model.
+        task (:class:`~.data.task.Task`):
+            Task object containing context and target sets.
+        num_samples (int, optional):
+            Number of samples to draw from the model. Defaults to 1.
 
-    Returns
-    -------
-    Tuple[..., ..., ..., ...]
-        Tuple of mean, variance, noiseless samples, and noisy samples.
+    Returns:
+        tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]:
+            Tuple of mean, variance, noiseless samples, and noisy samples.
     """
     context_data, xt, _, _ = convert_task_to_nps_args(task)
 
@@ -127,13 +132,13 @@ def construct_neural_process(
     dim_aux_t: Optional[int] = None,
     dim_lv: int = 0,
     conv_arch: str = "unet",
-    unet_channels: Tuple[int, int, int, int] = (64, 64, 64, 64),
+    unet_channels: Tuple[int, ...] = (64, 64, 64, 64),
     unet_resize_convs: bool = True,
     unet_resize_conv_interp_method: Literal["bilinear"] = "bilinear",
-    aux_t_mlp_layers: Optional[Tuple[int]] = None,
+    aux_t_mlp_layers: Optional[Tuple[int, ...]] = None,
     likelihood: Literal["cnp", "gnp", "cnp-spikes-beta"] = "cnp",
     unet_kernels: int = 5,
-    points_per_unit: int = 100,
+    internal_density: int = 100,
     encoder_scales: float = 1 / 100,
     encoder_scales_learnable: bool = False,
     decoder_scale: float = 1 / 100,
@@ -150,83 +155,81 @@ def construct_neural_process(
     needed, they must be explicitly passed to ``neuralprocesses`` constructor
     (not currently safe to use `**kwargs` here).
 
-    Parameters
-    ----------
-    dim_x : int, optional
-        Dimensionality of the inputs. Defaults to 1.
-    dim_y : int, optional
-        Dimensionality of the outputs. Defaults to 1.
-    dim_yc : int or tuple[int], optional
-        Dimensionality of the outputs of the context set. You should set this
-        if the dimensionality of the outputs of the context set is not equal to
-        the dimensionality of the outputs of the target set. You should also
-        set this if you want to use multiple context sets. In that case, set
-        this equal to a tuple of integers indicating the respective output
-        dimensionalities.
-    dim_yt : int, optional
-        Dimensionality of the outputs of the target set. You should set this if
-        the dimensionality of the outputs of the target set is not equal to the
-        dimensionality of the outputs of the context set.
-    dim_aux_t : int, optional
-        Dimensionality of target-specific auxiliary variables.
-    points_per_unit : int, optional
-        Density of the internal discretisation. Defaults to 100.
-    likelihood : str, optional
-        Likelihood. Must be one of ``"cnp"`` (equivalently ``"het"``),
-        ``"gnp"`` (equivalently ``"lowrank"``), or ``"cnp-spikes-beta"``
-        (equivalently ``"spikes-beta"``). Defaults to ``"cnp"``.
-    conv_arch : str, optional
-        Convolutional architecture to use. Must be one of
-        ``"unet[-res][-sep]"`` or ``"conv[-res][-sep]"``. Defaults to
-        ``"unet"``.
-    unet_channels: tuple[int], optional
-        Channels of every layer of the UNet. Defaults to six layers each with
-        64 channels.
-    unet_kernels : int or tuple[int], optional
-        Sizes of the kernels in the UNet. Defaults to 5.
-    unet_resize_convs : bool, optional
-        Use resize convolutions rather than transposed convolutions in the
-        UNet. Defaults to ``False``.
-    unet_resize_conv_interp_method : str, optional
-        Interpolation method for the resize convolutions in the UNet. Can be
-        set to ``"bilinear"``. Defaults to "bilinear".
-    num_basis_functions : int, optional
-        Number of basis functions for the low-rank likelihood. Defaults to
-        64.
-    dim_lv : int, optional
-        Dimensionality of the latent variable. Setting to >0 constructs a
-        latent neural process. Defaults to 0.
-    encoder_scales : float or tuple[float], optional
-        Initial value for the length scales of the set convolutions for the
-        context sets embeddings. Set to a tuple equal to the number of context
-        sets to use different values for each set. Set to a single value to use
-        the same value for all context sets. Defaults to
-        ``1 / points_per_unit``.
-    encoder_scales_learnable : bool, optional
-        Whether the encoder SetConv length scale(s) are learnable. Defaults to
-        ``False``.
-    decoder_scale : float, optional
-        Initial value for the length scale of the set convolution in the
-        decoder. Defaults to ``1 / points_per_unit``.
-    decoder_scale_learnable : bool, optional
-        Whether the decoder SetConv length scale(s) are learnable. Defaults to
-        ``False``.
-    aux_t_mlp_layers : tuple[int], optional
-        Widths of the layers of the MLP for the target-specific auxiliary
-        variable. Defaults to three layers of width 128.
-    epsilon : float, optional
-        Epsilon added by the set convolutions before dividing by the density
-        channel. Defaults to ``1e-2``.
+    Args:
+        dim_x (int, optional):
+            Dimensionality of the inputs. Defaults to 1.
+        dim_y (int, optional):
+            Dimensionality of the outputs. Defaults to 1.
+        dim_yc (int or tuple[int], optional):
+            Dimensionality of the outputs of the context set. You should set
+            this if the dimensionality of the outputs of the context set is not
+            equal to the dimensionality of the outputs of the target set. You
+            should also set this if you want to use multiple context sets. In
+            that case, set this equal to a tuple of integers indicating the
+            respective output dimensionalities.
+        dim_yt (int, optional):
+            Dimensionality of the outputs of the target set. You should set
+            this if the dimensionality of the outputs of the target set is not
+            equal to the dimensionality of the outputs of the context set.
+        dim_aux_t (int, optional):
+            Dimensionality of target-specific auxiliary variables.
+        internal_density (int, optional):
+            Density of the ConvNP's internal grid (in terms of number of points
+            per 1x1 unit square). Defaults to 100.
+        likelihood (str, optional):
+            Likelihood. Must be one of ``"cnp"`` (equivalently ``"het"``),
+            ``"gnp"`` (equivalently ``"lowrank"``), or ``"cnp-spikes-beta"``
+            (equivalently ``"spikes-beta"``). Defaults to ``"cnp"``.
+        conv_arch (str, optional):
+            Convolutional architecture to use. Must be one of
+            ``"unet[-res][-sep]"`` or ``"conv[-res][-sep]"``. Defaults to
+            ``"unet"``.
+        unet_channels (tuple[int], optional):
+            Channels of every layer of the UNet. Defaults to six layers each
+            with 64 channels.
+        unet_kernels (int or tuple[int], optional):
+            Sizes of the kernels in the UNet. Defaults to 5.
+        unet_resize_convs (bool, optional):
+            Use resize convolutions rather than transposed convolutions in the
+            UNet. Defaults to ``False``.
+        unet_resize_conv_interp_method (str, optional):
+            Interpolation method for the resize convolutions in the UNet. Can
+            be set to ``"bilinear"``. Defaults to "bilinear".
+        num_basis_functions (int, optional):
+            Number of basis functions for the low-rank likelihood. Defaults to
+            64.
+        dim_lv (int, optional):
+            Dimensionality of the latent variable. Setting to >0 constructs a
+            latent neural process. Defaults to 0.
+        encoder_scales (float or tuple[float], optional):
+            Initial value for the length scales of the set convolutions for the
+            context sets embeddings. Set to a tuple equal to the number of
+            context sets to use different values for each set. Set to a single
+            value to use the same value for all context sets. Defaults to
+            ``1 / internal_density``.
+        encoder_scales_learnable (bool, optional):
+            Whether the encoder SetConv length scale(s) are learnable.
+            Defaults to ``False``.
+        decoder_scale (float, optional):
+            Initial value for the length scale of the set convolution in the
+            decoder. Defaults to ``1 / internal_density``.
+        decoder_scale_learnable (bool, optional):
+            Whether the decoder SetConv length scale(s) are learnable. Defaults
+            to ``False``.
+        aux_t_mlp_layers (tuple[int], optional):
+            Widths of the layers of the MLP for the target-specific auxiliary
+            variable. Defaults to three layers of width 128.
+        epsilon (float, optional):
+            Epsilon added by the set convolutions before dividing by the
+            density channel. Defaults to ``1e-2``.
 
-    Returns
-    -------
-    :class:`.model.Model`:
-        ConvNP model.
+    Returns:
+        :class:`.model.Model`:
+            ConvNP model.
 
-    Raises
-    ------
-    NotImplementedError
-        If specified backend has no default dtype.
+    Raises:
+        NotImplementedError
+            If specified backend has no default dtype.
     """
     if likelihood == "cnp":
         likelihood = "het"
@@ -264,7 +267,7 @@ def construct_neural_process(
         unet_kernels=unet_kernels,
         # Use a stride of 1 for the first layer and 2 for all other layers
         unet_strides=(1, *(2,) * (len(unet_channels) - 1)),
-        points_per_unit=points_per_unit,
+        points_per_unit=internal_density,
         encoder_scales=encoder_scales,
         encoder_scales_learnable=encoder_scales_learnable,
         decoder_scale=decoder_scale,
@@ -281,17 +284,15 @@ def compute_encoding_tensor(model, task: Task):
     """
     Compute the encoding tensor for a given task.
 
-    Parameters
-    ----------
-    model : ...
-        Model object.
-    task : :class:`~.data.task.Task`
-        Task object containing context and target sets.
+    Args:
+        model (...):
+            Model object.
+        task (:class:`~.data.task.Task`):
+            Task object containing context and target sets.
 
-    Returns
-    -------
-    encoding : :class:`numpy:numpy.ndarray`
-        Encoding tensor? #TODO
+    Returns:
+        encoding : :class:`numpy:numpy.ndarray`
+            Encoding tensor? #TODO
     """
     neural_process_encoder = backend.nps.Model(model.model.encoder, lambda x: x)
     task = model.modify_task(task)

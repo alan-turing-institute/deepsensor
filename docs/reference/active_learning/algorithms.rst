@@ -1,7 +1,8 @@
-``deepsensor.active_learning.algorithms``
+deepsensor.active_learning.algorithms
 =========================================
 
-.. autoclass:: deepsensor.active_learning.algorithms.GreedyAlgorithm
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
+.. automodule:: deepsensor.active_learning.algorithms
+   :members:
+   :show-inheritance:
+   :undoc-members: __init__
+   :special-members: __call__

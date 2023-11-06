@@ -12,15 +12,13 @@ def construct_x1x2_ds(gridded_ds):
     a 2D gridded channel whose values contain the x_1 and x_2 coordinate
     values, respectively.
 
-    Parameters
-    ----------
-    gridded_ds : :class:`xarray.Dataset`
-        ...
+    Args:
+        gridded_ds (:class:`xarray.Dataset`):
+            ...
 
-    Returns
-    -------
-    :class:`xarray.Dataset`
-        ...
+    Returns:
+        :class:`xarray.Dataset`
+            ...
     """
     X1, X2 = np.meshgrid(gridded_ds.x1, gridded_ds.x2, indexing="ij")
     ds = xr.Dataset(
@@ -40,18 +38,18 @@ def construct_circ_time_ds(dates, freq):
         - ``'D'``: cycles once per year at daily intervals
         - ``'M'``: cycles once per year at monthly intervals
 
-    Parameters
-    ----------
-    dates: ...
-        ...
-    freq : ...
-        ...
+    Args:
+        dates (...):
+            ...
+        freq (...):
+            ...
 
-    Returns
-    -------
-    :class:`xarray.Dataset`
-        ...
+    Returns:
+        :class:`xarray.Dataset`
+            ...
     """
+    # Ensure dates are pandas
+    dates = pd.DatetimeIndex(dates)
     if freq == "D":
         time_var = dates.dayofyear
         mod = 365.25
@@ -62,9 +60,7 @@ def construct_circ_time_ds(dates, freq):
         time_var = dates.month
         mod = 12
     else:
-        raise ValueError(
-            "Circular time variable not implemented " "for this frequency."
-        )
+        raise ValueError("Circular time variable not implemented for this frequency.")
 
     cos_time = np.cos(2 * np.pi * time_var / mod)
     sin_time = np.sin(2 * np.pi * time_var / mod)
@@ -88,15 +84,12 @@ def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float
     resolution of 0.2 degrees, the data resolution returned will be 0.1
     degrees.
 
-    Parameters
-    ----------
-    ds : :class:`xarray.DataArray` | :class:`xarray.Dataset`
-        Xarray object with coordinates x1 and x2.
+    Args:
+        ds (:class:`xarray.DataArray` | :class:`xarray.Dataset`):
+            Xarray object with coordinates x1 and x2.
 
-    Returns
-    -------
-    data_resolution : float
-        Resolution of the data (in spatial units, e.g. 0.1 degrees).
+    Returns:
+        float: Resolution of the data (in spatial units, e.g. 0.1 degrees).
     """
     x1_res = np.abs(np.mean(np.diff(ds["x1"])))
     x2_res = np.abs(np.mean(np.diff(ds["x2"])))
@@ -119,21 +112,18 @@ def compute_pandas_data_resolution(
     than 1000) and to use the 5th percentile. This means that the resolution is
     the distance between the closest 5% of neighbouring observations.
 
-    Parameters
-    ----------
-    df : :class:`pandas.DataFrame` | :class:`pandas.Series`
-        Dataframe or series with indexes time, x1, and x2.
-    n_times : int, optional
-        Number of dates to sample. Defaults to 1000. If "all", all dates are
-        used.
-    percentile : int, optional
-        Percentile of pairwise distances for computing the resolution.
-        Defaults to 5.
+    Args:
+        df (:class:`pandas.DataFrame` | :class:`pandas.Series`):
+            Dataframe or series with indexes time, x1, and x2.
+        n_times (int, optional):
+            Number of dates to sample. Defaults to 1000. If "all", all dates
+            are used.
+        percentile (int, optional):
+            Percentile of pairwise distances for computing the resolution.
+            Defaults to 5.
 
-    Returns
-    -------
-    data_resolution : float
-        Resolution of the data (in spatial units, e.g. 0.1 degrees).
+    Returns:
+        float: Resolution of the data (in spatial units, e.g. 0.1 degrees).
     """
     dates = df.index.get_level_values("time").unique()
 

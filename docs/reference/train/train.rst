@@ -1,6 +1,8 @@
-``deepsensor.train.train``
+deepsensor.train.train
 ==========================
 
-.. autofunction:: deepsensor.train.train.set_gpu_default_device
-
-.. autofunction:: deepsensor.train.train.train_epoch
+.. automodule:: deepsensor.train.train
+   :members:
+   :show-inheritance:
+   :undoc-members: __init__
+   :special-members: __call__

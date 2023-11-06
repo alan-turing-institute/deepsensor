@@ -55,11 +55,7 @@ class TestDataProcessor(unittest.TestCase):
         df_raw = _gen_data_pandas()
 
         dp_with_x_mappings = DataProcessor(
-            x1_map=(20, 40),
-            x2_map=(40, 60),
-            time_name="time",
-            x1_name="lat",
-            x2_name="lon",
+            time_name="time", x1_name="lat", x2_name="lon"
         )
         dp_inferred_x_mappings = DataProcessor(
             time_name="time", x1_name="lat", x2_name="lon"
@@ -90,11 +86,7 @@ class TestDataProcessor(unittest.TestCase):
         )
 
         dp = DataProcessor(
-            x1_map=(20, 40),
-            x2_map=(40, 60),
-            time_name="datetime",
-            x1_name="latitude",
-            x2_name="longitude",
+            time_name="datetime", x1_name="latitude", x2_name="longitude"
         )
         da_norm = dp(da_raw)
         self.assertListEqual(
@@ -114,7 +106,7 @@ class TestDataProcessor(unittest.TestCase):
         da_raw = _gen_data_xr()
         da_raw = da_raw.rename({"lat": "x1", "lon": "x2"})
 
-        dp = DataProcessor(x1_map=(20, 40), x2_map=(40, 60))
+        dp = DataProcessor()
         da_norm = dp(da_raw)
         self.assertListEqual(
             ["time", "x1", "x2"], list(da_norm.dims), "Failed to rename dims."
@@ -131,13 +123,7 @@ class TestDataProcessor(unittest.TestCase):
         ds_raw = _gen_data_xr(dims=("time", "lat", "lon"), data_vars=["var1", "var2"])
         ds_raw = ds_raw.transpose("time", "lon", "lat")  # Transpose, changing order
 
-        dp = DataProcessor(
-            x1_map=(20, 40),
-            x2_map=(40, 60),
-            time_name="time",
-            x1_name="lat",
-            x2_name="lon",
-        )
+        dp = DataProcessor(time_name="time", x1_name="lat", x2_name="lon")
         with self.assertRaises(ValueError):
             dp(ds_raw)
 
@@ -146,22 +132,14 @@ class TestDataProcessor(unittest.TestCase):
         da_raw = _gen_data_xr()
         da_raw = da_raw.T  # Transpose, changing order
 
-        dp = DataProcessor(
-            x1_map=(20, 40),
-            x2_map=(40, 60),
-            time_name="time",
-            x1_name="lat",
-            x2_name="lon",
-        )
+        dp = DataProcessor(time_name="time", x1_name="lat", x2_name="lon")
         with self.assertRaises(ValueError):
             dp(da_raw)
 
     def test_not_passing_method_raises_valuerror(self):
         """Must pass a valid method when normalising."""
         da_raw = _gen_data_xr()
-        dp = DataProcessor(x1_map=(20, 40), x2_map=(40, 60))
-        with self.assertRaises(ValueError):
-            dp(da_raw)
+        dp = DataProcessor()
         with self.assertRaises(ValueError):
             dp(da_raw, method="not_a_valid_method")
 
@@ -173,13 +151,7 @@ class TestDataProcessor(unittest.TestCase):
         df_raw = _gen_data_pandas()
         df_raw.index.names = ["datetime", "lat", "lon"]
 
-        dp = DataProcessor(
-            x1_map=(20, 40),
-            x2_map=(40, 60),
-            time_name="datetime",
-            x1_name="lat",
-            x2_name="lon",
-        )
+        dp = DataProcessor(time_name="datetime", x1_name="lat", x2_name="lon")
 
         df_norm = dp(df_raw)
 
@@ -199,7 +171,7 @@ class TestDataProcessor(unittest.TestCase):
         df_raw = _gen_data_pandas()
         df_raw.index.names = ["time", "x1", "x2"]
 
-        dp = DataProcessor(x1_map=(20, 40), x2_map=(40, 60))  # No name changes
+        dp = DataProcessor()  # No name changes
 
         df_norm = dp(df_raw)
 
@@ -217,13 +189,7 @@ class TestDataProcessor(unittest.TestCase):
         df_raw = _gen_data_pandas()
         df_raw = df_raw.swaplevel(0, 2)
 
-        dp = DataProcessor(
-            x1_map=(20, 40),
-            x2_map=(40, 60),
-            time_name="time",
-            x1_name="lat",
-            x2_name="lon",
-        )
+        dp = DataProcessor(time_name="time", x1_name="lat", x2_name="lon")
 
         with self.assertRaises(ValueError):
             dp(df_raw)
@@ -241,13 +207,7 @@ class TestDataProcessor(unittest.TestCase):
         )
         df_raw = _gen_data_pandas(coords=coords)
 
-        dp = DataProcessor(
-            x1_map=(20, 40),
-            x2_map=(40, 60),
-            time_name="time",
-            x1_name="lat",
-            x2_name="lon",
-        )
+        dp = DataProcessor(time_name="time", x1_name="lat", x2_name="lon")
 
         df_norm = dp(df_raw)
         df_unnorm = dp.unnormalise(df_norm)
@@ -271,13 +231,7 @@ class TestDataProcessor(unittest.TestCase):
         )
         df_raw = _gen_data_pandas(coords=coords)
 
-        dp = DataProcessor(
-            x1_map=(20, 40),
-            x2_map=(40, 60),
-            time_name="time",
-            x1_name="lat",
-            x2_name="lon",
-        )
+        dp = DataProcessor(time_name="time", x1_name="lat", x2_name="lon")
 
         with self.assertRaises(ValueError):
             dp(df_raw)
@@ -288,13 +242,7 @@ class TestDataProcessor(unittest.TestCase):
             da_raw = _gen_data_xr()
             df_raw = _gen_data_pandas()
 
-            dp = DataProcessor(
-                x1_map=(20, 40),
-                x2_map=(40, 60),
-                time_name="time",
-                x1_name="lat",
-                x2_name="lon",
-            )
+            dp = DataProcessor(time_name="time", x1_name="lat", x2_name="lon")
             # Normalise some data to store normalisation parameters in config
             da_norm = dp(da_raw, method="mean_std")
             df_norm = dp(df_raw, method="min_max")

@@ -11,6 +11,7 @@ import unittest
 import os
 import shutil
 import tempfile
+import copy
 
 from deepsensor.errors import InvalidSamplingStrategyError
 from tests.utils import (
@@ -64,31 +65,7 @@ class TestTaskLoader(unittest.TestCase):
         self.df = _gen_data_pandas()
 
     def _gen_task_loader_call_args(self, n_context_sets, n_target_sets):
-        """
-        Generate arguments for ``TaskLoader.__call__``.
-
-        Loops over all possible combinations of context/target sampling methods
-        and returns a list of arguments for ``TaskLoader.__call__``.
-        Options tested include:
-
-            - (int): Random number of samples
-            - (float): Fraction of samples
-            - "all": All samples
-            - (:class:`numpy:numpy.ndarray`): Array of coordinates to sample
-              from the dataset (WIP)
-
-        Parameters
-        ----------
-        n_context_sets : int
-            Number of context samples.
-        n_target_sets : int
-            Number of target samples.
-
-        Returns
-        -------
-        tuple
-            Arguments for ``TaskLoader.__call__``
-        """
+        """Generate arguments for ``TaskLoader.__call__``."""
         for sampling_method in [
             0.0,
             0,
@@ -104,30 +81,17 @@ class TestTaskLoader(unittest.TestCase):
         da = _gen_data_xr(use_dask=True)
         aux_da = da.isel(time=0)
         tl = TaskLoader(
-            context=da, target=da, aux_at_targets=aux_da, aux_at_contexts=aux_da
+            context=da,
+            target=da,
+            aux_at_targets=aux_da,
+            aux_at_contexts=aux_da,
         )
         tl.load_dask()
 
     @parameterized.expand(range(1, 4))
     def test_loader_call(self, n_context_and_target):
-        """
-        Test TaskLoader.__call__ for all possible combinations of context/
-        target sampling methods.
-
-        Generates all possible combinations of xarray and pandas context/target
-        sets of length n_context_and_target and calls TaskLoader.__call__ with
-        all possible sampling methods.
-
-        Parameters
-        ----------
-        n_context_and_target : int
-            Number of context and target sets.
-
-        Returns
-        -------
-        ...
-            ...
-        """
+        """Test TaskLoader.__call__ for all possible combinations of context/
+        target sampling methods."""
         # Convert to list of strings containing every possible combination of "xr" and "pd"
         context_ID_list = list(
             itertools.product(["xr", "pd"], repeat=n_context_and_target)
@@ -143,16 +107,6 @@ class TestTaskLoader(unittest.TestCase):
 
             E.g. ["xr", "pd", "xr"] -> [self.da, self.df, self.da]
             E.g. "xr" -> self.da
-
-            Parameters
-            ----------
-            set_list : list[str] | str
-                List of data type IDs or single data type ID.
-
-            Returns
-            -------
-            list[xr.DataArray] | list[pd.DataFrame] | xr.DataArray | pd.DataFrame
-                List of data objects or single data object.
             """
             if set_list == "xr":
                 return self.da
@@ -188,30 +142,23 @@ class TestTaskLoader(unittest.TestCase):
         target = self.df
 
         tl = TaskLoader(
-            context=[self.da, self.df],  # gridded xarray and off-grid pandas contexts
+            context=[
+                self.da,
+                self.df,
+            ],  # gridded xarray and off-grid pandas contexts
             target=self.df,  # off-grid pandas targets
             aux_at_contexts=self.aux_da,  # gridded xarray to sample at off-grid context locations
             aux_at_targets=self.aux_da,  # gridded xarray to sample at target locations
         )
 
-        for context_sampling, target_sampling in self._gen_task_loader_call_args(
-            len(context), 1
-        ):
+        for (
+            context_sampling,
+            target_sampling,
+        ) in self._gen_task_loader_call_args(len(context), 1):
             task = tl("2020-01-01", context_sampling, target_sampling)
 
     def test_invalid_sampling_strat(self):
-        """
-        Test invalid sampling strategy in ``TaskLoader.__call__``.
-
-        Here we only need to test context sampling strategies because the same
-        code to check the validity of the sampling strategy is used for context
-        and target sampling.
-
-        Returns
-        -------
-        ...
-            ...
-        """
+        """Test invalid sampling strategy in ``TaskLoader.__call__``."""
         invalid_context_sampling_strategies = [
             # Sampling strategy must be same length as context/target
             ["all", "all", "all"],
@@ -221,7 +168,7 @@ class TestTaskLoader(unittest.TestCase):
             1.1,
             # If float, sampling strategy must be greater than or equal to 0.0
             -0.1,
-            # If str, sampling strategy must be in ["all", "split"]
+            # If str, sampling strategy must be one of the valid options
             "invalid",
             # If np.ndarray, sampling strategy must be shape (2, N)
             np.zeros((1, 2, 2)),
@@ -246,34 +193,32 @@ class TestTaskLoader(unittest.TestCase):
                     task = tl("2020-01-01", invalid_sampling_strategy)
 
     def test_wrong_links(self):
-        """
-        Test link indexes out of range.
-
-        Raises
-        ------
-        ValueError
-            If link indexes are out of range.
-
-        Returns
-        -------
-        None
-        """
+        """Test link indexes out of range."""
         with self.assertRaises(ValueError):
             tl = TaskLoader(context=self.df, target=self.df, links=[(0, 1)])
 
-    def test_links(self) -> None:
-        """
-        Test sampling from linked dataframes works as expected.
+    def test_links_gapfill_da(self) -> None:
+        """TODO"""
+        da_with_nans = copy.deepcopy(self.da)
+        # Convert 10% of data to NaNs
+        nan_idxs = np.random.randint(
+            0, da_with_nans.size, size=int(da_with_nans.size * 0.1)
+        )
+        da_with_nans.data.ravel()[nan_idxs] = np.nan
 
-        Raises
-        ------
-        ValueError
-            If link indexes are out of range.
+        tl = TaskLoader(context=da_with_nans, target=da_with_nans, links=[(0, 0)])
 
-        Returns
-        -------
-        None
-        """
+        # This should not raise an error
+        task = tl("2020-01-01", "gapfill", "gapfill")
+
+        # Should raise ValueError if "gapfill" provided for context but not target (or vice versa)
+        with self.assertRaises(ValueError):
+            task = tl("2020-01-01", "gapfill", "all")
+        with self.assertRaises(ValueError):
+            task = tl("2020-01-01", "all", "gapfill")
+
+    def test_links_split_df(self) -> None:
+        """TODO"""
         tl = TaskLoader(context=self.df, target=self.df, links=[(0, 0)])
         task = tl("2020-01-01", "split", "split", split_frac=0.0)
         self.assertEqual(task["Y_c"][0].size, 0)  # Should be no context data
@@ -283,14 +228,6 @@ class TestTaskLoader(unittest.TestCase):
         self.assertEqual(
             task["Y_c"][0].size // 2, task["Y_t"][0].size // 2
         )  # Should be split equally
-
-        # Should raise ValueError if `links` is not a list of tuples
-        with self.assertRaises(AssertionError):
-            TaskLoader(context=self.df, target=self.df, links=[0, 1])
-        with self.assertRaises(AssertionError):
-            TaskLoader(context=self.df, target=self.df, links=(0, 1))
-        with self.assertRaises(AssertionError):
-            TaskLoader(context=self.df, target=self.df, links=[(0, 1, 2)])
 
         # Should raise ValueError if "split" provided for context but not target (or vice versa)
         with self.assertRaises(ValueError):
@@ -302,6 +239,55 @@ class TestTaskLoader(unittest.TestCase):
         with self.assertRaises(ValueError):
             task = tl("2020-01-01", "split", "split", split_frac=1.1)
             task = tl("2020-01-01", "split", "split", split_frac=-0.1)
+
+    def test_links(self) -> None:
+        """Test sampling from linked dataframes works as expected."""
+        # This should not raise an error
+        tl = TaskLoader(context=self.df, target=self.df, links=[(0, 0)])
+
+        # Should raise ValueError if `links` is not a 2-tuple or a list of 2-tuples
+        with self.assertRaises(AssertionError):
+            TaskLoader(context=self.df, target=self.df, links=[0, 1])
+        with self.assertRaises(AssertionError):
+            TaskLoader(context=self.df, target=self.df, links=(0, 1))
+        with self.assertRaises(AssertionError):
+            TaskLoader(context=self.df, target=self.df, links=[(0, 1, 2)])
+
+        # Cannot use a sampling strategy that requires links if TaskLoader was not instantiated with links
+        with self.assertRaises(ValueError):
+            tl = TaskLoader(context=self.da, target=self.da, links=None)
+            task = tl("2020-01-01", "gapfill", "gapfill")
+        with self.assertRaises(ValueError):
+            tl = TaskLoader(context=self.df, target=self.df, links=None)
+            task = tl("2020-01-01", "split", "split")
+
+        # Cannot use "split" sampling strategy if not pandas
+        with self.assertRaises(AssertionError):
+            tl = TaskLoader(context=self.da, target=self.da, links=[(0, 0)])
+            task = tl("2020-01-01", "split", "split")
+        # Cannot use "gapfill" sampling strategy if not xarray
+        with self.assertRaises(AssertionError):
+            tl = TaskLoader(context=self.df, target=self.df, links=[(0, 0)])
+            task = tl("2020-01-01", "gapfill", "gapfill")
+
+    @parameterized.expand([[(0.3, 0.3)], [(0.6, 0.4)]])
+    def test_window_size(self, window_size) -> None:
+        """Test patch size sampling."""
+        context = [self.da, self.df]
+
+        tl = TaskLoader(
+            context=context,  # gridded xarray and off-grid pandas contexts
+            target=self.df,  # off-grid pandas targets
+        )
+
+        for context_sampling, target_sampling in self._gen_task_loader_call_args(
+            len(context), 1
+        ):
+            if isinstance(context_sampling[0], np.ndarray):
+                continue
+            task = tl(
+                "2020-01-01", context_sampling, target_sampling, window_size=window_size
+            )
 
     def test_saving_and_loading(self):
         """Test saving and loading TaskLoader"""
@@ -354,7 +340,9 @@ class TestTaskLoader(unittest.TestCase):
                 "aux_at_targets not saved and loaded correctly",
             )
             self.assertEqual(
-                tl.links, tl_loaded.links, "Links not saved and loaded correctly"
+                tl.links,
+                tl_loaded.links,
+                "Links not saved and loaded correctly",
             )
             self.assertEqual(
                 tl.context_delta_t,

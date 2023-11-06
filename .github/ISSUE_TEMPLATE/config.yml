@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Slack channel
+    url: https://ai4environment.slack.com/archives/C05NQ76L87R
+    about: Join our Slack channel to ask and answer questions about DeepSensor.

@@ -1,4 +1,7 @@
-``tensorflow`` module
-=====================
+deepsensor.tensorflow
+=========================
 
-...
+..
+   .. automodule:: deepsensor.tensorflow
+      :members:
+      :show-inheritance:

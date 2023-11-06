@@ -1,0 +1,62 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: index
+chapters:
+- file: getting-started/index
+  sections:
+  - file: getting-started/overview
+  - file: getting-started/data_requirements
+  - file: getting-started/installation
+
+- file: user-guide/index
+  sections:
+    - file: user-guide/deepsensor_design
+    - file: user-guide/data_processor
+    - file: user-guide/task
+    - file: user-guide/task_loader
+    - file: user-guide/convnp
+    - file: user-guide/training
+    - file: user-guide/prediction
+    - file: user-guide/active_learning
+    - file: user-guide/acquisition_functions
+    - file: user-guide/extending
+
+- file: community/index
+  sections:
+  - file: community/contributing
+  - file: community/code_of_conduct
+  - file: community/roadmap
+  - file: community/faq
+
+- file: resources
+
+- file: research_ideas
+
+- file: contact
+
+- file: reference/index
+  sections:
+  - file: reference/data/index
+    sections:
+    - file: reference/data/sources
+    - file: reference/data/loader
+    - file: reference/data/processor
+    - file: reference/data/task
+    - file: reference/data/utils
+  - file: reference/model/index
+    sections:
+    - file: reference/model/model
+    - file: reference/model/pred
+    - file: reference/model/convnp
+    - file: reference/model/defaults
+    - file: reference/model/nps
+  - file: reference/train/index
+    sections:
+    - file: reference/train/train
+  - file: reference/active_learning/index
+    sections:
+      - file: reference/active_learning/acquisition_fns
+      - file: reference/active_learning/algorithms
+  - file: reference/plot

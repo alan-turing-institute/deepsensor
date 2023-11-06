@@ -7,20 +7,23 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-            - uses: actions/setup-python@v3
+            - uses: actions/setup-python@v2
+              with:
+                python-version: 3.11
+            - uses: nikeee/setup-pandoc@v1
+            - name: "Upgrade pip"
+              run: pip install --upgrade pip
             - name: "Install dependencies"
-              run: pip install -r requirements.txt
-            - name: "Install sphinx"
-              run: pip install -r requirements.docs.txt
-            - name: "Sphinx link check"
-              run: sphinx-build docs -d docs/_build/doctrees docs/_build/html
-            - name: "Sphinx build"
-              run: sphinx-build docs docs/_build
+              run: pip install -r requirements/requirements.txt
+            - name: "Install jupyterbook"
+              run: pip install -r requirements/requirements.docs.txt
+            - name: "Run jupyterbook"
+              run: jupyter-book build docs --all
             - name: "Deploy"
               uses: peaceiris/actions-gh-pages@v3
               if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/docs') }}
               with:
                     publish_branch: gh-pages
                     github_token: ${{ secrets.GITHUB_TOKEN }}
-                    publish_dir: docs/_build/
+                    publish_dir: docs/_build/html/
                     force_orphan: true

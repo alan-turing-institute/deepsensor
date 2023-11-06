@@ -12,44 +12,42 @@ from deepsensor.data.utils import (
 from typing import List
 
 
-def gen_ppu(task_loader: TaskLoader) -> int:
+def compute_greatest_data_density(task_loader: TaskLoader) -> int:
     """
     Computes data-informed settings for the model's internal grid density (ppu,
-    points per unit)
+    points per unit).
 
     Loops over all context and target variables in the ``TaskLoader`` and
     computes the data resolution for each. The model ppu is then set to the
     maximum data ppu.
 
-    Parameters
-    ----------
-    task_loader : :class:`~.data.loader.TaskLoader`
-        TaskLoader object containing context and target sets.
+    Args:
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            TaskLoader object containing context and target sets.
 
-    Returns
-    -------
-    model_ppu : int
-        Model ppu (points per unit), i.e. the number of points per unit of
-        input space.
+    Returns:
+        max_density (int):
+            The maximum data density (ppu) across all context and target
+            variables, where 'density' is the number of points per unit of
+            input space (in both spatial dimensions).
     """
     # List of data resolutions for each context/target variable (in points-per-unit)
-    data_ppus = []
+    data_densities = []
     for var in [*task_loader.context, *task_loader.target]:
         if isinstance(var, (xr.DataArray, xr.Dataset)):
             # Gridded variable: use data resolution
             data_resolution = compute_xarray_data_resolution(var)
         elif isinstance(var, (pd.DataFrame, pd.Series)):
-            # Point-based variable: calculate ppu based on pairwise distances between observations
+            # Point-based variable: calculate density based on pairwise distances between observations
             data_resolution = compute_pandas_data_resolution(
                 var, n_times=1000, percentile=5
             )
         else:
             raise ValueError(f"Unknown context input type: {type(var)}")
-        data_ppu = int(1 / data_resolution)
-        data_ppus.append(data_ppu)
-
-    model_ppu = int(max(data_ppus))
-    return model_ppu
+        data_density = int(1 / data_resolution)
+        data_densities.append(data_density)
+    max_density = int(max(data_densities))
+    return max_density
 
 
 def gen_decoder_scale(model_ppu: int) -> float:
@@ -63,21 +61,18 @@ def gen_decoder_scale(model_ppu: int) -> float:
     internal grid. The value chosen is 1 / model_ppu (i.e. the length scale is
     equal to the model's internal grid spacing).
 
-    Parameters
-    ----------
-    model_ppu : int
-        Model ppu (points per unit), i.e. the number of points per unit of
-        input space.
+    Args:
+        model_ppu (int):
+            Model ppu (points per unit), i.e. the number of points per unit of
+            input space.
 
-    Returns
-    -------
-    decoder_scale : float
-        Decoder scale.
+    Returns:
+        float: Decoder scale.
     """
     return 1 / model_ppu
 
 
-def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> list[float]:
+def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> List[float]:
     """
     Computes data-informed settings for the encoder SetConv scale for each
     context set.
@@ -95,18 +90,15 @@ def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> list[float]:
     points) for each context variable. The encoder scale is then set to 0.5 *
     data_resolution.
 
-    Parameters
-    ----------
-    model_ppu : int
-        Model ppu (points per unit), i.e. the number of points per unit of
-        input space.
-    task_loader : :class:`~.data.loader.TaskLoader`
-        TaskLoader object containing context and target sets.
+    Args:
+        model_ppu (int):
+            Model ppu (points per unit), i.e. the number of points per unit of
+            input space.
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            TaskLoader object containing context and target sets.
 
-    Returns
-    -------
-    encoder_scales : list[float]
-        List of encoder scales for each context set.
+    Returns:
+        list[float]: List of encoder scales for each context set.
     """
     encoder_scales = []
     for var in task_loader.context:

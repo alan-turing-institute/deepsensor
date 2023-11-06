@@ -1,20 +1,8 @@
-``deepsensor.model.model``
+deepsensor.model.model
 ==========================
 
-.. autoclass:: deepsensor.model.model.DeepSensorModel
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :inherited-members:
-    :special-members: __init__
-
-.. autoclass:: deepsensor.model.model.ProbabilisticModel
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :inherited-members:
-    :special-members: __init__
-
-.. autofunction:: deepsensor.model.model.create_empty_spatiotemporal_xarray
-
-.. autofunction:: deepsensor.model.model.increase_spatial_resolution
+.. automodule:: deepsensor.model.model
+   :members:
+   :show-inheritance:
+   :undoc-members: __init__
+   :special-members: __call__

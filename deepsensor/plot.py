@@ -1,6 +1,7 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
+import pandas as pd
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.patches as mpatches
 
@@ -8,20 +9,143 @@ import lab as B
 
 from typing import Optional, Union, List, Tuple
 
-from deepsensor.data.task import Task
+from deepsensor.data.task import Task, flatten_X
 from deepsensor.data.loader import TaskLoader
 from deepsensor.data.processor import DataProcessor
+from deepsensor.model.pred import Prediction
 from pandas import DataFrame
 from matplotlib.colors import Colormap
 from matplotlib.axes import Axes
-from matplotlib.projections import (
-    PolarAxes,
-    AitoffAxes,
-    HammerAxes,
-    LambertAxes,
-    MollweideAxes,
-    Axes3D,
-)
+
+
+def task(
+    task: Task,
+    task_loader: TaskLoader,
+    figsize=3,
+    markersize=None,
+    equal_aspect=False,
+    plot_ticks=False,
+    extent=None,
+) -> plt.Figure:
+    """
+    Plot the context and target sets of a task.
+
+    Args:
+        task (:class:`~.data.task.Task`):
+            Task to plot.
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            Task loader used to load ``task``, containing variable IDs used for
+            plotting.
+        figsize (int, optional):
+            Figure size in inches, by default 3.
+        markersize (int, optional):
+            Marker size (in units of points squared), by default None. If None,
+            the marker size is set to ``(2**2) * figsize / 3``.
+        equal_aspect (bool, optional):
+            Whether to set the aspect ratio of the plots to be equal, by
+            default False.
+        plot_ticks (bool, optional):
+            Whether to plot the coordinate ticks on the axes, by default False.
+        extent (Tuple[int, int, int, int], optional):
+            Extent of the plot in format (x2_min, x2_max, x1_min, x1_max).
+            Defaults to None (uses the smallest extent that contains all data points
+            across all context and target sets).
+
+    Returns:
+        :class:`matplotlib:matplotlib.figure.Figure`:
+    """
+    if markersize is None:
+        markersize = (2**2) * figsize / 3
+
+    # Scale font size with figure size
+    fontsize = 10 * figsize / 3
+    params = {
+        "axes.labelsize": fontsize,
+        "axes.titlesize": fontsize,
+        "font.size": fontsize,
+        "figure.titlesize": fontsize,
+        "legend.fontsize": fontsize,
+        "xtick.labelsize": fontsize,
+        "ytick.labelsize": fontsize,
+    }
+
+    var_IDs = task_loader.context_var_IDs + task_loader.target_var_IDs
+    Y_c = task["Y_c"]
+    X_c = task["X_c"]
+    if task["Y_t"] is not None:
+        Y_t = task["Y_t"]
+        X_t = task["X_t"]
+    else:
+        Y_t = []
+        X_t = []
+    n_context = len(Y_c)
+    n_target = len(Y_t)
+    if "Y_t_aux" in task and task["Y_t_aux"] is not None:
+        # Assumes only 1 target set
+        X_t = X_t + [task["X_t"][-1]]
+        Y_t = Y_t + [task["Y_t_aux"]]
+        var_IDs = var_IDs + (task_loader.aux_at_target_var_IDs,)
+        ncols = n_context + n_target + 1
+    else:
+        ncols = n_context + n_target
+    nrows = max([Y.shape[0] for Y in Y_c + Y_t])
+
+    if extent is None:
+        x1_min = np.min([np.min(X[0]) for X in X_c + X_t])
+        x1_max = np.max([np.max(X[0]) for X in X_c + X_t])
+        x2_min = np.min([np.min(X[1]) for X in X_c + X_t])
+        x2_max = np.max([np.max(X[1]) for X in X_c + X_t])
+        extent = (x2_min, x2_max, x1_min, x1_max)
+
+    with plt.rc_context(params):
+        fig, axes = plt.subplots(
+            nrows=nrows, ncols=ncols, figsize=(ncols * figsize, nrows * figsize)
+        )
+        if nrows == 1:
+            axes = axes[np.newaxis]
+        if ncols == 1:
+            axes = axes[:, np.newaxis]
+        # j = loop index over columns/context sets
+        # i = loop index over rows/variables within context sets
+        for j, (X, Y) in enumerate(zip(X_c + X_t, Y_c + Y_t)):
+            for i in range(Y.shape[0]):
+                if i == 0:
+                    if j < n_context:
+                        axes[0, j].set_title(f"Context set {j}")
+                    elif j < n_context + n_target:
+                        axes[0, j].set_title(f"Target set {j - n_context}")
+                    else:
+                        axes[0, j].set_title(f"Auxiliary at targets")
+                if isinstance(X, tuple):
+                    X = flatten_X(X)
+                    Y = Y.reshape(Y.shape[0], -1)
+                axes[i, j].scatter(X[1, :], X[0, :], c=Y[i], s=markersize, marker=".")
+                if equal_aspect:
+                    # Don't warp aspect ratio
+                    axes[i, j].set_aspect("equal")
+                if not plot_ticks:
+                    axes[i, j].set_xticks([])
+                    axes[i, j].set_yticks([])
+                axes[i, j].set_ylabel(var_IDs[j][i])
+
+                axes[i, j].set_xlim(extent[0], extent[1])
+                axes[i, j].set_ylim(extent[2], extent[3])
+
+                # Add colorbar with same height as axis
+                divider = make_axes_locatable(axes[i, j])
+                box = axes[i, j].get_position()
+                ratio = 0.3
+                pad = 0.1
+                width = box.width * ratio
+                cax = divider.append_axes("right", size=width, pad=pad)
+                fig.colorbar(axes[i, j].collections[0], cax=cax)
+
+            for i in range(Y.shape[0], nrows):
+                axes[i, j].axis("off")
+
+        plt.tight_layout()
+
+    return fig
 
 
 def context_encoding(
@@ -39,11 +163,11 @@ def context_encoding(
     size: int = 3,
     return_axes: bool = False,
 ):
-    """Plot the encoding of a context set in a task.
+    """Plot the ``ConvNP`` SetConv encoding of a context set in a task.
 
     Args:
-        model (:class:`~.model.model.DeepSensorModel`):
-            DeepSensor model.
+        model (:class:`~.model.convnp.ConvNP`):
+            ConvNP model.
         task (:class:`~.data.task.Task`):
             Task containing context set to plot encoding of ...
         task_loader (:class:`~.data.loader.TaskLoader`):
@@ -213,9 +337,11 @@ def offgrid_context(
         None.
     """
     if markers is None:
-        markers = "ovs^D"
+        # all matplotlib markers
+        markers = "ovs^Dxv<>1234spP*hHd|_"
     if colors is None:
-        colors = "kbrgy"
+        # all one-letter matplotlib colors
+        colors = "kbrgy" * 10
 
     if isinstance(context_set_idxs, int):
         context_set_idxs = [context_set_idxs]
@@ -295,7 +421,8 @@ def offgrid_context_observations(
         context_set_idx (int):
             Index of the context set to plot.
         format_str (str, optional):
-            Format string for the context observation values, by default None.
+            Format string for the context observation values. By default
+            ``"{:.2f}"``.
         extent (Tuple[int, int, int, int], optional):
             Extent of the plot, by default None.
         color (str, optional):
@@ -321,7 +448,7 @@ def offgrid_context_observations(
         axes = [axes]
 
     if format_str is None:
-        format_str = ""
+        format_str = "{:.2f}"
 
     var_ID = task_loader.context_var_IDs[
         context_set_idx
@@ -355,17 +482,9 @@ def offgrid_context_observations(
 def receptive_field(
     receptive_field,
     data_processor: DataProcessor,
-    crs: Union[
-        Axes,
-        PolarAxes,
-        AitoffAxes,
-        HammerAxes,
-        LambertAxes,
-        MollweideAxes,
-        Axes3D,
-    ],
-    extent: str = "global",
-) -> plt.Figure:
+    crs,
+    extent: Union[str, Tuple[float, float, float, float]] = "global",
+) -> plt.Figure:  # pragma: no cover
     """
     ...
 
@@ -374,20 +493,23 @@ def receptive_field(
             Receptive field to plot.
         data_processor (:class:`~.data.processor.DataProcessor`):
             Data processor used to unnormalise the context set.
-        crs (:class:`matplotlib:matplotlib.axes.Axes` | :class:`matplotlib:matplotlib.projections.polar.PolarAxes` | :class:`matplotlib:matplotlib.projections.geo.AitoffAxes` | :class:`matplotlib:matplotlib.projections.geo.HammerAxes` | :class:`matplotlib:matplotlib.projections.geo.LambertAxes` | :class:`matplotlib:matplotlib.projections.geo.MollweideAxes` | :class:`mpl_toolkits.mplot3d.Axes3D`):
+        crs (cartopy CRS):
             Coordinate reference system for the plots.
-        extent (str, optional):
-            Extent of the plot, by default "global".
+        extent (str | Tuple[float, float, float, float], optional):
+            Extent of the plot, in format (x2_min, x2_max, x1_min, x1_max), e.g. in
+            lat-lon format (lon_min, lon_max, lat_min, lat_max). By default "global".
 
     Returns:
         None.
     """
     fig, ax = plt.subplots(subplot_kw=dict(projection=crs))
 
-    if extent == "global":
-        ax.set_global()
+    if isinstance(extent, str):
+        extent = extent_str_to_tuple(extent)
     else:
-        ax.set_extent(extent, crs=crs)
+        extent = tuple([float(x) for x in extent])
+    x2_min, x2_max, x1_min, x1_max = extent
+    ax.set_extent(extent, crs=crs)
 
     x11, x12 = data_processor.config["coords"]["x1"]["map"]
     x21, x22 = data_processor.config["coords"]["x2"]["map"]
@@ -395,8 +517,8 @@ def receptive_field(
     x1_rf_raw = receptive_field * (x12 - x11)
     x2_rf_raw = receptive_field * (x22 - x21)
 
-    x1_midpoint_raw = (x12 + x11) / 2
-    x2_midpoint_raw = (x22 + x21) / 2
+    x1_midpoint_raw = (x1_max + x1_min) / 2
+    x2_midpoint_raw = (x2_max + x2_min) / 2
 
     # Compute bottom left corner of receptive field
     x1_corner = x1_midpoint_raw - x1_rf_raw / 2
@@ -437,12 +559,6 @@ def feature_maps(
     """
     Plot the feature maps of a ``ConvNP`` model's decoder layers after a
     forward pass with a ``Task``.
-
-    Currently only plots feature maps for the downsampling path.
-
-    ..
-        TODO: Work out how to construct partial U-Net including the upsample
-        path.
 
     Args:
         model (:class:`~.model.model.convnp.ConvNP`):
@@ -568,19 +684,11 @@ def placements(
     task: Task,
     X_new_df: DataFrame,
     data_processor: DataProcessor,
-    crs: Union[
-        Axes,
-        PolarAxes,
-        AitoffAxes,
-        HammerAxes,
-        LambertAxes,
-        MollweideAxes,
-        Axes3D,
-    ],
+    crs,
     extent: Optional[Union[Tuple[int, int, int, int], str]] = None,
     figsize: int = 3,
     **scatter_kwargs,
-) -> plt.Figure:
+) -> plt.Figure:  # pragma: no cover
     """
     ...
 
@@ -593,7 +701,7 @@ def placements(
         data_processor (:class:`~.data.processor.DataProcessor`):
             Data processor used to unnormalise the context set and placement
             locations.
-        crs (:class:`matplotlib:matplotlib.axes.Axes` | :class:`matplotlib:matplotlib.projections.polar.PolarAxes` | :class:`matplotlib:matplotlib.projections.geo.AitoffAxes` | :class:`matplotlib:matplotlib.projections.geo.HammerAxes` | :class:`matplotlib:matplotlib.projections.geo.LambertAxes` | :class:`matplotlib:matplotlib.projections.geo.MollweideAxes` | :class:`mpl_toolkits.mplot3d.Axes3D`):
+        crs (cartopy CRS):
             Coordinate reference system for the plots.
         extent (Tuple[int, int, int, int] | str, optional):
             Extent of the plots, by default None.
@@ -624,21 +732,13 @@ def acquisition_fn(
     acquisition_fn_ds: np.ndarray,
     X_new_df: DataFrame,
     data_processor: DataProcessor,
-    crs: Union[
-        Axes,
-        PolarAxes,
-        AitoffAxes,
-        HammerAxes,
-        LambertAxes,
-        MollweideAxes,
-        Axes3D,
-    ],
+    crs,
     col_dim: str = "iteration",
     cmap: Union[str, Colormap] = "Greys_r",
     figsize: int = 3,
     add_colorbar: bool = True,
     max_ncol: int = 5,
-) -> plt.Figure:
+) -> plt.Figure:  # pragma: no cover
     """
 
     Args:
@@ -652,7 +752,7 @@ def acquisition_fn(
         data_processor (:class:`~.data.processor.DataProcessor`):
             Data processor used to unnormalise the context set and placement
             locations.
-        crs (:class:`matplotlib:matplotlib.axes.Axes` | :class:`matplotlib:matplotlib.projections.polar.PolarAxes` | :class:`matplotlib:matplotlib.projections.geo.AitoffAxes` | :class:`matplotlib:matplotlib.projections.geo.HammerAxes` | :class:`matplotlib:matplotlib.projections.geo.LambertAxes` | :class:`matplotlib:matplotlib.projections.geo.MollweideAxes` | :class:`mpl_toolkits.mplot3d.Axes3D`):
+        crs (cartopy CRS):
             Coordinate reference system for the plots.
         col_dim (str, optional):
             Column dimension to plot over, by default "iteration".
@@ -760,3 +860,200 @@ def acquisition_fn(
         ax.remove()
 
     return fig
+
+
+def prediction(
+    pred: Prediction,
+    date: Optional[Union[str, pd.Timestamp]] = None,
+    data_processor: Optional[DataProcessor] = None,
+    task_loader: Optional[TaskLoader] = None,
+    task: Optional[Task] = None,
+    prediction_parameters: Union[List[str], str] = "all",
+    crs=None,
+    colorbar: bool = True,
+    cmap: str = "viridis",
+    size: int = 5,
+    extent: Optional[Union[Tuple[float, float, float, float], str]] = None,
+) -> plt.Figure:  # pragma: no cover
+    """
+    Plot the mean and standard deviation of a prediction.
+
+    Args:
+        pred (:class:`~.model.prediction.Prediction`):
+            Prediction to plot.
+        date (str | :class:`pandas:pandas.Timestamp`):
+            Date of the prediction.
+        data_processor (:class:`~.data.processor.DataProcessor`):
+            Data processor used to unnormalise the context set.
+        task_loader (:class:`~.data.loader.TaskLoader`):
+            Task loader used to load the data, containing context set metadata
+            used for plotting.
+        task (:class:`~.data.task.Task`, optional):
+            Task containing the context data to overlay.
+        prediction_parameters (List[str] | str, optional):
+            Prediction parameters to plot, by default "all".
+        crs (cartopy CRS, optional):
+            Coordinate reference system for the plots, by default None.
+        colorbar (bool, optional):
+            Whether to add a colorbar to the plots, by default True.
+        cmap (str):
+            Colormap to use for the plots. By default "viridis".
+        size (int, optional):
+            Size of the figure in inches per axis, by default 5.
+        extent: (tuple | str, optional):
+            Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.
+            Options are: "global", "usa", "uk", "europe". Defaults to None (no
+            setting of extent).
+        c
+    """
+    if pred.mode == "off-grid":
+        assert date is None, "Cannot pass a `date` for off-grid predictions"
+        assert (
+            data_processor is None
+        ), "Cannot pass a `data_processor` for off-grid predictions"
+        assert (
+            task_loader is None
+        ), "Cannot pass a `task_loader` for off-grid predictions"
+        assert task is None, "Cannot pass a `task` for off-grid predictions"
+        assert crs is None, "Cannot pass a `crs` for off-grid predictions"
+
+    x1_name = pred.x1_name
+    x2_name = pred.x2_name
+
+    if prediction_parameters == "all":
+        prediction_parameters = {
+            var_ID: [param for param in pred[var_ID]] for var_ID in pred
+        }
+    else:
+        prediction_parameters = {var_ID: prediction_parameters for var_ID in pred}
+
+    n_vars = len(pred.target_var_IDs)
+    n_params = max(len(params) for params in prediction_parameters.values())
+
+    if isinstance(extent, str):
+        extent = extent_str_to_tuple(extent)
+    elif isinstance(extent, tuple):
+        extent = tuple([float(x) for x in extent])
+
+    fig, axes = plt.subplots(
+        n_vars,
+        n_params,
+        figsize=(size * n_params, size * n_vars),
+        subplot_kw=dict(projection=crs),
+    )
+    axes = np.array(axes)
+    if n_vars == 1:
+        axes = np.expand_dims(axes, axis=0)
+    if n_params == 1:
+        axes = np.expand_dims(axes, axis=1)
+    for row_i, var_ID in enumerate(pred.target_var_IDs):
+        for col_i, param in enumerate(prediction_parameters[var_ID]):
+            ax = axes[row_i, col_i]
+
+            if pred.mode == "on-grid":
+                if param == "std":
+                    vmin = 0
+                else:
+                    vmin = None
+                pred[var_ID][param].sel(time=date).plot(
+                    ax=ax,
+                    cmap=cmap,
+                    vmin=vmin,
+                    add_colorbar=False,
+                    center=False,
+                )
+                # ax.set_aspect("auto")
+                if colorbar:
+                    im = ax.get_children()[0]
+                    # add axis to right
+                    cax = fig.add_axes(
+                        [
+                            ax.get_position().x1 + 0.01,
+                            ax.get_position().y0,
+                            0.02,
+                            ax.get_position().height,
+                        ]
+                    )
+                    cbar = plt.colorbar(
+                        im, cax=cax
+                    )  # specify axis for colorbar to occupy with cax
+                if task is not None:
+                    offgrid_context(
+                        ax,
+                        task,
+                        data_processor,
+                        task_loader,
+                        linewidths=0.5,
+                        add_legend=False,
+                    )
+                if crs is not None:
+                    da = pred[var_ID][param]
+                    ax.coastlines()
+                    import cartopy.feature as cfeature
+
+                    ax.add_feature(cfeature.BORDERS)
+                    # ax.set_extent(
+                    #     [da["lon"].min(), da["lon"].max(), da["lat"].min(), da["lat"].max()]
+                    # )
+
+            elif pred.mode == "off-grid":
+                import seaborn as sns
+
+                hue = (
+                    pred[var_ID]
+                    .reset_index()[[x1_name, x2_name]]
+                    .apply(lambda row: f"({row[x1_name]}, {row[x2_name]})", axis=1)
+                )
+                hue.name = f"{x1_name}, {x2_name}"
+
+                sns.lineplot(
+                    data=pred[var_ID],
+                    x="time",
+                    y=param,
+                    ax=ax,
+                    hue=hue.values,
+                )
+                # set legend title
+                ax.legend(title=hue.name, loc="best")
+
+                # rotate date times
+                ax.set_xticklabels(
+                    ax.get_xticklabels(), rotation=45, horizontalalignment="right"
+                )
+
+            ax.set_title(f"{var_ID} {param}")
+
+            if extent is not None:
+                ax.set_extent(extent, crs=crs)
+
+    plt.subplots_adjust(wspace=0.3)
+    return fig
+
+
+def extent_str_to_tuple(extent: str) -> Tuple[float, float, float, float]:
+    """
+    Convert extent string to (lon_min, lon_max, lat_min, lat_max) tuple.
+
+    Args:
+        extent: str
+            String of region name. Options are: "global", "usa", "uk", "europe".
+
+    Returns:
+        tuple
+            Tuple of (lon_min, lon_max, lat_min, lat_max).
+    """
+    if extent == "global":
+        return (-180, 180, -90, 90)
+    elif extent == "north_america":
+        return (-160, -60, 15, 75)
+    elif extent == "uk":
+        return (-12, 3, 50, 60)
+    elif extent == "europe":
+        return (-15, 40, 35, 70)
+    elif extent == "germany":
+        return (5, 15, 47, 55)
+    else:
+        raise ValueError(
+            f"Region {extent} not in supported list of regions with default bounds. "
+            f"Options are: 'global', 'north_america', 'uk', 'europe'."
+        )

@@ -10,22 +10,17 @@ import warnings
 from matrix import Diagonal
 from plum import ModuleType, dispatch
 
-from .. import backend
-from ..data.loader import TaskLoader
-from ..data.processor import DataProcessor
-from ..data.task import (
-    Task,
-    flatten_gridded_data_in_task,
-    flatten_X,
-    flatten_Y,
-)
-from ..model.defaults import (
-    gen_ppu,
+from deepsensor import backend
+from deepsensor.data.loader import TaskLoader
+from deepsensor.data.processor import DataProcessor
+from deepsensor.data.task import Task
+from deepsensor.model.defaults import (
+    compute_greatest_data_density,
     gen_encoder_scales,
     gen_decoder_scale,
 )
-from ..model.model import DeepSensorModel
-from ..model.nps import (
+from deepsensor.model.model import DeepSensorModel
+from deepsensor.model.nps import (
     construct_neural_process,
     convert_task_to_nps_args,
     run_nps_model,
@@ -58,93 +53,110 @@ class ConvNP(DeepSensorModel):
         - a ``TaskLoader`` object to infer sensible default model parameters
           from the data.
 
-    These additional parameters can be passed to the ``__init__`` method to
-    customise the model, which will override any defaults inferred from a
-    ``TaskLoader``.
+    Examples:
+        Instantiate a ``ConvNP`` with all hyperparameters set to their default values:
+            >>> ConvNP(data_processor, task_loader)
+        Instantiate a ``ConvNP`` and override some hyperparameters:
+            >>> ConvNP(data_processor, task_loader, internal_density=250, unet_channels=(128,) * 6)
+        Instantiate a ``ConvNP`` with a pre-trained model saved in the folder ``my_trained_model``:
+            >>> ConvNP(data_processor, task_loader, model_ID="my_trained_model")
+        Instantiate a ``ConvNP`` with an existing ``neuralprocesses`` model object:
+            >>> ConvNP(data_processor, task_loader, neural_process=my_neural_process_model)
 
-    Parameters
-    ----------
-    points_per_unit : int, optional
-        Density of the internal discretisation. Defaults to 100.
-    likelihood : str, optional
-        Likelihood. Must be one of ``"cnp"`` (equivalently ``"het"``),
-        ``"gnp"`` (equivalently ``"lowrank"``), or ``"cnp-spikes-beta"``
-        (equivalently ``"spikes-beta"``). Defaults to ``"cnp"``.
-    dim_x : int, optional
-        Dimensionality of the inputs. Defaults to 1.
-    dim_y : int, optional
-        Dimensionality of the outputs. Defaults to 1.
-    dim_yc : int or tuple[int], optional
-        Dimensionality of the outputs of the context set. You should set this
-        if the dimensionality of the outputs of the context set is not equal
-        to the dimensionality of the outputs of the target set. You should
-        also set this if you want to use multiple context sets. In that case,
-        set this equal to a tuple of integers indicating the respective output
-        dimensionalities.
-    dim_yt : int, optional
-        Dimensionality of the outputs of the target set. You should set this
-        if the dimensionality of the outputs of the target set is not equal to
-        the dimensionality of the outputs of the context set.
-    dim_aux_t : int, optional
-        Dimensionality of target-specific auxiliary variables.
-    conv_arch : str, optional
-        Convolutional architecture to use. Must be one of
-        ``"unet[-res][-sep]"`` or ``"conv[-res][-sep]"``. Defaults to
-        ``"unet"``.
-    unet_channels : tuple[int], optional
-        Channels of every layer of the UNet. Defaults to six layers each with
-        64 channels.
-    unet_kernels : int or tuple[int], optional
-        Sizes of the kernels in the UNet. Defaults to 5.
-    unet_resize_convs : bool, optional
-        Use resize convolutions rather than transposed convolutions in the
-        UNet. Defaults to ``False``.
-    unet_resize_conv_interp_method : str, optional
-        Interpolation method for the resize convolutions in the UNet. Can be
-        set to ``"bilinear"``. Defaults to "bilinear".
-    num_basis_functions : int, optional
-        Number of basis functions for the low-rank likelihood. Defaults to
-        64.
-    dim_lv : int, optional
-        Dimensionality of the latent variable. Setting to >0 constructs a
-        latent neural process. Defaults to 0.
-    encoder_scales : float or tuple[float], optional
-        Initial value for the length scales of the set convolutions for the
-        context sets embeddings. Set to a tuple equal to the number of context
-        sets to use different values for each set. Set to a single value to use
-        the same value for all context sets. Defaults to
-        ``1 / points_per_unit``.
-    encoder_scales_learnable : bool, optional
-        Whether the encoder SetConv length scale(s) are learnable. Defaults to
-        ``False``.
-    decoder_scale : float, optional
-        Initial value for the length scale of the set convolution in the
-        decoder. Defaults to ``1 / points_per_unit``.
-    decoder_scale_learnable : bool, optional
-        Whether the decoder SetConv length scale(s) are learnable. Defaults to
-        ``False``.
-    aux_t_mlp_layers : tuple[int], optional
-        Widths of the layers of the MLP for the target-specific auxiliary
-        variable. Defaults to three layers of width 128.
-    epsilon : float, optional
-        Epsilon added by the set convolutions before dividing by the density
-        channel. Defaults to ``1e-2``.
-    dtype : dtype, optional
-        Data type.
+    Args:
+        data_processor (:class:`~.data.processor.DataProcessor`, optional):
+            Used for unnormalising model predictions in
+            ``.predict`` method.
+        task_loader (:class:`~.data.loader.TaskLoader`, optional):
+            Used for inferring sensible defaults for hyperparameters
+            that are not set by the user.
+        model_ID (str, optional):
+            Folder to load the model config and weights from. This argument can only
+            be used alongside the ``data_processor`` and ``task_loader`` arguments.
+        neural_process (TFModel | TorchModel, optional):
+            Pre-defined neural process PyTorch/TensorFlow model object. This argument can
+            only be used alongside the ``data_processor`` and ``task_loader`` arguments.
+        internal_density (int, optional):
+            Density of the ConvNP's internal grid (in terms of number of points
+            per 1x1 unit square). Defaults to 100.
+        likelihood (str, optional):
+            Likelihood. Must be one of ``"cnp"`` (equivalently ``"het"``),
+            ``"gnp"`` (equivalently ``"lowrank"``), or ``"cnp-spikes-beta"``
+            (equivalently ``"spikes-beta"``). Defaults to ``"cnp"``.
+        dim_x (int, optional):
+            Dimensionality of the inputs. Defaults to 1.
+        dim_y (int, optional):
+            Dimensionality of the outputs. Defaults to 1.
+        dim_yc (int or tuple[int], optional):
+            Dimensionality of the outputs of the context set. You should set this
+            if the dimensionality of the outputs of the context set is not equal
+            to the dimensionality of the outputs of the target set. You should
+            also set this if you want to use multiple context sets. In that case,
+            set this equal to a tuple of integers indicating the respective output
+            dimensionalities.
+        dim_yt (int, optional):
+            Dimensionality of the outputs of the target set. You should set this
+            if the dimensionality of the outputs of the target set is not equal to
+            the dimensionality of the outputs of the context set.
+        dim_aux_t (int, optional):
+            Dimensionality of target-specific auxiliary variables.
+        conv_arch (str, optional):
+            Convolutional architecture to use. Must be one of
+            ``"unet[-res][-sep]"`` or ``"conv[-res][-sep]"``. Defaults to
+            ``"unet"``.
+        unet_channels (tuple[int], optional):
+            Number of channels in the downsampling path of the UNet (including the bottleneck).
+            Defaults to four downsampling layers, each with 64 channels. I.e. (64, 64, 64, 64).
+            Note: The downsampling path is followed by an upsampling path with the same number of
+            channels in the reverse order (plus extra channels for the skip connections).
+        unet_kernels (int or tuple[int], optional):
+            Sizes of the kernels in the UNet. Defaults to 5.
+        unet_resize_convs (bool, optional):
+            Use resize convolutions rather than transposed convolutions in the
+            UNet. Defaults to ``False``.
+        unet_resize_conv_interp_method (str, optional):
+            Interpolation method for the resize convolutions in the UNet. Can be
+            set to ``"bilinear"``. Defaults to "bilinear".
+        num_basis_functions (int, optional):
+            Number of basis functions for the low-rank likelihood. Defaults to
+            64.
+        dim_lv (int, optional):
+            Dimensionality of the latent variable. Setting to >0 constructs a
+            latent neural process. Defaults to 0.
+        encoder_scales (float or tuple[float], optional):
+            Initial value for the length scales of the set convolutions for the
+            context sets embeddings. Set to a tuple equal to the number of context
+            sets to use different values for each set. Set to a single value to use
+            the same value for all context sets. Defaults to
+            ``1 / internal_density``.
+        encoder_scales_learnable (bool, optional):
+            Whether the encoder SetConv length scale(s) are learnable. Defaults to
+            ``False``.
+        decoder_scale (float, optional):
+            Initial value for the length scale of the set convolution in the
+            decoder. Defaults to ``1 / internal_density``.
+        decoder_scale_learnable (bool, optional):
+            Whether the decoder SetConv length scale(s) are learnable. Defaults to
+            ``False``.
+        aux_t_mlp_layers (tuple[int], optional):
+            Widths of the layers of the MLP for the target-specific auxiliary
+            variable. Defaults to three layers of width 128.
+        epsilon (float, optional):
+            Epsilon added by the set convolutions before dividing by the density
+            channel. Defaults to ``1e-2``.
+        dtype (dtype, optional):
+            Data type.
     """
 
     @dispatch
     def __init__(self, *args, **kwargs):
         """
-        Generate a new model using ``nps.construct_convgnp`` with default or
+        Generate a new model using ``construct_neural_process`` with default or
         specified parameters.
 
         This method does not take a ``TaskLoader`` or ``DataProcessor`` object,
         so the model will not auto-unnormalise predictions at inference time.
         """
-        # The parent class will instantiate with `task_loader` and
-        # `data_processor` set to None, so unnormalisation will not be
-        # performed at inference time.
         super().__init__()
 
         self.model, self.config = construct_neural_process(*args, **kwargs)
@@ -162,14 +174,15 @@ class ConvNP(DeepSensorModel):
         Instantiate model from TaskLoader, using data to infer model parameters
         (unless overridden).
 
-        Parameters
-        ----------
-        data_processor : :class:`~.data.processor.DataProcessor`
-            DataProcessor object.
-        task_loader : :class:`~.data.loader.TaskLoader`
-            TaskLoader object.
-        verbose : bool, optional
-            Whether to print inferred model parameters, by default True.
+        Args:
+            data_processor (:class:`~.data.processor.DataProcessor`):
+                DataProcessor object. Used for unnormalising model predictions in
+                ``.predict`` method.
+            task_loader (:class:`~.data.loader.TaskLoader`):
+                TaskLoader object. Used for inferring sensible defaults for hyperparameters
+                that are not set by the user.
+            verbose (bool, optional):
+                Whether to print inferred model parameters, by default True.
         """
         super().__init__(data_processor, task_loader)
 
@@ -192,18 +205,18 @@ class ConvNP(DeepSensorModel):
             kwargs["aux_t_mlp_layers"] = (64,) * 3
             if verbose:
                 print(f"Setting aux_t_mlp_layers: {kwargs['aux_t_mlp_layers']}")
-        if "points_per_unit" not in kwargs:
-            ppu = gen_ppu(task_loader)
+        if "internal_density" not in kwargs:
+            internal_density = compute_greatest_data_density(task_loader)
             if verbose:
-                print(f"points_per_unit inferred from TaskLoader: {ppu}")
-            kwargs["points_per_unit"] = ppu
+                print(f"internal_density inferred from TaskLoader: {internal_density}")
+            kwargs["internal_density"] = internal_density
         if "encoder_scales" not in kwargs:
-            encoder_scales = gen_encoder_scales(kwargs["points_per_unit"], task_loader)
+            encoder_scales = gen_encoder_scales(kwargs["internal_density"], task_loader)
             if verbose:
                 print(f"encoder_scales inferred from TaskLoader: {encoder_scales}")
             kwargs["encoder_scales"] = encoder_scales
         if "decoder_scale" not in kwargs:
-            decoder_scale = gen_decoder_scale(kwargs["points_per_unit"])
+            decoder_scale = gen_decoder_scale(kwargs["internal_density"])
             if verbose:
                 print(f"decoder_scale inferred from TaskLoader: {decoder_scale}")
             kwargs["decoder_scale"] = decoder_scale
@@ -220,18 +233,20 @@ class ConvNP(DeepSensorModel):
         """
         Instantiate with a pre-defined neural process model.
 
-        Parameters
-        ----------
-        data_processor : :class:`~.data.processor.DataProcessor`
-            DataProcessor object.
-        task_loader : :class:`~.data.loader.TaskLoader`
-            TaskLoader object.
-        neural_process : TFModel | TorchModel
-            Pre-defined neural process model.
+        Args:
+            data_processor (:class:`~.data.processor.DataProcessor`):
+                DataProcessor object. Used for unnormalising model predictions in
+                ``.predict`` method.
+            task_loader (:class:`~.data.loader.TaskLoader`):
+                TaskLoader object. Used for inferring sensible defaults for hyperparameters
+                that are not set by the user.
+            neural_process (TFModel | TorchModel):
+                Pre-defined neural process PyTorch/TensorFlow model object.
         """
         super().__init__(data_processor, task_loader)
 
         self.model = neural_process
+        self.config = None
 
     @dispatch
     def __init__(self, model_ID: str):
@@ -247,13 +262,33 @@ class ConvNP(DeepSensorModel):
         task_loader: TaskLoader,
         model_ID: str,
     ):
-        """Instantiate a model from a folder containing model weights and config."""
+        """Instantiate a model from a folder containing model weights and config.
+
+        Args:
+            data_processor (:class:`~.data.processor.DataProcessor`):
+                dataprocessor object. used for unnormalising model predictions in
+                ``.predict`` method.
+            task_loader (:class:`~.data.loader.TaskLoader`):
+                taskloader object. used for inferring sensible defaults for hyperparameters
+                that are not set by the user.
+            model_ID (str):
+                folder to load the model config and weights from.
+        """
         super().__init__(data_processor, task_loader)
 
         self.load(model_ID)
 
     def save(self, model_ID: str):
-        """Save the model weights and config to a folder."""
+        """
+        Save the model weights and config to a folder.
+
+        Args:
+            model_ID (str):
+                Folder to save the model to.
+
+        Returns:
+            None.
+        """
         os.makedirs(model_ID, exist_ok=True)
 
         if backend.str == "torch":
@@ -270,7 +305,16 @@ class ConvNP(DeepSensorModel):
             json.dump(self.config, f, indent=4, sort_keys=False)
 
     def load(self, model_ID: str):
-        """Load a model from a folder containing model weights and config."""
+        """
+        Load a model from a folder containing model weights and config.
+
+        Args:
+            model_ID (str):
+                Folder to load the model from.
+
+        Returns:
+            None.
+        """
         config_fpath = os.path.join(model_ID, "model_config.json")
         with open(config_fpath, "r") as f:
             self.config = json.load(f)
@@ -286,25 +330,27 @@ class ConvNP(DeepSensorModel):
         else:
             raise NotImplementedError(f"Backend {backend.str} not supported.")
 
+    def __str__(self):
+        return (
+            f"ConvNP with config:"
+            + "\n"
+            + json.dumps(self.config, indent=4, sort_keys=False)
+        )
+
     @classmethod
-    def modify_task(cls, task):
+    def modify_task(cls, task: Task):
         """
         Cast numpy arrays to TensorFlow or PyTorch tensors, add batch dim, and
         mask NaNs.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                ...
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
 
-        if "target_nans_removed" not in task["ops"]:
-            task = task.remove_nans_from_task_Y_t_if_present()
         if "batch_dim" not in task["ops"]:
             task = task.add_batch_dim()
         if "float32" not in task["ops"]:
@@ -322,19 +368,16 @@ class ConvNP(DeepSensorModel):
         """
         Compute ConvNP distribution.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
-        n_samples : int, optional
-            Number of samples to draw from the distribution, by default 10.
-        requires_grad : bool, optional
-            Whether to compute gradients, by default False.
+        Args:
+            task (:class:`~.data.task.Task`):
+                ...
+            n_samples (int, optional):
+                Number of samples to draw from the distribution, by default 10.
+            requires_grad (bool, optional):
+                Whether to compute gradients, by default False.
 
-        Returns
-        -------
-        ...
-            The ConvNP distribution.
+        Returns:
+            ...: The ConvNP distribution.
         """
         task = ConvNP.modify_task(task)
         dist = run_nps_model(self.model, task, n_samples, requires_grad)
@@ -345,15 +388,12 @@ class ConvNP(DeepSensorModel):
         """
         ...
 
-        Parameters
-        ----------
-        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
-            ...
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                ...
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
         mean = dist.mean
         if isinstance(mean, backend.nps.Aggregate):
@@ -366,15 +406,12 @@ class ConvNP(DeepSensorModel):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                ...
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
         dist = self(task)
         return self.mean(dist)
@@ -384,15 +421,12 @@ class ConvNP(DeepSensorModel):
         """
         ...
 
-        Parameters
-        ----------
-        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
-            ...
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                ...
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
         variance = dist.var
         if isinstance(variance, backend.nps.Aggregate):
@@ -405,15 +439,12 @@ class ConvNP(DeepSensorModel):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                ...
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
         dist = self(task)
         return self.variance(dist)
@@ -423,15 +454,12 @@ class ConvNP(DeepSensorModel):
         """
         ...
 
-        Parameters
-        ----------
-        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
-            ...
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                ...
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
         variance = self.variance(dist)
         if isinstance(variance, (list, tuple)):
@@ -444,15 +472,12 @@ class ConvNP(DeepSensorModel):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                ...
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
         dist = self(task)
         return self.stddev(dist)
@@ -462,15 +487,12 @@ class ConvNP(DeepSensorModel):
         """
         ...
 
-        Parameters
-        ----------
-        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
-            ...
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                ...
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
         return B.to_numpy(B.dense(dist.vectorised_normal.var))[0, 0]
 
@@ -479,15 +501,12 @@ class ConvNP(DeepSensorModel):
         """
         ...
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            ...
+        Args:
+            task (:class:`~.data.task.Task`):
+                ...
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
         dist = self(task)
         return self.covariance(dist)
@@ -502,19 +521,19 @@ class ConvNP(DeepSensorModel):
         """
         Create samples from a ConvNP distribution.
 
-        Parameters
-        ----------
-        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
-            The distribution to sample from.
-        n_samples : int, optional
-            The number of samples to draw from the distribution, by default 1.
-        noiseless : bool, optional
-            Whether to sample from the noiseless distribution, by default True.
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                The distribution to sample from.
+            n_samples (int, optional):
+                The number of samples to draw from the distribution, by
+                default 1.
+            noiseless (bool, optional):
+                Whether to sample from the noiseless distribution, by default
+                True.
 
-        Returns
-        -------
-        :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]
-            The samples as an array or list of arrays.
+        Returns:
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                The samples as an array or list of arrays.
         """
         if noiseless:
             samples = dist.noiseless.sample(n_samples)
@@ -531,19 +550,19 @@ class ConvNP(DeepSensorModel):
         """
         Create samples from a ConvNP distribution.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            The task to sample from.
-        n_samples : int, optional
-            The number of samples to draw from the distribution, by default 1.
-        noiseless : bool, optional
-            Whether to sample from the noiseless distribution, by default True.
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                The distribution to sample from.
+            n_samples (int, optional):
+                The number of samples to draw from the distribution, by
+                default 1.
+            noiseless (bool, optional):
+                Whether to sample from the noiseless distribution, by default
+                True.
 
-        Returns
-        -------
-        :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]
-            The samples as an array or list of arrays.
+        Returns:
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                The samples as an array or list of arrays.
         """
         dist = self(task)
         return self.sample(dist, n_samples, noiseless)
@@ -553,15 +572,12 @@ class ConvNP(DeepSensorModel):
         """
         Slice out the ConvCNP part of the ConvNP distribution.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            The task to slice.
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task to slice.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
         dist = self(task)
         dist_diag = backend.nps.MultiOutputNormal(
@@ -577,15 +593,12 @@ class ConvNP(DeepSensorModel):
         """
         Slice out the ConvCNP part of the ConvNP distribution.
 
-        Parameters
-        ----------
-        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
-            The distribution to slice.
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                The distribution to slice.
 
-        Returns
-        -------
-        ...
-            ...
+        Returns:
+            ...: ...
         """
         dist_diag = backend.nps.MultiOutputNormal(
             dist._mean,
@@ -600,15 +613,12 @@ class ConvNP(DeepSensorModel):
         """
         Mean marginal entropy over target points given context points.
 
-        Parameters
-        ----------
-        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
-            The distribution to compute the entropy of.
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                The distribution to compute the entropy of.
 
-        Returns
-        -------
-        float
-            The mean marginal entropy.
+        Returns:
+            float: The mean marginal entropy.
         """
         dist_diag = self.slice_diag(dist)
         return B.mean(B.to_numpy(dist_diag.entropy())[0, 0])
@@ -618,15 +628,12 @@ class ConvNP(DeepSensorModel):
         """
         Mean marginal entropy over target points given context points.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            The task to compute the entropy of.
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task to compute the entropy of.
 
-        Returns
-        -------
-        float
-            The mean marginal entropy.
+        Returns:
+            float: The mean marginal entropy.
         """
         dist_diag = self.slice_diag(task)
         return B.mean(B.to_numpy(dist_diag.entropy())[0, 0])
@@ -636,15 +643,12 @@ class ConvNP(DeepSensorModel):
         """
         Model entropy over target points given context points.
 
-        Parameters
-        ----------
-        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
-            The distribution to compute the entropy of.
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                The distribution to compute the entropy of.
 
-        Returns
-        -------
-        float
-            The model entropy.
+        Returns:
+            float: The model entropy.
         """
         return B.to_numpy(dist.entropy())[0, 0]
 
@@ -653,15 +657,12 @@ class ConvNP(DeepSensorModel):
         """
         Model entropy over target points given context points.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            The task to compute the entropy of.
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task to compute the entropy of.
 
-        Returns
-        -------
-        float
-            The model entropy.
+        Returns:
+            float: The model entropy.
         """
         return B.to_numpy(self(task).entropy())[0, 0]
 
@@ -671,17 +672,14 @@ class ConvNP(DeepSensorModel):
         Model outputs joint distribution over all targets: Concat targets along
         observation dimension.
 
-        Parameters
-        ----------
-        dist : neuralprocesses.dist.AbstractMultiOutputDistribution
-            The distribution to compute the logpdf of.
-        task : :class:`~.data.task.Task`
-            The task to compute the logpdf of.
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                The distribution to compute the logpdf of.
+            task (:class:`~.data.task.Task`):
+                The task to compute the logpdf of.
 
-        Returns
-        -------
-        float
-            The logpdf.
+        Returns:
+            float: The logpdf.
         """
         Y_t = B.concat(*task["Y_t"], axis=-1)
         return B.to_numpy(dist.logpdf(Y_t)).mean()
@@ -692,15 +690,12 @@ class ConvNP(DeepSensorModel):
         Model outputs joint distribution over all targets: Concat targets along
         observation dimension.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            The task to compute the logpdf of.
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task to compute the logpdf of.
 
-        Returns
-        -------
-        float
-            The logpdf.
+        Returns:
+            float: The logpdf.
         """
         dist = self(task)
         return self.logpdf(dist, task)
@@ -715,24 +710,21 @@ class ConvNP(DeepSensorModel):
         """
         Compute the loss of a task.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            The task to compute the loss of.
-        fix_noise : ...
-            Whether to fix the noise to the value specified in the model
-            config.
-        num_lv_samples : int, optional
-            If latent variable model, number of lv samples for evaluating the
-            loss, by default 8.
-        normalise : bool, optional
-            Whether to normalise the loss by the number of target points, by
-            default False.
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task to compute the loss of.
+            fix_noise (...):
+                Whether to fix the noise to the value specified in the model
+                config.
+            num_lv_samples (int, optional):
+                If latent variable model, number of lv samples for evaluating
+                the loss, by default 8.
+            normalise (bool, optional):
+                Whether to normalise the loss by the number of target points,
+                by default False.
 
-        Returns
-        -------
-        float
-            The loss.
+        Returns:
+            float: The loss.
         """
         task = ConvNP.modify_task(task)
 
@@ -769,28 +761,33 @@ class ConvNP(DeepSensorModel):
         the model mean or joint sample conditioned on the AR samples.
 
         .. note::
-            AR sampling only works for 0th context/target set
+            AR sampling only works for 0th context/target set, and only for models with
+            a single target set.
 
-        Parameters
-        ----------
-        task : :class:`~.data.task.Task`
-            The task to sample from.
-        n_samples : int, optional
-            The number of samples to draw from the distribution, by default 1.
-        X_target_AR : :class:`numpy:numpy.ndarray`, optional
-            Locations to draw AR samples over. If None, AR samples will be
-            drawn over the target locations in the task. Defaults to None.
-        ar_subsample_factor : int, optional
-            Subsample target locations to draw AR samples over. Defaults to 1.
-        fill_type : Literal["mean", "sample"], optional
-            How to infill the rest of the sample. Must be one of "mean" or
-            "sample". Defaults to "mean".
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task to sample from.
+            n_samples (int, optional):
+                The number of samples to draw from the distribution, by
+                default 1.
+            X_target_AR (:class:`numpy:numpy.ndarray`, optional):
+                Locations to draw AR samples over. If None, AR samples will be
+                drawn over the target locations in the task. Defaults to None.
+            ar_subsample_factor (int, optional):
+                Subsample target locations to draw AR samples over. Defaults
+                to 1.
+            fill_type (Literal["mean", "sample"], optional):
+                How to infill the rest of the sample. Must be one of "mean" or
+                "sample". Defaults to "mean".
 
-        Returns
-        -------
-        :class:`numpy:numpy.ndarray`
-            The samples.
+        Returns:
+            :class:`numpy:numpy.ndarray`
+                The samples.
         """
+        if len(task["X_t"]) > 1 or (task["Y_t"] is not None and len(task["Y_t"]) > 1):
+            raise NotImplementedError(
+                "AR sampling with multiple target sets is not supported."
+            )
 
         # AR sampling requires gridded data to be flattened, not coordinate tuples
         task_arsample = copy.deepcopy(task)
@@ -814,8 +811,8 @@ class ConvNP(DeepSensorModel):
         else:
             task_arsample = copy.deepcopy(task)
 
-        task = flatten_gridded_data_in_task(task)
-        task_arsample = flatten_gridded_data_in_task(task_arsample)
+        task = task.flatten_gridded_data()
+        task_arsample = task_arsample.flatten_gridded_data()
 
         task_arsample = ConvNP.modify_task(task_arsample)
         task = ConvNP.modify_task(task)
@@ -855,9 +852,8 @@ class ConvNP(DeepSensorModel):
 
                 if fill_type == "mean":
                     # Compute the mean conditioned on the AR samples
-                    pred = self.mean(
-                        task_with_sample
-                    )  # Should this be a `.sample` call?
+                    # Should this be a `.sample` call?
+                    pred = self.mean(task_with_sample)
                 elif fill_type == "sample":
                     # Sample from joint distribution over all target locations
                     pred = self.sample(task_with_sample, n_samples=1)

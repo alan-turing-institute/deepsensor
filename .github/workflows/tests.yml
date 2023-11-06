@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         python-version: ['3.8', '3.11']
 
     steps:
@@ -18,13 +18,21 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Delete huge unnecessary folders, and clean apt cache
+      run: |
+        rm -rf /opt/hostedtoolcache
+        rm -rf /usr/share/dotnet
+        rm -rf /opt/ghc
+        rm -rf "$AGENT_TOOLSDIRECTORY"
+        sudo apt-get clean
+      shell: bash
     - name: Print space
       run: df -h
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements.dev.txt
+        pip install -r requirements/requirements.txt
+        pip install -r requirements/requirements.dev.txt
     - name: Test with tox
       run: tox
     - name: Run coveralls

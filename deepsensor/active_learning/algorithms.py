@@ -10,8 +10,8 @@ from deepsensor.data.processor import (
 )
 from deepsensor.model.model import (
     DeepSensorModel,
-    create_empty_spatiotemporal_xarray,
 )
+from deepsensor.model.pred import create_empty_spatiotemporal_xarray
 from deepsensor.data.task import Task, append_obs_to_task
 from deepsensor.active_learning.acquisition_fns import (
     AcquisitionFunction,
@@ -28,7 +28,48 @@ from typing import Union, List, Tuple, Optional
 
 
 class GreedyAlgorithm:
-    """Greedy algorithm for active learning"""
+    """Greedy algorithm for active learning
+
+    Args:
+        model (:class:`~.model.model.DeepSensorModel`):
+            Trained model to use for proposing new context points.
+        X_s (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index`):
+            Search coordinates.
+        X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+            Target coordinates.
+        X_s_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):
+            Mask for search coordinates. If provided, only points where mask
+            is True will be considered. Defaults to None.
+        X_t_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):
+            [Description of the X_t_mask parameter.], defaults to None.
+        N_new_context (int, optional):
+            [Description of the N_new_context parameter.], defaults to 1.
+        X_normalised (bool, optional):
+            [Description of the X_normalised parameter.], defaults to False.
+        model_infill_method (str, optional):
+            [Description of the model_infill_method parameter.], defaults to "mean".
+        query_infill (:class:`xarray.DataArray`, optional):
+            [Description of the query_infill parameter.], defaults to None.
+        proposed_infill (:class:`xarray.DataArray`, optional):
+            [Description of the proposed_infill parameter.], defaults to None.
+        context_set_idx (int, optional):
+            [Description of the context_set_idx parameter.], defaults to 0.
+        target_set_idx (int, optional):
+            [Description of the target_set_idx parameter.], defaults to 0.
+        progress_bar (bool, optional):
+            [Description of the progress_bar parameter.], defaults to False.
+        min_or_max (str, optional):
+            [Description of the min_or_max parameter.], defaults to "min".
+        task_loader (:class:`~.data.loader.TaskLoader`, optional):
+            [Description of the task_loader parameter.], defaults to None.
+        verbose (bool, optional):
+            [Description of the verbose parameter.], defaults to False.
+
+    Raises:
+        ValueError:
+            If the ``model`` passed does not inherit from
+            :class:`~.model.model.DeepSensorModel`.
+    """
 
     def __init__(
         self,
@@ -50,51 +91,6 @@ class GreedyAlgorithm:
         ] = None,  # OPTIONAL for oracle acquisition functions only
         verbose: bool = False,
     ):
-        """
-        ...
-
-        Parameters
-        ----------
-        model : :class:`~.model.model.DeepSensorModel`
-            Trained model to use for proposing new context points.
-        X_s : :class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index`
-            Search coordinates.
-        X_t : :class:`xarray.Dataset` | :class:`xarray.DataArray`
-            Target coordinates.
-        X_s_mask : :class:`xarray.Dataset` | :class:`xarray.DataArray`, optional
-            Mask for search coordinates. If provided, only points where mask
-            is True will be considered. Defaults to None.
-        X_t_mask : :class:`xarray.Dataset` | :class:`xarray.DataArray`, optional
-            ..., by default None.
-        N_new_context : int, optional
-            ..., by default 1.
-        X_normalised : bool, optional
-            ..., by default False.
-        model_infill_method : str, optional
-            ..., by default "mean".
-        query_infill : :class:`xarray.DataArray`, optional
-            ..., by default None.
-        proposed_infill : :class:`xarray.DataArray`, optional
-            ..., by default None.
-        context_set_idx : int, optional
-            ..., by default 0.
-        target_set_idx : int, optional
-            ..., by default 0.
-        progress_bar : bool, optional
-            ..., by default False.
-        min_or_max : str, optional
-            ..., by default "min".
-        task_loader : :class:`~.data.loader.TaskLoader`, optional
-            ..., by default None.
-        verbose : bool, optional
-            ..., by default False.
-
-        Raises
-        ------
-        ValueError
-            If the ``model`` passed does not inherit from
-            :class:`~.model.model.DeepSensorModel`.
-        """
         if not isinstance(model, DeepSensorModel):
             raise ValueError(
                 "`model` must inherit from DeepSensorModel, but parent "
@@ -220,12 +216,13 @@ class GreedyAlgorithm:
         importance values of the placement criterion.
         """
         if self.model_infill_method == "mean":
-            infill_ds, _ = self.model.predict(
+            pred = self.model.predict(
                 self.tasks,
                 X_s,
                 X_t_is_normalised=True,
                 unnormalise=False,
             )
+            infill_ds = pred[self.target_set_idx]["mean"]
 
         elif self.model_infill_method == "sample":
             # _, _, infill_ds = self.model.predict(
@@ -281,7 +278,7 @@ class GreedyAlgorithm:
 
         return acquisition_fn_ds
 
-    def _init_acquisition_fn_ds(self, X_s: xr.Dataset) -> xr.Dataset:
+    def _init_acquisition_fn_ds(self, X_s: xr.Dataset):
         """Instantiate acquisition function object"""
         # Unnormalise before instantiating
         X_s = self.model.data_processor.map_coords(X_s, unnorm=True)
@@ -426,32 +423,25 @@ class GreedyAlgorithm:
         """
         Iteratively... docstring TODO
 
-        Returns a tensor of proposed new sensor locations (in greedy
-        iteration/priority order) and their corresponding list of indexes in
-        the search space.
+        Args:
+            acquisition_fn (:class:`~.active_learning.acquisition_fns.AcquisitionFunction`):
+                [Description of the acquisition_fn parameter.]
+            tasks (List[:class:`~.data.task.Task`] | :class:`~.data.task.Task`):
+                [Description of the tasks parameter.]
 
-        Parameters
-        ----------
-        acquisition_fn: :class:`~.active_learning.acquisition_fns.AcquisitionFunction`
-            ...
-        tasks: List[:class:`~.data.task.Task`] | :class:`~.data.task.Task`
-            ...
+        Returns:
+            Tuple[:class:`pandas.DataFrame`, :class:`xarray.Dataset`]:
+                X_new_df, acquisition_fn_ds - [Description of the return values.]
 
-        Returns
-        -------
-        X_new_df, acquisition_fn_ds: Tuple[:class:`pandas.DataFrame`, :class:`xarray.Dataset`]
-            ...
-
-        Raises
-        ------
-        ValueError
-            If ``acquisition_fn`` is an
-            :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`
-            and ``task_loader`` is None.
-        ValueError
-            If ``min_or_max`` is not ``"min"`` or ``"max"``.
-        ValueError
-            If ``Y_t_aux`` is in ``tasks`` but ``task_loader`` is None.
+        Raises:
+            ValueError:
+                If ``acquisition_fn`` is an
+                :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`
+                and ``task_loader`` is None.
+            ValueError:
+                If ``min_or_max`` is not ``"min"`` or ``"max"``.
+            ValueError:
+                If ``Y_t_aux`` is in ``tasks`` but ``task_loader`` is None.
         """
         if (
             isinstance(acquisition_fn, AcquisitionFunctionOracle)
@@ -482,7 +472,7 @@ class GreedyAlgorithm:
 
         # Add target set to tasks
         for i, task in enumerate(tasks):
-            tasks[i]["X_t"][self.target_set_idx] = self.X_t_arr
+            tasks[i]["X_t"] = [self.X_t_arr]
             if isinstance(acquisition_fn, AcquisitionFunctionOracle):
                 # Sample ground truth y-values at target points `self.X_t_arr` using `self.task_loader`
                 date = tasks[i]["time"]
