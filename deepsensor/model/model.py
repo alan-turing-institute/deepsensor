@@ -251,10 +251,6 @@ class DeepSensorModel(ProbabilisticModel):
         """
         Predict on a regular grid or at off-grid locations.
 
-        ..
-            TODO:
-            - Test with multiple targets model
-
         Args:
             tasks (List[Task] | Task):
                 List of tasks containing context data.

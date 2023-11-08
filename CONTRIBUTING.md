@@ -45,33 +45,6 @@ us at tomandersson3@gmail.com.
 We welcome contributions of all kinds, be it code, documentation, raising issues, or community engagement. We
 encourage you to read through the following sections to learn more about how you can contribute to
 
-### Contributing to the documentation
-
-We use the Jupyter Book framework to build our documentation in the `docs/` folder.
-The documentation is written in
-Markdown and Jupyter Notebooks. The documentation is hosted on GitHub Pages and is automatically
-built and deployed using GitHub Actions after every commit to the `main` branch.
-
-DeepSensor requires slightly unique documentation, because demonstrating the package requires
-both data and trained models.
-This makes it compute- and data-hungry to run some of the notebooks, and they cannot
-run on GitHub Actions.
-Therefore, all the notebooks are run locally - the code cell outputs are saved
-Please be careful about not clearing the outputs of the notebooks if you don't intend to.
-If DeepSensor is updated, some of the notebooks may
-become out of date and will need to be re-run.
-
-Guide to regenerating the notebooks:
-* Install `cartopy` using `conda install -c conda-forge cartopy`
-* `pip install -r requirements/requirements.docs.txt`
-* Run the notebooks locally, noting that some of them may require a GPU and some
-assume that previous notebooks have been run.
-
-Some relevant links for Juptyer Book and MyST:
-* https://jupyterbook.org/en/stable/intro.html
-* https://jupyterbook.org/en/stable/content/myst.html
-* https://jupyterbook.org/en/stable/reference/cheatsheet.html
-
 ### How to Submit Changes
 
 We follow the same instructions for submitting changes to the project as those developed
@@ -132,6 +105,52 @@ continuous integration as you make commits (which will help prevent stuff from b
 
 GitHub has a [nice introduction](https://guides.github.com/introduction/flow) to the pull request
 workflow, but please [get in touch](#get-in-touch) if you have any questions :balloon:.
+
+### DeepSensor's documentation
+
+You don't have to write code to contribute to DeepSensor.
+Another highly valuable way of contributing is helping with DeepSensor's [documentation](tom-andersson.github.io/deepsensor/).
+See below for information on how to do this.
+
+#### Background
+
+We use the Jupyter Book framework to build our documentation in the `docs/` folder.
+The documentation is written in
+Markdown and Jupyter Notebooks. The documentation is hosted on GitHub Pages and is automatically
+built and deployed using GitHub Actions after every commit to the `main` branch.
+
+DeepSensor requires slightly unique documentation, because demonstrating the package requires
+both data and trained models.
+This makes it compute- and data-hungry to run some of the notebooks, and they cannot
+run on GitHub Actions.
+Therefore, all the notebooks are run locally - the code cell outputs are saved in the .ipynb files
+and are rendered when the documentation is built.
+If DeepSensor is updated, some of the notebooks may become out of date and will need to be re-run.
+
+Some relevant links for Juptyer Book and MyST:
+* https://jupyterbook.org/en/stable/intro.html
+* https://jupyterbook.org/en/stable/content/myst.html
+* https://jupyterbook.org/en/stable/reference/cheatsheet.html
+
+#### Contributing to documentation
+
+One easy way to contribute to the documentation is to provide feedback in [this issue](https://github.com/tom-andersson/deepsensor/issues/87) and/or in the DeepSensor Slack channel.
+
+Another way to contribute is to directly edit or add to the documentation and open a PR:
+* Follow all the forking instructions above
+* Install the documentation requirements: `pip install -r requirements/requirements.docs.txt`
+* Option A: Editing a markdown file
+  * Simply make your edits!
+* Option B: Editing a jupyter notebook file
+  * This can be more involved... Firstly, reach out on the Slack channel to ask if anyone else is working on the same notebook file locally. Working one-at-a-time can save Jupyter JSON merge conflict headaches later!
+  * If you are only editing markdown cells, just re-run those cells specifically to compile them
+  * If you are editing code cells:
+    * Install `cartopy` using `conda install -c conda-forge cartopy`
+    * Run the all the code cells that the current cell depends on and any subsequent code cells that depend on the current cell (you may need to rerun the whole notebook)
+    * Note: Some notebooks require a GPU and some assume that previous notebooks have been run
+  * Please be careful about not clearing any code cell outputs that you don't intend to!
+* Once your changes have been made, regenerate the docs locally with `jupyter-book build docs --all` and check your changes have applied as expected
+* Push your changes and open a PR (see above)
 
 ## First-timers' Corner
 

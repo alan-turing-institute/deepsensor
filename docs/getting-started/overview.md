@@ -1,37 +1,47 @@
 # Overview: Why DeepSensor?
 
-Machine learning (ML) has now made its way from the fringes to the
-frontiers of environmental science. However, many of the success stories so far have used
-gridded reanalysis data as the target variables.
-There are growing calls for more flexible ML approaches that can handle the challenges of environmental observations
-to tackle a range of
-prediction tasks like forecasting, downscaling, satellite gap-filling, and sensor placement (i.e.
-telling us where to put sensors to get the most information about the environment).
+Machine learning (ML) has made its way from the fringes to the frontiers of environmental science.
+DeepSensor aims to accelerate the next generation of research in this growing field.
+How? By making it easy and fun to apply advanced ML models to environmental data.
 
-![DeepSensor applications](../../figs/deepsensor_application_examples.png)
+## Environmental data
 
 Environmental data is challenging for conventional ML architectures because
-as it can be multi-modal, multi-resolution, and have missing data.
-Differing data modalities provide different information:
-* station data provides high quality localised information but may not represent surroundings;
-* satellite data provides huge areas of high-res information, but only indirectly sense target quantities and can have missing data;
-* reanalysis data provide a spatiotemporally complete picture of the atmosphere and oceans but are limited by model bias and coarse resolution.
+it can be multi-modal, multi-resolution, and have missing data.
+The various data modalities (e.g. in-situ weather stations, satellites, and simulators) each provide different kinds of information.
+We need to move beyond vanilla CNNs, MLPs, and GPs if we want to fuse these data streams.
+
+## Neural processes
 
 Neural processes have emerged as promising ML architectures for environmental data because they can:
 * efficiently fuse multi-modal and multi-resolution data,
 * handle missing observations,
 * capture prediction uncertainty.
 
-The DeepSensor Python package streamlines the application of NPs
-to environmental sciences by plugging together the `xarray`, `pandas`, and `neuralprocesses` packages with a user-friendly interface that
-enables rapid experimentation.
-The pacakge allows users to tackle diverse environmental modelling tasks,
+Early research has shown NPs are capable of tackling diverse spatiotemporal modelling tasks,
 such as sensor placement, forecasting, downscaling, and satellite gap-filling.
 
+## What DeepSensor does
+
+The DeepSensor Python package streamlines the application of NPs
+to environmental sciences by plugging together the `xarray`, `pandas`, and `neuralprocesses` packages with a user-friendly interface that enables rapid experimentation.
+**All figures below visualise outputs from DeepSensor**:
+![DeepSensor applications](../../figs/deepsensor_application_examples.png)
+
+```{warning}
+NPs are not off-the-shelf ML models like those you might find in `scikit-learn`.
+They are novel, data-hungry deep learning models.
+Althought early studies have been very promising,
+more research is needed to understand when NPs work best and how to get the most out of them.
+That's where the DeepSensor package and community come in!
+```
+
+## Project goals
+
 DeepSensor aims to:
-* Drastically reduces effort to apply NPs to environmental prediction tasks, allowing DeepSensor users to focus on the science 
-* Accelerate research by building an open-source software community
+* Drastically reduce the effort required to apply NPs to their data so that users can focus on the science
+* Build an open-source software and research community
 * Generate a positive feedback loop between research and software
-* Accelerate the next generation of environmental ML 
+* Stay updated with the latest SOTA models that align with the DeepSensor modelling paradigm
 
 If this interests you, then let's get started!
