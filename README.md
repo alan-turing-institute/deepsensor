@@ -32,10 +32,6 @@ welcome [contributions from the community](https://github.com/tom-andersson/deep
 We have an active Slack channel for code and research discussions; you can request to
 join [via this Google Form](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform).
 
-For demonstrators, use cases, and videos showcasing the functionality of DeepSensor, as well as
-resources for learning about NPs, check out the
-[DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_gallery).
-
 ![DeepSensor example application figures](https://raw.githubusercontent.com/tom-andersson/deepsensor/main/figs/deepsensor_application_examples.png)
 
 Why neural processes?
@@ -65,8 +61,14 @@ optimal [sensor placements](https://doi.org/10.1017/eds.2023.22).
 Documentation
 -----------
 We have an extensive documentation page [here](https://tom-andersson.github.io/deepsensor/),
-containing steps for getting started, a user guide, learning resources, a list of research ideas,
-community information, and more!
+containing steps for getting started, a user guide built from reproducible Jupyter notebooks,
+learning resources, research ideas, community information, an API reference, and more!
+
+DeepSensor Gallery
+-----------
+For real-world DeepSensor research demonstrators, check out the
+[DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_gallery).
+Consider submitting a notebook showcasing your research!
 
 Deep learning library agnosticism
 -----------
