@@ -243,6 +243,7 @@ class DeepSensorModel(ProbabilisticModel):
         aux_at_targets_override: Union[xr.Dataset, xr.DataArray] = None,
         aux_at_targets_override_is_normalised: bool = False,
         resolution_factor: int = 1,
+        pred_params: tuple[str] = ("mean", "std"),
         n_samples: int = 0,
         ar_sample: bool = False,
         ar_subsample_factor: int = 1,
@@ -273,6 +274,10 @@ class DeepSensorModel(ProbabilisticModel):
                 Whether the `aux_at_targets_override` coords are normalised.
                 If False, the DataProcessor will normalise the coords before passing to model.
                 Default False.
+            pred_params (tuple[str]):
+                Tuple of prediction parameters to return. The strings refer to methods
+                of the model class which will be called and stored in the Prediction object.
+                Default ("mean", "std").
             resolution_factor (float):
                 Optional factor to increase the resolution of the target grid
                 by. E.g. 2 will double the target resolution, 0.5 will halve
@@ -424,13 +429,32 @@ class DeepSensorModel(ProbabilisticModel):
         elif mode == "off-grid":
             X_t_arr = X_t_normalised.reset_index()[["x1", "x2"]].values.T
 
+        if isinstance(X_t_arr, tuple):
+            target_shape = (len(X_t_arr[0]), len(X_t_arr[1]))
+        else:
+            target_shape = (X_t_arr.shape[1],)
+
         if not unnormalise:
             X_t = X_t_normalised
 
+        if "mixture_probs" in pred_params:
+            # Store each mixture component separately w/o overriding pred_params
+            pred_params_to_store = copy.deepcopy(pred_params)
+            pred_params_to_store.remove("mixture_probs")
+            for component_i in range(self.N_mixture_components):
+                pred_params_to_store.append(f"mixture_probs_{component_i}")
+        else:
+            pred_params_to_store = pred_params
+
         # Dict to store predictions for each target variable
-        # Make this a subclass of dict like Task? And way to initialise cleanly with target_var_IDs?
         pred = Prediction(
-            target_var_IDs, dates, X_t, X_t_mask, coord_names, n_samples=n_samples
+            target_var_IDs,
+            pred_params_to_store,
+            dates,
+            X_t,
+            X_t_mask,
+            coord_names,
+            n_samples=n_samples,
         )
 
         def unnormalise_pred_array(arr, **kwargs):
@@ -440,7 +464,9 @@ class DeepSensorModel(ProbabilisticModel):
                 for var_IDs in self.task_loader.target_var_IDs
                 for var_ID in var_IDs
             ]
-            assert arr.shape[0] == len(var_IDs_flattened)
+            assert arr.shape[0] == len(
+                var_IDs_flattened
+            ), f"{arr.shape[0]} != {len(var_IDs_flattened)}"
             for i, var_ID in enumerate(var_IDs_flattened):
                 arr[i] = self.data_processor.map_array(
                     arr[i],
@@ -478,66 +504,115 @@ class DeepSensorModel(ProbabilisticModel):
                     X_t_arr, aux_at_targets_sliced
                 )
 
+            prediction_arrs = {}
+            prediction_methods = {}
+            for param in pred_params:
+                try:
+                    method = getattr(self, param)
+                    prediction_methods[param] = method
+                except ValueError:
+                    raise ValueError(
+                        f"Prediction method {param} not found in model class."
+                    )
+            if n_samples >= 1:
+                B.set_random_seed(seed)
+                np.random.seed(seed)
+                if ar_sample:
+                    sample_method = getattr(self, "ar_sample")
+                    sample_args = {
+                        "n_samples": n_samples,
+                        "ar_subsample_factor": ar_subsample_factor,
+                    }
+                else:
+                    sample_method = getattr(self, "sample")
+                    sample_args = {"n_samples": n_samples}
+
             # If `DeepSensor` model child has been sub-classed with a `__call__` method,
             # we assume this is a distribution-like object that can be used to compute
             # mean, std and samples. Otherwise, run the model with `Task` for each prediction type.
             if hasattr(self, "__call__"):
                 # Run model forwards once to generate output distribution, which we re-use
                 dist = self(task, n_samples=n_samples)
-                mean_arr = self.mean(dist)
-                std_arr = self.stddev(dist)
-                if n_samples >= 1:
-                    B.set_random_seed(seed)
-                    np.random.seed(seed)
-                    if ar_sample:
-                        samples_arr = self.ar_sample(
-                            task,
-                            n_samples=n_samples,
-                            ar_subsample_factor=ar_subsample_factor,
-                        )
-                        samples_arr = samples_arr.reshape((n_samples, *mean_arr.shape))
-                    else:
-                        samples_arr = self.sample(dist, n_samples=n_samples)
-            # Repeated code not ideal here...
+                for param, method in prediction_methods.items():
+                    prediction_arrs[param] = method(dist)
+                if n_samples >= 1 and not ar_sample:
+                    samples_arr = sample_method(dist, **sample_args)
+                    # samples_arr = samples_arr.reshape((n_samples, len(target_var_IDs), *target_shape))
+                    prediction_arrs["samples"] = samples_arr
+                elif n_samples >= 1 and ar_sample:
+                    # Can't draw AR samples from distribution object, need to re-run with task
+                    samples_arr = sample_method(task, **sample_args)
+                    samples_arr = samples_arr.reshape(
+                        (n_samples, len(target_var_IDs), *target_shape)
+                    )
+                    prediction_arrs["samples"] = samples_arr
             else:
                 # Re-run model for each prediction type
-                mean_arr = self.mean(task)
-                std_arr = self.stddev(task)
+                for param, method in prediction_methods.items():
+                    prediction_arrs[param] = method(task)
                 if n_samples >= 1:
-                    B.set_random_seed(seed)
-                    np.random.seed(seed)
+                    samples_arr = sample_method(task, **sample_args)
                     if ar_sample:
-                        samples_arr = self.ar_sample(
-                            task,
-                            n_samples=n_samples,
-                            ar_subsample_factor=ar_subsample_factor,
+                        samples_arr = samples_arr.reshape(
+                            (n_samples, len(target_var_IDs), *target_shape)
                         )
-                        samples_arr = samples_arr.reshape((n_samples, *mean_arr.shape))
-                    else:
-                        samples_arr = self.sample(task, n_samples=n_samples)
+                    prediction_arrs["samples"] = samples_arr
 
             # Concatenate multi-target predictions
-            if isinstance(mean_arr, (list, tuple)):
-                mean_arr = np.concatenate(mean_arr, axis=0)
-                std_arr = np.concatenate(std_arr, axis=0)
-                if n_samples >= 1:
-                    # Axis 0 is sample dim, axis 1 is variable dim
-                    samples_arr = np.concatenate(samples_arr, axis=1)
+            for param, arr in prediction_arrs.items():
+                if isinstance(arr, (list, tuple)):
+                    if param != "samples":
+                        concat_axis = 0
+                    elif param == "samples":
+                        # Axis 0 is sample dim, axis 1 is variable dim
+                        concat_axis = 1
+                    prediction_arrs[param] = np.concatenate(arr, axis=concat_axis)
 
             # Unnormalise predictions
-            if unnormalise:
-                mean_arr = unnormalise_pred_array(mean_arr)
-                std_arr = unnormalise_pred_array(std_arr, add_offset=False)
-                if n_samples >= 1:
-                    for sample_i in range(n_samples):
-                        samples_arr[sample_i] = unnormalise_pred_array(
-                            samples_arr[sample_i]
+            for param, arr in prediction_arrs.items():
+                # TODO make class attributes?
+                scale_and_offset_params = ["mean"]
+                scale_only_params = ["std"]
+                scale_squared_only_params = ["variance"]
+                if unnormalise:
+                    if param == "samples":
+                        for sample_i in range(n_samples):
+                            prediction_arrs["samples"][
+                                sample_i
+                            ] = unnormalise_pred_array(
+                                prediction_arrs["samples"][sample_i]
+                            )
+                    elif param in scale_and_offset_params:
+                        prediction_arrs[param] = unnormalise_pred_array(arr)
+                    elif param in scale_only_params:
+                        prediction_arrs[param] = unnormalise_pred_array(
+                            arr, add_offset=False
                         )
+                    elif param in scale_squared_only_params:
+                        # This is a horrible hack to repeat the scaling operation of the linear
+                        #   transform twice s.t. new_var = scale ^ 2 * var
+                        prediction_arrs[param] = unnormalise_pred_array(
+                            arr, add_offset=False
+                        )
+                        prediction_arrs[param] = unnormalise_pred_array(
+                            prediction_arrs[param], add_offset=False
+                        )
+                    else:
+                        # Assume prediction parameters not captured above are dimensionless
+                        #   quantities like probabilities and should not be unnormalised
+                        pass
 
-            pred.assign("mean", task["time"], mean_arr)
-            pred.assign("std", task["time"], std_arr)
-            if n_samples >= 1:
-                pred.assign("samples", task["time"], samples_arr)
+            # Assign predictions to Prediction object
+            for param, arr in prediction_arrs.items():
+                if param != "mixture_probs":
+                    pred.assign(param, task["time"], arr)
+                elif param == "mixture_probs":
+                    assert arr.shape[0] == self.N_mixture_components, (
+                        f"Number of mixture components ({arr.shape[0]}) does not match "
+                        f"model attribute N_mixture_components ({self.N_mixture_components})."
+                    )
+                    for component_i, probs in enumerate(arr):
+                        pred.assign(f"{param}_{component_i}", task["time"], probs)
 
         if verbose:
             dur = time.time() - tic
