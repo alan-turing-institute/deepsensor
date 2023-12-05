@@ -448,10 +448,10 @@ class TestModel(unittest.TestCase):
         pred_params = ["mean", "std", "variance"]
         pred = model.predict(task, X_t=self.da, pred_params=pred_params)
         for pred_param in pred_params:
-            assert pred_param in pred["air"]
+            assert pred_param in pred["var"]
 
-        # Check that passing an invalid parameter raises a ValueError
-        with self.assertRaises(ValueError):
+        # Check that passing an invalid parameter raises an AttributeError
+        with self.assertRaises(AttributeError):
             model.predict(task, X_t=self.da, pred_params=["invalid_param"])
 
     def test_saving_and_loading(self):

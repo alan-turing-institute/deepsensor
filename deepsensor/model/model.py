@@ -510,8 +510,8 @@ class DeepSensorModel(ProbabilisticModel):
                 try:
                     method = getattr(self, param)
                     prediction_methods[param] = method
-                except ValueError:
-                    raise ValueError(
+                except AttributeError:
+                    raise AttributeError(
                         f"Prediction method {param} not found in model class."
                     )
             if n_samples >= 1:
