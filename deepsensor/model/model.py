@@ -217,6 +217,8 @@ class DeepSensorModel(ProbabilisticModel):
             TaskLoader object, used to determine target variables for unnormalising.
     """
 
+    N_mixture_components = 1  # Number of mixture components for mixture likelihoods
+
     def __init__(
         self,
         data_processor: Optional[DataProcessor] = None,

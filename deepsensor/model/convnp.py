@@ -222,6 +222,7 @@ class ConvNP(DeepSensorModel):
             kwargs["decoder_scale"] = decoder_scale
 
         self.model, self.config = construct_neural_process(*args, **kwargs)
+        self._set_num_mixture_components()
 
     @dispatch
     def __init__(
@@ -254,6 +255,7 @@ class ConvNP(DeepSensorModel):
         super().__init__()
 
         self.load(model_ID)
+        self._set_num_mixture_components()
 
     @dispatch
     def __init__(
@@ -277,6 +279,18 @@ class ConvNP(DeepSensorModel):
         super().__init__(data_processor, task_loader)
 
         self.load(model_ID)
+        self._set_num_mixture_components()
+
+    def _set_num_mixture_components(self):
+        """
+        Set the number of mixture components for the model based on the likelihood.
+        """
+        if self.config["likelihood"] in ["spikes-beta"]:
+            self.N_mixture_components = 3
+        elif self.config["likelihood"] in ["bernoulli-gamma"]:
+            self.N_mixture_components = 2
+        else:
+            self.N_mixture_components = 1
 
     def save(self, model_ID: str):
         """
