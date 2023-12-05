@@ -237,6 +237,8 @@ def construct_neural_process(
         likelihood = "lowrank"
     elif likelihood == "cnp-spikes-beta":
         likelihood = "spikes-beta"
+    elif likelihood == "cnp-bernoulli-gamma":
+        likelihood = "bernoulli-gamma"
 
     # Log the call signature for `construct_convgnp`
     config = dict(locals())
