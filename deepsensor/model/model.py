@@ -23,7 +23,6 @@ import pandas as pd
 import xarray as xr
 import lab as B
 
-
 # For dispatching with TF and PyTorch model types when they have not yet been loaded.
 # See https://beartype.github.io/plum/types.html#moduletype
 
@@ -71,7 +70,7 @@ class ProbabilisticModel:
         """
         raise NotImplementedError()
 
-    def stddev(self, task: Task):
+    def std(self, task: Task):
         """
         Model marginal standard deviation over target points given context
         points. Shape (N,).
@@ -85,6 +84,9 @@ class ProbabilisticModel:
         """
         var = self.variance(task)
         return var**0.5
+
+    def stddev(self, *args, **kwargs):
+        return self.std(*args, **kwargs)
 
     def covariance(self, task: Task, *args, **kwargs):
         """

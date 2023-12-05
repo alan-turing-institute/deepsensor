@@ -450,7 +450,7 @@ class ConvNP(DeepSensorModel):
         return self.variance(dist)
 
     @dispatch
-    def stddev(self, dist: AbstractMultiOutputDistribution):
+    def std(self, dist: AbstractMultiOutputDistribution):
         """
         ...
 
@@ -468,7 +468,7 @@ class ConvNP(DeepSensorModel):
             return np.sqrt(variance)
 
     @dispatch
-    def stddev(self, task: Task):
+    def std(self, task: Task):
         """
         ...
 
@@ -480,7 +480,7 @@ class ConvNP(DeepSensorModel):
             ...: ...
         """
         dist = self(task)
-        return self.stddev(dist)
+        return self.std(dist)
 
     @dispatch
     def covariance(self, dist: AbstractMultiOutputDistribution):
