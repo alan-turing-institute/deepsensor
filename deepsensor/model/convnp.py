@@ -497,6 +497,124 @@ class ConvNP(DeepSensorModel):
         return self.std(dist)
 
     @dispatch
+    def beta_dist_alpha(self, dist: AbstractMultiOutputDistribution):
+        """
+        Alpha parameter of a Beta distribution
+        https://www.wikipedia.com/en/Beta_distribution
+
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                ...
+
+        Returns:
+            ...: ...
+        """
+        if self.config["likelihood"] not in ["spikes-beta"]:
+            raise NotImplementedError(
+                f"beta_dist_alpha not supported for likelihood {self.config['likelihood']}"
+            )
+        alpha = dist.slab.alpha
+        if isinstance(alpha, backend.nps.Aggregate):
+            return [B.to_numpy(m)[0, 0] for m in alpha]
+        else:
+            return B.to_numpy(alpha)[0, 0]
+
+    @dispatch
+    def beta_dist_alpha(self, task: Task):
+        """
+        ...
+
+        Args:
+            task (:class:`~.data.task.Task`):
+                ...
+
+        Returns:
+            ...: ...
+        """
+        dist = self(task)
+        return self.beta_dist_alpha(dist)
+
+    @dispatch
+    def beta_dist_beta(self, dist: AbstractMultiOutputDistribution):
+        """
+        Beta parameter of a Beta distribution
+        https://www.wikipedia.com/en/Beta_distribution
+
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                ...
+
+        Returns:
+            ...: ...
+        """
+        if self.config["likelihood"] not in ["spikes-beta"]:
+            raise NotImplementedError(
+                f"beta_dist_beta not supported for likelihood {self.config['likelihood']}"
+            )
+        beta = dist.slab.beta
+        if isinstance(beta, backend.nps.Aggregate):
+            return [B.to_numpy(m)[0, 0] for m in beta]
+        else:
+            return B.to_numpy(beta)[0, 0]
+
+    @dispatch
+    def beta_dist_beta(self, task: Task):
+        """
+        ...
+
+        Args:
+            task (:class:`~.data.task.Task`):
+                ...
+
+        Returns:
+            ...: ...
+        """
+        dist = self(task)
+        return self.beta_dist_beta(dist)
+
+    @dispatch
+    def mixture_probs(self, dist: AbstractMultiOutputDistribution):
+        """
+        Probabilities of the components of a mixture distribution.
+
+        Shape (N_components, N_features, N_targets)
+
+        Args:
+            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
+                ...
+
+        Returns:
+            ...: ...
+        """
+        if self.N_mixture_components == 1:
+            raise NotImplementedError(
+                f"mixture_probs not supported if model attribute N_mixture_components == 1. "
+                f"Try changing the likelihood to a mixture model, e.g. 'spikes-beta'."
+            )
+        mixture_probs = dist.logprobs
+        if isinstance(mixture_probs, backend.nps.Aggregate):
+            return [
+                np.moveaxis(np.exp(B.to_numpy(m)[0, 0]), -1, 0) for m in mixture_probs
+            ]
+        else:
+            return np.moveaxis(np.exp(B.to_numpy(mixture_probs)[0, 0]), -1, 0)
+
+    @dispatch
+    def mixture_probs(self, task: Task):
+        """
+        ...
+
+        Args:
+            task (:class:`~.data.task.Task`):
+                ...
+
+        Returns:
+            ...: ...
+        """
+        dist = self(task)
+        return self.mixture_probs(dist)
+
+    @dispatch
     def covariance(self, dist: AbstractMultiOutputDistribution):
         """
         ...
@@ -587,12 +705,15 @@ class ConvNP(DeepSensorModel):
             ...: ...
         """
         dist = self(task)
-        dist_diag = backend.nps.MultiOutputNormal(
-            dist._mean,
-            B.zeros(dist._var),
-            Diagonal(B.diag(dist._noise + dist._var)),
-            dist.shape,
-        )
+        if self.config["likelihood"] in ["spikes-beta"]:
+            dist_diag = dist
+        else:
+            dist_diag = backend.nps.MultiOutputNormal(
+                dist._mean,
+                B.zeros(dist._var),
+                Diagonal(B.diag(dist._noise + dist._var)),
+                dist.shape,
+            )
         return dist_diag
 
     @dispatch
@@ -607,12 +728,15 @@ class ConvNP(DeepSensorModel):
         Returns:
             ...: ...
         """
-        dist_diag = backend.nps.MultiOutputNormal(
-            dist._mean,
-            B.zeros(dist._var),
-            Diagonal(B.diag(dist._noise + dist._var)),
-            dist.shape,
-        )
+        if self.config["likelihood"]:
+            dist_diag = dist
+        else:
+            dist_diag = backend.nps.MultiOutputNormal(
+                dist._mean,
+                B.zeros(dist._var),
+                Diagonal(B.diag(dist._noise + dist._var)),
+                dist.shape,
+            )
         return dist_diag
 
     @dispatch
