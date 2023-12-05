@@ -516,7 +516,6 @@ class ConvNP(DeepSensorModel):
         self,
         dist: AbstractMultiOutputDistribution,
         n_samples: int = 1,
-        noiseless: bool = True,
     ):
         """
         Create samples from a ConvNP distribution.
@@ -527,15 +526,12 @@ class ConvNP(DeepSensorModel):
             n_samples (int, optional):
                 The number of samples to draw from the distribution, by
                 default 1.
-            noiseless (bool, optional):
-                Whether to sample from the noiseless distribution, by default
-                True.
 
         Returns:
             :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
                 The samples as an array or list of arrays.
         """
-        if noiseless:
+        if self.config["likelihood"] in ["gnp", "lowrank"]:
             samples = dist.noiseless.sample(n_samples)
         else:
             samples = dist.sample(n_samples)
@@ -546,7 +542,7 @@ class ConvNP(DeepSensorModel):
             return B.to_numpy(samples)[:, 0, 0]
 
     @dispatch
-    def sample(self, task: Task, n_samples: int = 1, noiseless: bool = True):
+    def sample(self, task: Task, n_samples: int = 1):
         """
         Create samples from a ConvNP distribution.
 
@@ -556,16 +552,13 @@ class ConvNP(DeepSensorModel):
             n_samples (int, optional):
                 The number of samples to draw from the distribution, by
                 default 1.
-            noiseless (bool, optional):
-                Whether to sample from the noiseless distribution, by default
-                True.
 
         Returns:
             :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
                 The samples as an array or list of arrays.
         """
         dist = self(task)
-        return self.sample(dist, n_samples, noiseless)
+        return self.sample(dist, n_samples)
 
     @dispatch
     def slice_diag(self, task: Task):
