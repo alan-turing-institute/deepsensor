@@ -131,11 +131,10 @@ class TestModel(unittest.TestCase):
             )
 
             for target_sampling, expected_obs_shape in (
-                (10, (10,)),  # expected shape is (10,) when target_sampling is 10
-                (
-                    "all",
-                    self.da.shape[-2:],
-                ),  # expected shape is da.shape[-2:] when target_sampling is "all"
+                # expected shape is (10,) when target_sampling is 10
+                (10, (10,)),
+                # expected shape is da.shape[-2:] when target_sampling is "all"
+                ("all", self.da.shape[-2:]),
             ):
                 task = tl("2020-01-01", context_sampling, target_sampling)
 
@@ -143,7 +142,7 @@ class TestModel(unittest.TestCase):
 
                 # Tensors
                 mean = model.mean(task)
-                # TODO avoid repeated code
+                # TODO avoid repeated code by looping over methods
                 if isinstance(mean, (list, tuple)):
                     for m, dim_y in zip(mean, tl.target_dims):
                         assert_shape(m, (dim_y, *expected_obs_shape))
@@ -222,12 +221,12 @@ class TestModel(unittest.TestCase):
                 # Scalars
                 if likelihood in ["cnp", "gnp"]:
                     # Methods for Gaussian likelihoods only
-                    x = model.logpdf(task)
-                    assert x.size == 1 and x.shape == ()
                     x = model.joint_entropy(task)
                     assert x.size == 1 and x.shape == ()
                     x = model.mean_marginal_entropy(task)
                     assert x.size == 1 and x.shape == ()
+                x = model.logpdf(task)
+                assert x.size == 1 and x.shape == ()
                 x = B.to_numpy(model.loss_fn(task))
                 assert x.size == 1 and x.shape == ()
 

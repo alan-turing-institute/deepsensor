@@ -800,8 +800,11 @@ class ConvNP(DeepSensorModel):
     @dispatch
     def logpdf(self, dist: AbstractMultiOutputDistribution, task: Task):
         """
-        Model outputs joint distribution over all targets: Concat targets along
-        observation dimension.
+        Joint logpdf over all target sets.
+
+        .. note::
+            If the model has multiple target sets, the returned logpdf is the
+            mean logpdf over all target sets.
 
         Args:
             dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
@@ -812,14 +815,20 @@ class ConvNP(DeepSensorModel):
         Returns:
             float: The logpdf.
         """
-        Y_t = B.concat(*task["Y_t"], axis=-1)
+        # Need to ensure `Y_t` is a tensor and, if multiple target sets,
+        #   an nps.Aggregate object
+        task = ConvNP.modify_task(task)
+        _, _, Y_t, _ = convert_task_to_nps_args(task)
         return B.to_numpy(dist.logpdf(Y_t)).mean()
 
     @dispatch
     def logpdf(self, task: Task):
         """
-        Model outputs joint distribution over all targets: Concat targets along
-        observation dimension.
+        Joint logpdf over all target sets.
+
+        .. note::
+            If the model has multiple target sets, the returned logpdf is the
+            mean logpdf over all target sets.
 
         Args:
             task (:class:`~.data.task.Task`):
