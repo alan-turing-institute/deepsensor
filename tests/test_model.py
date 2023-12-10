@@ -204,14 +204,14 @@ class TestModel(unittest.TestCase):
                             ),
                         )
 
-                    x = model.beta_dist_alpha(task)
+                    x = model.alpha(task)
                     if isinstance(x, (list, tuple)):
                         for p, dim_y in zip(x, tl.target_dims):
                             assert_shape(p, (dim_y, *expected_obs_shape))
                     else:
                         assert_shape(x, (n_target_sets, *expected_obs_shape))
 
-                    x = model.beta_dist_beta(task)
+                    x = model.beta(task)
                     if isinstance(x, (list, tuple)):
                         for p, dim_y in zip(x, tl.target_dims):
                             assert_shape(p, (dim_y, *expected_obs_shape))

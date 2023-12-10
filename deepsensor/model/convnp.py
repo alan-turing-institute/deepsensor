@@ -497,21 +497,13 @@ class ConvNP(DeepSensorModel):
         return self.std(dist)
 
     @dispatch
-    def beta_dist_alpha(self, dist: AbstractMultiOutputDistribution):
-        """
-        Alpha parameter of a Beta distribution
-        https://www.wikipedia.com/en/Beta_distribution
-
-        Args:
-            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
-                ...
-
-        Returns:
-            ...: ...
-        """
-        if self.config["likelihood"] not in ["spikes-beta"]:
+    def alpha(
+        self, dist: AbstractMultiOutputDistribution
+    ) -> Union[np.ndarray, List[np.ndarray]]:
+        if self.config["likelihood"] not in ["spikes-beta", "bernoulli-gamma"]:
             raise NotImplementedError(
-                f"beta_dist_alpha not supported for likelihood {self.config['likelihood']}"
+                f"ConvNP.alpha method not supported for likelihood {self.config['likelihood']}. "
+                f"Try changing the likelihood to a mixture model, e.g. 'spikes-beta' or 'bernoulli-gamma'."
             )
         alpha = dist.slab.alpha
         if isinstance(alpha, backend.nps.Aggregate):
@@ -520,36 +512,31 @@ class ConvNP(DeepSensorModel):
             return B.to_numpy(alpha)[0, 0]
 
     @dispatch
-    def beta_dist_alpha(self, task: Task):
+    def alpha(self, task: Task) -> Union[np.ndarray, List[np.ndarray]]:
         """
-        ...
+        Alpha values of model's distribution at target locations in task.
+
+        .. note::
+            This method only works for models that return a distribution with
+            a ``dist.slab.alpha`` attribute, e.g. models with a Beta or
+            Bernoulli-Gamma likelihood.
 
         Args:
             task (:class:`~.data.task.Task`):
-                ...
+                The task containing the context and target data.
 
         Returns:
-            ...: ...
+            Union[np.ndarray, List[np.ndarray]]: Alpha values.
         """
         dist = self(task)
-        return self.beta_dist_alpha(dist)
+        return self.alpha(dist)
 
     @dispatch
-    def beta_dist_beta(self, dist: AbstractMultiOutputDistribution):
-        """
-        Beta parameter of a Beta distribution
-        https://www.wikipedia.com/en/Beta_distribution
-
-        Args:
-            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
-                ...
-
-        Returns:
-            ...: ...
-        """
-        if self.config["likelihood"] not in ["spikes-beta"]:
+    def beta(self, dist: AbstractMultiOutputDistribution):
+        if self.config["likelihood"] not in ["spikes-beta", "bernoulli-gamma"]:
             raise NotImplementedError(
-                f"beta_dist_beta not supported for likelihood {self.config['likelihood']}"
+                f"ConvNP.beta method not supported for likelihood {self.config['likelihood']}. "
+                f"Try changing the likelihood to a mixture model, e.g. 'spikes-beta' or 'bernoulli-gamma'."
             )
         beta = dist.slab.beta
         if isinstance(beta, backend.nps.Aggregate):
@@ -558,19 +545,24 @@ class ConvNP(DeepSensorModel):
             return B.to_numpy(beta)[0, 0]
 
     @dispatch
-    def beta_dist_beta(self, task: Task):
+    def beta(self, task: Task):
         """
-        ...
+        Beta values of model's distribution at target locations in task.
+
+        .. note::
+            This method only works for models that return a distribution with
+            a ``dist.slab.beta`` attribute, e.g. models with a Beta or
+            Bernoulli-Gamma likelihood.
 
         Args:
             task (:class:`~.data.task.Task`):
-                ...
+                The task containing the context and target data.
 
         Returns:
-            ...: ...
+            Union[np.ndarray, List[np.ndarray]]: Beta values.
         """
         dist = self(task)
-        return self.beta_dist_beta(dist)
+        return self.beta(dist)
 
     @dispatch
     def mixture_probs(self, dist: AbstractMultiOutputDistribution):
