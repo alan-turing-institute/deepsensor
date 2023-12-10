@@ -69,8 +69,7 @@ class TestModel(unittest.TestCase):
         ]:
             yield [sampling_method] * n_context, [sampling_method] * n_target
 
-    # TEMP only 1D because non-overlapping target sets are not yet supported
-    @parameterized.expand(range(1, 2))
+    @parameterized.expand(range(1, 4))
     def test_model_call(self, n_context_and_target):
         """Check ``ConvNP`` runs with all possible combinations of context/target
         sampling methods."""
@@ -120,68 +119,116 @@ class TestModel(unittest.TestCase):
 
         context_sampling = 10
 
-        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        likelihoods = ["cnp", "gnp", "cnp-spikes-beta"]
 
-        for target_sampling, expected_obs_shape in (
-            (10, (10,)),  # expected shape is (10,) when target_sampling is 10
-            (
-                "all",
-                self.da.shape[-2:],
-            ),  # expected shape is da.shape[-2:] when target_sampling is "all"
-        ):
-            task = tl("2020-01-01", context_sampling, target_sampling)
-
-            n_targets = np.product(expected_obs_shape)
-
-            # Tensors
-            mean = model.mean(task)
-            # TODO avoid repeated code
-            if isinstance(mean, (list, tuple)):
-                for m, dim_y in zip(mean, tl.target_dims):
-                    assert_shape(m, (dim_y, *expected_obs_shape))
-            else:
-                assert_shape(mean, (n_target_sets, *expected_obs_shape))
-
-            variance = model.variance(task)
-            if isinstance(variance, (list, tuple)):
-                for v, dim_y in zip(variance, tl.target_dims):
-                    assert_shape(v, (dim_y, *expected_obs_shape))
-            else:
-                assert_shape(variance, (n_target_sets, *expected_obs_shape))
-
-            stddev = model.stddev(task)
-            if isinstance(stddev, (list, tuple)):
-                for s, dim_y in zip(stddev, tl.target_dims):
-                    assert_shape(s, (dim_y, *expected_obs_shape))
-            else:
-                assert_shape(stddev, (n_target_sets, *expected_obs_shape))
-
-            n_samples = 5
-            samples = model.sample(task, n_samples)
-            if isinstance(samples, (list, tuple)):
-                for s, dim_y in zip(samples, tl.target_dims):
-                    assert_shape(s, (n_samples, dim_y, *expected_obs_shape))
-            else:
-                assert_shape(samples, (n_samples, n_target_sets, *expected_obs_shape))
-
-            n_target_dims = np.product(tl.target_dims)
-            assert_shape(
-                model.covariance(task),
-                (
-                    n_targets * n_target_sets * n_target_dims,
-                    n_targets * n_target_sets * n_target_dims,
-                ),
+        for likelihood in likelihoods:
+            model = ConvNP(
+                self.dp,
+                tl,
+                unet_channels=(5, 5, 5),
+                likelihood=likelihood,
+                verbose=False,
             )
 
-            # Scalars
-            x = model.logpdf(task)
-            assert x.size == 1 and x.shape == ()
-            x = model.joint_entropy(task)
-            assert x.size == 1 and x.shape == ()
-            x = model.mean_marginal_entropy(task)
-            assert x.size == 1 and x.shape == ()
-            x = B.to_numpy(model.loss_fn(task))
-            assert x.size == 1 and x.shape == ()
+            for target_sampling, expected_obs_shape in (
+                # expected shape is (10,) when target_sampling is 10
+                (10, (10,)),
+                # expected shape is da.shape[-2:] when target_sampling is "all"
+                ("all", self.da.shape[-2:]),
+            ):
+                task = tl("2020-01-01", context_sampling, target_sampling)
+
+                n_targets = np.product(expected_obs_shape)
+
+                # Tensors
+                mean = model.mean(task)
+                # TODO avoid repeated code by looping over methods
+                if isinstance(mean, (list, tuple)):
+                    for m, dim_y in zip(mean, tl.target_dims):
+                        assert_shape(m, (dim_y, *expected_obs_shape))
+                else:
+                    assert_shape(mean, (n_target_sets, *expected_obs_shape))
+
+                variance = model.variance(task)
+                if isinstance(variance, (list, tuple)):
+                    for v, dim_y in zip(variance, tl.target_dims):
+                        assert_shape(v, (dim_y, *expected_obs_shape))
+                else:
+                    assert_shape(variance, (n_target_sets, *expected_obs_shape))
+
+                stddev = model.stddev(task)
+                if isinstance(stddev, (list, tuple)):
+                    for s, dim_y in zip(stddev, tl.target_dims):
+                        assert_shape(s, (dim_y, *expected_obs_shape))
+                else:
+                    assert_shape(stddev, (n_target_sets, *expected_obs_shape))
+
+                n_samples = 5
+                samples = model.sample(task, n_samples)
+                if isinstance(samples, (list, tuple)):
+                    for s, dim_y in zip(samples, tl.target_dims):
+                        assert_shape(s, (n_samples, dim_y, *expected_obs_shape))
+                else:
+                    assert_shape(
+                        samples, (n_samples, n_target_sets, *expected_obs_shape)
+                    )
+
+                if likelihood in ["cnp", "gnp"]:
+                    n_target_dims = np.product(tl.target_dims)
+                    assert_shape(
+                        model.covariance(task),
+                        (
+                            n_targets * n_target_sets * n_target_dims,
+                            n_targets * n_target_sets * n_target_dims,
+                        ),
+                    )
+                if likelihood in ["cnp-spikes-beta"]:
+                    mixture_probs = model.mixture_probs(task)
+                    if isinstance(mixture_probs, (list, tuple)):
+                        for p, dim_y in zip(mixture_probs, tl.target_dims):
+                            assert_shape(
+                                p,
+                                (
+                                    model.N_mixture_components,
+                                    dim_y,
+                                    *expected_obs_shape,
+                                ),
+                            )
+                    else:
+                        assert_shape(
+                            mixture_probs,
+                            (
+                                model.N_mixture_components,
+                                n_target_sets,
+                                *expected_obs_shape,
+                            ),
+                        )
+
+                    x = model.alpha(task)
+                    if isinstance(x, (list, tuple)):
+                        for p, dim_y in zip(x, tl.target_dims):
+                            assert_shape(p, (dim_y, *expected_obs_shape))
+                    else:
+                        assert_shape(x, (n_target_sets, *expected_obs_shape))
+
+                    x = model.beta(task)
+                    if isinstance(x, (list, tuple)):
+                        for p, dim_y in zip(x, tl.target_dims):
+                            assert_shape(p, (dim_y, *expected_obs_shape))
+                    else:
+                        assert_shape(x, (n_target_sets, *expected_obs_shape))
+
+                # Scalars
+                if likelihood in ["cnp", "gnp"]:
+                    # Methods for Gaussian likelihoods only
+                    x = model.joint_entropy(task)
+                    assert x.size == 1 and x.shape == ()
+                    x = model.mean_marginal_entropy(task)
+                    assert x.size == 1 and x.shape == ()
+                x = model.logpdf(task)
+                assert x.size == 1 and x.shape == ()
+                x = B.to_numpy(model.loss_fn(task))
+                assert x.size == 1 and x.shape == ()
 
     @parameterized.expand(range(1, 4))
     def test_prediction_shapes_highlevel(self, target_dim):
@@ -372,9 +419,7 @@ class TestModel(unittest.TestCase):
 
         dp = DataProcessor(
             x1_name="latitude",
-            x1_map=lat_lims,
             x2_name="longitude",
-            x2_map=lon_lims,
         )
         df = dp(df_raw)
 
@@ -391,6 +436,81 @@ class TestModel(unittest.TestCase):
             pred["dummy_data"]["mean"].reset_index()["longitude"],
             df_raw.reset_index()["longitude"],
         )
+
+    def test_highlevel_predict_with_pred_params_pandas(self):
+        """
+        Test that passing ``pred_params`` to ``.predict`` works with
+        a spikes-beta likelihood for prediction to pandas.
+        """
+        tl = TaskLoader(context=self.da, target=self.da)
+        model = ConvNP(
+            self.dp,
+            tl,
+            unet_channels=(5, 5, 5),
+            verbose=False,
+            likelihood="cnp-spikes-beta",
+        )
+        task = tl("2020-01-01", context_sampling=10, target_sampling=10)
+
+        # Off-grid prediction
+        X_t = np.array([[0.0, 0.5, 1.0], [0.0, 0.5, 1.0]])
+
+        # Check that nothing breaks and the correct parameters are returned
+        pred_params = ["mean", "std", "variance", "alpha", "beta"]
+        pred = model.predict(task, X_t=X_t, pred_params=pred_params)
+        for pred_param in pred_params:
+            assert pred_param in pred["var"]
+
+        # Test mixture probs special case
+        pred_params = ["mixture_probs"]
+        pred = model.predict(task, X_t=self.da, pred_params=pred_params)
+        for component in range(model.N_mixture_components):
+            pred_param = f"mixture_probs_{component}"
+            assert pred_param in pred["var"]
+
+    def test_highlevel_predict_with_pred_params_xarray(self):
+        """
+        Test that passing ``pred_params`` to ``.predict`` works with
+        a spikes-beta likelihood for prediction to xarray.
+        """
+        tl = TaskLoader(context=self.da, target=self.da)
+        model = ConvNP(
+            self.dp,
+            tl,
+            unet_channels=(5, 5, 5),
+            verbose=False,
+            likelihood="cnp-spikes-beta",
+        )
+        task = tl("2020-01-01", context_sampling=10, target_sampling=10)
+
+        # Check that nothing breaks and the correct parameters are returned
+        pred_params = ["mean", "std", "variance", "alpha", "beta"]
+        pred = model.predict(task, X_t=self.da, pred_params=pred_params)
+        for pred_param in pred_params:
+            assert pred_param in pred["var"]
+
+        # Test mixture probs special case
+        pred_params = ["mixture_probs"]
+        pred = model.predict(task, X_t=self.da, pred_params=pred_params)
+        for component in range(model.N_mixture_components):
+            pred_param = f"mixture_probs_{component}"
+            assert pred_param in pred["var"]
+
+    def test_highlevel_predict_with_invalid_pred_params(self):
+        """Test that passing ``pred_params`` to ``.predict`` works."""
+        tl = TaskLoader(context=self.da, target=self.da)
+        model = ConvNP(
+            self.dp,
+            tl,
+            unet_channels=(5, 5, 5),
+            verbose=False,
+            likelihood="cnp-spikes-beta",
+        )
+        task = tl("2020-01-01", context_sampling=10, target_sampling=10)
+
+        # Check that passing an invalid parameter raises an AttributeError
+        with self.assertRaises(AttributeError):
+            model.predict(task, X_t=self.da, pred_params=["invalid_param"])
 
     def test_saving_and_loading(self):
         """Test saving and loading of model"""
