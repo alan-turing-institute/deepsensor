@@ -69,6 +69,7 @@ sphinx:
     autodoc_typehints: "none"
     autoclass_content: "class"
     bibtex_reference_style: author_year
+    napoleon_use_rtype: False
     intersphinx_mapping:
       python:
         - https://docs.python.org/3

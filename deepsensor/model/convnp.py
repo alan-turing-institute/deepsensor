@@ -526,7 +526,8 @@ class ConvNP(DeepSensorModel):
                 The task containing the context and target data.
 
         Returns:
-            Union[np.ndarray, List[np.ndarray]]: Alpha values.
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                Alpha values.
         """
         dist = self(task)
         return self.alpha(dist)
@@ -559,7 +560,8 @@ class ConvNP(DeepSensorModel):
                 The task containing the context and target data.
 
         Returns:
-            Union[np.ndarray, List[np.ndarray]]: Beta values.
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                Beta values.
         """
         dist = self(task)
         return self.beta(dist)
