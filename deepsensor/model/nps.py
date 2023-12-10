@@ -40,10 +40,21 @@ def convert_task_to_nps_args(task: Task):
         yt = task["Y_t"][0]
     elif len(task["X_t"]) > 1 and len(task["Y_t"]) > 1:
         # Multiple target sets, different target locations
-        xt = backend.nps.AggregateInput(*[(xt, i) for i, xt in enumerate(task["X_t"])])
-        yt = backend.nps.Aggregate(*task["Y_t"])
+        assert len(task["X_t"]) == len(task["Y_t"])
+        xts = []
+        yts = []
+        target_dims = [yt.shape[1] for yt in task["Y_t"]]
+        # Map from ND target sets to 1D target sets
+        dim_counter = 0
+        for i, (xt, yt) in enumerate(zip(task["X_t"], task["Y_t"])):
+            # Repeat target locations for each target dimension in target set
+            xts.extend([(xt, dim_counter + j) for j in range(target_dims[i])])
+            yts.extend([yt[:, j : j + 1] for j in range(target_dims[i])])
+            dim_counter += target_dims[i]
+        xt = backend.nps.AggregateInput(*xts)
+        yt = backend.nps.Aggregate(*yts)
     elif len(task["X_t"]) == 1 and len(task["Y_t"]) > 1:
-        # Multiple target sets, same target locations
+        # Multiple target sets, same target locations; `Y_t`s along feature dim
         xt = task["X_t"][0]
         yt = B.concat(*task["Y_t"], axis=1)
     else:

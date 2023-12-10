@@ -110,16 +110,25 @@ class TestModel(unittest.TestCase):
 
     @parameterized.expand(range(1, 4))
     def test_prediction_shapes_lowlevel(self, n_target_sets):
-        """Test low-level model prediction interface over a range of number of
-        target sets."""
+        """
+        Test low-level model prediction interface over a range of number of
+        target sets.
+        """
+        # Make dataset 5D for non-trivial target dimensions
+        ndim = 5
+        ds = xr.Dataset(
+            {f"var{i}": self.da for i in range(ndim)},
+        )
         tl = TaskLoader(
-            context=self.da,
-            target=[self.da] * n_target_sets,
+            context=ds,
+            target=[ds] * n_target_sets,
         )
 
         context_sampling = 10
 
         likelihoods = ["cnp", "gnp", "cnp-spikes-beta"]
+
+        dim_y_combined = sum(tl.target_dims)
 
         for likelihood in likelihoods:
             model = ConvNP(
@@ -129,11 +138,12 @@ class TestModel(unittest.TestCase):
                 likelihood=likelihood,
                 verbose=False,
             )
+            assert dim_y_combined == model.config["dim_yt"]
 
             for target_sampling, expected_obs_shape in (
-                # expected shape is (10,) when target_sampling is 10
+                # expected obs shape is (10,) when target_sampling is 10
                 (10, (10,)),
-                # expected shape is da.shape[-2:] when target_sampling is "all"
+                # expected obs shape is da.shape[-2:] when target_sampling is "all"
                 ("all", self.da.shape[-2:]),
             ):
                 task = tl("2020-01-01", context_sampling, target_sampling)
@@ -147,21 +157,21 @@ class TestModel(unittest.TestCase):
                     for m, dim_y in zip(mean, tl.target_dims):
                         assert_shape(m, (dim_y, *expected_obs_shape))
                 else:
-                    assert_shape(mean, (n_target_sets, *expected_obs_shape))
+                    assert_shape(mean, (dim_y_combined, *expected_obs_shape))
 
                 variance = model.variance(task)
                 if isinstance(variance, (list, tuple)):
                     for v, dim_y in zip(variance, tl.target_dims):
                         assert_shape(v, (dim_y, *expected_obs_shape))
                 else:
-                    assert_shape(variance, (n_target_sets, *expected_obs_shape))
+                    assert_shape(variance, (dim_y_combined, *expected_obs_shape))
 
                 stddev = model.stddev(task)
                 if isinstance(stddev, (list, tuple)):
                     for s, dim_y in zip(stddev, tl.target_dims):
                         assert_shape(s, (dim_y, *expected_obs_shape))
                 else:
-                    assert_shape(stddev, (n_target_sets, *expected_obs_shape))
+                    assert_shape(stddev, (dim_y_combined, *expected_obs_shape))
 
                 n_samples = 5
                 samples = model.sample(task, n_samples)
@@ -170,7 +180,7 @@ class TestModel(unittest.TestCase):
                         assert_shape(s, (n_samples, dim_y, *expected_obs_shape))
                 else:
                     assert_shape(
-                        samples, (n_samples, n_target_sets, *expected_obs_shape)
+                        samples, (n_samples, dim_y_combined, *expected_obs_shape)
                     )
 
                 if likelihood in ["cnp", "gnp"]:
@@ -178,8 +188,8 @@ class TestModel(unittest.TestCase):
                     assert_shape(
                         model.covariance(task),
                         (
-                            n_targets * n_target_sets * n_target_dims,
-                            n_targets * n_target_sets * n_target_dims,
+                            n_targets * dim_y_combined * n_target_dims,
+                            n_targets * dim_y_combined * n_target_dims,
                         ),
                     )
                 if likelihood in ["cnp-spikes-beta"]:
@@ -199,7 +209,7 @@ class TestModel(unittest.TestCase):
                             mixture_probs,
                             (
                                 model.N_mixture_components,
-                                n_target_sets,
+                                dim_y_combined,
                                 *expected_obs_shape,
                             ),
                         )
@@ -209,14 +219,14 @@ class TestModel(unittest.TestCase):
                         for p, dim_y in zip(x, tl.target_dims):
                             assert_shape(p, (dim_y, *expected_obs_shape))
                     else:
-                        assert_shape(x, (n_target_sets, *expected_obs_shape))
+                        assert_shape(x, (dim_y_combined, *expected_obs_shape))
 
                     x = model.beta(task)
                     if isinstance(x, (list, tuple)):
                         for p, dim_y in zip(x, tl.target_dims):
                             assert_shape(p, (dim_y, *expected_obs_shape))
                     else:
-                        assert_shape(x, (n_target_sets, *expected_obs_shape))
+                        assert_shape(x, (dim_y_combined, *expected_obs_shape))
 
                 # Scalars
                 if likelihood in ["cnp", "gnp"]:
