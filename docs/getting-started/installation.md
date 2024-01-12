@@ -31,7 +31,7 @@ This method will create a `DeepSensor` directory on your machine which will cont
 - Install `DeepSensor`:
 
   ```bash
-  pip install -e -v .
+  pip install -v -e .
   ```
 ## Install PyTorch or TensorFlow
 
