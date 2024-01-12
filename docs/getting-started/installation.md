@@ -25,7 +25,7 @@ This method will create a `DeepSensor` directory on your machine which will cont
 - Clone the repository:
 
   ```bash
-  git clone
+  git clone https://github.com/tom-andersson/deepsensor
   ```
 
 - Install `DeepSensor`:
