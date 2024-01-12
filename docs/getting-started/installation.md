@@ -12,6 +12,10 @@ This is the easiest way to install DeepSensor.
 pip install deepsensor
 ```
 
+```{note}
+We advise installing DeepSensor and its dependencies in a python virtual environment using a tool such as [venv](https://docs.python.org/3/library/venv.html) or [conda](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html#managing-python) (other virtual environment managers are available).
+```
+
 ## Install DeepSensor from [source](https://github.com/tom-andersson/deepsensor)
 
 ```{note}
