@@ -198,9 +198,13 @@ class TestActiveLearning(unittest.TestCase):
         X_new_df, acquisition_fn_ds = alg(acquisition_fn, task)
 
         # Assert
-        expected_columns = ['lat', 'lon']  # Replace with actual expected column names
+        expected_columns = ["lat", "lon"]  # Replace with actual expected column names
         actual_columns = X_new_df.columns.tolist()
-        self.assertEqual(expected_columns, actual_columns, "Column names do not match the expected names")
+        self.assertEqual(
+            expected_columns,
+            actual_columns,
+            "Column names do not match the expected names",
+        )
 
     def test_greedy_alg_with_aux_at_targets_without_task_loader_raises_value_error(
         self,
