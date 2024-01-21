@@ -505,7 +505,7 @@ class GreedyAlgorithm:
         self._init_acquisition_fn_ds(self.X_s)
 
         # Dataframe for storing proposed context locations
-        self.X_new_df = pd.DataFrame(columns=["x1", "x2"])
+        self.X_new_df = pd.DataFrame(columns=[self.x1_name, self.x2_name])
         self.X_new_df.index.name = "iteration"
 
         # List to track indexes into original search grid of chosen sensor locations
