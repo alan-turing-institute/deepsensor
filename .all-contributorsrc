@@ -1,6 +1,6 @@
 {
   "projectName": "deepsensor",
-  "projectOwner": "tom-andersson",
+  "projectOwner": "alan-turing-institute",
   "skipCI": true,
   "files": [
     "README.md"

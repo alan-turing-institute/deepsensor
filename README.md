@@ -1,6 +1,6 @@
 [//]: # (![]&#40;figs/DeepSensorLogo.png&#41;)
 <ul style="text-align: center;">
-<img src="https://raw.githubusercontent.com/tom-andersson/deepsensor/main/figs/DeepSensorLogo2.png" width="700"/>
+<img src="https://raw.githubusercontent.com/alan-turing-institute/deepsensor/main/figs/DeepSensorLogo2.png" width="700"/>
 </ul>
 
 <ul style="margin-top:0px;">
@@ -11,14 +11,14 @@ data with neural processes</p>
 
 -----------
 
-[![release](https://img.shields.io/badge/release-v0.3.5-green?logo=github)](https://github.com/tom-andersson/deepsensor/releases)
-[![Latest Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://tom-andersson.github.io/deepsensor/)
-![Tests](https://github.com/tom-andersson/deepsensor/actions/workflows/tests.yml/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/tom-andersson/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/tom-andersson/deepsensor?branch=main)
+[![release](https://img.shields.io/badge/release-v0.3.6-green?logo=github)](https://github.com/alan-turing-institute/deepsensor/releases)
+[![Latest Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://alan-turing-institute.github.io/deepsensor/)
+![Tests](https://github.com/alan-turing-institute/deepsensor/actions/workflows/tests.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/alan-turing-institute/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/alan-turing-institute/deepsensor?branch=main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![slack](https://img.shields.io/badge/slack-deepsensor-purple.svg?logo=slack)](https://ai4environment.slack.com/archives/C05NQ76L87R)
-[![All Contributors](https://img.shields.io/github/all-contributors/tom-andersson/deepsensor?color=ee8449&style=flat-square)](#contributors)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/tom-andersson/deepsensor/blob/main/LICENSE)
+[![All Contributors](https://img.shields.io/github/all-contributors/alan-turing-institute/deepsensor?color=ee8449&style=flat-square)](#contributors)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/alan-turing-institute/deepsensor/blob/main/LICENSE)
 
 DeepSensor streamlines the application of neural processes (NPs) to environmental sciences by
 providing a simple interface for building, training, and evaluating NPs using `xarray` and `pandas`
@@ -28,11 +28,11 @@ drastically reducing the time and effort required to apply NPs to environmental 
 This allows DeepSensor users to focus on the science and rapidly iterate on ideas.
 
 DeepSensor is an experimental package, and we
-welcome [contributions from the community](https://github.com/tom-andersson/deepsensor/blob/main/CONTRIBUTING.md).
+welcome [contributions from the community](https://github.com/alan-turing-institute/deepsensor/blob/main/CONTRIBUTING.md).
 We have an active Slack channel for code and research discussions; you can request to
 join [via this Google Form](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform).
 
-![DeepSensor example application figures](https://raw.githubusercontent.com/tom-andersson/deepsensor/main/figs/deepsensor_application_examples.png)
+![DeepSensor example application figures](https://raw.githubusercontent.com/alan-turing-institute/deepsensor/main/figs/deepsensor_application_examples.png)
 
 Why neural processes?
 -----------
@@ -60,7 +60,7 @@ optimal [sensor placements](https://doi.org/10.1017/eds.2023.22).
 
 Documentation
 -----------
-We have an extensive documentation page [here](https://tom-andersson.github.io/deepsensor/),
+We have an extensive documentation page [here](https://alan-turing-institute.github.io/deepsensor/),
 containing steps for getting started, a user guide built from reproducible Jupyter notebooks,
 learning resources, research ideas, community information, an API reference, and more!
 
