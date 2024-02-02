@@ -577,10 +577,10 @@ class DeepSensorModel(ProbabilisticModel):
                 if unnormalise:
                     if param == "samples":
                         for sample_i in range(n_samples):
-                            prediction_arrs["samples"][
-                                sample_i
-                            ] = unnormalise_pred_array(
-                                prediction_arrs["samples"][sample_i]
+                            prediction_arrs["samples"][sample_i] = (
+                                unnormalise_pred_array(
+                                    prediction_arrs["samples"][sample_i]
+                                )
                             )
                     elif param in scale_and_offset_params:
                         prediction_arrs[param] = unnormalise_pred_array(arr)

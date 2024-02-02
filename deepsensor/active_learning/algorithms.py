@@ -377,9 +377,9 @@ class GreedyAlgorithm:
                     self.X_s_mask.data
                 ] = importances
             else:
-                self.acquisition_fn_ds.loc[
-                    self.iteration, task["time"]
-                ] = importances.reshape(self.acquisition_fn_ds.shape[-2:])
+                self.acquisition_fn_ds.loc[self.iteration, task["time"]] = (
+                    importances.reshape(self.acquisition_fn_ds.shape[-2:])
+                )
 
         return np.mean(importances_list, axis=0)
 

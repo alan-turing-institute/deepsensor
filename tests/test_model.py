@@ -269,9 +269,9 @@ class TestModel(unittest.TestCase):
             tasks,
             X_t=self.da,
             n_samples=n_samples,
-            unnormalise=True
-            if target_dim == 1
-            else False,  # TODO fix unnormalising for multiple equally named targets
+            unnormalise=(
+                True if target_dim == 1 else False
+            ),  # TODO fix unnormalising for multiple equally named targets
         )
         assert [isinstance(ds, xr.Dataset) for ds in pred.values()]
         for var_ID in pred:
