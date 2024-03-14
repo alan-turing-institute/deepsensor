@@ -52,7 +52,7 @@ To install `tensorflow` via pip:
 
 ```bash
 pip install tensorflow
-pip install tensorflow_probability
+pip install tensorflow_probability[tf]
 ```
 
 To install `pytorch` via pip:
