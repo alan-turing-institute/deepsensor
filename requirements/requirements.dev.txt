@@ -5,3 +5,4 @@ parameterized
 tox
 tox-gh-actions
 coveralls
+black

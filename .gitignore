@@ -10,3 +10,4 @@ dist/*
 .tox/
 _build
 *.png
+deepsensor.egg-info/

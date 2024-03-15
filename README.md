@@ -1,6 +1,6 @@
 [//]: # (![]&#40;figs/DeepSensorLogo.png&#41;)
 <ul style="text-align: center;">
-<img src="https://raw.githubusercontent.com/tom-andersson/deepsensor/main/figs/DeepSensorLogo2.png" width="700"/>
+<img src="https://raw.githubusercontent.com/alan-turing-institute/deepsensor/main/figs/DeepSensorLogo2.png" width="700"/>
 </ul>
 
 <ul style="margin-top:0px;">
@@ -11,14 +11,14 @@ data with neural processes</p>
 
 -----------
 
-[![release](https://img.shields.io/badge/release-v0.3.2-green?logo=github)](https://github.com/tom-andersson/deepsensor/releases)
-[![Latest Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://tom-andersson.github.io/deepsensor/)
-![Tests](https://github.com/tom-andersson/deepsensor/actions/workflows/tests.yml/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/tom-andersson/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/tom-andersson/deepsensor?branch=main)
+[![release](https://img.shields.io/badge/release-v0.3.6-green?logo=github)](https://github.com/alan-turing-institute/deepsensor/releases)
+[![Latest Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://alan-turing-institute.github.io/deepsensor/)
+![Tests](https://github.com/alan-turing-institute/deepsensor/actions/workflows/tests.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/alan-turing-institute/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/alan-turing-institute/deepsensor?branch=main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![slack](https://img.shields.io/badge/slack-deepsensor-purple.svg?logo=slack)](https://ai4environment.slack.com/archives/C05NQ76L87R)
-[![All Contributors](https://img.shields.io/github/all-contributors/tom-andersson/deepsensor?color=ee8449&style=flat-square)](#contributors)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/tom-andersson/deepsensor/blob/main/LICENSE)
+[![All Contributors](https://img.shields.io/github/all-contributors/alan-turing-institute/deepsensor?color=ee8449&style=flat-square)](#contributors)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/alan-turing-institute/deepsensor/blob/main/LICENSE)
 
 DeepSensor streamlines the application of neural processes (NPs) to environmental sciences by
 providing a simple interface for building, training, and evaluating NPs using `xarray` and `pandas`
@@ -28,15 +28,11 @@ drastically reducing the time and effort required to apply NPs to environmental 
 This allows DeepSensor users to focus on the science and rapidly iterate on ideas.
 
 DeepSensor is an experimental package, and we
-welcome [contributions from the community](https://github.com/tom-andersson/deepsensor/blob/main/CONTRIBUTING.md).
+welcome [contributions from the community](https://github.com/alan-turing-institute/deepsensor/blob/main/CONTRIBUTING.md).
 We have an active Slack channel for code and research discussions; you can request to
 join [via this Google Form](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform).
 
-For demonstrators, use cases, and videos showcasing the functionality of DeepSensor, as well as
-resources for learning about NPs, check out the
-[DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_gallery).
-
-![DeepSensor example application figures](https://raw.githubusercontent.com/tom-andersson/deepsensor/main/figs/deepsensor_application_examples.png)
+![DeepSensor example application figures](https://raw.githubusercontent.com/alan-turing-institute/deepsensor/main/figs/deepsensor_application_examples.png)
 
 Why neural processes?
 -----------
@@ -62,17 +58,23 @@ and [pandas](https://pandas.pydata.org) world from end-to-end.
 DeepSensor also provides convenient plotting tools and active learning functionality for finding
 optimal [sensor placements](https://doi.org/10.1017/eds.2023.22).
 
+Documentation
+-----------
+We have an extensive documentation page [here](https://alan-turing-institute.github.io/deepsensor/),
+containing steps for getting started, a user guide built from reproducible Jupyter notebooks,
+learning resources, research ideas, community information, an API reference, and more!
+
+DeepSensor Gallery
+-----------
+For real-world DeepSensor research demonstrators, check out the
+[DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_gallery).
+Consider submitting a notebook showcasing your research!
+
 Deep learning library agnosticism
 -----------
 DeepSensor leverages the [backends](https://github.com/wesselb/lab) package to be compatible with
 either [PyTorch](https://pytorch.org/) or [TensorFlow](https://www.tensorflow.org/).
 Simply `import deepsensor.torch` or `import deepsensor.tensorflow` to choose between them!
-
-Documentation
------------
-We have an extensive documentation page [here](https://tom-andersson.github.io/deepsensor/),
-containing steps for getting started, a user guide, learning resources, a list of research ideas,
-community information, and more!
 
 Quick start
 ----------
@@ -114,11 +116,12 @@ task_loader = TaskLoader(context=ds, target=ds)
 # Set up model
 model = ConvNP(data_processor, task_loader)
 
-# Generate training tasks with up to 10% of grid cells passed as context and all grid cells
-# passed as targets
+# Generate training tasks with up 100 grid cells as context and all grid cells
+#   as targets
 train_tasks = []
 for date in pd.date_range("2013-01-01", "2014-11-30")[::7]:
-    task = task_loader(date, context_sampling=np.random.uniform(0.0, 0.1), target_sampling="all")
+    N_context = np.random.randint(0, 100)
+    task = task_loader(date, context_sampling=N_context, target_sampling="all")
     train_tasks.append(task)
 
 # Train model
@@ -126,8 +129,8 @@ trainer = Trainer(model, lr=5e-5)
 for epoch in tqdm(range(10)):
     batch_losses = trainer(train_tasks)
 
-# Predict on new task with 10% of context data and a dense grid of target points
-test_task = task_loader("2014-12-31", 0.1)
+# Predict on new task with 50 context points and a dense grid of target points
+test_task = task_loader("2014-12-31", context_sampling=50)
 pred = model.predict(test_task, X_t=ds_raw)
 ```
 
@@ -176,13 +179,18 @@ time       lat lon
 [62 rows x 2 columns]
 ```
 
+DeepSensor offers far more functionality than this simple example demonstrates.
+For more information on the package's capabilities, check out the
+[User Guide](https://tom-andersson.github.io/deepsensor/user-guide/index.html)
+in the documentation.
+
 ## Citing DeepSensor
 
 If you use DeepSensor in your research, please consider citing this repository.
 You can generate a BiBTeX entry by clicking the 'Cite this repository' button
 on the top right of this page.
 
-## Acknowledgements
+## Funding
 
 DeepSensor is funded by [The Alan Turing Institute](https://www.turing.ac.uk/) under the [Environmental monitoring: blending satellite and surface data](https://www.turing.ac.uk/research/research-projects/environmental-monitoring-blending-satellite-and-surface-data) and [Scivision](https://www.turing.ac.uk/research/research-projects/scivision) projects, led by PI [Dr Scott Hosking](https://www.turing.ac.uk/people/researchers/scott-hosking).
 
@@ -202,19 +210,22 @@ if you would like to join this list!
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/acocac"><img src="https://avatars.githubusercontent.com/u/13321552?v=4?s=100" width="100px;" alt="Alejandro ©"/><br /><sub><b>Alejandro ©</b></sub></a><br /><a href="#userTesting-acocac" title="User Testing">📓</a> <a href="#bug-acocac" title="Bug reports">🐛</a> <a href="#mentoring-acocac" title="Mentoring">🧑‍🏫</a> <a href="#ideas-acocac" title="Ideas, Planning, & Feedback">🤔</a> <a href="#research-acocac" title="Research">🔬</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/annavaughan"><img src="https://avatars.githubusercontent.com/u/45528489?v=4?s=100" width="100px;" alt="Anna Vaughan"/><br /><sub><b>Anna Vaughan</b></sub></a><br /><a href="#research-annavaughan" title="Research">🔬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://inconsistentrecords.co.uk"><img src="https://avatars.githubusercontent.com/u/731727?v=4?s=100" width="100px;" alt="Jim Circadian"/><br /><sub><b>Jim Circadian</b></sub></a><br /><a href="#ideas-JimCircadian" title="Ideas, Planning, & Feedback">🤔</a> <a href="#projectManagement-JimCircadian" title="Project Management">📆</a> <a href="#maintenance-JimCircadian" title="Maintenance">🚧</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jonas-scholz123"><img src="https://avatars.githubusercontent.com/u/37850411?v=4?s=100" width="100px;" alt="Jonas Scholz"/><br /><sub><b>Jonas Scholz</b></sub></a><br /><a href="#userTesting-jonas-scholz123" title="User Testing">📓</a> <a href="#research-jonas-scholz123" title="Research">🔬</a> <a href="#code-jonas-scholz123" title="Code">💻</a> <a href="#bug-jonas-scholz123" title="Bug reports">🐛</a> <a href="#ideas-jonas-scholz123" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://www.westerling.nu"><img src="https://avatars.githubusercontent.com/u/7298727?v=4?s=100" width="100px;" alt="Kalle Westerling"/><br /><sub><b>Kalle Westerling</b></sub></a><br /><a href="#doc-kallewesterling" title="Documentation">📖</a> <a href="#infra-kallewesterling" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#ideas-kallewesterling" title="Ideas, Planning, & Feedback">🤔</a> <a href="#projectManagement-kallewesterling" title="Project Management">📆</a> <a href="#promotion-kallewesterling" title="Promotion">📣</a> <a href="#question-kallewesterling" title="Answering Questions">💬</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://kenzaxtazi.github.io"><img src="https://avatars.githubusercontent.com/u/43008274?v=4?s=100" width="100px;" alt="Kenza Tazi"/><br /><sub><b>Kenza Tazi</b></sub></a><br /><a href="#ideas-kenzaxtazi" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://magnusross.github.io/about"><img src="https://avatars.githubusercontent.com/u/51709759?v=4?s=100" width="100px;" alt="Magnus Ross"/><br /><sub><b>Magnus Ross</b></sub></a><br /><a href="#tutorial-magnusross" title="Tutorials">✅</a> <a href="#data-magnusross" title="Data">🔣</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://nilsleh.info/"><img src="https://avatars.githubusercontent.com/u/35272119?v=4?s=100" width="100px;" alt="Nils Lehmann"/><br /><sub><b>Nils Lehmann</b></sub></a><br /><a href="#ideas-nilsleh" title="Ideas, Planning, & Feedback">🤔</a> <a href="#userTesting-nilsleh" title="User Testing">📓</a> <a href="#bug-nilsleh" title="Bug reports">🐛</a></td>
     </tr>
     <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://nilsleh.info/"><img src="https://avatars.githubusercontent.com/u/35272119?v=4?s=100" width="100px;" alt="Nils Lehmann"/><br /><sub><b>Nils Lehmann</b></sub></a><br /><a href="#ideas-nilsleh" title="Ideas, Planning, & Feedback">🤔</a> <a href="#userTesting-nilsleh" title="User Testing">📓</a> <a href="#bug-nilsleh" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/polpel"><img src="https://avatars.githubusercontent.com/u/56694450?v=4?s=100" width="100px;" alt="Paolo Pelucchi"/><br /><sub><b>Paolo Pelucchi</b></sub></a><br /><a href="#userTesting-polpel" title="User Testing">📓</a> <a href="#bug-polpel" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://rohitrathore.netlify.app/"><img src="https://avatars.githubusercontent.com/u/42641738?v=4?s=100" width="100px;" alt="Rohit Singh Rathaur"/><br /><sub><b>Rohit Singh Rathaur</b></sub></a><br /><a href="#code-RohitRathore1" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://scotthosking.com"><img src="https://avatars.githubusercontent.com/u/10783052?v=4?s=100" width="100px;" alt="Scott Hosking"/><br /><sub><b>Scott Hosking</b></sub></a><br /><a href="#fundingFinding-scotthosking" title="Funding Finding">🔍</a> <a href="#ideas-scotthosking" title="Ideas, Planning, & Feedback">🤔</a> <a href="#projectManagement-scotthosking" title="Project Management">📆</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.bas.ac.uk/profile/tomand"><img src="https://avatars.githubusercontent.com/u/26459412?v=4?s=100" width="100px;" alt="Tom Andersson"/><br /><sub><b>Tom Andersson</b></sub></a><br /><a href="#code-tom-andersson" title="Code">💻</a> <a href="#research-tom-andersson" title="Research">🔬</a> <a href="#maintenance-tom-andersson" title="Maintenance">🚧</a> <a href="#bug-tom-andersson" title="Bug reports">🐛</a> <a href="#test-tom-andersson" title="Tests">⚠️</a> <a href="#tutorial-tom-andersson" title="Tutorials">✅</a> <a href="#doc-tom-andersson" title="Documentation">📖</a> <a href="#review-tom-andersson" title="Reviewed Pull Requests">👀</a> <a href="#talk-tom-andersson" title="Talks">📢</a> <a href="#question-tom-andersson" title="Answering Questions">💬</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://wessel.ai"><img src="https://avatars.githubusercontent.com/u/1444448?v=4?s=100" width="100px;" alt="Wessel"/><br /><sub><b>Wessel</b></sub></a><br /><a href="#research-wesselb" title="Research">🔬</a> <a href="#code-wesselb" title="Code">💻</a> <a href="#ideas-wesselb" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://patel-zeel.github.io"><img src="https://avatars.githubusercontent.com/u/59758528?v=4?s=100" width="100px;" alt="Zeel B Patel"/><br /><sub><b>Zeel B Patel</b></sub></a><br /><a href="#bug-patel-zeel" title="Bug reports">🐛</a> <a href="#code-patel-zeel" title="Code">💻</a> <a href="#userTesting-patel-zeel" title="User Testing">📓</a> <a href="#ideas-patel-zeel" title="Ideas, Planning, & Feedback">🤔</a></td>
+    </tr>
+    <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ots22"><img src="https://avatars.githubusercontent.com/u/5434836?v=4?s=100" width="100px;" alt="ots22"/><br /><sub><b>ots22</b></sub></a><br /><a href="#ideas-ots22" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
