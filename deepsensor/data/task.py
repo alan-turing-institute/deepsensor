@@ -54,8 +54,7 @@ class Task(dict):
                 Value of the task dictionary.
 
         Returns:
-            str:
-                String representation of the task.
+            str: String representation of the task.
         """
         if v is None:
             return "None"
@@ -357,14 +356,10 @@ def append_obs_to_task(
         option plus ability to remove observations.
 
     Args:
-        task (:class:`deepsensor.data.task.Task`:):
-            The task to modify.
-        X_new (array-like):
-            New observation coordinates.
-        Y_new (array-like):
-            New observation values.
-        context_set_idx (int):
-            Index of the context set to append to.
+        task (:class:`deepsensor.data.task.Task`:): The task to modify.
+        X_new (array-like): New observation coordinates.
+        Y_new (array-like): New observation values.
+        context_set_idx (int): Index of the context set to append to.
 
     Returns:
         :class:`deepsensor.data.task.Task`:
@@ -459,15 +454,14 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
             the computational graph in graph mode.
 
     Returns:
-        :class:`~.data.task.Task`
-            Task containing multiple batches.
+        :class:`~.data.task.Task`: Task containing multiple batches.
 
     Raises:
-        ValueError
+        ValueError:
             If the tasks have different numbers of target sets.
-        ValueError
+        ValueError:
             If the tasks have different numbers of targets.
-        ValueError
+        ValueError:
             If the tasks have different types of target sets (gridded/
             non-gridded).
     """

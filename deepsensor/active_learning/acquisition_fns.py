@@ -31,7 +31,7 @@ class AcquisitionFunction:
             context_set_idx (int):
                 Index of context set to add new observations to when computing
                 the acquisition function.
-          target_set_idx (int):
+            target_set_idx (int):
                 Index of target set to compute acquisition function for.
         """
         self.model = model
