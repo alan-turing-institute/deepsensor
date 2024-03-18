@@ -179,6 +179,15 @@
         "projectManagement",
         "maintenance"
       ]
+    },
+    {
+      "login": "davidwilby",
+      "name": "David Wilby",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24752124?v=4",
+      "profile": "http://davidwilby.dev",
+      "contributions": [
+        "doc"
+      ]
     }
   ]
 }
