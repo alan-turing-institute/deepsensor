@@ -181,7 +181,7 @@ time       lat lon
 
 DeepSensor offers far more functionality than this simple example demonstrates.
 For more information on the package's capabilities, check out the
-[User Guide](https://tom-andersson.github.io/deepsensor/user-guide/index.html)
+[User Guide](https://alan-turing-institute.github.io/deepsensor/user-guide/index.html)
 in the documentation.
 
 ## Citing DeepSensor
@@ -198,8 +198,8 @@ DeepSensor is funded by [The Alan Turing Institute](https://www.turing.ac.uk/) u
 
 We appreciate all contributions to DeepSensor, big or small, code-related or not, and we thank all
 contributors below for supporting open-source software and research.
-For code-specific contributions, check out our graph of [code contributions](https://github.com/tom-andersson/deepsensor/graphs/contributors).
-See our [contribution guidelines](https://github.com/tom-andersson/deepsensor/blob/main/CONTRIBUTING.md)
+For code-specific contributions, check out our graph of [code contributions](https://github.com/alan-turing-institute/deepsensor/graphs/contributors).
+See our [contribution guidelines](https://github.com/alan-turing-institute/deepsensor/blob/main/CONTRIBUTING.md)
 if you would like to join this list!
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
