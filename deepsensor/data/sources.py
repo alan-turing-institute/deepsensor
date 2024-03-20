@@ -473,8 +473,8 @@ def get_earthenv_auxiliary_data(
         elevation of a cell and the mean elevation of its surrounding landscape. This highlights
         topographic features such as mountains (positive TPI) and valleys (negative TPI).
 
-    .. note::
-        TODO support land cover data: https://www.earthenv.org/landcover
+    .. todo::
+        support land cover data: https://www.earthenv.org/landcover
 
     .. warning::
         If this function is updated, the cache will be invalidated and the data will need
