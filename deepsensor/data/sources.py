@@ -33,7 +33,7 @@ def get_ghcnd_station_data(
     .. note::
         Requires the `scotthosking/get-station-data` repository to be installed
         manually in your Python environment with:
-        `pip install git+https://github.com/scott-hosking/get-station-data.git`
+        ``pip install git+https://github.com/scott-hosking/get-station-data.git``
 
     .. note::
         Example key variable IDs:
@@ -454,6 +454,11 @@ def get_earthenv_auxiliary_data(
     Download global static auxiliary data from EarthEnv into an xarray DataArray.
     See: https://www.earthenv.org/topography
 
+    .. note::
+        Requires the `rioxarray` package to be installed. e.g. via ``pip install rioxarray``.
+        See the ``rioxarray`` pages for more installation options:
+        https://corteva.github.io/rioxarray/stable/installation.html
+    
     .. note::
         This method downloads the data from EarthEnv to disk, then reads it into memory,
         and then deletes the file from disk. This is because EarthEnv does not support
