@@ -458,7 +458,7 @@ def get_earthenv_auxiliary_data(
         Requires the `rioxarray` package to be installed. e.g. via ``pip install rioxarray``.
         See the ``rioxarray`` pages for more installation options:
         https://corteva.github.io/rioxarray/stable/installation.html
-    
+
     .. note::
         This method downloads the data from EarthEnv to disk, then reads it into memory,
         and then deletes the file from disk. This is because EarthEnv does not support
@@ -508,8 +508,11 @@ def get_earthenv_auxiliary_data(
 
     # Check for rioxarray and raise error if not present
     import importlib.util
+
     if importlib.util.find_spec("rioxarray") is None:
-        raise ImportError("The rioxarray is required to run this function, it was not found. Install with `pip install rioxarray`.")
+        raise ImportError(
+            "The rioxarray is required to run this function, it was not found. Install with `pip install rioxarray`."
+        )
 
     @memory.cache
     def _get_auxiliary_data_cached(
