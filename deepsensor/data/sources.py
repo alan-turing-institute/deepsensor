@@ -506,6 +506,11 @@ def get_earthenv_auxiliary_data(
         cache_dir = None
     memory = Memory(cache_dir, verbose=0)
 
+    # Check for rioxarray and raise error if not present
+    import importlib.util
+    if importlib.util.find_spec("rioxarray") is None:
+        raise ImportError("The rioxarray is required to run this function, it was not found. Install with `pip install rioxarray`.")
+
     @memory.cache
     def _get_auxiliary_data_cached(
         var_IDs: str,
