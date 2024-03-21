@@ -1,0 +1,792 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>deepsensor.data.task &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/data/task';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="deepsensor.data.utils" href="utils.html" />
+    <link rel="prev" title="deepsensor.data.processor" href="processor.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../getting-started/index.html">Getting started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../user-guide/index.html">User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../community/index.html">Community</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../community/faq.html">Community FAQ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">deepsensor.data</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html">deepsensor.data.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model/index.html">deepsensor.model</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../train/index.html">deepsensor.train</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../train/train.html">deepsensor.train.train</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../active_learning/index.html">deepsensor.active_learning</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../plot.html">deepsensor.plot</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2Freference/data/task.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/reference/data/task.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>deepsensor.data.task</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-deepsensor.data.task">
+<span id="deepsensor-data-task"></span><h1>deepsensor.data.task<a class="headerlink" href="#module-deepsensor.data.task" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+<p>Task dictionary class.</p>
+<p>Inherits from <code class="docutils literal notranslate"><span class="pre">dict</span></code> and adds methods for printing and modifying the
+data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Dictionary containing the task.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.add_batch_dim">
+<span class="sig-name descname"><span class="pre">add_batch_dim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.add_batch_dim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.add_batch_dim" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a batch dimension to the arrays in the task dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a> –     Task with batch dimension added to the array elements.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.cast_to_float32">
+<span class="sig-name descname"><span class="pre">cast_to_float32</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.cast_to_float32"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.cast_to_float32" title="Permalink to this definition">#</a></dt>
+<dd><p>Cast the arrays in the task dictionary to float32.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a> –     Task with arrays cast to float32.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.convert_to_tensor">
+<span class="sig-name descname"><span class="pre">convert_to_tensor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.convert_to_tensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.convert_to_tensor" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert to tensor object based on deep learning backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a> –     Task with arrays converted to deep learning tensor objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.flatten_gridded_data">
+<span class="sig-name descname"><span class="pre">flatten_gridded_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.flatten_gridded_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.flatten_gridded_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert any gridded data in <code class="docutils literal notranslate"><span class="pre">Task</span></code> to flattened arrays.</p>
+<p>Necessary for AR sampling, which doesn’t yet permit gridded context sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> – <a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>
+…</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a> –     …</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.mask_nans_nps">
+<span class="sig-name descname"><span class="pre">mask_nans_nps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.mask_nans_nps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.mask_nans_nps" title="Permalink to this definition">#</a></dt>
+<dd><p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a> –     …</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.mask_nans_numpy">
+<span class="sig-name descname"><span class="pre">mask_nans_numpy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.mask_nans_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.mask_nans_numpy" title="Permalink to this definition">#</a></dt>
+<dd><p>Replace NaNs with zeroes and set a mask to indicate where the NaNs
+were.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a> –     Task with NaNs set to zeros and a mask indicating where the
+missing values are.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.op">
+<span class="sig-name descname"><span class="pre">op</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.op"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.op" title="Permalink to this definition">#</a></dt>
+<dd><p>Apply function f to the array elements of a task dictionary.</p>
+<p>Useful for recasting to a different dtype or reshaping (e.g. adding a
+batch dimension).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> (<em>callable</em>) – Function to apply to the array elements of the task.</p></li>
+<li><p><strong>op_flag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Flag to set in the task dictionary’s <cite>ops</cite> key.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a> –     Task with f applied to the array elements and op_flag set in
+the <code class="docutils literal notranslate"><span class="pre">ops</span></code> key.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.remove_context_nans">
+<span class="sig-name descname"><span class="pre">remove_context_nans</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.remove_context_nans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.remove_context_nans" title="Permalink to this definition">#</a></dt>
+<dd><p>If NaNs are present in task[“Y_c”], remove them (and corresponding task[“X_c”])</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a> –     …</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.remove_target_nans">
+<span class="sig-name descname"><span class="pre">remove_target_nans</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.remove_target_nans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.remove_target_nans" title="Permalink to this definition">#</a></dt>
+<dd><p>If NaNs are present in task[“Y_t”], remove them (and corresponding task[“X_t”])</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a> –     …</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.summarise_repr">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">summarise_repr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.summarise_repr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.summarise_repr" title="Permalink to this definition">#</a></dt>
+<dd><p>Summarise the task in a representation that can be printed.</p>
+<dl class="simple">
+<dt>:param cls (<a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a>: ):</dt><dd><p>Task class.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Key of the task dictionary.</p></li>
+<li><p><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><em>object</em></a>) – Value of the task dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> –     String representation of the task.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.data.task.Task.summarise_str">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">summarise_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#Task.summarise_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.Task.summarise_str" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.data.task.append_obs_to_task">
+<span class="sig-name descname"><span class="pre">append_obs_to_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_set_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#append_obs_to_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.append_obs_to_task" title="Permalink to this definition">#</a></dt>
+<dd><p>Append a single observation to a context set in <code class="docutils literal notranslate"><span class="pre">task</span></code>.</p>
+<p>Makes a deep copy of the data structure to avoid affecting the original
+object.</p>
+<dl class="simple">
+<dt>:param task (<a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a>: ):</dt><dd><p>The task to modify.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_new</strong> (<em>array-like</em>) – New observation coordinates.</p></li>
+<li><p><strong>Y_new</strong> (<em>array-like</em>) – New observation values.</p></li>
+<li><p><strong>context_set_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Index of the context set to append to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a> –     Task with new observation appended to the context set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.data.task.concat_tasks">
+<span class="sig-name descname"><span class="pre">concat_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#concat_tasks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.concat_tasks" title="Permalink to this definition">#</a></dt>
+<dd><p>Concatenate a list of tasks into a single task containing multiple batches.</p>
+<dl class="simple">
+<dt>:param tasks (List[<a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">deepsensor.data.task.Task</span></code></a>: ]):</dt><dd><p>List of tasks to concatenate into a single task.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>multiple</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>optional</em>) – Contexts are padded to the smallest multiple of this number that is
+greater than the number of contexts in each task. Defaults to 1
+(padded to the largest number of contexts in the tasks). Setting
+to a larger number will increase the amount of padding but decrease
+the range of tensor shapes presented to the model, which simplifies
+the computational graph in graph mode.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt><a class="reference internal" href="#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a></dt><dd><p>Task containing multiple batches.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – If the tasks have different numbers of target sets.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – If the tasks have different numbers of targets.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – If the tasks have different types of target sets (gridded/
+    non-gridded).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.data.task.flatten_X">
+<span class="sig-name descname"><span class="pre">flatten_X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#flatten_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.flatten_X" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert tuple of gridded coords to (2, N) array if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | Tuple[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>]) – <p>…</p>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>…</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.data.task.flatten_Y">
+<span class="sig-name descname"><span class="pre">flatten_Y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/data/task.html#flatten_Y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.data.task.flatten_Y" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2)
+array if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Y</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | Tuple[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>]) – <p>…</p>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>…</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./reference/data"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="processor.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">deepsensor.data.processor</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="utils.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">deepsensor.data.utils</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
