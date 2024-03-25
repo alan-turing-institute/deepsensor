@@ -1,5 +1,7 @@
 import itertools
 
+from typing import Sequence
+
 from parameterized import parameterized
 
 import xarray as xr
@@ -269,6 +271,25 @@ class TestTaskLoader(unittest.TestCase):
         with self.assertRaises(AssertionError):
             tl = TaskLoader(context=self.df, target=self.df, links=[(0, 0)])
             task = tl("2020-01-01", "gapfill", "gapfill")
+
+    @parameterized.expand([[(0.3, 0.3)], [(0.6, 0.4)]])
+    def test_window_size(self, window_size) -> None:
+        """Test patch size sampling."""
+        context = [self.da, self.df]
+
+        tl = TaskLoader(
+            context=context,  # gridded xarray and off-grid pandas contexts
+            target=self.df,  # off-grid pandas targets
+        )
+
+        for context_sampling, target_sampling in self._gen_task_loader_call_args(
+            len(context), 1
+        ):
+            if isinstance(context_sampling[0], np.ndarray):
+                continue
+            task = tl(
+                "2020-01-01", context_sampling, target_sampling, window_size=window_size
+            )
 
     def test_saving_and_loading(self):
         """Test saving and loading TaskLoader"""
