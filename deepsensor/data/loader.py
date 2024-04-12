@@ -832,13 +832,13 @@ class TaskLoader:
 
         return [x1_min, x1_max, x2_min, x2_max]
 
-    def sample_random_window(self, window_size: Tuple[float]) -> Sequence[float]:
+    def sample_random_window(self, patch_size: Tuple[float]) -> Sequence[float]:
         """
         Sample random window uniformly from global coordinats to slice data.
 
         Parameters
         ----------
-        window_size : Tuple[float]
+        patch_size : Tuple[float]
             Tuple of window extent
 
         Returns
@@ -846,7 +846,7 @@ class TaskLoader:
         bbox: List[float]
             sequence of patch spatial extent as [x1_min, x1_max, x2_min, x2_max]
         """
-        x1_extend, x2_extend = window_size
+        x1_extend, x2_extend = patch_size
 
         x1_side = x1_extend / 2
         x2_side = x2_extend / 2
@@ -895,7 +895,6 @@ class TaskLoader:
         else:
             raise ValueError(f"Unknown variable type {type(var)}")
         return var
-    
 
     def spatial_slice_variable(self, var, window: List[float]):
         """
@@ -992,7 +991,7 @@ class TaskLoader:
             ]
         ] = None,
         split_frac: float = 0.5,
-        window_size: Sequence[float] = None,
+        patch_size: Sequence[float] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
@@ -1026,7 +1025,7 @@ class TaskLoader:
             "split" sampling strategy for linked context and target set pairs.
             The remaining observations are used for the target set. Default is
             0.5.
-        window_size : Sequence[float], optional
+        patch_size : Sequence[float], optional
             Desired patch size in x1/x2 used for patchwise task generation. Usefule when considering
             the entire available region is computationally prohibitive for model forward pass
         datewise_deterministic : bool
@@ -1232,22 +1231,22 @@ class TaskLoader:
         ]
 
         # check patch size
-        if window_size is not None:
+        if patch_size is not None:
             assert (
-                len(window_size) == 2
+                len(patch_size) == 2
             ), "Patch size must be a Sequence of two values for x1/x2 extent."
             assert all(
-                0 < x <= 1 for x in window_size
+                0 < x <= 1 for x in patch_size
             ), "Values specified for patch size must satisfy 0 < x <= 1."
 
-            window = self.sample_random_window(window_size)
+            patch = self.sample_random_window(patch_size)
 
             # spatial slices
             context_slices = [
-                self.spatial_slice_variable(var, window) for var in context_slices
+                self.spatial_slice_variable(var, patch) for var in context_slices
             ]
             target_slices = [
-                self.spatial_slice_variable(var, window) for var in target_slices
+                self.spatial_slice_variable(var, patch) for var in target_slices
             ]
 
         # TODO move to method
@@ -1377,6 +1376,40 @@ class TaskLoader:
 
         return Task(task)
 
+    def generate_tasks(
+        self,
+        dates: Union[pd.Timestamp, List[pd.Timestamp]],
+        patch_strategy: Optional[str],
+        **kwargs,
+    ) -> List[Task]:
+        """
+        Generate a list of Tasks for Training or Inference.
+
+        Args:
+            dates: Union[pd.Timestamp, List[pd.Timestamp]]
+                List of dates for which to generate the task.
+            patch_strategy: Optional[str]
+                Patch strategy to use for patchwise task generation. Default is None.
+                Possible options are 'random' or 'sliding'.
+            **kwargs:
+                Additional keyword arguments to pass to the task generation method.
+        """
+        if patch_strategy is None:
+            tasks = [self.task_generation(date, **kwargs) for date in dates]
+        elif patch_strategy == "random":
+            # uniform random sampling of patch
+            pass
+        elif patch_strategy == "sliding":
+            # sliding window sampling of patch
+            pass
+        else:
+            raise ValueError(
+                f"Invalid patch strategy {patch_strategy}. "
+                f"Must be one of [None, 'random', 'sliding']."
+            )
+
+        return tasks
+
     def __call__(
         self,
         date: pd.Timestamp,
@@ -1397,6 +1430,8 @@ class TaskLoader:
             ]
         ] = None,
         split_frac: float = 0.5,
+        patch_size: Sequence[float] = None,
+        patch_strategy: Optional[str] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Union[Task, List[Task]]:
@@ -1443,9 +1478,12 @@ class TaskLoader:
                 the "split" sampling strategy for linked context and target set
                 pairs. The remaining observations are used for the target set.
                 Default is 0.5.
-            window_size : Sequence[float], optional
+            patch_size : Sequence[float], optional
                 Desired patch size in x1/x2 used for patchwise task generation. Usefule when considering
                 the entire available region is computationally prohibitive for model forward pass
+            patch_strategy:
+                Patch strategy to use for patchwise task generation. Default is None.
+                Possible options are 'random' or 'sliding'.
             datewise_deterministic (bool, optional):
                 Whether random sampling is datewise deterministic based on the
                 date. Default is ``False``.
@@ -1459,18 +1497,21 @@ class TaskLoader:
                 Task object or list of task objects for each date containing
                 the context and target data.
         """
+        assert patch_strategy in [None, "random", "sliding"], (
+            f"Invalid patch strategy {patch_strategy}. "
+            f"Must be one of [None, 'random', 'sliding']."
+        )
         if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
-            return [
-                self.task_generation(
-                    d,
-                    context_sampling,
-                    target_sampling,
-                    split_frac,
-                    datewise_deterministic,
-                    seed_override,
-                )
-                for d in date
-            ]
+            return self.generate_tasks(
+                dates=date,
+                patch_strategy=patch_strategy,
+                context_sampling=context_sampling,
+                target_sampling=target_sampling,
+                split_frac=split_frac,
+                patch_size=patch_size,
+                datewise_deterministic=datewise_deterministic,
+                seed_override=seed_override,
+            )
         else:
             return self.task_generation(
                 date,
