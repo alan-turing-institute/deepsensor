@@ -1431,6 +1431,7 @@ class TaskLoader:
         ] = None,
         split_frac: float = 0.5,
         patch_size: Sequence[float] = None,
+        patch_strategy: Optional[str] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Union[Task, List[Task]]:
@@ -1496,10 +1497,14 @@ class TaskLoader:
                 Task object or list of task objects for each date containing
                 the context and target data.
         """
+        assert patch_strategy in [None, "random", "sliding"], (
+            f"Invalid patch strategy {patch_strategy}. "
+            f"Must be one of [None, 'random', 'sliding']."
+        )
         if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
             return self.generate_tasks(
                 dates=date,
-                patch_strategy="random" if patch_size is not None else None,
+                patch_strategy=patch_strategy,
                 context_sampling=context_sampling,
                 target_sampling=target_sampling,
                 split_frac=split_frac,
