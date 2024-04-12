@@ -1378,7 +1378,7 @@ class TaskLoader:
 
     def generate_tasks(
         self,
-        dates: Union[pd.Timestamp, List[pd.Timestamp]],
+        dates: Union[pd.Timestamp, Sequence[pd.Timestamp]],
         patch_strategy: Optional[str],
         **kwargs,
     ) -> List[Task]:
@@ -1412,7 +1412,7 @@ class TaskLoader:
 
     def __call__(
         self,
-        date: pd.Timestamp,
+        date: Union[pd.Timestamp, Sequence[pd.Timestamp]],
         context_sampling: Union[
             str,
             int,
