@@ -1086,6 +1086,11 @@ class TaskLoader:
                     raise InvalidSamplingStrategyError(
                         f"Unknown sampling strategy {strat} of type {type(strat)}"
                     )
+                elif isinstance(strat, str) and strat == "gapfill":
+                    assert all(isinstance(item, (xr.Dataset, xr.DataArray)) for item in set), (
+                        "Gapfill sampling strategy can only be used with xarray "
+                        "datasets or data arrays"
+                    )
                 elif isinstance(strat, str) and strat not in [
                     "all",
                     "split",
@@ -1397,11 +1402,18 @@ class TaskLoader:
         if patch_strategy is None:
             tasks = [self.task_generation(date, **kwargs) for date in dates]
         elif patch_strategy == "random":
+            assert "patch_size" in kwargs, "Patch size must be specified for random patch sampling."
             # uniform random sampling of patch
-            pass
+            tasks : list[Task] = []
+            num_samples_per_date = kwargs.get("num_samples_per_date", 1)
+            new_kwargs = kwargs.copy()
+            new_kwargs.pop("num_samples_per_date", None)
+            for date in dates:
+                tasks.extend([self.task_generation(date, **new_kwargs) for _ in range(num_samples_per_date)])
+            
         elif patch_strategy == "sliding":
             # sliding window sampling of patch
-            pass
+            tasks : list[Task] = []
         else:
             raise ValueError(
                 f"Invalid patch strategy {patch_strategy}. "
@@ -1409,6 +1421,20 @@ class TaskLoader:
             )
 
         return tasks
+    
+    def check_tasks(self, tasks: List[Task]):
+        """
+        Check tasks for consistency, such as target nans etc.
+        
+        Args:
+            tasks List[:class:`~.data.task.Task`]:
+                List of tasks to check.
+
+        Returns:
+            List[:class:`~.data.task.Task`]:
+            updated list of tasks
+        """
+        pass
 
     def __call__(
         self,
@@ -1514,10 +1540,10 @@ class TaskLoader:
             )
         else:
             return self.task_generation(
-                date,
-                context_sampling,
-                target_sampling,
-                split_frac,
-                datewise_deterministic,
-                seed_override,
+                date=date,
+                context_sampling=context_sampling,
+                target_sampling=target_sampling,
+                split_frac=split_frac,
+                datewise_deterministic=datewise_deterministic,
+                seed_override=seed_override,
             )
