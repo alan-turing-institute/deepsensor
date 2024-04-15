@@ -6,7 +6,8 @@ import unittest
 
 from tqdm import tqdm
 
-import deepsensor.tensorflow as deepsensor
+# import deepsensor.tensorflow as deepsensor
+import deepsensor.torch
 
 from deepsensor.train.train import Trainer
 from deepsensor.data.processor import DataProcessor
@@ -104,6 +105,40 @@ class TestTraining(unittest.TestCase):
         trainer = Trainer(model, lr=5e-5)
         # batch_size = None
         batch_size = 5
+        n_epochs = 10
+        epoch_losses = []
+        for epoch in tqdm(range(n_epochs)):
+            batch_losses = trainer(train_tasks, batch_size=batch_size)
+            epoch_losses.append(np.mean(batch_losses))
+
+        # Check for NaNs in the loss
+        loss = np.mean(epoch_losses)
+        self.assertFalse(np.isnan(loss))
+
+    def test_patch_wise_training(self):
+        """
+        Test model training with patch-wise tasks.
+        """
+        tl = TaskLoader(context=self.da, target=self.da)
+        model = ConvNP(self.data_processor, tl, unet_channels=(5, 5, 5), verbose=False)
+
+        # generate training tasks
+        n_train_tasks = 10
+        dates = [np.random.choice(self.da.time.values) for i in range(n_train_tasks)]
+        train_tasks = tl.generate_tasks(
+            dates,
+            context_sampling="all",
+            target_sampling="all",
+            patch_strategy="random",
+            patch_size=(0.8, 0.8),
+        )
+
+        # TODO pytest can also be more succinct with pytest.fixtures
+        # Train
+        trainer = Trainer(model, lr=5e-5)
+        batch_size = None
+        # TODO check with batch_size > 1
+        # batch_size = 5
         n_epochs = 10
         epoch_losses = []
         for epoch in tqdm(range(n_epochs)):
