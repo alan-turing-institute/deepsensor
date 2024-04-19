@@ -1264,7 +1264,7 @@ class TaskLoader:
             assert (
                 len(patch_size) == 2
             ), "Patch size must be a Sequence of two values for x1/x2 extent."
-            assert all( ## Will it confuse users to provide a patch size 0-1? Should we add method to convert patch size to 0-1?
+            assert all( ## Will it confuse users to provide a patch with size 0-1? Should we add method to convert patch size to 0-1?
                 0 < x <= 1 for x in patch_size 
             ), "Values specified for patch size must satisfy 0 < x <= 1."
             
@@ -1281,7 +1281,7 @@ class TaskLoader:
             target_slices = [
                 self.spatial_slice_variable(var, patch) for var in target_slices
             ]
-            ## Do we want patching before "gapfill" and "split" sampling plus adding
+            ## Do we want to patch before "gapfill" and "split" sampling plus adding
             ## Auxilary data?
 
         # TODO move to method
@@ -1411,7 +1411,7 @@ class TaskLoader:
 
         return Task(task)
 
-    def nils(
+    def generate_tasks(
         self,
         dates: Union[pd.Timestamp, Sequence[pd.Timestamp]],
         patch_strategy: Optional[str],
@@ -1446,8 +1446,8 @@ class TaskLoader:
             for date in dates:
                 tasks.extend(
                     [
-                        self.task_generation(date, **new_kwargs)
-                        for _ in range(num_samples_per_date)## Is it risky to run the entire task_generation call each time?
+                        self.task_generation(date, patch_strategy, **new_kwargs)
+                        for _ in range(num_samples_per_date)## Could we produce different context/target sets if we call task_generation in a loop?
                                                                 ## e.g. if using the "split" or "gapfill" strategy? 
                                                                 ## Should we run task_generation() once and then patch?
                     ]
@@ -1470,8 +1470,11 @@ class TaskLoader:
                 
 
             for date in dates:
-                for bbox in patch_extents:
-                    tasks.extend([self.task_generation(date, bbox, **kwargs)])
+                tasks.extend(
+                    [self.task_generation(date, patch_strategy, bbox, **kwargs)
+                            for bbox in patch_extents
+                    ]
+                )
                     
         else:
             raise ValueError(
@@ -1587,7 +1590,7 @@ class TaskLoader:
             f"Invalid patch strategy {patch_strategy}. "
             f"Must be one of [None, 'random', 'sliding']."
         )
-        if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex, pd._libs.tslibs.timestamps.Timestamp)):
+        if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
             return self.generate_tasks(
                 dates=date,
                 patch_strategy=patch_strategy,
@@ -1609,5 +1612,5 @@ class TaskLoader:
                 datewise_deterministic=datewise_deterministic,
                 seed_override=seed_override,
             )## This set up currently doesn't work for sliding window because the function is not called when an individual date is supplied.
-             ## I also don't think it could patch using uniform function?
-             ## Currently I can only run when incluiding pd._libs.tslibs.timestamps.Timestamp
+             ## I also don't think it could patch using uniform function because it can't run through for _ in range(num_samples_per_date)?
+             ## Currently I can only run when including pd._libs.tslibs.timestamps.Timestamp
