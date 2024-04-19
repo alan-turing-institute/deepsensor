@@ -1,17 +1,15 @@
-from deepsensor.data.task import Task, flatten_X
-
-import os
-import json
 import copy
-import random
 import itertools
+import json
+import os
+import random
+from typing import List, Optional, Sequence, Tuple, Union
 
 import numpy as np
-import xarray as xr
 import pandas as pd
+import xarray as xr
 
-from typing import List, Tuple, Union, Optional, Sequence
-
+from deepsensor.data.task import Task, flatten_X
 from deepsensor.errors import InvalidSamplingStrategyError
 
 
@@ -834,7 +832,7 @@ class TaskLoader:
 
     def sample_random_window(self, patch_size: Tuple[float]) -> Sequence[float]:
         """
-        Sample random window uniformly from global coordinats to slice data.
+        Sample random window uniformly from global coordinates to slice data.
 
         Parameters
         ----------
@@ -853,6 +851,7 @@ class TaskLoader:
 
         # sample a point that satisfies the context and target global bounds
         x1_min, x1_max, x2_min, x2_max = self.coord_bounds
+
         x1_point = random.uniform(x1_min + x1_side, x1_max - x1_side)
         x2_point = random.uniform(x2_min + x2_side, x2_max - x2_side)
 
@@ -865,6 +864,57 @@ class TaskLoader:
         ]
 
         return bbox
+
+    def sample_sliding_window(self, patch_size: Tuple[float], stride: Tuple[float]) -> Sequence[float]:
+        """
+        Sample data using sliding window from global coordinates to slice data.
+
+        Parameters
+        ----------
+        patch_size : Tuple[float]
+            Tuple of window extent
+        
+        Stride : Tuple[float]
+            Tuple of step size between each patch along x1 and x2 axis.
+        Returns
+        -------
+        bbox: List[float] ## check type of return.
+            sequence of patch spatial extent as [x1_min, x1_max, x2_min, x2_max]
+        """
+        # define patch size in x1/x2
+        x1_extend, x2_extend = patch_size
+
+        # define stride length in x1/x2
+        dy, dx = stride
+
+        # Calculate the global bounds of context and target set. 
+        x1_min, x1_max, x2_min, x2_max = self.coord_bounds
+
+        ## start with first patch top left hand corner at x1_min, x2_min
+        n_patches = 0
+        patch_list = []
+        for y in range(x1_min, x1_max, dy):
+            for x in range(x2_min, x2_max, dx):
+                n_patches += 1
+                if y + x1_extend > x1_max:
+                    y0 = x1_max - x1_extend
+                else:
+                    y0 = y
+                if x + x2_extend > x2_max:
+                    x0 = x2_max - x2_extend
+                else:
+                    x0 = x
+
+                # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                bbox = [y0, y0 + x1_extend, x0, x0 + x2_extend] 
+
+                patch_list.append(bbox)
+
+        ## I don't think we should actually print this here, but somehow we should
+        ## provide this information back, so users know the number of patches per date.
+        print("Number of patches per date using sliding window method", n_patches)      
+
+        return patch_list
 
     def time_slice_variable(self, var, date, delta_t=0):
         """
@@ -898,7 +948,7 @@ class TaskLoader:
 
     def spatial_slice_variable(self, var, window: List[float]):
         """
-        Slice a variabel by a given window size.
+        Slice a variable by a given window size.
         Parameters
         ----------
         var : ...
@@ -916,47 +966,15 @@ class TaskLoader:
         """
         x1_min, x1_max, x2_min, x2_max = window
         if isinstance(var, (xr.Dataset, xr.DataArray)):
-            x1_slice = slice(x1_min, x1_max)
-            x2_slice = slice(x2_min, x2_max)
-            var = var.sel(x1=x1_slice, x2=x2_slice)
-        elif isinstance(var, (pd.DataFrame, pd.Series)):
-            # retrieve desired patch size
-            var = var[
-                (var.index.get_level_values("x1") >= x1_min)
-                & (var.index.get_level_values("x1") <= x1_max)
-                & (var.index.get_level_values("x2") >= x2_min)
-                & (var.index.get_level_values("x2") <= x2_max)
-            ]
-        else:
-            raise ValueError(f"Unknown variable type {type(var)}")
-
-        return var
-
-    def spatial_slice_variable(self, var, window: List[float]):
-        """
-        Slice a variabel by a given window size.
-
-        Parameters
-        ----------
-        var : ...
-            Variable to slice
-        window : ...
-            list of coordinates specifying the window [x1_min, x1_max, x2_min, x2_max]
-
-        Returns
-        -------
-        var : ...
-            Sliced variable.
-
-        Raises
-        ------
-        ValueError
-            If the variable is of an unknown type.
-        """
-        x1_min, x1_max, x2_min, x2_max = window
-        if isinstance(var, (xr.Dataset, xr.DataArray)):
-            x1_slice = slice(x1_min, x1_max)
-            x2_slice = slice(x2_min, x2_max)
+            # we cannot assume that the coordinates are sorted from small to large
+            if var.x1[0] > var.x1[-1]:
+                x1_slice = slice(x1_max, x1_min)
+            else:
+                x1_slice = slice(x1_min, x1_max)
+            if var.x2[0] > var.x2[-1]:
+                x2_slice = slice(x2_max, x2_min)
+            else:
+                x2_slice = slice(x2_min, x2_max)
             var = var.sel(x1=x1_slice, x2=x2_slice)
         elif isinstance(var, (pd.DataFrame, pd.Series)):
             # retrieve desired patch size
@@ -974,6 +992,7 @@ class TaskLoader:
     def task_generation(
         self,
         date: pd.Timestamp,
+        patch_strategy: Optional[str],
         context_sampling: Union[
             str,
             int,
@@ -992,6 +1011,7 @@ class TaskLoader:
         ] = None,
         split_frac: float = 0.5,
         patch_size: Sequence[float] = None,
+        bbox: Sequence[float] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
@@ -1026,8 +1046,10 @@ class TaskLoader:
             The remaining observations are used for the target set. Default is
             0.5.
         patch_size : Sequence[float], optional
-            Desired patch size in x1/x2 used for patchwise task generation. Usefule when considering
+            Desired patch size in x1/x2 used for patchwise task generation. Useful when considering
             the entire available region is computationally prohibitive for model forward pass
+        bbox : Sequence[float], optional
+            Bounding box in x1/x2 for patch. Only passed when using sliding window patching function. 
         datewise_deterministic : bool
             Whether random sampling is datewise_deterministic based on the
             date. Default is ``False``.
@@ -1085,6 +1107,13 @@ class TaskLoader:
                 if not isinstance(strat, (str, int, np.integer, float, np.ndarray)):
                     raise InvalidSamplingStrategyError(
                         f"Unknown sampling strategy {strat} of type {type(strat)}"
+                    )
+                elif isinstance(strat, str) and strat == "gapfill":
+                    assert all(
+                        isinstance(item, (xr.Dataset, xr.DataArray)) for item in set
+                    ), (
+                        "Gapfill sampling strategy can only be used with xarray "
+                        "datasets or data arrays"
                     )
                 elif isinstance(strat, str) and strat not in [
                     "all",
@@ -1235,11 +1264,15 @@ class TaskLoader:
             assert (
                 len(patch_size) == 2
             ), "Patch size must be a Sequence of two values for x1/x2 extent."
-            assert all(
-                0 < x <= 1 for x in patch_size
+            assert all( ## Will it confuse users to provide a patch size 0-1? Should we add method to convert patch size to 0-1?
+                0 < x <= 1 for x in patch_size 
             ), "Values specified for patch size must satisfy 0 < x <= 1."
-
-            patch = self.sample_random_window(patch_size)
+            
+            #patch_strategy = kwargs.get("patch_strategy")
+            if patch_strategy == "random":
+                patch = self.sample_random_window(patch_size)
+            elif patch_strategy == "sliding": 
+                patch = bbox
 
             # spatial slices
             context_slices = [
@@ -1248,6 +1281,8 @@ class TaskLoader:
             target_slices = [
                 self.spatial_slice_variable(var, patch) for var in target_slices
             ]
+            ## Do we want patching before "gapfill" and "split" sampling plus adding
+            ## Auxilary data?
 
         # TODO move to method
         if (
@@ -1376,7 +1411,7 @@ class TaskLoader:
 
         return Task(task)
 
-    def generate_tasks(
+    def nils(
         self,
         dates: Union[pd.Timestamp, Sequence[pd.Timestamp]],
         patch_strategy: Optional[str],
@@ -1394,14 +1429,50 @@ class TaskLoader:
             **kwargs:
                 Additional keyword arguments to pass to the task generation method.
         """
+
         if patch_strategy is None:
             tasks = [self.task_generation(date, **kwargs) for date in dates]
+        
         elif patch_strategy == "random":
+            assert (
+                "patch_size" in kwargs
+            ), "Patch size must be specified for random patch sampling."
             # uniform random sampling of patch
-            pass
+            tasks: list[Task] = []
+            num_samples_per_date = kwargs.get("num_samples_per_date", 1)
+            ## Run sample_random_window() here once? 
+            new_kwargs = kwargs.copy()
+            new_kwargs.pop("num_samples_per_date", None)
+            for date in dates:
+                tasks.extend(
+                    [
+                        self.task_generation(date, **new_kwargs)
+                        for _ in range(num_samples_per_date)## Is it risky to run the entire task_generation call each time?
+                                                                ## e.g. if using the "split" or "gapfill" strategy? 
+                                                                ## Should we run task_generation() once and then patch?
+                    ]
+                )
+        
         elif patch_strategy == "sliding":
+            assert (
+                "patch_size" in kwargs
+            ), "Patch size must be specified for sliding window patch sampling."          
+            
             # sliding window sampling of patch
-            pass
+            tasks: list[Task] = []
+
+            # Extract the x1/x2 length values of the patch defined by user.
+            patch_size = kwargs.get("patch_size")
+            # Extract stride size in x1/x2 or default to patch size. 
+            stride = kwargs.get("stride", patch_size)
+
+            patch_extents = self.sample_sliding_window(patch_size, stride)
+                
+
+            for date in dates:
+                for bbox in patch_extents:
+                    tasks.extend([self.task_generation(date, bbox, **kwargs)])
+                    
         else:
             raise ValueError(
                 f"Invalid patch strategy {patch_strategy}. "
@@ -1409,6 +1480,20 @@ class TaskLoader:
             )
 
         return tasks
+
+    def check_tasks(self, tasks: List[Task]):
+        """
+        Check tasks for consistency, such as target nans etc.
+
+        Args:
+            tasks List[:class:`~.data.task.Task`]:
+                List of tasks to check.
+
+        Returns:
+            List[:class:`~.data.task.Task`]:
+            updated list of tasks
+        """
+        pass
 
     def __call__(
         self,
@@ -1497,11 +1582,12 @@ class TaskLoader:
                 Task object or list of task objects for each date containing
                 the context and target data.
         """
+
         assert patch_strategy in [None, "random", "sliding"], (
             f"Invalid patch strategy {patch_strategy}. "
             f"Must be one of [None, 'random', 'sliding']."
         )
-        if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
+        if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex, pd._libs.tslibs.timestamps.Timestamp)):
             return self.generate_tasks(
                 dates=date,
                 patch_strategy=patch_strategy,
@@ -1511,13 +1597,17 @@ class TaskLoader:
                 patch_size=patch_size,
                 datewise_deterministic=datewise_deterministic,
                 seed_override=seed_override,
-            )
+            ) 
         else:
             return self.task_generation(
-                date,
-                context_sampling,
-                target_sampling,
-                split_frac,
-                datewise_deterministic,
-                seed_override,
-            )
+                date=date,
+                context_sampling=context_sampling,
+                target_sampling=target_sampling,
+                split_frac=split_frac,
+                patch_strategy=patch_strategy,
+                patch_size=patch_size,
+                datewise_deterministic=datewise_deterministic,
+                seed_override=seed_override,
+            )## This set up currently doesn't work for sliding window because the function is not called when an individual date is supplied.
+             ## I also don't think it could patch using uniform function?
+             ## Currently I can only run when incluiding pd._libs.tslibs.timestamps.Timestamp
