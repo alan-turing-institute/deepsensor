@@ -890,9 +890,33 @@ class TaskLoader:
         # Calculate the global bounds of context and target set. 
         x1_min, x1_max, x2_min, x2_max = self.coord_bounds
 
+        print("all the key variables in sliding window", x1_min, x1_max, dy, x2_min, x2_max, dx)
         ## start with first patch top left hand corner at x1_min, x2_min
         n_patches = 0
         patch_list = []
+
+        y = x1_min
+        while y < x1_max:
+            x = x2_min
+            while x < x2_max:
+                n_patches += 1
+                if y + x1_extend > x1_max:
+                    y0 = x1_max - x1_extend
+                else:
+                    y0 = y
+                if x + x2_extend > x2_max:
+                    x0 = x2_max - x2_extend
+                else:
+                    x0 = x
+                
+                # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                bbox = [y0, y0 + x1_extend, x0, x0 + x2_extend] 
+                print('bbox', bbox)
+                patch_list.append(bbox)
+                x += dx  # Increment x by dx
+            y += dy  # Increment y by dy
+
+        """
         for y in range(x1_min, x1_max, dy):
             for x in range(x2_min, x2_max, dx):
                 n_patches += 1
@@ -909,7 +933,7 @@ class TaskLoader:
                 bbox = [y0, y0 + x1_extend, x0, x0 + x2_extend] 
 
                 patch_list.append(bbox)
-
+        """
         ## I don't think we should actually print this here, but somehow we should
         ## provide this information back, so users know the number of patches per date.
         print("Number of patches per date using sliding window method", n_patches)      
@@ -1443,10 +1467,13 @@ class TaskLoader:
             ## Run sample_random_window() here once? 
             new_kwargs = kwargs.copy()
             new_kwargs.pop("num_samples_per_date", None)
+            new_kwargs.pop('stride', None)
+            #context_sampling = new_kwargs.pop("context_sampling")
+            print('kwargs', new_kwargs)
             for date in dates:
                 tasks.extend(
                     [
-                        self.task_generation(date, patch_strategy, **new_kwargs)
+                        self.task_generation(date, patch_strategy,  **new_kwargs)
                         for _ in range(num_samples_per_date)## Could we produce different context/target sets if we call task_generation in a loop?
                                                                 ## e.g. if using the "split" or "gapfill" strategy? 
                                                                 ## Should we run task_generation() once and then patch?
@@ -1457,24 +1484,28 @@ class TaskLoader:
             assert (
                 "patch_size" in kwargs
             ), "Patch size must be specified for sliding window patch sampling."          
-            
+
             # sliding window sampling of patch
             tasks: list[Task] = []
 
             # Extract the x1/x2 length values of the patch defined by user.
             patch_size = kwargs.get("patch_size")
-            # Extract stride size in x1/x2 or default to patch size. 
-            stride = kwargs.get("stride", patch_size)
+            # Extract stride size in x1/x2 or set to patch size if undefined.             
+            stride = kwargs.pop("stride", None)
+            kwargs.pop("num_samples_per_date")
+            if stride is None:
+                stride = patch_size
 
             patch_extents = self.sample_sliding_window(patch_size, stride)
                 
-
+            #context_sampling = kwargs.pop("context_sampling")
             for date in dates:
-                tasks.extend(
-                    [self.task_generation(date, patch_strategy, bbox, **kwargs)
-                            for bbox in patch_extents
-                    ]
-                )
+                for bbox in patch_extents:
+                    kwargs['bbox'] = bbox
+                    tasks.extend( 
+                        [self.task_generation(date, patch_strategy, **kwargs)
+                        ]
+                    )
                     
         else:
             raise ValueError(
@@ -1519,7 +1550,9 @@ class TaskLoader:
         ] = None,
         split_frac: float = 0.5,
         patch_size: Sequence[float] = None,
+        stride: Sequence[float] = None,
         patch_strategy: Optional[str] = None,
+        num_samples_per_date: Optional[int] = 1,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Union[Task, List[Task]]:
@@ -1598,6 +1631,8 @@ class TaskLoader:
                 target_sampling=target_sampling,
                 split_frac=split_frac,
                 patch_size=patch_size,
+                stride=stride,
+                num_samples_per_date=num_samples_per_date,
                 datewise_deterministic=datewise_deterministic,
                 seed_override=seed_override,
             ) 
@@ -1609,6 +1644,7 @@ class TaskLoader:
                 split_frac=split_frac,
                 patch_strategy=patch_strategy,
                 patch_size=patch_size,
+                num_samples_per_date=num_samples_per_date,
                 datewise_deterministic=datewise_deterministic,
                 seed_override=seed_override,
             )## This set up currently doesn't work for sliding window because the function is not called when an individual date is supplied.
