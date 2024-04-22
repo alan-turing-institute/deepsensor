@@ -993,9 +993,8 @@ class TaskLoader:
             The remaining observations are used for the target set. Default is
             0.5.
         bbox : Sequence[float], optional
-            A bounding box to sample the context and target data from. Specified as a list
-            of coordinates [x1_min, x1_max, x2_min, x2_max]. Useful when considering
-            the entire available region is computationally prohibitive for model forward pass
+            Bounding box to spatially slice the data, should be of the form [x1_min, x1_max, x2_min, x2_max].
+            Usefule when considering the entire available region is computationally prohibitive for model forward pass
         datewise_deterministic : bool
             Whether random sampling is datewise_deterministic based on the
             date. Default is ``False``.
@@ -1207,7 +1206,8 @@ class TaskLoader:
 
         # check patch size
         if bbox is not None:
-            assert len(bbox) == 4, "Bounding box must be of length 4"
+            assert len(bbox) == 4, "bbox must be a list of length 4 with [x1_min, x1_max, x2_min, x2_max]"
+
             # spatial slices
             context_slices = [
                 self.spatial_slice_variable(var, bbox) for var in context_slices
