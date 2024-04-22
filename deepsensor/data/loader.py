@@ -958,7 +958,7 @@ class TaskLoader:
             ]
         ] = None,
         split_frac: float = 0.5,
-        patch_size: Sequence[float] = None,
+        bbox: Sequence[float] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
@@ -992,8 +992,9 @@ class TaskLoader:
             "split" sampling strategy for linked context and target set pairs.
             The remaining observations are used for the target set. Default is
             0.5.
-        patch_size : Sequence[float], optional
-            Desired patch size in x1/x2 used for patchwise task generation. Usefule when considering
+        bbox : Sequence[float], optional
+            A bounding box to sample the context and target data from. Specified as a list
+            of coordinates [x1_min, x1_max, x2_min, x2_max]. Useful when considering
             the entire available region is computationally prohibitive for model forward pass
         datewise_deterministic : bool
             Whether random sampling is datewise_deterministic based on the
@@ -1205,21 +1206,14 @@ class TaskLoader:
         ]
 
         # check patch size
-        if patch_size is not None:
-            assert (
-                len(patch_size) == 2
-            ), "Patch size must be a Sequence of two values for x1/x2 extent."
-            assert all(
-                0 < x <= 1 for x in patch_size
-            ), "Values specified for patch size must satisfy 0 < x <= 1."
-            patch = self.sample_random_window(patch_size)
-
+        if bbox is not None:
+            assert len(bbox) == 4, "Bounding box must be of length 4"
             # spatial slices
             context_slices = [
-                self.spatial_slice_variable(var, patch) for var in context_slices
+                self.spatial_slice_variable(var, bbox) for var in context_slices
             ]
             target_slices = [
-                self.spatial_slice_variable(var, patch) for var in target_slices
+                self.spatial_slice_variable(var, bbox) for var in target_slices
             ]
 
         # TODO move to method
@@ -1353,6 +1347,7 @@ class TaskLoader:
         self,
         dates: Union[pd.Timestamp, Sequence[pd.Timestamp]],
         patch_strategy: Optional[str],
+        patch_size: Optional[Sequence[float]] = None,
         **kwargs,
     ) -> List[Task]:
         """
@@ -1364,31 +1359,44 @@ class TaskLoader:
             patch_strategy: Optional[str]
                 Patch strategy to use for patchwise task generation. Default is None.
                 Possible options are 'random' or 'sliding'.
+            patch_size: Optional[Sequence[float]]
+                Patch size for random patch sampling or sliding window sampling
             **kwargs:
                 Additional keyword arguments to pass to the task generation method.
         """
         if patch_strategy is None:
             tasks = [self.task_generation(date, **kwargs) for date in dates]
         elif patch_strategy == "random":
-            assert (
-                "patch_size" in kwargs
-            ), "Patch size must be specified for random patch sampling."
-            # uniform random sampling of patch
-            tasks: list[Task] = []
+            assert patch_size is not None, "Patch size must be specified for random patch sampling"
+
             num_samples_per_date = kwargs.get("num_samples_per_date", 1)
             new_kwargs = kwargs.copy()
             new_kwargs.pop("num_samples_per_date", None)
+            tasks: list[Task] = []
             for date in dates:
+                bboxes : list[float] = []
+                for _ in range(num_samples_per_date):
+                    bboxes.append(self.sample_random_window(patch_size))
                 tasks.extend(
                     [
-                        self.task_generation(date, **new_kwargs)
-                        for _ in range(num_samples_per_date)
+                        self.task_generation(date, bbox=bbox, **new_kwargs)
+                        for bbox in bboxes
                     ]
                 )
 
         elif patch_strategy == "sliding":
             # sliding window sampling of patch
+            assert patch_size is not None, "Patch size must be specified for sliding window sampling"
             tasks: list[Task] = []
+
+            for date in dates:
+                bboxes = self.sliding_window_sampling(patch_size)
+                tasks.extend(
+                    [
+                        self.task_generation(date, bbox=bbox, **kwargs)
+                        for bbox in bboxes
+                    ]
+                )
         else:
             raise ValueError(
                 f"Invalid patch strategy {patch_strategy}. "
@@ -1519,7 +1527,6 @@ class TaskLoader:
                 context_sampling=context_sampling,
                 target_sampling=target_sampling,
                 split_frac=split_frac,
-                patch_size=patch_size,
                 datewise_deterministic=datewise_deterministic,
                 seed_override=seed_override,
             )
