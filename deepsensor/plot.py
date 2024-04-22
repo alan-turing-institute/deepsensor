@@ -309,7 +309,7 @@ def offgrid_context(
     context coordinates if provided.
 
     Args:
-        axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]:
+        axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]):
             Axes to plot on.
         task (:class:`~.data.task.Task`):
             Task containing the context set to plot.

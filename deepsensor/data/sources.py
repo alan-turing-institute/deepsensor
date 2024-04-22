@@ -2,7 +2,6 @@ import tqdm
 
 from deepsensor.plot import extent_str_to_tuple
 
-from get_station_data import ghcnd
 import urllib.request
 import multiprocessing
 from functools import partial
@@ -30,6 +29,11 @@ def get_ghcnd_station_data(
     Download Global Historical Climatology Network Daily (GHCND) station data from NOAA
     into a pandas DataFrame.
     Source: https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily
+
+    .. note::
+        Requires the `scotthosking/get-station-data` repository to be installed
+        manually in your Python environment with:
+        ``pip install git+https://github.com/scott-hosking/get-station-data.git``
 
     .. note::
         Example key variable IDs:
@@ -78,6 +82,12 @@ def get_ghcnd_station_data(
             Station data with indexes ``time``, ``lat``, ``lon``, ``station`` and columns
             ``var1``, ``var2``, etc.
     """
+    try:
+        from get_station_data import ghcnd
+    except ImportError:
+        raise ImportError(
+            "Must manually pip-install get-station-data with: `pip install git+https://github.com/scott-hosking/get-station-data.git`"
+        )
     if not cache:
         cache_dir = None
     memory = Memory(cache_dir, verbose=0)
@@ -301,7 +311,7 @@ def _get_era5_reanalysis_data_parallel(
     extent="global",
     cache=False,
     cache_dir=".datacache",
-):
+):  # pragma: no cover
     """
     Helper function for downloading ERA5 data in parallel with caching.
 
@@ -359,7 +369,7 @@ def get_gldas_land_mask(
     verbose: bool = False,
     cache: bool = False,
     cache_dir: str = ".datacache",
-) -> xr.DataArray:
+) -> xr.DataArray:  # pragma: no cover
     """
     Get GLDAS land mask at 0.25 degree resolution.
     Source: https://ldas.gsfc.nasa.gov/gldas/vegetation-class-mask
@@ -439,10 +449,15 @@ def get_earthenv_auxiliary_data(
     verbose: bool = False,
     cache: bool = False,
     cache_dir: str = ".datacache",
-) -> xr.Dataset:
+) -> xr.Dataset:  # pragma: no cover
     """
     Download global static auxiliary data from EarthEnv into an xarray DataArray.
     See: https://www.earthenv.org/topography
+
+    .. note::
+        Requires the `rioxarray` package to be installed. e.g. via ``pip install rioxarray``.
+        See the ``rioxarray`` pages for more installation options:
+        https://corteva.github.io/rioxarray/stable/installation.html
 
     .. note::
         This method downloads the data from EarthEnv to disk, then reads it into memory,
@@ -458,8 +473,8 @@ def get_earthenv_auxiliary_data(
         elevation of a cell and the mean elevation of its surrounding landscape. This highlights
         topographic features such as mountains (positive TPI) and valleys (negative TPI).
 
-    .. note::
-        TODO support land cover data: https://www.earthenv.org/landcover
+    .. todo::
+        support land cover data: https://www.earthenv.org/landcover
 
     .. warning::
         If this function is updated, the cache will be invalidated and the data will need
@@ -490,6 +505,14 @@ def get_earthenv_auxiliary_data(
     if not cache:
         cache_dir = None
     memory = Memory(cache_dir, verbose=0)
+
+    # Check for rioxarray and raise error if not present
+    import importlib.util
+
+    if importlib.util.find_spec("rioxarray") is None:
+        raise ImportError(
+            "The rioxarray is required to run this function, it was not found. Install with `pip install rioxarray`."
+        )
 
     @memory.cache
     def _get_auxiliary_data_cached(
@@ -558,7 +581,7 @@ def get_earthenv_auxiliary_data(
     return _get_auxiliary_data_cached(var_IDs, extent, resolution, verbose)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # Using the same settings allows use to use pre-downloaded cached data
     data_range = ("2015-06-25", "2015-06-30")
     extent = "europe"

@@ -3,35 +3,25 @@
 This FAQ aims to answer common questions about the DeepSensor library. It is our way to streamline the onboarding process and clarify expectations.
 
 ```{note}
-If you have a question that is not answered here, please open an issue or submit a pull request.
+If you have a question you'd like to see answered here, make a request in a issue or in the [Slack channel](https://ai4environment.slack.com/archives/C05NQ76L87R).
 ```
 
 ## Questions
 
-**Q: What is the purpose of this project?**
-
-**Answer:** [Briefly describe the project, its objectives, and its intended audience.]
-
----
-
 **Q: Why doesn't the package name `DeepSensor` mention NPs if it's all about neural processes?**
 
 **Answer:**
-We didn't specify NPs in the title because we want DeepSensor to be extensible to potential
-future models that are not NPs. We also want to keep the name short and easy to remember.
+DeepSensor aims to be extensible to models that are not necessarily NPs.
+We also wanted to keep the name short and easy to remember.
 The name `DeepSensor` is a reference to the fact that the library is about deep learning and sensor data.
 
 ---
 
 **Q: How can I contribute?**
 
-**Answer:** There are many ways to contribute, from writing code and fixing bugs to improving documentation or translating content. Check our :doc:`contribution guide <contributing>` for detailed steps.
-
----
-
-**Q: Where can I find the contribution guidelines?**
-
-**Answer:** You can find our contribution guidelines in the CONTRIBUTING.md file in the root directory of the repository, or in the :doc:`contribution guide <contributing>`.
+**Answer:**
+There are many ways to contribute, from writing code and fixing bugs to improving documentation or translating content.
+Check our [](./contributing.md) guide.
 
 ---
 
@@ -53,21 +43,25 @@ The name `DeepSensor` is a reference to the fact that the library is about deep 
 
 ---
 
+**Q: How can I get in touch with other contributors or maintainers?**
+
+**Answer:**
+[Request to join our Slack channel](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform) to stay in touch with other contributors and maintainers.
+We also have a regular community Zoom call (join the Slack channel or get in touch to find out more).
+
+---
+
 **Q: How do I set up the development environment?**
 
-**Answer:** Follow the instructions in our developer documentation. If you run into issues, ask in our community chat (on Slack) or :doc:`contact the core group of maintainers directly </contact>`.
+**Answer:** Follow the instructions in our developer documentation. If you run into issues, ask in our [community chat](https://ai4environment.slack.com/archives/C05NQ76L87R) (on Slack).
 
 ---
 
 **Q: Do you have a code of conduct?**
 
-**Answer:** Yes, we value a respectful and inclusive community. Please read our :doc:`Code of Conduct <code-of-conduct>` before contributing.
-
----
-
-**Q: How can I get in touch with other contributors or maintainers?**
-
-**Answer:** Join our Slack team to stay in touch with other contributors and maintainers. We also have a standing community meeting, which is by invite, so :doc:`get in touch with the core group of maintainers </contact>` to receive an invite to them.
+**Answer:**
+Yes, we value a respectful and inclusive community.
+Please read our [](./code_of_conduct.md) before contributing.
 
 ---
 
@@ -95,16 +89,8 @@ The name `DeepSensor` is a reference to the fact that the library is about deep 
 
 ---
 
-**Q: What's the project's release cycle?**
-
-**Answer:** We release updates in a rolling manner, following our roadmap planning. Critical bug fixes might be released as needed.
-
----
-
 **Q: How is credit given to contributors?**
 
-**Answer:** Contributors are acknowledged in our release notes, and their contributions are forever recorded in the project's history.
-
-<!--
-TODO: write more questions and answers here.
--->
+**Answer:**
+Contributors are acknowledged via an `all-contributors` system, which records contributions (code or non-code) at the end of the project's README.
+Code contributions are acknowledged in our release notes.

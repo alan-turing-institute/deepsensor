@@ -29,7 +29,7 @@ bibtex_bibfiles:
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/tom-andersson/deepsensor  # Online location of your book
+  url: https://github.com/alan-turing-institute/deepsensor  # Online location of your book
   path_to_book: docs  # Optional path to your book, relative to the repository root
   branch: main  # Which branch of the repository should be used when creating links (optional)
 
@@ -64,11 +64,14 @@ sphinx:
     - 'sphinx.ext.autodoc'
     - 'sphinx.ext.napoleon'
     - 'sphinx.ext.viewcode'
+    - 'sphinx.ext.todo'
   config:
     add_module_names: False
     autodoc_typehints: "none"
     autoclass_content: "class"
     bibtex_reference_style: author_year
+    napoleon_use_rtype: False
+    todo_include_todos: True
     intersphinx_mapping:
       python:
         - https://docs.python.org/3

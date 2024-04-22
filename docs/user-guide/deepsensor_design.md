@@ -5,8 +5,7 @@ before they begin. Others would prefer to just see some examples and
 get started right away.
 
 If you fall into the latter category,
-feel free to skip this section and go straight to the [](data_processor.ipynb)
-section. It may be useful to come back to this section later.
+feel free to jump straight to the next page ([](data_processor.ipynb)).
 
 ## Design overview
 
@@ -32,9 +31,9 @@ Uses the `neuralprocesses` library. This is currently the only model provided by
 
 In addition, a [`deepsensor.plot`](../reference/plot.rst) module provides useful plotting functions for
 visualising:
-* Raw data,
-* ``ConvNP`` internals (encoding and feature maps),
+* `Task` context and target sets,
 * ``DeepSensorModel`` predictions,
+* ``ConvNP`` internals (encoding and feature maps),
 * ``GreedyAlgorithm`` active learning outputs.
 
 You will see examples of these `deepsensor.plot` visualisation functions

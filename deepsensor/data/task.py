@@ -279,10 +279,10 @@ class Task(dict):
 
         def f(arr):
             if isinstance(arr, deepsensor.backend.nps.Masked):
-                # Ignore nps.Masked objects
                 nps_mask = arr.mask == 0
                 nan_mask = np.isnan(arr.y)
                 mask = np.logical_or(nps_mask, nan_mask)
+                mask = np.any(mask, axis=1, keepdims=True)
                 data = arr.y
                 data[nan_mask] = 0.0
                 arr = deepsensor.backend.nps.Masked(data, mask)

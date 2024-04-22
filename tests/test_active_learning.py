@@ -181,6 +181,31 @@ class TestActiveLearning(unittest.TestCase):
         task = self.task_loader("2014-12-31", context_sampling=10)
         _ = alg(acquisition_fn, task)
 
+    def test_greedy_algorithm_column_names(self):
+        # Setup
+        acquisition_fn = Stddev(self.model)
+        X_s = self.ds_raw
+        alg = GreedyAlgorithm(
+            model=self.model,
+            X_t=X_s,
+            X_s=X_s,
+            N_new_context=1,
+            task_loader=self.task_loader,
+        )
+        task = self.task_loader("2014-12-31", context_sampling=10)
+
+        # Exercise
+        X_new_df, acquisition_fn_ds = alg(acquisition_fn, task)
+
+        # Assert
+        expected_columns = ["lat", "lon"]  # Replace with actual expected column names
+        actual_columns = X_new_df.columns.tolist()
+        self.assertEqual(
+            expected_columns,
+            actual_columns,
+            "Column names do not match the expected names",
+        )
+
     def test_greedy_alg_with_aux_at_targets_without_task_loader_raises_value_error(
         self,
     ):

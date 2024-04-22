@@ -172,6 +172,42 @@ class TestTraining(unittest.TestCase):
         trainer = Trainer(model, lr=5e-5)
         batch_size = None
         n_epochs = 2
+
+    def test_training_multidim(self):
+        """A basic test of the training loop with multidimensional context sets"""
+        # Load raw data
+        ds_raw = xr.tutorial.open_dataset("air_temperature")
+
+        # Add extra dim
+        ds_raw["air2"] = ds_raw["air"].copy()
+
+        # Normalise data
+        dp = DataProcessor(x1_name="lat", x2_name="lon")
+        ds = dp(ds_raw)
+
+        # Set up task loader
+        tl = TaskLoader(context=ds, target=ds)
+
+        # Set up model
+        model = ConvNP(dp, tl)
+
+        # Generate training tasks
+        n_train_tasks = 10
+        train_tasks = []
+        for i in range(n_train_tasks):
+            date = np.random.choice(self.da.time.values)
+            task = tl(date, 10, 10)
+            task["Y_c"][0][:, 0] = np.nan  # Add NaN to context
+            task["Y_t"][0][:, 0] = np.nan  # Add NaN to target
+            print(task)
+            train_tasks.append(task)
+
+        # Train
+        trainer = Trainer(model, lr=5e-5)
+        # batch_size = None
+        batch_size = 5
+        n_epochs = 10
+
         epoch_losses = []
         for epoch in tqdm(range(n_epochs)):
             batch_losses = trainer(train_tasks, batch_size=batch_size)
