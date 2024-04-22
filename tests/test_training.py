@@ -123,8 +123,8 @@ class TestTraining(unittest.TestCase):
         model = ConvNP(self.data_processor, tl, unet_channels=(5, 5, 5), verbose=False)
 
         # generate training tasks
-        n_train_tasks = 10
-        dates = [np.random.choice(self.da.time.values) for i in range(n_train_tasks)]
+        n_train_dates = 10
+        dates = [np.random.choice(self.da.time.values) for i in range(n_train_dates)]
         train_tasks = tl.generate_tasks(
             dates,
             context_sampling="all",
@@ -139,7 +139,39 @@ class TestTraining(unittest.TestCase):
         batch_size = None
         # TODO check with batch_size > 1
         # batch_size = 5
-        n_epochs = 10
+        n_epochs = 5
+        epoch_losses = []
+        for epoch in tqdm(range(n_epochs)):
+            batch_losses = trainer(train_tasks, batch_size=batch_size)
+            epoch_losses.append(np.mean(batch_losses))
+
+        # Check for NaNs in the loss
+        loss = np.mean(epoch_losses)
+        self.assertFalse(np.isnan(loss))
+
+    def test_sliding_window_training(self):
+        """
+        Test model training with sliding window tasks.
+        """
+        tl = TaskLoader(context=self.da, target=self.da)
+        model = ConvNP(self.data_processor, tl, unet_channels=(5, 5, 5), verbose=False)
+
+        # generate training tasks
+        n_train_dates = 3
+        dates = [np.random.choice(self.da.time.values) for i in range(n_train_dates)]
+        train_tasks = tl.generate_tasks(
+            dates,
+            context_sampling="all",
+            target_sampling="all",
+            patch_strategy="sliding",
+            patch_size=(0.5, 0.5),
+            stride=(1, 1),
+        )
+
+        # Train
+        trainer = Trainer(model, lr=5e-5)
+        batch_size = None
+        n_epochs = 2
         epoch_losses = []
         for epoch in tqdm(range(n_epochs)):
             batch_losses = trainer(train_tasks, batch_size=batch_size)
