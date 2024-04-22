@@ -37,6 +37,7 @@ class Prediction(dict):
     def __init__(
         self,
         target_var_IDs: List[str],
+        pred_params: List[str],
         dates: List[Union[str, pd.Timestamp]],
         X_t: Union[
             xr.Dataset,
@@ -59,10 +60,12 @@ class Prediction(dict):
 
         self.mode = infer_prediction_modality_from_X_t(X_t)
 
-        # TODO don't assume Gaussian distribution
-        self.pred_parameters = ["mean", "std"]
+        self.pred_params = pred_params
         if n_samples >= 1:
-            self.pred_parameters.extend([f"sample_{i}" for i in range(n_samples)])
+            self.pred_params = [
+                *pred_params,
+                *[f"sample_{i}" for i in range(n_samples)],
+            ]
 
         if self.mode == "on-grid":
             for var_ID in self.target_var_IDs:
@@ -70,7 +73,7 @@ class Prediction(dict):
                 self[var_ID] = create_empty_spatiotemporal_xarray(
                     X_t,
                     dates,
-                    data_vars=self.pred_parameters,
+                    data_vars=self.pred_params,
                     coord_names=coord_names,
                 )
             if self.X_t_mask is None:
@@ -86,7 +89,7 @@ class Prediction(dict):
             idxs = [(date, *idxs) for date in dates for idxs in X_t.index]
             index = pd.MultiIndex.from_tuples(idxs, names=["time", *X_t.index.names])
             for var_ID in self.target_var_IDs:
-                self[var_ID] = pd.DataFrame(index=index, columns=self.pred_parameters)
+                self[var_ID] = pd.DataFrame(index=index, columns=self.pred_params)
 
     def __getitem__(self, key):
         # Support self[i] syntax
@@ -95,7 +98,7 @@ class Prediction(dict):
         return super().__getitem__(key)
 
     def __str__(self):
-        dict_repr = {var_ID: self.pred_parameters for var_ID in self.target_var_IDs}
+        dict_repr = {var_ID: self.pred_params for var_ID in self.target_var_IDs}
         return f"Prediction({dict_repr}), mode={self.mode}"
 
     def assign(

@@ -1,7 +1,7 @@
 # DeepSensor Roadmap
 
 This page contains a list of new features that we would like to add to DeepSensor in the future.
-Some of these have been raised as issues on the [GitHub issue tracker](https://github.com/tom-andersson/deepsensor/issues)
+Some of these have been raised as issues on the [GitHub issue tracker](https://github.com/alan-turing-institute/deepsensor/issues)
 with further details.
 
 ```{note}

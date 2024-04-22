@@ -47,11 +47,22 @@ class ConvNP(DeepSensorModel):
     from the ``TaskLoader``.
 
     The ``ConvNP`` can optionally be instantiated with:
+        - a ``DataProcessor`` object to auto-unnormalise the data at inference time with the ``.predict`` method.
+        - a ``TaskLoader`` object to infer sensible default model parameters from the data.
 
-        - a ``DataProcessor`` object to auto-unnormalise the data at inference
-          time with the ``.predict`` method.
-        - a ``TaskLoader`` object to infer sensible default model parameters
-          from the data.
+    Many of the ``ConvNP`` class methods utilise multiple dispatch so that they
+    can either be run with a ``Task`` object or a ``neuralprocesses`` distribution
+    object. This allows for re-using the model's forward prediction object.
+
+    Dimension shapes are expressed in method docstrings in terms of:
+        - ``N_features``: number of features/dimensions in the target set.
+        - ``N_targets``: number of target points (1D for off-grid targets, 2D for gridded targets).
+        - ``N_components``: number of mixture components in the likelihood (for mixture likelihoods only).
+        - ``N_samples``: number of samples drawn from the distribution.
+
+    If the model has multiple target sets and the ``Task`` object
+    has different target locations for each set, a list of arrays is returned
+    for each target set. Otherwise, a single array is returned.
 
     Examples:
         Instantiate a ``ConvNP`` with all hyperparameters set to their default values:
@@ -222,6 +233,7 @@ class ConvNP(DeepSensorModel):
             kwargs["decoder_scale"] = decoder_scale
 
         self.model, self.config = construct_neural_process(*args, **kwargs)
+        self._set_num_mixture_components()
 
     @dispatch
     def __init__(
@@ -254,6 +266,7 @@ class ConvNP(DeepSensorModel):
         super().__init__()
 
         self.load(model_ID)
+        self._set_num_mixture_components()
 
     @dispatch
     def __init__(
@@ -277,6 +290,18 @@ class ConvNP(DeepSensorModel):
         super().__init__(data_processor, task_loader)
 
         self.load(model_ID)
+        self._set_num_mixture_components()
+
+    def _set_num_mixture_components(self):
+        """
+        Set the number of mixture components for the model based on the likelihood.
+        """
+        if self.config["likelihood"] in ["spikes-beta"]:
+            self.N_mixture_components = 3
+        elif self.config["likelihood"] in ["bernoulli-gamma"]:
+            self.N_mixture_components = 2
+        else:
+            self.N_mixture_components = 1
 
     def save(self, model_ID: str):
         """
@@ -383,84 +408,102 @@ class ConvNP(DeepSensorModel):
         dist = run_nps_model(self.model, task, n_samples, requires_grad)
         return dist
 
-    @dispatch
-    def mean(self, dist: AbstractMultiOutputDistribution):
+    def _cast_numpy_and_squeeze(
+        self,
+        x: Union[B.Numeric, List[B.Numeric]],
+        squeeze_axes: List[int] = (0, 1),
+    ):
+        """TODO docstring"""
+        if isinstance(x, backend.nps.Aggregate):
+            return [np.squeeze(B.to_numpy(xi), axis=squeeze_axes) for xi in x]
+        else:
+            return np.squeeze(B.to_numpy(x), axis=squeeze_axes)
+
+    def _maybe_concat_multi_targets(
+        self,
+        x: Union[np.ndarray, List[np.ndarray]],
+        concat_axis: int = 0,
+    ) -> Union[np.ndarray, List[np.ndarray]]:
         """
-        ...
+        Concatenate multiple target sets into a single tensor along feature dimension
+        and remove size-1 dimensions.
 
         Args:
-            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
-                ...
+            x (:class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]):
+                List of target sets.
+            squeeze_axes (List[int], optional):
+                Axes to squeeze out of the concatenated target sets. Defaults to (0, 1).
+            concat_axis (int, optional):
+                Axis to concatenate along (*after* squeezing arrays) when
+                merging multiple target sets. Defaults to 0.
 
         Returns:
-            ...: ...
+            (:class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]):
+                Concatenated target sets.
         """
-        mean = dist.mean
-        if isinstance(mean, backend.nps.Aggregate):
-            return [B.to_numpy(m)[0, 0] for m in mean]
+        if isinstance(x, (list, tuple)):
+            new_list = []
+            pos = 0
+            for dim in self.task_loader.target_dims:
+                new_list.append(x[pos : pos + dim])
+                pos += dim
+            return [
+                B.concat(*[xi for xi in sub_list], axis=concat_axis)
+                for sub_list in new_list
+            ]
         else:
-            return B.to_numpy(mean)[0, 0]
+            return x
+
+    @dispatch
+    def mean(self, dist: AbstractMultiOutputDistribution):
+        mean = dist.mean
+        mean = self._cast_numpy_and_squeeze(mean)
+        return self._maybe_concat_multi_targets(mean)
 
     @dispatch
     def mean(self, task: Task):
         """
-        ...
+        Mean values of model's distribution at target locations in task.
+
+        Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
         Args:
             task (:class:`~.data.task.Task`):
-                ...
+                The task containing the context and target data.
 
         Returns:
-            ...: ...
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                Mean values.
         """
         dist = self(task)
         return self.mean(dist)
 
     @dispatch
     def variance(self, dist: AbstractMultiOutputDistribution):
-        """
-        ...
-
-        Args:
-            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
-                ...
-
-        Returns:
-            ...: ...
-        """
         variance = dist.var
-        if isinstance(variance, backend.nps.Aggregate):
-            return [B.to_numpy(v)[0, 0] for v in variance]
-        else:
-            return B.to_numpy(variance)[0, 0]
+        variance = self._cast_numpy_and_squeeze(variance)
+        return self._maybe_concat_multi_targets(variance)
 
     @dispatch
     def variance(self, task: Task):
         """
-        ...
+        Variance values of model's distribution at target locations in task.
+
+        Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
         Args:
             task (:class:`~.data.task.Task`):
-                ...
+                The task containing the context and target data.
 
         Returns:
-            ...: ...
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                Variance values.
         """
         dist = self(task)
         return self.variance(dist)
 
     @dispatch
-    def stddev(self, dist: AbstractMultiOutputDistribution):
-        """
-        ...
-
-        Args:
-            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
-                ...
-
-        Returns:
-            ...: ...
-        """
+    def std(self, dist: AbstractMultiOutputDistribution):
         variance = self.variance(dist)
         if isinstance(variance, (list, tuple)):
             return [np.sqrt(v) for v in variance]
@@ -468,32 +511,131 @@ class ConvNP(DeepSensorModel):
             return np.sqrt(variance)
 
     @dispatch
-    def stddev(self, task: Task):
+    def std(self, task: Task):
         """
-        ...
+        Standard deviation values of model's distribution at target locations in task.
+
+        Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
         Args:
             task (:class:`~.data.task.Task`):
-                ...
+                The task containing the context and target data.
 
         Returns:
-            ...: ...
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                Standard deviation values.
         """
         dist = self(task)
-        return self.stddev(dist)
+        return self.std(dist)
+
+    @dispatch
+    def alpha(
+        self, dist: AbstractMultiOutputDistribution
+    ) -> Union[np.ndarray, List[np.ndarray]]:
+        if self.config["likelihood"] not in ["spikes-beta", "bernoulli-gamma"]:
+            raise NotImplementedError(
+                f"ConvNP.alpha method not supported for likelihood {self.config['likelihood']}. "
+                f"Try changing the likelihood to a mixture model, e.g. 'spikes-beta' or 'bernoulli-gamma'."
+            )
+        alpha = dist.slab.alpha
+        alpha = self._cast_numpy_and_squeeze(alpha)
+        return self._maybe_concat_multi_targets(alpha)
+
+    @dispatch
+    def alpha(self, task: Task) -> Union[np.ndarray, List[np.ndarray]]:
+        """
+        Alpha parameter values of model's distribution at target locations in task.
+
+        Returned numpy arrays have shape ``(N_features, *N_targets)``.
+
+        .. note::
+            This method only works for models that return a distribution with
+            a ``dist.slab.alpha`` attribute, e.g. models with a Beta or
+            Bernoulli-Gamma likelihood, where it returns the alpha values of
+            the slab component of the mixture model.
+
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task containing the context and target data.
+
+        Returns:
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                Alpha values.
+        """
+        dist = self(task)
+        return self.alpha(dist)
+
+    @dispatch
+    def beta(
+        self, dist: AbstractMultiOutputDistribution
+    ) -> Union[np.ndarray, List[np.ndarray]]:
+        if self.config["likelihood"] not in ["spikes-beta", "bernoulli-gamma"]:
+            raise NotImplementedError(
+                f"ConvNP.beta method not supported for likelihood {self.config['likelihood']}. "
+                f"Try changing the likelihood to a mixture model, e.g. 'spikes-beta' or 'bernoulli-gamma'."
+            )
+        beta = dist.slab.beta
+        beta = self._cast_numpy_and_squeeze(beta)
+        return self._maybe_concat_multi_targets(beta)
+
+    @dispatch
+    def beta(self, task: Task) -> Union[np.ndarray, List[np.ndarray]]:
+        """
+        Beta values of model's distribution at target locations in task.
+
+        Returned numpy arrays have shape ``(N_features, *N_targets)``.
+
+        .. note::
+            This method only works for models that return a distribution with
+            a ``dist.slab.beta`` attribute, e.g. models with a Beta or
+            Bernoulli-Gamma likelihood.
+
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task containing the context and target data.
+
+        Returns:
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                Beta values.
+        """
+        dist = self(task)
+        return self.beta(dist)
+
+    @dispatch
+    def mixture_probs(self, dist: AbstractMultiOutputDistribution):
+        if self.N_mixture_components == 1:
+            raise NotImplementedError(
+                f"mixture_probs not supported if model attribute N_mixture_components == 1. "
+                f"Try changing the likelihood to a mixture model, e.g. 'spikes-beta'."
+            )
+        mixture_probs = dist.logprobs
+        mixture_probs = self._cast_numpy_and_squeeze(mixture_probs)
+        mixture_probs = self._maybe_concat_multi_targets(mixture_probs)
+        if isinstance(mixture_probs, (list, tuple)):
+            return [np.moveaxis(np.exp(m), -1, 0) for m in mixture_probs]
+        else:
+            return np.moveaxis(np.exp(mixture_probs), -1, 0)
+
+    @dispatch
+    def mixture_probs(self, task: Task):
+        """
+        Mixture probabilities of model's distribution at target locations in task.
+
+        Returned numpy arrays have shape ``(N_components, N_features, *N_targets)``.
+
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task containing the context and target data.
+
+        Returns:
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                Mixture probabilities.
+        """
+        dist = self(task)
+        return self.mixture_probs(dist)
 
     @dispatch
     def covariance(self, dist: AbstractMultiOutputDistribution):
-        """
-        ...
-
-        Args:
-            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
-                ...
-
-        Returns:
-            ...: ...
-        """
         return B.to_numpy(B.dense(dist.vectorised_normal.var))[0, 0]
 
     @dispatch
@@ -516,39 +658,21 @@ class ConvNP(DeepSensorModel):
         self,
         dist: AbstractMultiOutputDistribution,
         n_samples: int = 1,
-        noiseless: bool = True,
     ):
-        """
-        Create samples from a ConvNP distribution.
-
-        Args:
-            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
-                The distribution to sample from.
-            n_samples (int, optional):
-                The number of samples to draw from the distribution, by
-                default 1.
-            noiseless (bool, optional):
-                Whether to sample from the noiseless distribution, by default
-                True.
-
-        Returns:
-            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
-                The samples as an array or list of arrays.
-        """
-        if noiseless:
+        if self.config["likelihood"] in ["gnp", "lowrank"]:
             samples = dist.noiseless.sample(n_samples)
         else:
             samples = dist.sample(n_samples)
-
-        if isinstance(samples, backend.nps.Aggregate):
-            return [B.to_numpy(s)[:, 0, 0] for s in samples]
-        else:
-            return B.to_numpy(samples)[:, 0, 0]
+        # Be careful to keep sample dimension in position 0
+        samples = self._cast_numpy_and_squeeze(samples, squeeze_axes=(1, 2))
+        return self._maybe_concat_multi_targets(samples, concat_axis=1)
 
     @dispatch
-    def sample(self, task: Task, n_samples: int = 1, noiseless: bool = True):
+    def sample(self, task: Task, n_samples: int = 1):
         """
         Create samples from a ConvNP distribution.
+
+        Returned numpy arrays have shape ``(N_samples, N_features, *N_targets)``,
 
         Args:
             dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
@@ -556,16 +680,13 @@ class ConvNP(DeepSensorModel):
             n_samples (int, optional):
                 The number of samples to draw from the distribution, by
                 default 1.
-            noiseless (bool, optional):
-                Whether to sample from the noiseless distribution, by default
-                True.
 
         Returns:
             :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
                 The samples as an array or list of arrays.
         """
         dist = self(task)
-        return self.sample(dist, n_samples, noiseless)
+        return self.sample(dist, n_samples)
 
     @dispatch
     def slice_diag(self, task: Task):
@@ -580,12 +701,15 @@ class ConvNP(DeepSensorModel):
             ...: ...
         """
         dist = self(task)
-        dist_diag = backend.nps.MultiOutputNormal(
-            dist._mean,
-            B.zeros(dist._var),
-            Diagonal(B.diag(dist._noise + dist._var)),
-            dist.shape,
-        )
+        if self.config["likelihood"] in ["spikes-beta"]:
+            dist_diag = dist
+        else:
+            dist_diag = backend.nps.MultiOutputNormal(
+                dist._mean,
+                B.zeros(dist._var),
+                Diagonal(B.diag(dist._noise + dist._var)),
+                dist.shape,
+            )
         return dist_diag
 
     @dispatch
@@ -600,12 +724,15 @@ class ConvNP(DeepSensorModel):
         Returns:
             ...: ...
         """
-        dist_diag = backend.nps.MultiOutputNormal(
-            dist._mean,
-            B.zeros(dist._var),
-            Diagonal(B.diag(dist._noise + dist._var)),
-            dist.shape,
-        )
+        if self.config["likelihood"]:
+            dist_diag = dist
+        else:
+            dist_diag = backend.nps.MultiOutputNormal(
+                dist._mean,
+                B.zeros(dist._var),
+                Diagonal(B.diag(dist._noise + dist._var)),
+                dist.shape,
+            )
         return dist_diag
 
     @dispatch
@@ -669,8 +796,11 @@ class ConvNP(DeepSensorModel):
     @dispatch
     def logpdf(self, dist: AbstractMultiOutputDistribution, task: Task):
         """
-        Model outputs joint distribution over all targets: Concat targets along
-        observation dimension.
+        Joint logpdf over all target sets.
+
+        .. note::
+            If the model has multiple target sets, the returned logpdf is the
+            mean logpdf over all target sets.
 
         Args:
             dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
@@ -681,14 +811,20 @@ class ConvNP(DeepSensorModel):
         Returns:
             float: The logpdf.
         """
-        Y_t = B.concat(*task["Y_t"], axis=-1)
+        # Need to ensure `Y_t` is a tensor and, if multiple target sets,
+        #   an nps.Aggregate object
+        task = ConvNP.modify_task(task)
+        _, _, Y_t, _ = convert_task_to_nps_args(task)
         return B.to_numpy(dist.logpdf(Y_t)).mean()
 
     @dispatch
     def logpdf(self, task: Task):
         """
-        Model outputs joint distribution over all targets: Concat targets along
-        observation dimension.
+        Joint logpdf over all target sets.
+
+        .. note::
+            If the model has multiple target sets, the returned logpdf is the
+            mean logpdf over all target sets.
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -759,6 +895,8 @@ class ConvNP(DeepSensorModel):
         AR sampling with optional functionality to only draw AR samples over a
         subset of the target set and then infill the rest of the sample with
         the model mean or joint sample conditioned on the AR samples.
+
+        Returned numpy arrays have shape ``(N_samples, N_features, *N_targets)``,
 
         .. note::
             AR sampling only works for 0th context/target set, and only for models with

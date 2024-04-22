@@ -377,9 +377,9 @@ class GreedyAlgorithm:
                     self.X_s_mask.data
                 ] = importances
             else:
-                self.acquisition_fn_ds.loc[
-                    self.iteration, task["time"]
-                ] = importances.reshape(self.acquisition_fn_ds.shape[-2:])
+                self.acquisition_fn_ds.loc[self.iteration, task["time"]] = (
+                    importances.reshape(self.acquisition_fn_ds.shape[-2:])
+                )
 
         return np.mean(importances_list, axis=0)
 
@@ -505,7 +505,7 @@ class GreedyAlgorithm:
         self._init_acquisition_fn_ds(self.X_s)
 
         # Dataframe for storing proposed context locations
-        self.X_new_df = pd.DataFrame(columns=["x1", "x2"])
+        self.X_new_df = pd.DataFrame(columns=[self.x1_name, self.x2_name])
         self.X_new_df.index.name = "iteration"
 
         # List to track indexes into original search grid of chosen sensor locations

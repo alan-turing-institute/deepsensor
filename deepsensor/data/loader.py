@@ -1283,7 +1283,9 @@ class TaskLoader:
 
         # check bbox
         if bbox is not None:
-            assert len(bbox) == 4, "bbox must be a list of length 4 with [x1_min, x1_max, x2_min, x2_max]"
+            assert (
+                len(bbox) == 4
+            ), "bbox must be a list of length 4 with [x1_min, x1_max, x2_min, x2_max]"
 
             # spatial slices
             context_slices = [
@@ -1422,88 +1424,56 @@ class TaskLoader:
 
         return Task(task)
 
-    def generate_tasks(
-        self,
-        dates: Union[pd.Timestamp, Sequence[pd.Timestamp]],
-        patch_strategy: Optional[str],
-        patch_size: Optional[Sequence[float]] = None,
-        **kwargs,
-    ) -> List[Task]:
+    def sample_sliding_window(
+        self, patch_size: Tuple[float], stride: Tuple[int]
+    ) -> Sequence[float]:
         """
-        Generate a list of Tasks for Training or Inference.
+        Sample data using sliding window from global coordinates to slice data.
+        Parameters
+        ----------
+        patch_size : Tuple[float]
+            Tuple of window extent
 
-        Args:
-            dates: Union[pd.Timestamp, List[pd.Timestamp]]
-                List of dates for which to generate the task.
-            patch_strategy: Optional[str]
-                Patch strategy to use for patchwise task generation. Default is None.
-                Possible options are 'random' or 'sliding'.
-            patch_size: Optional[Sequence[float]]
-                Patch size for random patch sampling or sliding window sampling
-            **kwargs:
-                Additional keyword arguments to pass to the task generation method.
+        Stride : Tuple[float]
+            Tuple of step size between each patch along x1 and x2 axis.
+        Returns
+        -------
+        bbox: List[float] ## check type of return.
+            sequence of patch spatial extent as [x1_min, x1_max, x2_min, x2_max]
         """
+        # define patch size in x1/x2
+        x1_extend, x2_extend = patch_size
 
-        if patch_strategy is None:
-            tasks = [self.task_generation(date, **kwargs) for date in dates]
-        
-        elif patch_strategy == "random":
-            assert patch_size is not None, "Patch size must be specified for random patch sampling"
+        # define stride length in x1/x2
+        dy, dx = stride[0] * x1_extend, stride[1] * x2_extend
 
-            num_samples_per_date = kwargs.get("num_samples_per_date", 1)
-            new_kwargs = kwargs.copy()
-            new_kwargs.pop("num_samples_per_date", None)
-            tasks: list[Task] = []
-            for date in dates:
-                bboxes : list[float] = []
-                for _ in range(num_samples_per_date):
-                    bboxes.append(self.sample_random_window(patch_size))
-                tasks.extend(
-                    [
-                        self.task_generation(date, bbox=bbox, **new_kwargs)
-                        for bbox in bboxes
-                    ]
-                )
+        # Calculate the global bounds of context and target set.
+        x1_min, x1_max, x2_min, x2_max = self.coord_bounds
 
-        elif patch_strategy == "sliding":
-            assert (
-                "patch_size" in kwargs
-            ), "Patch size must be specified for sliding window patch sampling."          
+        ## start with first patch top left hand corner at x1_min, x2_min
+        patch_list = []
 
-            # sliding window sampling of patch
-            assert patch_size is not None, "Patch size must be specified for sliding window sampling"
-            tasks: list[Task] = []
+        for y in np.arange(x1_min, x1_max, dy):
+            for x in np.arange(x2_min, x2_max, dx):
+                if y + x1_extend > x1_max:
+                    y0 = x1_max - x1_extend
+                else:
+                    y0 = y
+                if x + x2_extend > x2_max:
+                    x0 = x2_max - x2_extend
+                else:
+                    x0 = x
 
-            for date in dates:
-                bboxes = self.sliding_window_sampling(patch_size)
-                tasks.extend(
-                    [
-                        self.task_generation(date, bbox=bbox, **kwargs)
-                        for bbox in bboxes
-                    ]
-                )
+                # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                bbox = [y0, y0 + x1_extend, x0, x0 + x2_extend]
 
-        else:
-            raise ValueError(
-                f"Invalid patch strategy {patch_strategy}. "
-                f"Must be one of [None, 'random', 'sliding']."
-            )
+                patch_list.append(bbox)
 
-        return tasks
+        ## I don't think we should actually print this here, but somehow we should
+        ## provide this information back, so users know the number of patches per date.
+        print("Number of patches per date using sliding window method", len(patch_list))
 
-    def check_tasks(self, tasks: List[Task]):
-        """
-        Check tasks for consistency, such as target nans etc.
-
-        Args:
-            tasks List[:class:`~.data.task.Task`]:
-                List of tasks to check.
-
-        Returns:
-            List[:class:`~.data.task.Task`]:
-            updated list of tasks
-        """
-        pass
+        return patch_list
 
     def __call__(
         self,
@@ -1528,7 +1498,8 @@ class TaskLoader:
         patch_size: Sequence[float] = None,
         stride: Sequence[float] = None,
         patch_strategy: Optional[str] = None,
-        num_samples_per_date: Optional[int] = 1,
+        stride: Optional[Sequence[int]] = None,
+        num_samples_per_date: int = 1,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Union[Task, List[Task]]:
@@ -1581,6 +1552,8 @@ class TaskLoader:
             patch_strategy:
                 Patch strategy to use for patchwise task generation. Default is None.
                 Possible options are 'random' or 'sliding'.
+            stride: Sequence[int], optional
+                Step size between each sliding window patch along x1 and x2 axis. Default is None.
             datewise_deterministic (bool, optional):
                 Whether random sampling is datewise deterministic based on the
                 date. Default is ``False``.
@@ -1599,25 +1572,109 @@ class TaskLoader:
             f"Invalid patch strategy {patch_strategy}. "
             f"Must be one of [None, 'random', 'sliding']."
         )
-        if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
-            return self.generate_tasks(
-                dates=date,
-                patch_strategy=patch_strategy,
-                context_sampling=context_sampling,
-                target_sampling=target_sampling,
-                split_frac=split_frac,
-                patch_size=patch_size,
-                stride=stride,
-                num_samples_per_date=num_samples_per_date,
-                datewise_deterministic=datewise_deterministic,
-                seed_override=seed_override,
-            ) 
+
+        if patch_strategy is None:
+            if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
+                tasks = [
+                    self.task_generation(
+                        d,
+                        context_sampling=context_sampling,
+                        target_sampling=target_sampling,
+                        split_frac=split_frac,
+                        datewise_deterministic=datewise_deterministic,
+                        seed_override=seed_override,
+                    )
+                    for d in date
+                ]
+            else:
+                tasks = self.task_generation(
+                    date=date,
+                    context_sampling=context_sampling,
+                    target_sampling=target_sampling,
+                    split_frac=split_frac,
+                    datewise_deterministic=datewise_deterministic,
+                    seed_override=seed_override,
+                )
+
+        elif patch_strategy == "random":
+            assert (
+                patch_size is not None
+            ), "Patch size must be specified for random patch sampling"
+
+            if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
+                for d in date:
+                    bboxes = [
+                        self.sample_random_window(patch_size)
+                        for _ in range(num_samples_per_date)
+                    ]
+                    tasks = [
+                        self.task_generation(
+                            d,
+                            bbox=bbox,
+                            context_sampling=context_sampling,
+                            target_sampling=target_sampling,
+                            split_frac=split_frac,
+                            datewise_deterministic=datewise_deterministic,
+                            seed_override=seed_override,
+                        )
+                        for bbox in bboxes
+                    ]
+
+            else:
+                bbox = self.sample_random_window(patch_size)
+                tasks = self.task_generation(
+                    date=date,
+                    bbox=bbox,
+                    context_sampling=context_sampling,
+                    target_sampling=target_sampling,
+                    split_frac=split_frac,
+                    datewise_deterministic=datewise_deterministic,
+                    seed_override=seed_override,
+                )
+
+        elif patch_strategy == "sliding":
+            # sliding window sampling of patch
+            assert (
+                patch_size is not None
+            ), "Patch size must be specified for sliding window sampling"
+
+            if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
+                tasks = []
+                for d in date:
+                    bboxes = self.sample_sliding_window(patch_size, stride)
+                    tasks.extend(
+                        [
+                            self.task_generation(
+                                d,
+                                bbox=bbox,
+                                context_sampling=context_sampling,
+                                target_sampling=target_sampling,
+                                split_frac=split_frac,
+                                datewise_deterministic=datewise_deterministic,
+                                seed_override=seed_override,
+                            )
+                            for bbox in bboxes
+                        ]
+                    )
+            else:
+                bboxes = self.sample_sliding_window(patch_size, stride)
+                tasks = [
+                    self.task_generation(
+                        date,
+                        bbox=bbox,
+                        context_sampling=context_sampling,
+                        target_sampling=target_sampling,
+                        split_frac=split_frac,
+                        datewise_deterministic=datewise_deterministic,
+                        seed_override=seed_override,
+                    )
+                    for bbox in bboxes
+                ]
+
         else:
-            return self.task_generation(
-                date=date,
-                context_sampling=context_sampling,
-                target_sampling=target_sampling,
-                split_frac=split_frac,
-                datewise_deterministic=datewise_deterministic,
-                seed_override=seed_override,
+            raise ValueError(
+                f"Invalid patch strategy {patch_strategy}. "
+                f"Must be one of [None, 'random', 'sliding']."
             )
+
+        return tasks

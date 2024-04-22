@@ -315,9 +315,9 @@ class TestTaskLoader(unittest.TestCase):
             patch_size=patch_size,
             patch_strategy="random",
         )
-        assert len(tasks) == 2
+
         # test date range with num_samples per date
-        tasks = tl.generate_tasks(
+        tasks = tl(
             ["2020-01-01", "2020-01-02"],
             context_sampling="all",
             target_sampling="all",
@@ -325,7 +325,47 @@ class TestTaskLoader(unittest.TestCase):
             patch_strategy="random",
             num_samples_per_date=2,
         )
-        assert len(tasks) == 4
+
+    @parameterized.expand([[(0.2, 0.2), (1, 1)], [(0.3, 0.4), (1, 1)]])
+    def test_sliding_window(self, patch_size, stride) -> None:
+        """Test sliding window sampling."""
+        # need to redefine the data generators because the patch size samplin
+        # where we want to test that context and or target have different
+        # spatial extents
+        da_data_0_1 = self.da
+
+        # smaller normalized coord
+        da_data_smaller = _gen_data_xr(
+            coords=dict(
+                time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+                x1=np.linspace(0.1, 0.9, 25),
+                x2=np.linspace(0.1, 0.9, 10),
+            )
+        )
+        # larger normalized coord
+        da_data_larger = _gen_data_xr(
+            coords=dict(
+                time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+                x1=np.linspace(-0.1, 1.1, 50),
+                x2=np.linspace(-0.1, 1.1, 50),
+            )
+        )
+
+        context = [da_data_0_1, da_data_smaller, da_data_larger]
+        tl = TaskLoader(
+            context=context,  # gridded xarray and off-grid pandas contexts
+            target=self.df,  # off-grid pandas targets
+        )
+
+        # test date range
+        tasks = tl(
+            ["2020-01-01", "2020-01-02"],
+            "all",
+            "all",
+            patch_size=patch_size,
+            patch_strategy="sliding",
+            stride=stride,
+        )
 
     def test_saving_and_loading(self):
         """Test saving and loading TaskLoader"""

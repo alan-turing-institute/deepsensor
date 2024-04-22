@@ -20,9 +20,9 @@ If you'd like to find out more about DeepSensor, make sure to check out:
 
 1. **README**: For a high-level overview of the project, please refer to our README.
 2. **Documentation**: For more detailed information about the project, please refer to
-   our [documentation](tom-andersson.github.io/deepsensor/).
+   our [documentation](https://alan-turing-institute.github.io/deepsensor).
 3. **Project Roadmap**: Familiarize yourself with our direction and goals by checking
-   out [the project's roadmap](https://tom-andersson.github.io/deepsensor/community/roadmap.html).
+   out [the project's roadmap](https://alan-turing-institute.github.io/deepsensor/community/roadmap.html).
 
 ## Get in touch
 
@@ -45,33 +45,6 @@ us at tomandersson3@gmail.com.
 We welcome contributions of all kinds, be it code, documentation, raising issues, or community engagement. We
 encourage you to read through the following sections to learn more about how you can contribute to
 
-### Contributing to the documentation
-
-We use the Jupyter Book framework to build our documentation in the `docs/` folder.
-The documentation is written in
-Markdown and Jupyter Notebooks. The documentation is hosted on GitHub Pages and is automatically
-built and deployed using GitHub Actions after every commit to the `main` branch.
-
-DeepSensor requires slightly unique documentation, because demonstrating the package requires
-both data and trained models.
-This makes it compute- and data-hungry to run some of the notebooks, and they cannot
-run on GitHub Actions.
-Therefore, all the notebooks are run locally - the code cell outputs are saved
-Please be careful about not clearing the outputs of the notebooks if you don't intend to.
-If DeepSensor is updated, some of the notebooks may
-become out of date and will need to be re-run.
-
-Guide to regenerating the notebooks:
-* Install `cartopy` using `conda install -c conda-forge cartopy`
-* `pip install -r requirements/requirements.docs.txt`
-* Run the notebooks locally, noting that some of them may require a GPU and some
-assume that previous notebooks have been run.
-
-Some relevant links for Juptyer Book and MyST:
-* https://jupyterbook.org/en/stable/intro.html
-* https://jupyterbook.org/en/stable/content/myst.html
-* https://jupyterbook.org/en/stable/reference/cheatsheet.html
-
 ### How to Submit Changes
 
 We follow the same instructions for submitting changes to the project as those developed
@@ -79,14 +52,14 @@ by [The Turing Way](https://github.com/the-turing-way/the-turing-way/blob/main/C
 In short, there are five steps to adding changes to this repository:
 
 1. **Fork the Repository**: Start
-   by [forking the DeepSensor repository](https://github.com/tom-andersson/deepsensor/fork).
+   by [forking the DeepSensor repository](https://github.com/alan-turing-institute/deepsensor/fork).
 2. **Make Changes**: Ensure your code adheres to the style guidelines and passes all tests.
 3. **Commit and Push**: Use clear commit messages.
 4. **Open a Pull Request**: Ensure you describe the changes made and any additional details.
 
 #### 1. Fork the Repository
 
-Once you have [created a fork of the repository](https://github.com/tom-andersson/deepsensor/fork),
+Once you have [created a fork of the repository](https://github.com/alan-turing-institute/deepsensor/fork),
 you now have your own unique local copy of DeepSensor. Changes here won't affect anyone else's work,
 so it's a safe space to explore edits to the code!
 
@@ -133,22 +106,68 @@ continuous integration as you make commits (which will help prevent stuff from b
 GitHub has a [nice introduction](https://guides.github.com/introduction/flow) to the pull request
 workflow, but please [get in touch](#get-in-touch) if you have any questions :balloon:.
 
+### DeepSensor's documentation
+
+You don't have to write code to contribute to DeepSensor.
+Another highly valuable way of contributing is helping with DeepSensor's [documentation](https://alan-turing-institute.github.io/deepsensor).
+See below for information on how to do this.
+
+#### Background
+
+We use the Jupyter Book framework to build our documentation in the `docs/` folder.
+The documentation is written in
+Markdown and Jupyter Notebooks. The documentation is hosted on GitHub Pages and is automatically
+built and deployed using GitHub Actions after every commit to the `main` branch.
+
+DeepSensor requires slightly unique documentation, because demonstrating the package requires
+both data and trained models.
+This makes it compute- and data-hungry to run some of the notebooks, and they cannot
+run on GitHub Actions.
+Therefore, all the notebooks are run locally - the code cell outputs are saved in the .ipynb files
+and are rendered when the documentation is built.
+If DeepSensor is updated, some of the notebooks may become out of date and will need to be re-run.
+
+Some relevant links for Juptyer Book and MyST:
+* https://jupyterbook.org/en/stable/intro.html
+* https://jupyterbook.org/en/stable/content/myst.html
+* https://jupyterbook.org/en/stable/reference/cheatsheet.html
+
+#### Contributing to documentation
+
+One easy way to contribute to the documentation is to provide feedback in [this issue](https://github.com/alan-turing-institute/deepsensor/issues/87) and/or in the DeepSensor Slack channel.
+
+Another way to contribute is to directly edit or add to the documentation and open a PR:
+* Follow all the forking instructions above
+* Install the documentation requirements: `pip install -r requirements/requirements.docs.txt`
+* Option A: Editing a markdown file
+  * Simply make your edits!
+* Option B: Editing a jupyter notebook file
+  * This can be more involved... Firstly, reach out on the Slack channel to ask if anyone else is working on the same notebook file locally. Working one-at-a-time can save Jupyter JSON merge conflict headaches later!
+  * If you are only editing markdown cells, just re-run those cells specifically to compile them
+  * If you are editing code cells:
+    * Install `cartopy` using `conda install -c conda-forge cartopy`
+    * Run the all the code cells that the current cell depends on and any subsequent code cells that depend on the current cell (you may need to rerun the whole notebook)
+    * Note: Some notebooks require a GPU and some assume that previous notebooks have been run
+  * Please be careful about not clearing any code cell outputs that you don't intend to!
+* Once your changes have been made, regenerate the docs locally with `jupyter-book build docs --all` and check your changes have applied as expected
+* Push your changes and open a PR (see above)
+
 ## First-timers' Corner
 
 If you're new to the project, we recommend starting with issues labeled
-as ["good first issue"](https://github.com/tom-andersson/deepsensor/issues?q=is:issue+is:open+label:%22good+first+issue%22).
+as ["good first issue"](https://github.com/alan-turing-institute/deepsensor/issues?q=is:issue+is:open+label:%22good+first+issue%22).
 These are typically simpler tasks that offer a great starting point. Browse these here.
 
 There's also the
-label ["thoughts welcome"](https://github.com/tom-andersson/deepsensor/issues?q=is:issue+is:open+label:%22thoughts+welcome%22),
+label ["thoughts welcome"](https://github.com/alan-turing-institute/deepsensor/issues?q=is:issue+is:open+label:%22thoughts+welcome%22),
 which allows for you to contribute with discussion points in the issues, even if you don't want to
 or cannot contribute to the codebase.
 
 If you feel ready for it, you can also open a new issue. Before you open a new issue, please check
-if any of [our open issues](https://github.com/tom-andersson/deepsensor/issues) cover your idea
+if any of [our open issues](https://github.com/alan-turing-institute/deepsensor/issues) cover your idea
 already. If you open a new issue, please follow our basic guidelines laid out in our issue
 templates, which you should be able to see if
-you [open a new issue](https://github.com/tom-andersson/deepsensor/issues/new/choose).
+you [open a new issue](https://github.com/alan-turing-institute/deepsensor/issues/new/choose).
 
 ## Reporting Bugs
 
@@ -163,7 +182,7 @@ issues, so make sure you follow the correct format and ensure you include:
 ## Recognising Contributions
 
 We value and recognize every contribution. All contributors will be acknowledged in the
-[contributors](https://github.com/tom-andersson/deepsensor/tree/main#contributors) section of the
+[contributors](https://github.com/alan-turing-institute/deepsensor/tree/main#contributors) section of the
 README.
 Notable contributions will also be highlighted in our fortnightly community meetings.
 
@@ -180,7 +199,7 @@ the following:
 You can see
 the [Emoji Key (Contribution Types Reference)](https://allcontributors.org/docs/en/emoji-key) for a
 list of valid <contribution> types and examples of how this command can be run
-in [this issue](https://github.com/tom-andersson/deepsensor/issues/58). The bot will then create a
+in [this issue](https://github.com/alan-turing-institute/deepsensor/issues/58). The bot will then create a
 Pull Request to add the contributor and reply with the pull request details.
 
 **PLEASE NOTE: Only one contributor can be added with the bot at a time!** Add each contributor in
@@ -188,7 +207,7 @@ turn, merge the pull request and delete the branch (`all-contributors/add-<usern
 another one. Otherwise, you can end up with
 dreaded [merge conflicts](https://help.github.com/articles/about-merge-conflicts). Therefore, please
 check the open pull requests first to make sure there aren't
-any [open requests from the bot](https://github.com/tom-andersson/deepsensor/pulls/app%2Fallcontributors)
+any [open requests from the bot](https://github.com/alan-turing-institute/deepsensor/pulls/app%2Fallcontributors)
 before adding another.
 
 What happens if you accidentally run the bot before the previous run was merged and you got those
@@ -201,7 +220,7 @@ will be very happy to help!
 
 If you're stuck or need assistance:
 
-- Check our [FAQ](https://tom-andersson.github.io/deepsensor/community/faq.html) section first.
+- Check our [FAQ](https://alan-turing-institute.github.io/deepsensor/community/faq.html) section first.
 - Reach out on Slack or via email for personalized assistance. (See ["Get in touch"](#get-in-touch)
   above for links.)
 - Consider pairing up with a another contributor for guidance. You can always find us in the Slack

@@ -1,5 +1,5 @@
 # Getting started
 
-In this part of the documentation, we will show you how to get started with `DeepSensor`.
-We will show you how to install `DeepSensor` and how to extend it. We will also provide you with some tutorials to get you started with `DeepSensor`.
-
+This first part of the documentation provides an overview of the package in [](overview.md) and
+the [](./data_requirements.ipynb) of DeepSensor.
+If these align with your use case, move on to the [](installation.md) to get started.
