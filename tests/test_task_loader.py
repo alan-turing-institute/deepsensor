@@ -1,29 +1,27 @@
+import copy
 import itertools
-
-from typing import Sequence
-
-from parameterized import parameterized
-
-import xarray as xr
-import dask.array
-import numpy as np
-import pandas as pd
-import unittest
-
 import os
 import shutil
 import tempfile
-import copy
+import unittest
+from typing import Sequence
 
-from deepsensor.errors import InvalidSamplingStrategyError
-from tests.utils import (
-    gen_random_data_xr,
-    gen_random_data_pandas,
-    assert_allclose_pd,
-    assert_allclose_xr,
-)
+import dask.array
+import numpy as np
+import pandas as pd
+import pytest
+import xarray as xr
+from _pytest.fixtures import SubRequest
+from parameterized import parameterized
 
 from deepsensor.data.loader import TaskLoader
+from deepsensor.errors import InvalidSamplingStrategyError
+from tests.utils import (
+    assert_allclose_pd,
+    assert_allclose_xr,
+    gen_random_data_pandas,
+    gen_random_data_xr,
+)
 
 
 def _gen_data_xr(coords=None, dims=None, data_vars=None, use_dask=False):
@@ -273,23 +271,61 @@ class TestTaskLoader(unittest.TestCase):
             task = tl("2020-01-01", "gapfill", "gapfill")
 
     @parameterized.expand([[(0.3, 0.3)], [(0.6, 0.4)]])
-    def test_window_size(self, window_size) -> None:
+    def test_patch_size(self, patch_size) -> None:
         """Test patch size sampling."""
-        context = [self.da, self.df]
+        # need to redefine the data generators because the patch size samplin
+        # where we want to test that context and or target have different
+        # spatial extents
+        da_data_0_1 = self.da
 
+        # smaller normalized coord
+        da_data_smaller = _gen_data_xr(
+            coords=dict(
+                time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+                x1=np.linspace(0.1, 0.9, 25),
+                x2=np.linspace(0.1, 0.9, 10),
+            )
+        )
+        # larger normalized coord
+        da_data_larger = _gen_data_xr(
+            coords=dict(
+                time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+                x1=np.linspace(-0.1, 1.1, 50),
+                x2=np.linspace(-0.1, 1.1, 50),
+            )
+        )
+
+        context = [da_data_0_1, da_data_smaller, da_data_larger]
         tl = TaskLoader(
             context=context,  # gridded xarray and off-grid pandas contexts
             target=self.df,  # off-grid pandas targets
         )
 
-        for context_sampling, target_sampling in self._gen_task_loader_call_args(
-            len(context), 1
-        ):
-            if isinstance(context_sampling[0], np.ndarray):
-                continue
-            task = tl(
-                "2020-01-01", context_sampling, target_sampling, window_size=window_size
-            )
+        # TODO it would be better to do this with pytest.fixtures
+        # but could not get to work so far
+        task = tl(
+            "2020-01-01", "all", "all", patch_size=patch_size, patch_strategy="random"
+        )
+
+        # test date range
+        tasks = tl(
+            ["2020-01-01", "2020-01-02"],
+            "all",
+            "all",
+            patch_size=patch_size,
+            patch_strategy="random",
+        )
+        assert len(tasks) == 2
+        # test date range with num_samples per date
+        tasks = tl.generate_tasks(
+            ["2020-01-01", "2020-01-02"],
+            context_sampling="all",
+            target_sampling="all",
+            patch_size=patch_size,
+            patch_strategy="random",
+            num_samples_per_date=2,
+        )
+        assert len(tasks) == 4
 
     def test_saving_and_loading(self):
         """Test saving and loading TaskLoader"""
