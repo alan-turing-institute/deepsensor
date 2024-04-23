@@ -832,7 +832,7 @@ class TaskLoader:
 
     def sample_random_window(self, patch_size: Tuple[float]) -> Sequence[float]:
         """
-        Sample random window uniformly from global coordinats to slice data.
+        Sample random window uniformly from global coordinates to slice data.
 
         Parameters
         ----------
@@ -864,6 +864,81 @@ class TaskLoader:
         ]
 
         return bbox
+
+    def sample_sliding_window(self, patch_size: Tuple[float], stride: Tuple[float]) -> Sequence[float]:
+        """
+        Sample data using sliding window from global coordinates to slice data.
+
+        Parameters
+        ----------
+        patch_size : Tuple[float]
+            Tuple of window extent
+        
+        Stride : Tuple[float]
+            Tuple of step size between each patch along x1 and x2 axis.
+        Returns
+        -------
+        bbox: List[float] ## check type of return.
+            sequence of patch spatial extent as [x1_min, x1_max, x2_min, x2_max]
+        """
+        # define patch size in x1/x2
+        x1_extend, x2_extend = patch_size
+
+        # define stride length in x1/x2
+        dy, dx = stride
+
+        # Calculate the global bounds of context and target set. 
+        x1_min, x1_max, x2_min, x2_max = self.coord_bounds
+
+        print("all the key variables in sliding window", x1_min, x1_max, dy, x2_min, x2_max, dx)
+        ## start with first patch top left hand corner at x1_min, x2_min
+        n_patches = 0
+        patch_list = []
+
+        y = x1_min
+        while y < x1_max:
+            x = x2_min
+            while x < x2_max:
+                n_patches += 1
+                if y + x1_extend > x1_max:
+                    y0 = x1_max - x1_extend
+                else:
+                    y0 = y
+                if x + x2_extend > x2_max:
+                    x0 = x2_max - x2_extend
+                else:
+                    x0 = x
+                
+                # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                bbox = [y0, y0 + x1_extend, x0, x0 + x2_extend] 
+                print('bbox', bbox)
+                patch_list.append(bbox)
+                x += dx  # Increment x by dx
+            y += dy  # Increment y by dy
+
+        """
+        for y in range(x1_min, x1_max, dy):
+            for x in range(x2_min, x2_max, dx):
+                n_patches += 1
+                if y + x1_extend > x1_max:
+                    y0 = x1_max - x1_extend
+                else:
+                    y0 = y
+                if x + x2_extend > x2_max:
+                    x0 = x2_max - x2_extend
+                else:
+                    x0 = x
+
+                # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                bbox = [y0, y0 + x1_extend, x0, x0 + x2_extend] 
+
+                patch_list.append(bbox)
+        """
+        ## I don't think we should actually print this here, but somehow we should
+        ## provide this information back, so users know the number of patches per date.
+        print("Number of patches per date using sliding window method", n_patches)      
+
+        return patch_list
 
     def time_slice_variable(self, var, date, delta_t=0):
         """
@@ -897,7 +972,7 @@ class TaskLoader:
 
     def spatial_slice_variable(self, var, window: List[float]):
         """
-        Slice a variabel by a given window size.
+        Slice a variable by a given window size.
         Parameters
         ----------
         var : ...
@@ -941,6 +1016,7 @@ class TaskLoader:
     def task_generation(
         self,
         date: pd.Timestamp,
+        patch_strategy: Optional[str],
         context_sampling: Union[
             str,
             int,
@@ -994,7 +1070,8 @@ class TaskLoader:
             0.5.
         bbox : Sequence[float], optional
             Bounding box to spatially slice the data, should be of the form [x1_min, x1_max, x2_min, x2_max].
-            Usefule when considering the entire available region is computationally prohibitive for model forward pass
+            Useful when considering the entire available region is computationally prohibitive for model forward pass
+            and one resorts to patching strategies
         datewise_deterministic : bool
             Whether random sampling is datewise_deterministic based on the
             date. Default is ``False``.
@@ -1204,7 +1281,7 @@ class TaskLoader:
             for var, delta_t in zip(self.target, self.target_delta_t)
         ]
 
-        # check patch size
+        # check bbox
         if bbox is not None:
             assert (
                 len(bbox) == 4
@@ -1217,6 +1294,8 @@ class TaskLoader:
             target_slices = [
                 self.spatial_slice_variable(var, bbox) for var in target_slices
             ]
+            ## Do we want to patch before "gapfill" and "split" sampling plus adding
+            ## Auxilary data?
 
         # TODO move to method
         if (
@@ -1417,6 +1496,7 @@ class TaskLoader:
         ] = None,
         split_frac: float = 0.5,
         patch_size: Sequence[float] = None,
+        stride: Sequence[float] = None,
         patch_strategy: Optional[str] = None,
         stride: Optional[Sequence[int]] = None,
         num_samples_per_date: int = 1,
@@ -1487,6 +1567,7 @@ class TaskLoader:
                 Task object or list of task objects for each date containing
                 the context and target data.
         """
+
         assert patch_strategy in [None, "random", "sliding"], (
             f"Invalid patch strategy {patch_strategy}. "
             f"Must be one of [None, 'random', 'sliding']."
