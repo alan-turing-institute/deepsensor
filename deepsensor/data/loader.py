@@ -1516,6 +1516,7 @@ class TaskLoader:
                 )
 
         elif patch_strategy == "random":
+            
             assert (
                 patch_size is not None
             ), "Patch size must be specified for random patch sampling"
@@ -1540,16 +1541,22 @@ class TaskLoader:
                     ]
 
             else:
-                bbox = self.sample_random_window(patch_size)
-                tasks = self.task_generation(
-                    date=date,
-                    bbox=bbox,
-                    context_sampling=context_sampling,
-                    target_sampling=target_sampling,
-                    split_frac=split_frac,
-                    datewise_deterministic=datewise_deterministic,
-                    seed_override=seed_override,
-                )
+                bboxes = [
+                        self.sample_random_window(patch_size)
+                        for _ in range(num_samples_per_date)
+                    ]
+                tasks = [
+                        self.task_generation(
+                            date,
+                            bbox=bbox,
+                            context_sampling=context_sampling,
+                            target_sampling=target_sampling,
+                            split_frac=split_frac,
+                            datewise_deterministic=datewise_deterministic,
+                            seed_override=seed_override,
+                        )
+                        for bbox in bboxes
+                    ]
 
         elif patch_strategy == "sliding":
             # sliding window sampling of patch
