@@ -1365,8 +1365,11 @@ class TaskLoader:
         # define patch size in x1/x2
         x1_extend, x2_extend = patch_size
 
-        # define stride length in x1/x2
-        dy, dx = stride[0] * x1_extend, stride[1] * x2_extend
+        # define stride length in x1/x2 or set to patch_size if undefined
+        if stride is None:
+            stride = patch_size
+        
+        dy, dx = stride
 
         # Calculate the global bounds of context and target set.
         x1_min, x1_max, x2_min, x2_max = self.coord_bounds
@@ -1389,10 +1392,6 @@ class TaskLoader:
                 bbox = [y0, y0 + x1_extend, x0, x0 + x2_extend]
 
                 patch_list.append(bbox)
-
-        ## I don't think we should actually print this here, but somehow we should
-        ## provide this information back, so users know the number of patches per date.
-        print("Number of patches per date using sliding window method", len(patch_list))
 
         return patch_list
 
