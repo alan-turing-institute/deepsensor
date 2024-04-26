@@ -95,6 +95,14 @@ That is, please do not use the [rebase](https://help.github.com/en/articles/abou
 command to edit previous commit messages, combine multiple commits into one, or delete or revert
 commits that are no longer necessary.
 
+Make sure you're using the developer dependencies.
+If you're working locally on the source code, *before* commiting, please run `pip install -r requirements/requirements.dev.txt` to install some useful dependencies just for development.
+This includes `pre-commit` and `ruff` which are used to check and format your code style when you run `git commit`, so that you don't have to.
+To make this work, just run `pre-commit install`.
+
+You should also run `pytest` and check that your changes don't break any of the existing tests.
+If you've made changes to the source code, you may need to add some tests to make sure that they don't get broken in the future.
+
 #### 4. Open a Pull Request
 
 We encourage you to open a pull request as early in your contributing process as possible.
