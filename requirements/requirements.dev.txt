@@ -1,8 +1,9 @@
 # Additional requirements for development
+coveralls
+parameterized
+pre-commit
 pytest
 pytest-cov
-parameterized
+ruff
 tox
 tox-gh-actions
-coveralls
-black
