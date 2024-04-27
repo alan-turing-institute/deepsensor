@@ -1185,6 +1185,7 @@ class TaskLoader:
 
         task["time"] = date
         task["ops"] = []
+        task["bbox"] = bbox
         task["X_c"] = []
         task["Y_c"] = []
         if target_sampling is not None:

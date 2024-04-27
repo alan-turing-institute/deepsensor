@@ -621,6 +621,47 @@ class DeepSensorModel(ProbabilisticModel):
         return pred
 
 
+    def predict_patch(        
+            self,
+            tasks: Union[List[Task], Task],
+            X_t: Union[
+                xr.Dataset,
+                xr.DataArray,
+                pd.DataFrame,
+                pd.Series,
+                pd.Index,
+                np.ndarray,
+            ],)-> Prediction:
+        
+        """
+        Predict patches and subsequently stiching patches to produce prediction at original extent. 
+        Predict on a regular grid or at off-grid locations.
+
+        Args:
+            tasks (List[Task] | Task):
+                List of tasks containing context data.
+            X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
+                Target locations to predict at. Can be an xarray object
+                containingon-grid locations or a pandas object containing off-grid locations.
+        Returns:
+            :class:`~.model.pred.Prediction`):
+                A `dict`-like object mapping from target variable IDs to xarray or pandas objects
+                containing model predictions.
+                - If ``X_t`` is a pandas object, returns pandas objects
+                containing off-grid predictions.
+                - If ``X_t`` is an xarray object, returns xarray object
+                containing on-grid predictions.
+                - If ``n_samples`` == 0, returns only mean and std predictions.
+                - If ``n_samples`` > 0, returns mean, std and samples
+                predictions.
+        """
+
+        # Identify extent of original dataframe
+        for task in tasks:
+            pred = predict(task, X_t)
+
+        return pred
+
 def main():  # pragma: no cover
     import deepsensor.tensorflow
     from deepsensor.data.loader import TaskLoader
