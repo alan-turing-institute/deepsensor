@@ -658,7 +658,7 @@ class DeepSensorModel(ProbabilisticModel):
 
         # Identify extent of original dataframe
         for task in tasks:
-            pred = predict(task, X_t)
+            pred = self.predict(task, X_t)
 
         return pred
 
