@@ -744,9 +744,11 @@ class DeepSensorModel(ProbabilisticModel):
             task_X_t = X_t.sel(x = slice(unnorm_bbox_x1[0], unnorm_bbox_x1[1]),
                                 y = slice(unnorm_bbox_x2[0], unnorm_bbox_x2[1]))
 
+            # Patchwise prediction
             pred = self.predict(task, task_X_t)
             preds.append(pred)
 
+        # Produce a blank xarray to stitch patched predictions to.
         pred_copy = copy.deepcopy(preds[0])
 
         for var_name_copy, data_array_copy in pred_copy.items():
@@ -763,13 +765,15 @@ class DeepSensorModel(ProbabilisticModel):
             stitched_preds.attrs.clear()
             pred_copy[var_name_copy]= stitched_preds
 
+        # Stitch patchwise predictions
         for pred in preds:
             for var_name, data_array in pred.items():
                 if var_name in pred_copy:
                     unnorm_patch_x1 = data_array['x'].min().values, data_array['x'].max().values
                     unnorm_patch_x2 = data_array['y'].min().values, data_array['y'].max().values
-                    pred_copy[var_name].loc[{'x': slice(unnorm_patch_x1[0], unnorm_patch_x1[1]), 'y': slice(unnorm_patch_x2[0], unnorm_patch_x2[1])}] = data_array
-        return preds
+                    pred_copy[var_name].loc[{'x': slice(unnorm_patch_x1[0], unnorm_patch_x1[1]),
+                                              'y': slice(unnorm_patch_x2[0], unnorm_patch_x2[1])}] = data_array
+        return pred_copy
 
 def main():  # pragma: no cover
     import deepsensor.tensorflow
