@@ -621,20 +621,39 @@ class DeepSensorModel(ProbabilisticModel):
         return pred
 
 
-    def predict_patch(        
-            self,
-            tasks: Union[List[Task], Task],
-            X_t: Union[
-                xr.Dataset,
-                xr.DataArray,
-                pd.DataFrame,
-                pd.Series,
-                pd.Index,
-                np.ndarray,
-            ],)-> Prediction:
-        
+    def predict_patch(
+        self,
+        tasks: Union[List[Task], Task],
+        X_t: Union[
+            xr.Dataset,
+            xr.DataArray,
+            pd.DataFrame,
+            pd.Series,
+            pd.Index,
+            np.ndarray,
+        ],
+        X_t_mask: Optional[Union[xr.Dataset, xr.DataArray]] = None,
+        X_t_is_normalised: bool = False,
+        aux_at_targets_override: Union[xr.Dataset, xr.DataArray] = None,
+        aux_at_targets_override_is_normalised: bool = False,
+        resolution_factor: int = 1,
+        pred_params: tuple[str] = ("mean", "std"),
+        n_samples: int = 0,
+        ar_sample: bool = False,
+        ar_subsample_factor: int = 1,
+        unnormalise: bool = False,
+        seed: int = 0,
+        append_indexes: dict = None,
+        progress_bar: int = 0,
+        verbose: bool = False,
+        data_processor: Union[
+        xr.DataArray,
+        xr.Dataset,
+        pd.DataFrame,
+        List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
+    ] = None,
+    ) -> Prediction:
         """
-        Predict patches and subsequently stiching patches to produce prediction at original extent. 
         Predict on a regular grid or at off-grid locations.
 
         Args:
@@ -643,6 +662,45 @@ class DeepSensorModel(ProbabilisticModel):
             X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
                 Target locations to predict at. Can be an xarray object
                 containingon-grid locations or a pandas object containing off-grid locations.
+            X_t_mask: :class:`xarray.Dataset` | :class:`xarray.DataArray`, optional
+                2D mask to apply to gridded ``X_t`` (zero/False will be NaNs). Will be interpolated
+                to the same grid as ``X_t``. Default None (no mask).
+            X_t_is_normalised (bool):
+                Whether the ``X_t`` coords are normalised. If False, will normalise
+                the coords before passing to model. Default ``False``.
+            aux_at_targets_override (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+                Optional auxiliary xarray data to override from the task_loader.
+            aux_at_targets_override_is_normalised (bool):
+                Whether the `aux_at_targets_override` coords are normalised.
+                If False, the DataProcessor will normalise the coords before passing to model.
+                Default False.
+            pred_params (tuple[str]):
+                Tuple of prediction parameters to return. The strings refer to methods
+                of the model class which will be called and stored in the Prediction object.
+                Default ("mean", "std").
+            resolution_factor (float):
+                Optional factor to increase the resolution of the target grid
+                by. E.g. 2 will double the target resolution, 0.5 will halve
+                it.Applies to on-grid predictions only. Default 1.
+            n_samples (int):
+                Number of joint samples to draw from the model. If 0, will not
+                draw samples. Default 0.
+            ar_sample (bool):
+                Whether to use autoregressive sampling. Default ``False``.
+            unnormalise (bool):
+                Whether to unnormalise the predictions. Only works if ``self``
+                hasa ``data_processor`` and ``task_loader`` attribute. Default
+                ``True``.
+            seed (int):
+                Random seed for deterministic sampling. Default 0.
+            append_indexes (dict):
+                Dictionary of index metadata to append to pandas indexes in the
+                off-grid case. Default ``None``.
+            progress_bar (int):
+                Whether to display a progress bar over tasks. Default 0.
+            verbose (bool):
+                Whether to print time taken for prediction. Default ``False``.
+
         Returns:
             :class:`~.model.pred.Prediction`):
                 A `dict`-like object mapping from target variable IDs to xarray or pandas objects
@@ -654,13 +712,64 @@ class DeepSensorModel(ProbabilisticModel):
                 - If ``n_samples`` == 0, returns only mean and std predictions.
                 - If ``n_samples`` > 0, returns mean, std and samples
                 predictions.
+
+        Raises:
+            ValueError
+                If ``X_t`` is not an xarray object and
+                ``resolution_factor`` is not 1 or ``ar_subsample_factor`` is
+                not 1.
+            ValueError
+                If ``X_t`` is not a pandas object and ``append_indexes`` is not
+                ``None``.
+            ValueError
+                If ``X_t`` is not an xarray, pandas or numpy object.
+            ValueError
+                If ``append_indexes`` are not all the same length as ``X_t``.
         """
 
         # Identify extent of original dataframe
+        preds = []
         for task in tasks:
-            pred = self.predict(task, X_t)
+            bbox = task['bbox']
 
-        return pred
+            # Determine X_t for the patched task in original coordinates.
+            x1 = xr.DataArray([bbox[0], bbox[1]], dims='x1', name='x1')
+            x2 = xr.DataArray([bbox[2], bbox[3]], dims='x2', name='x2')
+            bbox_norm = xr.Dataset(coords={'x1': x1, 'x2': x2})
+
+            bbox_unnorm = data_processor.unnormalise(bbox_norm)
+            unnorm_bbox_x1 = bbox_unnorm['x'].values.min(), bbox_unnorm['x'].values.max()
+            unnorm_bbox_x2 = bbox_unnorm['y'].values.min(), bbox_unnorm['y'].values.max()
+
+            task_X_t = X_t.sel(x = slice(unnorm_bbox_x1[0], unnorm_bbox_x1[1]),
+                                y = slice(unnorm_bbox_x2[0], unnorm_bbox_x2[1]))
+
+            pred = self.predict(task, task_X_t)
+            preds.append(pred)
+
+        pred_copy = copy.deepcopy(preds[0])
+
+        for var_name_copy, data_array_copy in pred_copy.items():
+
+            # set x and y coords
+            stitched_preds = xr.Dataset(coords={'x': X_t['x'], 'y': X_t['y']})
+
+            # Set time to same as patched prediction
+            stitched_preds['time'] = data_array_copy['time']
+
+            # set variable names to those in patched prediction, make values blank
+            for var_name_i in data_array_copy.data_vars:
+                stitched_preds[var_name_i] = data_array_copy[var_name_i]
+            stitched_preds.attrs.clear()
+            pred_copy[var_name_copy]= stitched_preds
+
+        for pred in preds:
+            for var_name, data_array in pred.items():
+                if var_name in pred_copy:
+                    unnorm_patch_x1 = data_array['x'].min().values, data_array['x'].max().values
+                    unnorm_patch_x2 = data_array['y'].min().values, data_array['y'].max().values
+                    pred_copy[var_name].loc[{'x': slice(unnorm_patch_x1[0], unnorm_patch_x1[1]), 'y': slice(unnorm_patch_x2[0], unnorm_patch_x2[1])}] = data_array
+        return preds
 
 def main():  # pragma: no cover
     import deepsensor.tensorflow
