@@ -7,10 +7,9 @@ neural processes.
 **Useful links**:
 [Code repository](https://github.com/alan-turing-institute/deepsensor) |
 [Issues](https://github.com/alan-turing-institute/deepsensor/issues) |
-[Slack join request form](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform) |
+[Slack join request form](https://forms.office.com/pages/responsepage.aspx?id=p_SVQ1XklU-Knx-672OE-ZmEJNLHTHVFkqQ97AaCfn9UMTZKT1IwTVhJRE82UjUzMVE2MThSOU5RMC4u) |
 [Slack channel](https://ai4environment.slack.com/archives/C05NQ76L87R) |
 [DeepSensor Gallery](https://github.com/tom-andersson/deepsensor_gallery)
-
 
 
 ::::{grid} 1 1 2 2
