@@ -29,8 +29,7 @@ This allows DeepSensor users to focus on the science and rapidly iterate on idea
 
 DeepSensor is an experimental package, and we
 welcome [contributions from the community](https://github.com/alan-turing-institute/deepsensor/blob/main/CONTRIBUTING.md).
-We have an active Slack channel for code and research discussions; you can request to
-join [via this Google Form](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform).
+We have an active Slack channel for code and research discussions; you can join by [signing up for the Turing Environment & Sustainability stakeholder community](https://forms.office.com/pages/responsepage.aspx?id=p_SVQ1XklU-Knx-672OE-ZmEJNLHTHVFkqQ97AaCfn9UMTZKT1IwTVhJRE82UjUzMVE2MThSOU5RMC4u). The form includes a question on signing up for the Slack team, where you can find DeepSensor's channel.
 
 ![DeepSensor example application figures](https://raw.githubusercontent.com/alan-turing-institute/deepsensor/main/figs/deepsensor_application_examples.png)
 

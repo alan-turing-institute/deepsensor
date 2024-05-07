@@ -46,7 +46,8 @@ Check our [](./contributing.md) guide.
 **Q: How can I get in touch with other contributors or maintainers?**
 
 **Answer:**
-[Request to join our Slack channel](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform) to stay in touch with other contributors and maintainers.
+Request to join our Slack channel to stay in touch with other contributors and maintainers. You can join by [signing up for the Turing Environment & Sustainability stakeholder community](https://forms.office.com/pages/responsepage.aspx?id=p_SVQ1XklU-Knx-672OE-ZmEJNLHTHVFkqQ97AaCfn9UMTZKT1IwTVhJRE82UjUzMVE2MThSOU5RMC4u). The form includes a question on signing up for the Slack team, where you can find DeepSensor's channel.
+
 We also have a regular community Zoom call (join the Slack channel or get in touch to find out more).
 
 ---

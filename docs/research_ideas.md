@@ -7,8 +7,7 @@ Below are a non-exhaustive selection of research ideas that you could explore.
 It would be helpful to ensure you are familiar with the literature and
 resources in the [](resources.md) page before starting.
 
-Why not [join our Slack channel](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform)
-and start a conversation around these ideas or your own? :-)
+Why not join our Slack channel and start a conversation around these ideas or your own? :-) You can join by [signing up for the Turing Environment & Sustainability stakeholder community](https://forms.office.com/pages/responsepage.aspx?id=p_SVQ1XklU-Knx-672OE-ZmEJNLHTHVFkqQ97AaCfn9UMTZKT1IwTVhJRE82UjUzMVE2MThSOU5RMC4u). The form includes a question on signing up for the Slack team, where you can find DeepSensor's channel.
 
 ## Transfer learning from regions of dense observations to regions of sparse observations
 
