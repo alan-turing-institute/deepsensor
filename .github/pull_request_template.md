@@ -16,5 +16,5 @@ If changing or adding source code:
 - [ ] tests are included and are passing (run `pytest`).
 - [ ] documentation is included or updated as relevant, including docstrings.
 
-If changing or adding documentation
-- [ ] docs build successfully (`jupyter-book build docs --all`)
+If changing or adding documentation:
+- [ ] docs build successfully (`jupyter-book build docs --all`) and the changes look good from a manual inspection of the HTML in `docs/_build/html/`.
