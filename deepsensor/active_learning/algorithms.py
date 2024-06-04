@@ -240,7 +240,7 @@ class GreedyAlgorithm:
             )
 
     def _get_times_from_tasks(self):
-        """Get times from tasks"""
+        """Get times from tasks."""
         times = [task["time"] for task in self.tasks]
         # Check for any repeats
         if len(times) != len(set(times)):
@@ -285,22 +285,20 @@ class GreedyAlgorithm:
         return infill_ds
 
     def _sample_y_infill(self, infill_ds, time, x1, x2):
-        """Sample infill values at a single location"""
-        assert isinstance(infill_ds, (xr.Dataset, xr.DataArray))
-        y = infill_ds.sel(time=time, x1=x1, x2=x2)
-        if isinstance(y, xr.Dataset):
-            y = y.to_array()
-        y = y.data
-        if "sample" not in infill_ds.dims:
-            return y.reshape(1, y.size)  # 1 observation with N_target_dims
+        """Sample infill values at a single location."""
+        if isinstance(infill_ds, (xr.Dataset, xr.DataArray)):
+            y = infill_ds.sel(time=time, x1=x1, x2=x2)
+            if isinstance(y, xr.Dataset):
+                y = y.to_array()
+            y = y.data
+            y = y.reshape(1, y.size)  # 1 observation with N dimensions
         else:
             # TODO confirm or force that dim ordering is (N_samples, N_target_dims)
             return y
 
     def _build_acquisition_fn_ds(self, X_s: Union[xr.Dataset, xr.DataArray]):
-        """
-        Initialise xr.DataArray for storing acquisition function values on
-        search grid
+        """Initialise xr.DataArray for storing acquisition function values on
+        search grid.
         """
         prepend_dims = ["iteration"]  # , "sample"]  # MC sample TODO
         prepend_coords = {
@@ -319,8 +317,13 @@ class GreedyAlgorithm:
 
         return acquisition_fn_ds
 
+<<<<<<< HEAD
     def _init_acquisition_fn_object(self, X_s: xr.Dataset):
         """Instantiate acquisition function object"""
+=======
+    def _init_acquisition_fn_ds(self, X_s: xr.Dataset):
+        """Instantiate acquisition function object."""
+>>>>>>> 97373bc (lint docstrings)
         # Unnormalise before instantiating
         X_s = self.model.data_processor.map_coords(X_s, unnorm=True)
         if isinstance(X_s, (xr.Dataset, xr.DataArray)):
@@ -335,8 +338,7 @@ class GreedyAlgorithm:
             raise TypeError(f"Unsupported type for X_s: {type(X_s)}")
 
     def _search(self, acquisition_fn: AcquisitionFunction):
-        """
-        Run one greedy pass by looping over each point in ``X_s`` and
+        """Run one greedy pass by looping over each point in ``X_s`` and
         computing the acquisition function.
         """
         importances_list = []

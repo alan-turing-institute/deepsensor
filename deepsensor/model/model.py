@@ -28,15 +28,13 @@ import lab as B
 
 
 class ProbabilisticModel:
-    """
-    Base class for probabilistic model used for DeepSensor.
+    """Base class for probabilistic model used for DeepSensor.
     Ensures a set of methods required for DeepSensor
     are implemented by specific model classes that inherit from it.
     """
 
     def mean(self, task: Task, *args, **kwargs):
-        """
-        Computes the model mean prediction over target points based on given context
+        """Computes the model mean prediction over target points based on given context
         data.
 
         Args:
@@ -53,8 +51,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def variance(self, task: Task, *args, **kwargs):
-        """
-        Model marginal variance over target points given context points.
+        """Model marginal variance over target points given context points.
         Shape (N,).
 
         Args:
@@ -71,8 +68,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def std(self, task: Task):
-        """
-        Model marginal standard deviation over target points given context
+        """Model marginal standard deviation over target points given context
         points. Shape (N,).
 
         Args:
@@ -89,8 +85,7 @@ class ProbabilisticModel:
         return self.std(*args, **kwargs)
 
     def covariance(self, task: Task, *args, **kwargs):
-        """
-        Computes the model covariance matrix over target points based on given
+        """Computes the model covariance matrix over target points based on given
         context data. Shape (N, N).
 
         Args:
@@ -107,8 +102,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def mean_marginal_entropy(self, task: Task, *args, **kwargs):
-        """
-        Computes the mean marginal entropy over target points based on given
+        """Computes the mean marginal entropy over target points based on given
         context data.
 
         .. note::
@@ -129,8 +123,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def joint_entropy(self, task: Task, *args, **kwargs):
-        """
-        Computes the model joint entropy over target points based on given
+        """Computes the model joint entropy over target points based on given
         context data.
 
 
@@ -148,8 +141,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def logpdf(self, task: Task, *args, **kwargs):
-        """
-        Computes the joint model logpdf over target points based on given
+        """Computes the joint model logpdf over target points based on given
         context data.
 
         Args:
@@ -166,8 +158,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def loss(self, task: Task, *args, **kwargs):
-        """
-        Computes the model loss over target points based on given context data.
+        """Computes the model loss over target points based on given context data.
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -183,8 +174,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def sample(self, task: Task, n_samples=1, *args, **kwargs):
-        """
-        Draws ``n_samples`` joint samples over target points based on given
+        """Draws ``n_samples`` joint samples over target points based on given
         context data. Returned shape is ``(n_samples, n_target)``.
 
 
@@ -205,8 +195,7 @@ class ProbabilisticModel:
 
 
 class DeepSensorModel(ProbabilisticModel):
-    """
-    Implements DeepSensor prediction functionality of a ProbabilisticModel.
+    """Implements DeepSensor prediction functionality of a ProbabilisticModel.
     Allows for outputting an xarray object containing on-grid predictions or a
     pandas object containing off-grid predictions.
 
@@ -253,8 +242,7 @@ class DeepSensorModel(ProbabilisticModel):
         progress_bar: int = 0,
         verbose: bool = False,
     ) -> Prediction:
-        """
-        Predict on a regular grid or at off-grid locations.
+        """Predict on a regular grid or at off-grid locations.
 
         Args:
             tasks (List[Task] | Task):

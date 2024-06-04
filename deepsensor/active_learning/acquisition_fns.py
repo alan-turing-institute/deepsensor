@@ -10,9 +10,7 @@ from deepsensor.data.task import Task
 
 
 class AcquisitionFunction:
-    """
-    Parent class for acquisition functions.
-    """
+    """Parent class for acquisition functions."""
 
     # Class attribute to indicate whether the acquisition function should be
     #   minimised or maximised
@@ -24,23 +22,21 @@ class AcquisitionFunction:
         context_set_idx: int = 0,
         target_set_idx: int = 0,
     ):
-        """
-        Args:
-            model (:class:`~.model.model.ProbabilisticModel`):
-                [Description of the model parameter.]
-            context_set_idx (int):
-                Index of context set to add new observations to when computing
-                the acquisition function.
-            target_set_idx (int):
-                Index of target set to compute acquisition function for.
+        """Args:
+          model (:class:`~.model.model.ProbabilisticModel`):
+              [Description of the model parameter.]
+          context_set_idx (int):
+              Index of context set to add new observations to when computing
+              the acquisition function.
+        target_set_idx (int):
+              Index of target set to compute acquisition function for.
         """
         self.model = model
         self.context_set_idx = context_set_idx
         self.target_set_idx = target_set_idx
 
     def __call__(self, task: Task, *args, **kwargs) -> np.ndarray:
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -61,21 +57,18 @@ class AcquisitionFunction:
 
 
 class AcquisitionFunctionOracle(AcquisitionFunction):
-    """
-    Signifies that the acquisition function is computed using the true
+    """Signifies that the acquisition function is computed using the true
     target values.
     """
 
 
 class AcquisitionFunctionParallel(AcquisitionFunction):
-    """
-    Parent class for acquisition functions that are computed across all search
+    """Parent class for acquisition functions that are computed across all search
     points in parallel.
     """
 
     def __call__(self, task: Task, X_s: np.ndarray, **kwargs) -> np.ndarray:
-        """
-        ...
+        """...
 
         :param **kwargs:
         :no-index:
@@ -104,8 +97,7 @@ class MeanStddev(AcquisitionFunction):
     min_or_max = "min"
 
     def __call__(self, task: Task):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -126,8 +118,7 @@ class MeanVariance(AcquisitionFunction):
     min_or_max = "min"
 
     def __call__(self, task: Task):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -148,8 +139,7 @@ class pNormStddev(AcquisitionFunction):
     min_or_max = "min"
 
     def __init__(self, *args, p: int = 1, **kwargs):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -161,8 +151,7 @@ class pNormStddev(AcquisitionFunction):
         self.p = p
 
     def __call__(self, task: Task):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -185,8 +174,7 @@ class MeanMarginalEntropy(AcquisitionFunction):
     min_or_max = "min"
 
     def __call__(self, task):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -208,8 +196,7 @@ class JointEntropy(AcquisitionFunction):
     min_or_max = "min"
 
     def __call__(self, task: Task):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -230,8 +217,7 @@ class OracleMAE(AcquisitionFunctionOracle):
     min_or_max = "min"
 
     def __call__(self, task: Task):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -256,8 +242,7 @@ class OracleRMSE(AcquisitionFunctionOracle):
     min_or_max = "min"
 
     def __call__(self, task: Task):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -282,8 +267,7 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
     min_or_max = "min"
 
     def __call__(self, task: Task):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -308,8 +292,7 @@ class OracleJointNLL(AcquisitionFunctionOracle):
     min_or_max = "min"
 
     def __call__(self, task: Task):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -330,8 +313,7 @@ class Random(AcquisitionFunctionParallel):
     min_or_max = "max"
 
     def __init__(self, *args, seed: int = 42, **kwargs):
-        """
-        ...
+        """...
 
         :no-index:
 
@@ -343,8 +325,7 @@ class Random(AcquisitionFunctionParallel):
         self.rng = np.random.default_rng(seed)
 
     def __call__(self, task: Task, X_s: np.ndarray, **kwargs):
-        """
-        ...
+        """...
 
         :param **kwargs:
         :no-index:
@@ -368,8 +349,7 @@ class ContextDist(AcquisitionFunctionParallel):
     min_or_max = "max"
 
     def __call__(self, task: Task, X_s: np.ndarray, **kwargs):
-        """
-        ...
+        """...
 
         :param **kwargs:
         :no-index:
@@ -410,8 +390,7 @@ class Stddev(AcquisitionFunctionParallel):
     min_or_max = "max"
 
     def __call__(self, task: Task, X_s: np.ndarray, **kwargs):
-        """
-        ...
+        """...
 
         :param **kwargs:
         :no-index:
@@ -434,8 +413,7 @@ class Stddev(AcquisitionFunctionParallel):
 
 
 class ExpectedImprovement(AcquisitionFunctionParallel):
-    """
-    Expected improvement acquisition function.
+    """Expected improvement acquisition function.
 
     .. note::
 
@@ -446,8 +424,7 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
     min_or_max = "max"
 
     def __call__(self, task: Task, X_s: np.ndarray, **kwargs) -> np.ndarray:
-        """
-        :param **kwargs:
+        """:param **kwargs:
         :no-index:
 
         Args:
