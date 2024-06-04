@@ -1057,6 +1057,14 @@ class ConvNP(DeepSensorModel):
 
 
 def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
+    """
+    Concatenate a list of tasks into a single task containing multiple batches.
+
+    ```{warning}
+    `concat_tasks` has been moved to deepsensor.data.task and will be removed from "
+        "deepsensor.model.convnp in a future release.
+    ```
+    """
     warnings.warn(
         "concat_tasks has been moved to deepsensor.data.task and will be removed from "
         "deepsensor.model.convnp in a future release.",

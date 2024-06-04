@@ -172,6 +172,7 @@ class Trainer:
         progress_bar=False,
         tqdm_notebook=False,
     ) -> List[float]:
+        """Train model for one epoch."""
         return train_epoch(
             model=self.model,
             tasks=tasks,
