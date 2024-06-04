@@ -10,8 +10,7 @@ from typing import List
 
 
 def set_gpu_default_device() -> None:
-    """
-    Set default GPU device for the backend.
+    """Set default GPU device for the backend.
 
     Raises:
         RuntimeError
@@ -60,8 +59,7 @@ def train_epoch(
     progress_bar=False,
     tqdm_notebook=False,
 ) -> List[float]:
-    """
-    Train model for one epoch.
+    """Train model for one epoch.
 
     Args:
         model (:class:`~.model.convnp.ConvNP`):
@@ -149,7 +147,7 @@ def train_epoch(
 
 
 class Trainer:
-    """Class for training ConvNP models with an Adam optimiser
+    """Class for training ConvNP models with an Adam optimiser.
 
     Args:
         lr (float): Learning rate
