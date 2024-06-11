@@ -33,9 +33,8 @@ Slack workspace, where conversation about when to hold the community calls in th
 place.
 
 **Slack Workspace**: Join
-our [DeepSensor Slack channel](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform) for
-discussions, queries, and community interactions. Send us an email at kwesterling@turing.ac.uk to
-request an invite.
+our DeepSensor Slack channel for
+discussions, queries, and community interactions. In order to join, [sign up for the Turing Environment & Sustainability stakeholder community](https://forms.office.com/pages/responsepage.aspx?id=p_SVQ1XklU-Knx-672OE-ZmEJNLHTHVFkqQ97AaCfn9UMTZKT1IwTVhJRE82UjUzMVE2MThSOU5RMC4u). The form includes a question on signing up for the Slack team, where you can find DeepSensor's channel.
 
 **Email**: If you prefer a more formal communication method or have specific concerns, please reach
 us at tomandersson3@gmail.com.
