@@ -13,19 +13,13 @@ jobs:
         python-version: ['3.8', '3.11']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Delete huge unnecessary folders, and clean apt cache
-      run: |
-        rm -rf /opt/hostedtoolcache
-        rm -rf /usr/share/dotnet
-        rm -rf /opt/ghc
-        rm -rf "$AGENT_TOOLSDIRECTORY"
-        sudo apt-get clean
-      shell: bash
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
     - name: Print space
       run: df -h
     - name: Install dependencies
