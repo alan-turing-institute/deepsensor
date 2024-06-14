@@ -11,22 +11,23 @@ from deepsensor.model.convnp import ConvNP
 
 
 class TestPlotting(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def setUpClass(cls):
         # It's safe to share data between tests because the TaskLoader does not modify data
         ds_raw = xr.tutorial.open_dataset("air_temperature")
-        self.ds_raw = ds_raw
-        self.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
-        ds = self.data_processor(ds_raw)
-        self.task_loader = TaskLoader(context=ds, target=ds)
-        self.model = ConvNP(
-            self.data_processor,
-            self.task_loader,
+        cls.ds_raw = ds_raw
+        cls.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
+        ds = cls.data_processor(ds_raw)
+        cls.task_loader = TaskLoader(context=ds, target=ds)
+        cls.model = ConvNP(
+            cls.data_processor,
+            cls.task_loader,
             unet_channels=(5, 5, 5),
             verbose=False,
         )
         # Sample a task with 10 random context points
-        self.task = self.task_loader(
+        cls.task = cls.task_loader(
             "2014-12-31", context_sampling=10, target_sampling="all"
         )
 

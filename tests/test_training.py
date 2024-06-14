@@ -16,15 +16,16 @@ from deepsensor.data.task import concat_tasks
 
 
 class TestTraining(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def setUpClass(cls):
         # It's safe to share data between tests because the TaskLoader does not modify data
         ds_raw = xr.tutorial.open_dataset("air_temperature")
 
-        self.ds_raw = ds_raw
-        self.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
+        cls.ds_raw = ds_raw
+        cls.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
 
-        self.da = self.data_processor(ds_raw)
+        cls.da = cls.data_processor(ds_raw)
 
     def test_concat_tasks(self):
         tl = TaskLoader(context=self.da, target=self.da)
