@@ -47,8 +47,7 @@ def _gen_data_pandas(coords=None, dims=None, cols=None):
 
 
 class TestModel(unittest.TestCase):
-    """
-    A test class for the ``ConvNP`` model.
+    """A test class for the ``ConvNP`` model.
     """
 
     def __init__(self, *args, **kwargs):
@@ -72,7 +71,8 @@ class TestModel(unittest.TestCase):
     @parameterized.expand(range(1, 4))
     def test_model_call(self, n_context_and_target):
         """Check ``ConvNP`` runs with all possible combinations of context/target
-        sampling methods."""
+        sampling methods.
+        """
         # Convert to list of strings containing every possible combination of "xr" and "pd"
         context_ID_list = list(
             itertools.product(["xr", "pd"], repeat=n_context_and_target)
@@ -110,8 +110,7 @@ class TestModel(unittest.TestCase):
 
     @parameterized.expand(range(1, 4))
     def test_prediction_shapes_lowlevel(self, n_target_sets):
-        """
-        Test low-level model prediction interface over a range of number of
+        """Test low-level model prediction interface over a range of number of
         target sets.
         """
         # Make dataset 5D for non-trivial target dimensions
@@ -243,7 +242,6 @@ class TestModel(unittest.TestCase):
     @parameterized.expand(range(1, 4))
     def test_prediction_shapes_highlevel(self, target_dim):
         """Test high-level ``.predict`` interface over a range of number of target"""
-
         if target_dim > 1:
             # Avoid data var name clash in `predict`
             target_names = [f"target_{i}" for i in range(target_dim)]
@@ -314,7 +312,6 @@ class TestModel(unittest.TestCase):
     @parameterized.expand(range(1, 4))
     def test_nans_offgrid_context(self, ndim):
         """Test that ``ConvNP`` can handle ``NaN``s in offgrid context."""
-
         tl = TaskLoader(
             context=_gen_data_xr(data_vars=range(ndim)),
             target=self.da,
@@ -337,7 +334,6 @@ class TestModel(unittest.TestCase):
     @parameterized.expand(range(1, 4))
     def test_nans_gridded_context(self, ndim):
         """Test that ``ConvNP`` can handle ``NaN``s in gridded context."""
-
         tl = TaskLoader(
             context=_gen_data_xr(data_vars=range(ndim)),
             target=self.da,
@@ -372,8 +368,8 @@ class TestModel(unittest.TestCase):
 
     def test_highlevel_predict_coords_align_with_X_t_ongrid(self):
         """Test coordinates of the xarray returned predictions align with the
-        coordinates of X_t."""
-
+        coordinates of X_t.
+        """
         # Instantiate an xarray object that would lead to rounding errors
         region_size = (61, 81)
         lat_lims = (30, 75)
@@ -409,8 +405,8 @@ class TestModel(unittest.TestCase):
 
     def test_highlevel_predict_coords_align_with_X_t_offgrid(self):
         """Test coordinates of the pandas returned predictions align with the
-        coordinates of X_t."""
-
+        coordinates of X_t.
+        """
         # Instantiate a pandas object that would lead to rounding errors
         region_size = (61, 81)
         lat_lims = (30, 75)
@@ -448,8 +444,7 @@ class TestModel(unittest.TestCase):
         )
 
     def test_highlevel_predict_with_pred_params_pandas(self):
-        """
-        Test that passing ``pred_params`` to ``.predict`` works with
+        """Test that passing ``pred_params`` to ``.predict`` works with
         a spikes-beta likelihood for prediction to pandas.
         """
         tl = TaskLoader(context=self.da, target=self.da)
@@ -479,8 +474,7 @@ class TestModel(unittest.TestCase):
             assert pred_param in pred["var"]
 
     def test_highlevel_predict_with_pred_params_xarray(self):
-        """
-        Test that passing ``pred_params`` to ``.predict`` works with
+        """Test that passing ``pred_params`` to ``.predict`` works with
         a spikes-beta likelihood for prediction to xarray.
         """
         tl = TaskLoader(context=self.da, target=self.da)

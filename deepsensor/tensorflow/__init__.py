@@ -17,6 +17,7 @@ from .. import *  # noqa
 
 
 def convert_to_tensor(arr):
+    """Convert `arr` to tensorflow tensor."""
     return tf.convert_to_tensor(arr)
 
 

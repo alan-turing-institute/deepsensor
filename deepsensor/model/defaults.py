@@ -13,8 +13,7 @@ from typing import List
 
 
 def compute_greatest_data_density(task_loader: TaskLoader) -> int:
-    """
-    Computes data-informed settings for the model's internal grid density (ppu,
+    """Computes data-informed settings for the model's internal grid density (ppu,
     points per unit).
 
     Loops over all context and target variables in the ``TaskLoader`` and
@@ -51,8 +50,7 @@ def compute_greatest_data_density(task_loader: TaskLoader) -> int:
 
 
 def gen_decoder_scale(model_ppu: int) -> float:
-    """
-    Computes informed setting for the decoder SetConv scale.
+    """Computes informed setting for the decoder SetConv scale.
 
     This sets the length scale of the Gaussian basis functions used interpolate
     from the model's internal grid to the target locations.
@@ -73,8 +71,7 @@ def gen_decoder_scale(model_ppu: int) -> float:
 
 
 def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> List[float]:
-    """
-    Computes data-informed settings for the encoder SetConv scale for each
+    """Computes data-informed settings for the encoder SetConv scale for each
     context set.
 
     This sets the length scale of the Gaussian basis functions used to encode
