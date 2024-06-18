@@ -20,7 +20,10 @@ no_implicit_reexport = true
 
 [tool.ruff]
 exclude = ["tests/*"]
-lint.select = ["D"]
+lint.select = [
+    "D",
+    "NPY201"
+    ]
 lint.ignore = [
     "D100", # Missing docstring in public module
     "D104", # Missing docstring in public package
