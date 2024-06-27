@@ -735,7 +735,7 @@ class DeepSensorModel(ProbabilisticModel):
             ValueError
                 If ``append_indexes`` are not all the same length as ``X_t``.
         """
-        
+        # TODO, do we need to add patch and stride as an additional argument?
         def get_patches_per_row(preds, X_t) -> int:
             """
             Calculate number of patches per row. 
@@ -799,6 +799,8 @@ class DeepSensorModel(ProbabilisticModel):
 
             return xy_overlap
 
+
+        # TODO - change amsr_raw_ds to what?
         def get_index(*args, x1 = True) -> Union[int, Tuple[List[int], List[int]]]:
             """
             Convert coordinates into pixel row/column (index).
@@ -931,7 +933,7 @@ class DeepSensorModel(ProbabilisticModel):
         stitched_prediction = stitch_clipped_predictions(preds, patch_overlap_unnorm, patches_per_row)
         
         ## Cast prediction into DeepSensor.Prediction object.
-        # Todo: make this into seperate method. 
+        # TODO make this into seperate method. 
         prediction= copy.deepcopy(preds[0])
 
         # Generate new blank DeepSensor.prediction object in original coordinate system.
