@@ -638,7 +638,7 @@ class DeepSensorModel(ProbabilisticModel):
             pd.DataFrame,
             List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
         ],
-        stride_size: Union[float, tuple[float]],
+        stride: Union[float, tuple[float]],
         patch_size: Union[float, tuple[float]],
         X_t_mask: Optional[Union[xr.Dataset, xr.DataArray]] = None,
         X_t_is_normalised: bool = False,
@@ -664,7 +664,7 @@ class DeepSensorModel(ProbabilisticModel):
                 List of tasks containing context data.
             data_processor (:class:`~.data.processor.DataProcessor`):
                 Used for unnormalising the coordinates of the bounding boxes of patches.
-            stride_size (Union[float, tuple[float]]):
+            stride (Union[float, tuple[float]]):
                 Length of stride between adjacent patches in x1/x2 normalised coordinates.
             patch_size (Union[float, tuple[float]]):
                 Height and width of patch in x1/x2 normalised coordinates.
@@ -927,7 +927,7 @@ class DeepSensorModel(ProbabilisticModel):
             # Append patchwise DeepSensor prediction object to list
             preds.append(pred)
           
-        overlap_norm = tuple(patch - stride for patch, stride in zip(patch_size, stride_size))
+        overlap_norm = tuple(patch - stride for patch, stride in zip(patch_size, stride))
         patch_overlap_unnorm = get_patch_overlap(overlap_norm, data_processor, X_t)
         patches_per_row = get_patches_per_row(preds, X_t)
         stitched_prediction = stitch_clipped_predictions(preds, patch_overlap_unnorm, patches_per_row)
