@@ -57,12 +57,12 @@ class TestTaskLoader(unittest.TestCase):
     - Task batching shape as expected
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    @classmethod
+    def setUpClass(cls):
         # It's safe to share data between tests because the TaskLoader does not modify data
-        self.da = _gen_data_xr()
-        self.aux_da = self.da.isel(time=0)
-        self.df = _gen_data_pandas()
+        cls.da = _gen_data_xr()
+        cls.aux_da = cls.da.isel(time=0)
+        cls.df = _gen_data_pandas()
 
     def _gen_task_loader_call_args(self, n_context_sets, n_target_sets):
         """Generate arguments for ``TaskLoader.__call__``."""

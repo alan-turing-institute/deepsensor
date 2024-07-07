@@ -51,14 +51,15 @@ class TestModel(unittest.TestCase):
     A test class for the ``ConvNP`` model.
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    @classmethod
+    def setUpClass(cls):
+        # super().__init__(*args, **kwargs)
         # It's safe to share data between tests because the TaskLoader does not modify data
-        self.da = _gen_data_xr()
-        self.df = _gen_data_pandas()
+        cls.da = _gen_data_xr()
+        cls.df = _gen_data_pandas()
 
-        self.dp = DataProcessor()
-        _ = self.dp([self.da, self.df])  # Compute normalisation parameters
+        cls.dp = DataProcessor()
+        _ = cls.dp([cls.da, cls.df])  # Compute normalisation parameters
 
     def _gen_task_loader_call_args(self, n_context, n_target):
         """Generate arguments for TaskLoader.__call__"""
