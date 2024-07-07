@@ -187,7 +187,8 @@
       "profile": "http://davidwilby.dev",
       "contributions": [
         "doc",
-        "test"
+        "test",
+        "maintenance"
       ]
     }
   ]
