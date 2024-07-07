@@ -40,9 +40,7 @@ class TestActiveLearning(unittest.TestCase):
         cls.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
         cls.ds = cls.data_processor(ds_raw)
         # Set up a model with two context sets and two target sets for generality
-        cls.task_loader = TaskLoader(
-            context=[cls.ds, cls.ds], target=[cls.ds, cls.ds]
-        )
+        cls.task_loader = TaskLoader(context=[cls.ds, cls.ds], target=[cls.ds, cls.ds])
         cls.model = ConvNP(
             cls.data_processor,
             cls.task_loader,
