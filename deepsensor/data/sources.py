@@ -25,10 +25,9 @@ def get_ghcnd_station_data(
     cache: bool = False,
     cache_dir: str = ".datacache",
 ) -> pd.DataFrame:  # pragma: no cover
-    """
-    Download Global Historical Climatology Network Daily (GHCND) station data from NOAA
+    """Download Global Historical Climatology Network Daily (GHCND) station data from NOAA
     into a pandas DataFrame.
-    Source: https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily
+    Source: https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily.
 
     .. note::
         Requires the `scotthosking/get-station-data` repository to be installed
@@ -169,9 +168,8 @@ def get_era5_reanalysis_data(
     cache: bool = False,
     cache_dir: str = ".datacache",
 ) -> xr.Dataset:  # pragma: no cover
-    """
-    Download ERA5 reanalysis data from Google Cloud Storage into an xarray Dataset.
-    Source: https://cloud.google.com/storage/docs/public-datasets/era5
+    """Download ERA5 reanalysis data from Google Cloud Storage into an xarray Dataset.
+    Source: https://cloud.google.com/storage/docs/public-datasets/era5.
 
     Supports parallelising downloads into monthly chunks across multiple CPUs.
     Supports caching the downloaded data locally to avoid re-downloading when calling
@@ -312,8 +310,7 @@ def _get_era5_reanalysis_data_parallel(
     cache=False,
     cache_dir=".datacache",
 ):  # pragma: no cover
-    """
-    Helper function for downloading ERA5 data in parallel with caching.
+    """Helper function for downloading ERA5 data in parallel with caching.
 
     For documentation, see get_era5_reanalysis_data()
     """
@@ -370,9 +367,8 @@ def get_gldas_land_mask(
     cache: bool = False,
     cache_dir: str = ".datacache",
 ) -> xr.DataArray:  # pragma: no cover
-    """
-    Get GLDAS land mask at 0.25 degree resolution.
-    Source: https://ldas.gsfc.nasa.gov/gldas/vegetation-class-mask
+    """Get GLDAS land mask at 0.25 degree resolution.
+    Source: https://ldas.gsfc.nasa.gov/gldas/vegetation-class-mask.
 
     .. warning::
         If this function is updated, the cache will be invalidated and the data will need
@@ -450,9 +446,8 @@ def get_earthenv_auxiliary_data(
     cache: bool = False,
     cache_dir: str = ".datacache",
 ) -> xr.Dataset:  # pragma: no cover
-    """
-    Download global static auxiliary data from EarthEnv into an xarray DataArray.
-    See: https://www.earthenv.org/topography
+    """Download global static auxiliary data from EarthEnv into an xarray DataArray.
+    See: https://www.earthenv.org/topography.
 
     .. note::
         Requires the `rioxarray` package to be installed. e.g. via ``pip install rioxarray``.

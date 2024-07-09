@@ -14,8 +14,7 @@ from deepsensor.errors import InvalidSamplingStrategyError
 
 
 class TaskLoader:
-    """
-    Generates :class:`~.data.task.Task` objects for training, testing, and inference with DeepSensor models.
+    """Generates :class:`~.data.task.Task` objects for training, testing, and inference with DeepSensor models.
 
     Provides a suite of sampling methods for generating :class:`~.data.task.Task` objects for different kinds of
     predictions, such as: spatial interpolation, forecasting, downscaling, or some combination
@@ -191,7 +190,7 @@ class TaskLoader:
         ) = self.infer_context_and_target_var_IDs()
 
     def _set_config(self):
-        """Instantiate a config dictionary for the TaskLoader object"""
+        """Instantiate a config dictionary for the TaskLoader object."""
         # Take deepcopy to avoid modifying the original config
         self.config = copy.deepcopy(
             dict(
@@ -256,7 +255,6 @@ class TaskLoader:
 
     def _load_data_from_paths(self):
         """Load data from paths and overwrite paths with loaded data."""
-
         loaded_data = {}
 
         def _load_pandas_or_xarray(path):
@@ -294,7 +292,7 @@ class TaskLoader:
         self.aux_at_targets = _load_data(self.aux_at_targets)
 
     def save(self, folder: str):
-        """Save TaskLoader config to JSON in `folder`"""
+        """Save TaskLoader config to JSON in `folder`."""
         if not self._is_saveable:
             raise ValueError(
                 "TaskLoader cannot be saved because not all data was passed as paths."
@@ -314,8 +312,7 @@ class TaskLoader:
             List[Union[xr.DataArray, xr.Dataset, pd.DataFrame, str]],
         ],
     ) -> (List, List):
-        """
-        Cast context and target data to the default dtype.
+        """Cast context and target data to the default dtype.
 
         ..
             TODO unit test this by passing in a variety of data types and
@@ -357,8 +354,7 @@ class TaskLoader:
         return var
 
     def load_dask(self) -> None:
-        """
-        Load any `dask` data into memory.
+        """Load any `dask` data into memory.
 
         This function triggers the computation and loading of any data that
         is represented as dask arrays or datasets into memory.
@@ -384,8 +380,7 @@ class TaskLoader:
         return None
 
     def count_context_and_target_data_dims(self):
-        """
-        Count the number of data dimensions in the context and target data.
+        """Count the number of data dimensions in the context and target data.
 
         Returns:
             tuple: context_dims, Tuple of data dimensions in the context data.
@@ -431,8 +426,7 @@ class TaskLoader:
         return tuple(context_dims), tuple(target_dims), aux_at_target_dims
 
     def infer_context_and_target_var_IDs(self):
-        """
-        Infer the variable IDs of the context and target data.
+        """Infer the variable IDs of the context and target data.
 
         Returns:
             tuple: context_var_IDs, Tuple of variable IDs in the context data.
@@ -445,7 +439,7 @@ class TaskLoader:
         """
 
         def infer_var_IDs_of_tuple_of_sets(datasets, delta_ts=None):
-            """If delta_ts is not None, then add the delta_t to the variable ID"""
+            """If delta_ts is not None, then add the delta_t to the variable ID."""
             if not isinstance(datasets, (tuple, list)):
                 datasets = [datasets]
 
@@ -506,8 +500,7 @@ class TaskLoader:
         )
 
     def _check_links(self, links: Union[Tuple[int, int], List[Tuple[int, int]]]):
-        """
-        Check that the context-target links are valid.
+        """Check that the context-target links are valid.
 
         Args:
             links (Tuple[int, int] | List[Tuple[int, int]]):
@@ -555,9 +548,7 @@ class TaskLoader:
         return links
 
     def __str__(self):
-        """
-        String representation of the TaskLoader object (user-friendly).
-        """
+        """String representation of the TaskLoader object (user-friendly)."""
         s = f"TaskLoader({len(self.context_dims)} context sets, {len(self.target_dims)} target sets)"
         s += f"\nContext variable IDs: {self.context_var_IDs}"
         s += f"\nTarget variable IDs: {self.target_var_IDs}"
@@ -566,8 +557,7 @@ class TaskLoader:
         return s
 
     def __repr__(self):
-        """
-        Representation of the TaskLoader object (for developers).
+        """Representation of the TaskLoader object (for developers).
 
         ..
             TODO make this a more verbose version of __str__
@@ -586,8 +576,7 @@ class TaskLoader:
         sampling_strat: Union[str, int, float, np.ndarray],
         seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
-        """
-        Sample a DataArray according to a given strategy.
+        """Sample a DataArray according to a given strategy.
 
         Args:
             da (:class:`xarray.DataArray` | :class:`xarray.Dataset`):
@@ -677,8 +666,7 @@ class TaskLoader:
         sampling_strat: Union[str, int, float, np.ndarray],
         seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
-        """
-        Sample a DataArray according to a given strategy.
+        """Sample a DataArray according to a given strategy.
 
         Args:
             df (:class:`pandas.DataFrame` | :class:`pandas.Series`):
@@ -750,8 +738,7 @@ class TaskLoader:
         X_t: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]],
         offgrid_aux: Union[xr.DataArray, xr.Dataset],
     ) -> np.ndarray:
-        """
-        Sample auxiliary data at off-grid locations.
+        """Sample auxiliary data at off-grid locations.
 
         Args:
             X_t (:class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]):
@@ -791,8 +778,7 @@ class TaskLoader:
         return Y_t_aux
 
     def time_slice_variable(self, var, date, delta_t=0):
-        """
-        Slice a variable by a given time delta.
+        """Slice a variable by a given time delta.
 
         Args:
             var (...):
@@ -844,8 +830,7 @@ class TaskLoader:
         seed_override: Optional[int] = None,
     ) -> Task:
         def check_sampling_strat(sampling_strat, set):
-            """
-            Check the sampling strategy.
+            """Check the sampling strategy.
 
             Ensure ``sampling_strat`` is either a single strategy (broadcast
             to all sets) or a list of length equal to the number of sets.
@@ -914,8 +899,7 @@ class TaskLoader:
             return sampling_strat
 
         def sample_variable(var, sampling_strat, seed):
-            """
-            Sample a variable by a given sampling strategy to get input and
+            """Sample a variable by a given sampling strategy to get input and
             output data.
 
             Args:
@@ -1223,8 +1207,7 @@ class TaskLoader:
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Union[Task, List[Task]]:
-        """
-        Generate a task for a given date (or a list of
+        """Generate a task for a given date (or a list of
         :class:`.data.task.Task` objects for a list of dates).
 
         There are several sampling strategies available for the context and

@@ -7,8 +7,7 @@ import xarray as xr
 
 
 def construct_x1x2_ds(gridded_ds):
-    """
-    Construct an :class:`xarray.Dataset` containing two vars, where each var is
+    """Construct an :class:`xarray.Dataset` containing two vars, where each var is
     a 2D gridded channel whose values contain the x_1 and x_2 coordinate
     values, respectively.
 
@@ -29,8 +28,8 @@ def construct_x1x2_ds(gridded_ds):
 
 
 def construct_circ_time_ds(dates, freq):
-    """
-    Return an :class:`xarray.Dataset` containing a circular variable for time.
+    """Return an :class:`xarray.Dataset` containing a circular variable for time.
+    
     The ``freq`` entry dictates the frequency of cycling of the circular
     variable. E.g.:
 
@@ -76,8 +75,7 @@ def construct_circ_time_ds(dates, freq):
 
 
 def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float:
-    """
-    Computes the resolution of an xarray object with coordinates x1 and x2.
+    """Computes the resolution of an xarray object with coordinates x1 and x2.
 
     The data resolution is the finer of the two coordinate resolutions (x1 and
     x2). For example, if x1 has a resolution of 0.1 degrees and x2 has a
@@ -102,8 +100,7 @@ def compute_pandas_data_resolution(
     n_times: int = 1000,
     percentile: int = 5,
 ) -> float:
-    """
-    Approximates the resolution of non-gridded pandas data with indexes time,
+    """Approximates the resolution of non-gridded pandas data with indexes time,
     x1, and x2.
 
     The resolution is approximated as the Nth percentile of the distances
