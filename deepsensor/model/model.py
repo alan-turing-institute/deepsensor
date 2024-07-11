@@ -907,10 +907,17 @@ class DeepSensorModel(ProbabilisticModel):
 
             return combined
 
+        # tasks should be iterable, if only one is provided, make it a list
+        if type(tasks) is Task:
+            tasks = [tasks]
+
         # Perform patchwise predictions
         preds = []
         for task in tasks:
             bbox = task['bbox']
+            
+            if bbox is None:
+                raise AttributeError("Tasks require non-None ``bbox`` for patchwise inference.")
 
             # Unnormalise coordinates of bounding box of patch
             x1 = xr.DataArray([bbox[0], bbox[1]], dims='x1', name='x1')
