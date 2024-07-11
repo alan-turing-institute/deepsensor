@@ -907,8 +907,8 @@ class DeepSensorModel(ProbabilisticModel):
                         patch_clip_x2_min = int(b_x2_min)
                         patch_clip_x2_max = int(data_array.sizes[unnorm_coord_names['x2']] - b_x2_max)
 
-                        patch_clip = data_array.isel(y=slice(patch_clip_x1_min, patch_clip_x1_max),
-                                                    x=slice(patch_clip_x2_min, patch_clip_x2_max))
+                        patch_clip = data_array[{unnorm_coord_names['x1']: slice(patch_clip_x1_min, patch_clip_x1_max),
+                                                     unnorm_coord_names['x2']: slice(patch_clip_x2_min, patch_clip_x2_max)}]
 
                         patches_clipped[var_name].append(patch_clip)
 
