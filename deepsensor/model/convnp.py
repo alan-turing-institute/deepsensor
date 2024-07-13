@@ -43,7 +43,7 @@ class ConvNP(DeepSensorModel):
     Init kwargs passed to the `ConvNP` are passed to the `neuralprocesses.construct_convgnp` function
     and can be used to specify hyperparameters (see parameter list below). In particular, the
     `likelihood` parameter can be used to specify the likelihood of the model, which dictates
-    whether the model outputs marginal distributions at each target point (a ConvCNP) or a 
+    whether the model outputs marginal distributions at each target point (a ConvCNP) or a
     joint Gaussian distribution over all target points (a ConvGNP). By default a ConvCNP
     with Gaussian likelihoods is constructed.
 
