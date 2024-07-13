@@ -11,7 +11,7 @@ data with neural processes</p>
 
 -----------
 
-[![release](https://img.shields.io/badge/release-v0.3.6-green?logo=github)](https://github.com/alan-turing-institute/deepsensor/releases)
+[![release](https://img.shields.io/badge/release-v0.3.7-green?logo=github)](https://github.com/alan-turing-institute/deepsensor/releases)
 [![Latest Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://alan-turing-institute.github.io/deepsensor/)
 ![Tests](https://github.com/alan-turing-institute/deepsensor/actions/workflows/tests.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/alan-turing-institute/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/alan-turing-institute/deepsensor?branch=main)
@@ -112,7 +112,7 @@ ds = data_processor(ds_raw)
 # Set up task loader
 task_loader = TaskLoader(context=ds, target=ds)
 
-# Set up model
+# Set up ConvNP, which by default instantiates a ConvCNP with Gaussian marginals
 model = ConvNP(data_processor, task_loader)
 
 # Generate training tasks with up 100 grid cells as context and all grid cells
