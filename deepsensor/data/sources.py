@@ -164,7 +164,7 @@ def get_era5_reanalysis_data(
     extent: Union[Tuple[float, float, float, float], str] = "global",
     date_range: Optional[Tuple[str, str]] = None,
     freq: str = "D",
-    num_processes: Optional[int] = None,
+    num_processes: Optional[int] = 1,
     verbose: bool = False,
     cache: bool = False,
     cache_dir: str = ".datacache",
@@ -205,9 +205,9 @@ def get_era5_reanalysis_data(
             Frequency of data to download. Options are: "D" (daily) or "H" (hourly).
             If "D", the data is downloaded from the 1-hourly dataset and then resampled
             to daily averages. If "H", the 1-hourly data is returned as-is.
-        num_processes (Optional[int], optional):
+        num_processes Optional[int]:
             Number of CPUs to use for downloading years of ERA5 data in parallel.
-            Defaults to 75% of all available CPUs or 8 CPUs, whichever is smaller.
+            Defaults to 1 (i.e. no parallelisation). 75% of all available CPUs or 8 CPUs, whichever is smaller.
         verbose: bool
             Whether to print status messages. Default is ``False``.
         cache: bool
@@ -273,31 +273,44 @@ def get_era5_reanalysis_data(
         num_processes = max(1, int(0.75 * multiprocessing.cpu_count()))
         num_processes = min(num_processes, len(date_ranges))
         num_processes = min(num_processes, max_num_processes)
-        if verbose:
-            print(
-                f"Using {num_processes} CPUs out of {multiprocessing.cpu_count()}... "
-            )
 
-    with multiprocessing.Pool(num_processes) as pool:
-        partial_era5 = partial(
-            _get_era5_reanalysis_data_parallel,
+    if num_processes == 1:
+        # Just download in one go
+        if verbose:
+            print("Downloading ERA5 data in without parallelisation... ")
+        era5_da = _get_era5_reanalysis_data_parallel(
+            date_range=date_range,
             var_IDs=var_IDs,
             freq=freq,
             extent=extent,
             cache=cache,
             cache_dir=cache_dir,
         )
-
-        era5_das = list(
-            tqdm.tqdm(
-                pool.imap(partial_era5, date_ranges),
-                total=len(date_ranges),
-                smoothing=0,
-                disable=not verbose,
+    elif num_processes > 1:
+        if verbose:
+            print(
+                f"Using {num_processes} CPUs out of {multiprocessing.cpu_count()}... "
             )
-        )
+        with multiprocessing.Pool(num_processes) as pool:
+            partial_era5 = partial(
+                _get_era5_reanalysis_data_parallel,
+                var_IDs=var_IDs,
+                freq=freq,
+                extent=extent,
+                cache=cache,
+                cache_dir=cache_dir,
+            )
 
-    era5_da = xr.concat(era5_das, dim="time")
+            era5_das = list(
+                tqdm.tqdm(
+                    pool.imap(partial_era5, date_ranges),
+                    total=len(date_ranges),
+                    smoothing=0,
+                    disable=not verbose,
+                )
+            )
+
+        era5_da = xr.concat(era5_das, dim="time")
 
     if verbose:
         print(f"{era5_da.nbytes / 1e9:.2f} GB loaded in {time.time() - tic:.2f} s")
