@@ -36,19 +36,25 @@ TorchModel = ModuleType("torch.nn", "Module")
 
 class ConvNP(DeepSensorModel):
     """
-    A ConvNP regression probabilistic model.
+    A Convolutional Neural Process (ConvNP) regression probabilistic model (by default a ConvCNP).
 
     Wraps around the ``neuralprocesses`` package to construct a ConvNP model.
-    See: https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py
+    See: https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py.
+    Init kwargs passed to the `ConvNP` are passed to the `neuralprocesses.construct_convgnp` function
+    and can be used to specify hyperparameters (see parameter list below). In particular, the
+    `likelihood` parameter can be used to specify the likelihood of the model, which dictates
+    whether the model outputs marginal distributions at each target point (a ConvCNP) or a 
+    joint Gaussian distribution over all target points (a ConvGNP). By default a ConvCNP
+    with Gaussian likelihoods is constructed.
+
+    Additionally, the ``ConvNP`` can optionally be instantiated with:
+        - a ``DataProcessor`` object to auto-unnormalise the data at inference time with the ``.predict`` method.
+        - a ``TaskLoader`` object to infer sensible default model parameters from the data.
 
     Multiple dispatch is implemented using ``plum`` to allow for re-using the
     model's forward prediction object when computing the logpdf, entropy, etc.
     Alternatively, the model can be run forwards with a ``Task`` object of data
     from the ``TaskLoader``.
-
-    The ``ConvNP`` can optionally be instantiated with:
-        - a ``DataProcessor`` object to auto-unnormalise the data at inference time with the ``.predict`` method.
-        - a ``TaskLoader`` object to infer sensible default model parameters from the data.
 
     Many of the ``ConvNP`` class methods utilise multiple dispatch so that they
     can either be run with a ``Task`` object or a ``neuralprocesses`` distribution
@@ -92,8 +98,9 @@ class ConvNP(DeepSensorModel):
             per 1x1 unit square). Defaults to 100.
         likelihood (str, optional):
             Likelihood. Must be one of ``"cnp"`` (equivalently ``"het"``),
-            ``"gnp"`` (equivalently ``"lowrank"``), or ``"cnp-spikes-beta"``
-            (equivalently ``"spikes-beta"``). Defaults to ``"cnp"``.
+            ``"gnp"`` (equivalently ``"lowrank"``), ``"cnp-spikes-beta"``,
+            (equivalently ``"spikes-beta"``) or "bernoulli-gamma".
+            Defaults to ``"cnp"``.
         dim_x (int, optional):
             Dimensionality of the inputs. Defaults to 1.
         dim_y (int, optional):
