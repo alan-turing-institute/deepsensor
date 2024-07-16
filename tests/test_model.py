@@ -522,6 +522,33 @@ class TestModel(unittest.TestCase):
         with self.assertRaises(AttributeError):
             model.predict(task, X_t=self.da, pred_params=["invalid_param"])
 
+    def test_patchwise_prediction(self):
+        """Test that ``.predict_patch`` runs correctly."""
+
+        patch_size = (0.6, 0.6)
+        stride_size = (0.5, 0.5)
+
+        tl = TaskLoader(context=self.da, target=self.da)
+
+        task = tl(
+            "2020-01-01",
+            context_sampling="all",
+            target_sampling="all",
+            patch_strategy="sliding",
+            patch_size=patch_size,
+            stride=stride_size,
+        )
+
+        model = ConvNP(self.dp, tl)
+
+        model.predict_patch(
+            tasks=task,
+            X_t=self.da,
+            data_processor=self.dp,
+            stride=stride_size,
+            patch_size=patch_size,
+        )
+
     def test_saving_and_loading(self):
         """Test saving and loading of model"""
         with tempfile.TemporaryDirectory() as folder:
