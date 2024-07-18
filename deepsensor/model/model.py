@@ -665,9 +665,9 @@ class DeepSensorModel(ProbabilisticModel):
             data_processor (:class:`~.data.processor.DataProcessor`):
                 Used for unnormalising the coordinates of the bounding boxes of patches.
             stride (Union[float, tuple[float]]):
-                Length of stride between adjacent patches in x1/x2 normalised coordinates.
+                Length of stride between adjacent patches in x1/x2 normalised coordinates. If passed a single float, will use value for both x1 & x2.
             patch_size (Union[float, tuple[float]]):
-                Height and width of patch in x1/x2 normalised coordinates.
+                Height and width of patch in x1/x2 normalised coordinates. If passed a single float, will use value for both x1 & x2.
             X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
                 Target locations to predict at. Can be an xarray object
                 containingon-grid locations or a pandas object containing off-grid locations.
@@ -736,13 +736,6 @@ class DeepSensorModel(ProbabilisticModel):
                 If ``append_indexes`` are not all the same length as ``X_t``.
         """
         
-        # Get coordinate names of original unnormalised dataset.
-        unnorm_coord_names = {
-                "x1": self.data_processor.raw_spatial_coord_names[0],
-                "x2": self.data_processor.raw_spatial_coord_names[1],
-            }
-
-
         def get_patches_per_row(preds) -> int:
             """
             Calculate number of patches per row. 
@@ -916,6 +909,23 @@ class DeepSensorModel(ProbabilisticModel):
 
             return combined
 
+        if isinstance(patch_size, float) and patch_size is not None:
+            patch_size = (patch_size, patch_size)
+        
+        if isinstance(stride, float) and stride is not None:
+            stride = (stride, stride)
+
+        if stride[0] > patch_size[0] or stride[1] > patch_size[1]:
+            raise ValueError(
+                f"stride must be smaller than patch_size in the corresponding dimensions. Got: patch_size: {patch_size}, stride: {stride}"
+                )
+        
+        # Get coordinate names of original unnormalised dataset.
+        unnorm_coord_names = {
+                "x1": self.data_processor.raw_spatial_coord_names[0],
+                "x2": self.data_processor.raw_spatial_coord_names[1],
+            }
+        
         # tasks should be iterable, if only one is provided, make it a list
         if type(tasks) is Task:
             tasks = [tasks]

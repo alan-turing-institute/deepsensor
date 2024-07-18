@@ -1416,9 +1416,9 @@ class TaskLoader:
             ]
         ] = None,
         split_frac: float = 0.5,
-        patch_size: Sequence[float] = None,
+        patch_size: Union[float, tuple[float]] = None,
         patch_strategy: Optional[str] = None,
-        stride: Optional[Sequence[int]] = None,
+        stride: Union[float, tuple[float]] = None,
         num_samples_per_date: int = 1,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
@@ -1466,14 +1466,16 @@ class TaskLoader:
                 the "split" sampling strategy for linked context and target set
                 pairs. The remaining observations are used for the target set.
                 Default is 0.5.
-            patch_size : Sequence[float], optional
-                Desired patch size in x1/x2 used for patchwise task generation. Usefule when considering
-                the entire available region is computationally prohibitive for model forward pass
+            patch_size : Union[float, tuple[float]], optional
+                Desired patch size in x1/x2 used for patchwise task generation. Useful when considering
+                the entire available region is computationally prohibitive for model forward pass.
+                If passed a single float, will use value for both x1 & x2.
             patch_strategy:
                 Patch strategy to use for patchwise task generation. Default is None.
                 Possible options are 'random' or 'sliding'.
-            stride: Sequence[int], optional
+            stride: Union[float, tuple[float]], optional
                 Step size between each sliding window patch along x1 and x2 axis. Default is None.
+                If passed a single float, will use value for both x1 & x2.
             datewise_deterministic (bool, optional):
                 Whether random sampling is datewise deterministic based on the
                 date. Default is ``False``.
@@ -1491,6 +1493,12 @@ class TaskLoader:
             f"Invalid patch strategy {patch_strategy}. "
             f"Must be one of [None, 'random', 'sliding']."
         )
+
+        if isinstance(patch_size, float) and patch_size is not None:
+            patch_size = (patch_size, patch_size)
+        
+        if isinstance(stride, float) and stride is not None:
+            stride = (stride, stride)
 
         if patch_strategy is None:
             if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
