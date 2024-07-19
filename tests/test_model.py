@@ -568,7 +568,12 @@ class TestModel(unittest.TestCase):
             )
 
 
-    @parameterized.expand([(0.5, 0.6)])
+    @parameterized.expand([
+        ((0.5, 0.5), (0.6, 0.6)), # patch_size and stride as tuples
+        (0.5, 0.6), # as floats
+        (1.0, 1.2), # one argument above allowed range
+        (-0.1, 0.6) # and below allowed range
+        ])
     def test_patchwise_prediction_parameter_handling(self, patch_size, stride_size):
         """Test that correct errors and warnings are raised by ``.predict_patch``."""
 

@@ -908,6 +908,8 @@ class DeepSensorModel(ProbabilisticModel):
 
             return combined
 
+        # sanitise patch_size and stride arguments
+        
         if isinstance(patch_size, float) and patch_size is not None:
             patch_size = (patch_size, patch_size)
         
@@ -918,6 +920,13 @@ class DeepSensorModel(ProbabilisticModel):
             raise ValueError(
                 f"stride must be smaller than patch_size in the corresponding dimensions. Got: patch_size: {patch_size}, stride: {stride}"
                 )
+
+        for val in zip(stride, patch_size):
+            if val>1.0 or val<0.0:
+                raise ValueError(
+                    f"Values of stride and patch_size must be between 0 & 1. Got: patch_size: {patch_size}, stride: {stride}"
+                )
+                
         
         # Get coordinate names of original unnormalised dataset.
         unnorm_coord_names = {
