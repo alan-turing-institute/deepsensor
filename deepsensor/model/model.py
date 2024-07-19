@@ -800,7 +800,6 @@ class DeepSensorModel(ProbabilisticModel):
             return xy_overlap
 
 
-        # TODO - change amsr_raw_ds to what?
         def get_index(*args, x1 = True) -> Union[int, Tuple[List[int], List[int]]]:
             """
             Convert coordinates into pixel row/column (index).
