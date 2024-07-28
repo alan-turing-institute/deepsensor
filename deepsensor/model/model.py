@@ -385,7 +385,7 @@ class DeepSensorModel(ProbabilisticModel):
         elif isinstance(X_t, (xr.DataArray, xr.Dataset)):
             # Remove time dimension if present
             if "time" in X_t.coords:
-                X_t = X_t.isel(time=0).drop("time")
+                X_t = X_t.isel(time=0).drop_vars("time")
 
         if mode == "off-grid" and append_indexes is not None:
             # Check append_indexes are all same length as X_t
