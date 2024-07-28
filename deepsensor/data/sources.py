@@ -432,7 +432,7 @@ def get_gldas_land_mask(
         with urllib.request.urlopen(req) as response:
             with open(fname, "wb") as f:
                 f.write(response.read())
-        da = xr.open_dataset(fname)["GLDAS_mask"].isel(time=0).drop("time").load()
+        da = xr.open_dataset(fname)["GLDAS_mask"].isel(time=0).drop_vars("time").load()
 
         if isinstance(extent, str):
             extent = extent_str_to_tuple(extent)
@@ -577,7 +577,7 @@ def get_earthenv_auxiliary_data(
             # Read data
             da = xr.open_dataset(fname).to_array().squeeze().load()
             da = da.rename({"y": "lat", "x": "lon"})
-            da = da.drop(["band", "spatial_ref", "variable"])
+            da = da.drop_vars(["band", "spatial_ref", "variable"])
             da.name = var_ID
             da = da.sel(lat=slice(lat_max, lat_min), lon=slice(lon_min, lon_max))
             da_dict[var_ID] = da
