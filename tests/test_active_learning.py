@@ -26,9 +26,6 @@ from deepsensor.data.processor import DataProcessor, xarray_to_coord_array_norma
 from deepsensor.model.convnp import ConvNP
 
 
-# from deepsensor.active_learning.acquisition_fns import
-
-
 class TestActiveLearning(unittest.TestCase):
 
     @classmethod
