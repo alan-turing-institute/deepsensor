@@ -539,10 +539,10 @@ class ConvNP(DeepSensorModel):
     def alpha(
         self, dist: AbstractMultiOutputDistribution
     ) -> Union[np.ndarray, List[np.ndarray]]:
-        if self.config["likelihood"] not in ["spikes-beta", "bernoulli-gamma"]:
+        if self.config["likelihood"] not in ["spikes-beta"]:
             raise NotImplementedError(
                 f"ConvNP.alpha method not supported for likelihood {self.config['likelihood']}. "
-                f"Try changing the likelihood to a mixture model, e.g. 'spikes-beta' or 'bernoulli-gamma'."
+                f"Valid likelihoods: 'spikes-beta'."
             )
         alpha = dist.slab.alpha
         alpha = self._cast_numpy_and_squeeze(alpha)
@@ -576,10 +576,10 @@ class ConvNP(DeepSensorModel):
     def beta(
         self, dist: AbstractMultiOutputDistribution
     ) -> Union[np.ndarray, List[np.ndarray]]:
-        if self.config["likelihood"] not in ["spikes-beta", "bernoulli-gamma"]:
+        if self.config["likelihood"] not in ["spikes-beta"]:
             raise NotImplementedError(
                 f"ConvNP.beta method not supported for likelihood {self.config['likelihood']}. "
-                f"Try changing the likelihood to a mixture model, e.g. 'spikes-beta' or 'bernoulli-gamma'."
+                f"Valid likelihoods: 'spikes-beta'."
             )
         beta = dist.slab.beta
         beta = self._cast_numpy_and_squeeze(beta)
@@ -607,6 +607,80 @@ class ConvNP(DeepSensorModel):
         """
         dist = self(task)
         return self.beta(dist)
+
+    @dispatch
+    def k(
+        self, dist: AbstractMultiOutputDistribution
+    ) -> Union[np.ndarray, List[np.ndarray]]:
+        if self.config["likelihood"] not in ["bernoulli-gamma"]:
+            raise NotImplementedError(
+                f"ConvNP.k method not supported for likelihood {self.config['likelihood']}. "
+                f"Valid likelihoods: 'bernoulli-gamma'."
+            )
+        k = dist.slab.k
+        k = self._cast_numpy_and_squeeze(k)
+        return self._maybe_concat_multi_targets(k)
+
+    @dispatch
+    def k(self, task: Task) -> Union[np.ndarray, List[np.ndarray]]:
+        """
+        k parameter values of model's distribution at target locations in task.
+
+        Returned numpy arrays have shape ``(N_features, *N_targets)``.
+
+        .. note::
+            This method only works for models that return a distribution with
+            a ``dist.slab.k`` attribute, e.g. models with a Beta or
+            Bernoulli-Gamma likelihood, where it returns the k values of
+            the slab component of the mixture model.
+
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task containing the context and target data.
+
+        Returns:
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                k values.
+        """
+        dist = self(task)
+        return self.k(dist)
+
+    @dispatch
+    def scale(
+        self, dist: AbstractMultiOutputDistribution
+    ) -> Union[np.ndarray, List[np.ndarray]]:
+        if self.config["likelihood"] not in ["bernoulli-gamma"]:
+            raise NotImplementedError(
+                f"ConvNP.scale method not supported for likelihood {self.config['likelihood']}. "
+                f"Valid likelihoods: 'bernoulli-gamma'."
+            )
+        scale = dist.slab.scale
+        scale = self._cast_numpy_and_squeeze(scale)
+        return self._maybe_concat_multi_targets(scale)
+
+    @dispatch
+    def scale(self, task: Task) -> Union[np.ndarray, List[np.ndarray]]:
+        """
+        Scale parameter values of model's distribution at target locations in task.
+
+        Returned numpy arrays have shape ``(N_features, *N_targets)``.
+
+        .. note::
+            This method only works for models that return a distribution with
+            a ``dist.slab.scale`` attribute, e.g. models with a Beta or
+            Bernoulli-Gamma likelihood, where it returns the scale values of
+            the slab component of the mixture model.
+
+        Args:
+            task (:class:`~.data.task.Task`):
+                The task containing the context and target data.
+
+        Returns:
+            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+                Scale values.
+        """
+        dist = self(task)
+        return self.scale(dist)
 
     @dispatch
     def mixture_probs(self, dist: AbstractMultiOutputDistribution):

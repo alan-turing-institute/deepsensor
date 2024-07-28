@@ -193,7 +193,7 @@ class TestModel(unittest.TestCase):
                             n_targets * dim_y_combined * n_target_dims,
                         ),
                     )
-                if likelihood in ["cnp-spikes-beta"]:
+                if likelihood in ["cnp-spikes-beta", "bernoulli-gamma"]:
                     mixture_probs = model.mixture_probs(task)
                     if isinstance(mixture_probs, (list, tuple)):
                         for p, dim_y in zip(mixture_probs, tl.target_dims):
@@ -215,6 +215,7 @@ class TestModel(unittest.TestCase):
                             ),
                         )
 
+                if likelihood in ["cnp-spikes-beta"]:
                     x = model.alpha(task)
                     if isinstance(x, (list, tuple)):
                         for p, dim_y in zip(x, tl.target_dims):
@@ -223,6 +224,21 @@ class TestModel(unittest.TestCase):
                         assert_shape(x, (dim_y_combined, *expected_obs_shape))
 
                     x = model.beta(task)
+                    if isinstance(x, (list, tuple)):
+                        for p, dim_y in zip(x, tl.target_dims):
+                            assert_shape(p, (dim_y, *expected_obs_shape))
+                    else:
+                        assert_shape(x, (dim_y_combined, *expected_obs_shape))
+
+                if likelihood in ["bernoulli-gamma"]:
+                    x = model.k(task)
+                    if isinstance(x, (list, tuple)):
+                        for p, dim_y in zip(x, tl.target_dims):
+                            assert_shape(p, (dim_y, *expected_obs_shape))
+                    else:
+                        assert_shape(x, (dim_y_combined, *expected_obs_shape))
+
+                    x = model.scale(task)
                     if isinstance(x, (list, tuple)):
                         for p, dim_y in zip(x, tl.target_dims):
                             assert_shape(p, (dim_y, *expected_obs_shape))
@@ -451,61 +467,75 @@ class TestModel(unittest.TestCase):
     def test_highlevel_predict_with_pred_params_pandas(self):
         """
         Test that passing ``pred_params`` to ``.predict`` works with
-        a spikes-beta likelihood for prediction to pandas.
+        mixture model likelihoods for off-grid prediction to pandas.
         """
         tl = TaskLoader(context=self.da, target=self.da)
-        model = ConvNP(
-            self.dp,
-            tl,
-            unet_channels=(5, 5, 5),
-            verbose=False,
-            likelihood="cnp-spikes-beta",
-        )
-        task = tl("2020-01-01", context_sampling=10, target_sampling=10)
 
-        # Off-grid prediction
-        X_t = np.array([[0.0, 0.5, 1.0], [0.0, 0.5, 1.0]])
+        likelihoods = ["cnp-spikes-beta", "bernoulli-gamma"]
+        expected_pred_params = [
+            ["mean", "std", "variance", "alpha", "beta"],
+            ["mean", "std", "variance", "k", "scale"],
+        ]
 
-        # Check that nothing breaks and the correct parameters are returned
-        pred_params = ["mean", "std", "variance", "alpha", "beta"]
-        pred = model.predict(task, X_t=X_t, pred_params=pred_params)
-        for pred_param in pred_params:
-            assert pred_param in pred["var"]
+        for likelihood, pred_params in zip(likelihoods, expected_pred_params):
+            model = ConvNP(
+                self.dp,
+                tl,
+                unet_channels=(5, 5, 5),
+                verbose=False,
+                likelihood=likelihood,
+            )
+            task = tl("2020-01-01", context_sampling=10)
 
-        # Test mixture probs special case
-        pred_params = ["mixture_probs"]
-        pred = model.predict(task, X_t=self.da, pred_params=pred_params)
-        for component in range(model.N_mixture_components):
-            pred_param = f"mixture_probs_{component}"
-            assert pred_param in pred["var"]
+            # Off-grid prediction
+            X_t = np.array([[0.0, 0.5, 1.0], [0.0, 0.5, 1.0]])
+
+            # Check that nothing breaks and the correct parameters are returned
+            pred = model.predict(task, X_t=X_t, pred_params=pred_params)
+            for pred_param in pred_params:
+                assert pred_param in pred["var"]
+
+            # Test mixture probs special case
+            pred_params = ["mixture_probs"]
+            pred = model.predict(task, X_t=self.da, pred_params=pred_params)
+            for component in range(model.N_mixture_components):
+                pred_param = f"mixture_probs_{component}"
+                assert pred_param in pred["var"]
 
     def test_highlevel_predict_with_pred_params_xarray(self):
         """
         Test that passing ``pred_params`` to ``.predict`` works with
-        a spikes-beta likelihood for prediction to xarray.
+        mixture model likelihoods for gridded prediction to xarray.
         """
         tl = TaskLoader(context=self.da, target=self.da)
-        model = ConvNP(
-            self.dp,
-            tl,
-            unet_channels=(5, 5, 5),
-            verbose=False,
-            likelihood="cnp-spikes-beta",
-        )
-        task = tl("2020-01-01", context_sampling=10, target_sampling=10)
 
-        # Check that nothing breaks and the correct parameters are returned
-        pred_params = ["mean", "std", "variance", "alpha", "beta"]
-        pred = model.predict(task, X_t=self.da, pred_params=pred_params)
-        for pred_param in pred_params:
-            assert pred_param in pred["var"]
+        likelihoods = ["cnp-spikes-beta", "bernoulli-gamma"]
+        expected_pred_params = [
+            ["mean", "std", "variance", "alpha", "beta"],
+            ["mean", "std", "variance", "k", "scale"],
+        ]
 
-        # Test mixture probs special case
-        pred_params = ["mixture_probs"]
-        pred = model.predict(task, X_t=self.da, pred_params=pred_params)
-        for component in range(model.N_mixture_components):
-            pred_param = f"mixture_probs_{component}"
-            assert pred_param in pred["var"]
+        for likelihood, pred_params in zip(likelihoods, expected_pred_params):
+            model = ConvNP(
+                self.dp,
+                tl,
+                unet_channels=(5, 5, 5),
+                verbose=False,
+                likelihood=likelihood,
+            )
+            task = tl("2020-01-01", context_sampling=10)
+
+            # Check that nothing breaks and the correct parameters are returned
+            pred = model.predict(task, X_t=self.da, pred_params=pred_params)
+            for pred_param in pred_params:
+                assert pred_param in pred["var"]
+
+            # Test mixture probs special case
+            pred_params = ["mixture_probs"]
+            pred = model.predict(task, X_t=self.da, pred_params=pred_params)
+            for component in range(model.N_mixture_components):
+                pred_param = f"mixture_probs_{component}"
+                assert pred_param in pred["var"]
 
     def test_highlevel_predict_with_invalid_pred_params(self):
         """Test that passing ``pred_params`` to ``.predict`` works."""
