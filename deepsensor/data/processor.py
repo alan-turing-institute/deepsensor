@@ -498,33 +498,22 @@ class DataProcessor:
 
         params = self.get_config(var_ID, data, method)
 
+        # Linear transformation:
+        # - Inverse normalisation: y_unnorm = m * y_norm + c
+        # - Inverse normalisation: y_norm = (1/m) * y_unnorm - c/m
         if method == "mean_std":
-            std = params["std"]
-            mean = params["mean"]
-            if unnorm:
-                scale = std
-                offset = mean
-            else:
-                scale = 1 / std
-                offset = -mean / std
-            data = data * scale
-            if add_offset:
-                data = data + offset
-            return data
-
+            m = params["std"]
+            c = params["mean"]
         elif method == "min_max":
-            minimum = params["min"]
-            maximum = params["max"]
-            if unnorm:
-                scale = (maximum - minimum) / 2
-                offset = (maximum + minimum) / 2
-            else:
-                scale = 2 / (maximum - minimum)
-                offset = -(maximum + minimum) / (maximum - minimum)
-            data = data * scale
-            if add_offset:
-                data = data + offset
-            return data
+            m = (params["max"] - params["min"]) / 2
+            c = (params["max"] + params["min"]) / 2
+        if not unnorm:
+            c = -c / m
+            m = 1 / m
+        data = data * m
+        if add_offset:
+            data = data + c
+        return data
 
     def map(
         self,
