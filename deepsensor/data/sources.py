@@ -277,7 +277,7 @@ def get_era5_reanalysis_data(
     if num_processes == 1:
         # Just download in one go
         if verbose:
-            print("Downloading ERA5 data in without parallelisation... ")
+            print("Downloading ERA5 data without parallelisation... ")
         era5_da = _get_era5_reanalysis_data_parallel(
             date_range=date_range,
             var_IDs=var_IDs,
