@@ -97,7 +97,7 @@ class DataProcessor:
         self.verbose = verbose
 
         # List of valid normalisation method names
-        self.valid_methods = ["mean_std", "min_max"]
+        self.valid_methods = ["mean_std", "min_max", "positive_semidefinite"]
 
     def save(self, folder: str):
         """Save DataProcessor config to JSON in `folder`"""
@@ -293,6 +293,8 @@ class DataProcessor:
                 params = {"mean": float(data.mean()), "std": float(data.std())}
             elif method == "min_max":
                 params = {"min": float(data.min()), "max": float(data.max())}
+            elif method == "positive_semidefinite":
+                params = {"min": float(data.min()), "std": float(data.std())}
             if self.verbose:
                 print(f"Done. {var_ID} {method} params={params}")
             self.add_to_config(
@@ -507,6 +509,9 @@ class DataProcessor:
         elif method == "min_max":
             m = (params["max"] - params["min"]) / 2
             c = (params["max"] + params["min"]) / 2
+        elif method == "positive_semidefinite":
+            m = params["std"]
+            c = params["min"]
         if not unnorm:
             c = -c / m
             m = 1 / m
@@ -599,6 +604,7 @@ class DataProcessor:
             method (str, optional): Normalisation method. Options include:
                 - "mean_std": Normalise to mean=0 and std=1 (default)
                 - "min_max": Normalise to min=-1 and max=1
+                - "positive_semidefinite": Normalise to min=0 and std=1
 
         Returns:
             :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]:
