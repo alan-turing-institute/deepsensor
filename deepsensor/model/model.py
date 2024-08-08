@@ -757,7 +757,8 @@ class DeepSensorModel(ProbabilisticModel):
             """   
             patches_per_row = 0
             vars = list(preds[0][0].data_vars)
-            var = vars[0]    
+            
+            var = vars[0]  
             y_val = preds[0][0][var].coords[unnorm_coord_names['x1']].min()  
               
             for p in preds:
@@ -803,7 +804,6 @@ class DeepSensorModel(ProbabilisticModel):
             x_overlap_index = int(np.ceil((np.argmin(np.abs(X_t_ds.coords[unnorm_coord_names['x1']].values - unnorm_overlap_x1))/2)))
             y_overlap_index = int(np.ceil((np.argmin(np.abs(X_t_ds.coords[unnorm_coord_names['x2']].values - unnorm_overlap_x2))/2)))
             xy_overlap = (x_overlap_index, y_overlap_index)
-
             return xy_overlap
 
         def get_index(*args, x1 = True) -> Union[int, Tuple[List[int], List[int]]]:
@@ -918,7 +918,6 @@ class DeepSensorModel(ProbabilisticModel):
         preds = []
         for task in tasks:
             bbox = task['bbox']
-
             # Unnormalise coordinates of bounding box of patch
             x1 = xr.DataArray([bbox[0], bbox[1]], dims='x1', name='x1')
             x2 = xr.DataArray([bbox[2], bbox[3]], dims='x2', name='x2')
@@ -938,9 +937,11 @@ class DeepSensorModel(ProbabilisticModel):
             pred = self.predict(task, task_X_t)
             # Append patchwise DeepSensor prediction object to list
             preds.append(pred)
-          
+
+        
         overlap_norm = tuple(patch - stride for patch, stride in zip(patch_size, stride_size))
         patch_overlap_unnorm = get_patch_overlap(overlap_norm, data_processor, X_t)
+        
         patches_per_row = get_patches_per_row(preds)
         stitched_prediction = stitch_clipped_predictions(preds, patch_overlap_unnorm, patches_per_row)
         
