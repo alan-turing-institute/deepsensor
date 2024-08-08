@@ -7,10 +7,10 @@ Below are a non-exhaustive selection of research ideas that you could explore.
 It would be helpful to ensure you are familiar with the literature and
 resources in the [](resources.md) page before starting.
 
-Why not [join our Slack channel](https://docs.google.com/forms/d/e/1FAIpQLScsI8EiXDdSfn1huMp1vj5JAxi9NIeYLljbEUlMceZvwVpugw/viewform)
-and start a conversation around these ideas or your own? :-)
+Why not join our Slack channel and start a conversation around these ideas or your own? :-) You can join by [signing up for the Turing Environment & Sustainability stakeholder community](https://forms.office.com/pages/responsepage.aspx?id=p_SVQ1XklU-Knx-672OE-ZmEJNLHTHVFkqQ97AaCfn9UMTZKT1IwTVhJRE82UjUzMVE2MThSOU5RMC4u). The form includes a question on signing up for the Slack team, where you can find DeepSensor's channel.
 
 ## Transfer learning from regions of dense observations to regions of sparse observations
+
 Since the `ConvNP` is a data-hungry model, it does not perform well if only trained on a
 small number of observations, which presents a challenge for modelling variables that
 are poorly observed.
@@ -20,12 +20,14 @@ of sparse observations?
 Does the performance improve?
 
 ## Sensor placement for forecasting
+
 Previous active learning research with ConvNPs has only considered sensor placement for interpolation.
 Do the sensor placements change when the model is trained for forecasting?
 
 See, e.g., Section 4.2.1 of [Environmental sensor placement with convolutional Gaussian neural processes](https://doi.org/10.1017/eds.2023.22).
 
 ## U-Net architectural changes
+
 The `ConvNP` currently uses a vanilla U-Net architecture.
 Do any architectural changes improve performance, such as batch normalisation or dropout?
 
@@ -33,6 +35,7 @@ This would require digging into the [`neuralprocesses.construct_convgnp` method]
 and replacing the U-Net module with a custom one.
 
 ## Extension to continuous time observations
+
 The `ConvNP` currently assumes that the observations are on a regular time grid.
 How can we extend this to continuous time observations, where the observations are not necessarily
 on a regular time grid?
@@ -41,6 +44,7 @@ For example, can we pass a 'time of observation' auxiliary input to the model?
 What are the limitations of this approach?
 
 ## Training with ablations for interpretability
+
 Since the `ConvNP` operates on sets of observations, it is possible to ablate observations
 and see how the model's predictions change.
 Thus, the `ConvNP` admits unique interpretability opportunities.
@@ -53,6 +57,7 @@ Then, at test time, ablate context sets and measure the change in the model's pr
 or performance.
 
 ## Monte Carlo sensor placement using AR sampling
+
 The `GreedyAlgorithm` for sensor placement currently uses the model's mean prediction
 to infill missing observations at query sites.
 However, one could also draw multiple [AR samples](user-guide/prediction.ipynb)

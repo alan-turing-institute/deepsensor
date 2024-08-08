@@ -25,7 +25,7 @@ class TaskLoader:
         - If all data passed as paths, load the data and overwrite the paths with the loaded data
         - Either all data is passed as paths, or all data is passed as loaded data (else ``ValueError``)
         - If all data passed as paths, the TaskLoader can be saved with the ``save`` method
-        (using config)
+          (using config)
 
     Args:
         task_loader_ID:
