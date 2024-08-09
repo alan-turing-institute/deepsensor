@@ -678,11 +678,11 @@ class TaskLoader:
         seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
         """
-        Sample a DataArray according to a given strategy.
+        Sample a DataFrame according to a given strategy.
 
         Args:
             df (:class:`pandas.DataFrame` | :class:`pandas.Series`):
-                DataArray to sample, assumed to be time-sliced for the task
+                Dataframe to sample, assumed to be time-sliced for the task
                 already.
             sampling_strat (str | int | float | :class:`numpy:numpy.ndarray`):
                 Sampling strategy, either "all" or an integer for random grid
