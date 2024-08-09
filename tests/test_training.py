@@ -172,6 +172,14 @@ class TestTraining(unittest.TestCase):
         trainer = Trainer(model, lr=5e-5)
         batch_size = None
         n_epochs = 2
+        epoch_losses = []
+        for epoch in tqdm(range(n_epochs)):
+            batch_losses = trainer(train_tasks, batch_size=batch_size)
+            epoch_losses.append(np.mean(batch_losses))
+
+        # Check for NaNs in the loss
+        loss = np.mean(epoch_losses)
+        self.assertFalse(np.isnan(loss))
 
     def test_training_multidim(self):
         """A basic test of the training loop with multidimensional context sets"""
