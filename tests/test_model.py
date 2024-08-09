@@ -542,12 +542,12 @@ class TestModel(unittest.TestCase):
         model = ConvNP(self.dp, tl)
 
         pred = model.predict_patch(
-                tasks=task,
-                X_t=self.da,
-                data_processor=self.dp,
-                stride=stride_size,
-                patch_size=patch_size,
-            )
+            tasks=task,
+            X_t=self.da,
+            data_processor=self.dp,
+            stride=stride_size,
+            patch_size=patch_size,
+        )
 
         # gridded predictions
         assert [isinstance(ds, xr.Dataset) for ds in pred.values()]
@@ -560,20 +560,17 @@ class TestModel(unittest.TestCase):
                 pred[var_ID]["std"],
                 (1, self.da.x1.size, self.da.x2.size),
             )
-            assert(
-                self.da.x1.size == pred[var_ID].x1.size
-            )
-            assert(
-                self.da.x2.size == pred[var_ID].x2.size
-            )
+            assert self.da.x1.size == pred[var_ID].x1.size
+            assert self.da.x2.size == pred[var_ID].x2.size
 
-
-    @parameterized.expand([
-        ((0.5, 0.5), (0.6, 0.6)), # patch_size and stride as tuples
-        (0.5, 0.6), # as floats
-        (1.0, 1.2), # one argument above allowed range
-        (-0.1, 0.6) # and below allowed range
-        ])
+    @parameterized.expand(
+        [
+            ((0.5, 0.5), (0.6, 0.6)),  # patch_size and stride as tuples
+            (0.5, 0.6),  # as floats
+            (1.0, 1.2),  # one argument above allowed range
+            (-0.1, 0.6),  # and below allowed range
+        ]
+    )
     def test_patchwise_prediction_parameter_handling(self, patch_size, stride_size):
         """Test that correct errors and warnings are raised by ``.predict_patch``."""
 

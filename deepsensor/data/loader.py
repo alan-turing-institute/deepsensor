@@ -908,7 +908,7 @@ class TaskLoader:
         Returns:
             var (...)
                 Sliced variable.
-        
+
         Raises:
             ValueError
                 If the variable is of an unknown type.
@@ -1369,7 +1369,7 @@ class TaskLoader:
         # define stride length in x1/x2 or set to patch_size if undefined
         if stride is None:
             stride = patch_size
-        
+
         dy, dx = stride
 
         # Calculate the global bounds of context and target set.
@@ -1496,7 +1496,7 @@ class TaskLoader:
 
         if isinstance(patch_size, float) and patch_size is not None:
             patch_size = (patch_size, patch_size)
-        
+
         if isinstance(stride, float) and stride is not None:
             stride = (stride, stride)
 
@@ -1524,7 +1524,7 @@ class TaskLoader:
                 )
 
         elif patch_strategy == "random":
-            
+
             assert (
                 patch_size is not None
             ), "Patch size must be specified for random patch sampling"
@@ -1550,21 +1550,21 @@ class TaskLoader:
 
             else:
                 bboxes = [
-                        self.sample_random_window(patch_size)
-                        for _ in range(num_samples_per_date)
-                    ]
+                    self.sample_random_window(patch_size)
+                    for _ in range(num_samples_per_date)
+                ]
                 tasks = [
-                        self.task_generation(
-                            date,
-                            bbox=bbox,
-                            context_sampling=context_sampling,
-                            target_sampling=target_sampling,
-                            split_frac=split_frac,
-                            datewise_deterministic=datewise_deterministic,
-                            seed_override=seed_override,
-                        )
-                        for bbox in bboxes
-                    ]
+                    self.task_generation(
+                        date,
+                        bbox=bbox,
+                        context_sampling=context_sampling,
+                        target_sampling=target_sampling,
+                        split_frac=split_frac,
+                        datewise_deterministic=datewise_deterministic,
+                        seed_override=seed_override,
+                    )
+                    for bbox in bboxes
+                ]
 
         elif patch_strategy == "sliding":
             # sliding window sampling of patch
