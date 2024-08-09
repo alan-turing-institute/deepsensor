@@ -678,11 +678,11 @@ class TaskLoader:
         seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
         """
-        Sample a DataArray according to a given strategy.
+        Sample a DataFrame according to a given strategy.
 
         Args:
             df (:class:`pandas.DataFrame` | :class:`pandas.Series`):
-                DataArray to sample, assumed to be time-sliced for the task
+                Dataframe to sample, assumed to be time-sliced for the task
                 already.
             sampling_strat (str | int | float | :class:`numpy:numpy.ndarray`):
                 Sampling strategy, either "all" or an integer for random grid
@@ -721,8 +721,8 @@ class TaskLoader:
             Y_c = df.values.T
         elif isinstance(sampling_strat, np.ndarray):
             X_c = sampling_strat.astype(self.dtype)
-            x1match = np.in1d(df.index.get_level_values("x1"), X_c[0])
-            x2match = np.in1d(df.index.get_level_values("x2"), X_c[1])
+            x1match = np.in1d(df.index.get_level_values("x1").astype(self.dtype), X_c[0])
+            x2match = np.in1d(df.index.get_level_values("x2").astype(self.dtype), X_c[1])
             num_matches = np.sum(x1match & x2match)
 
             # Check that we got all the samples we asked for
