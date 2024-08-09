@@ -115,9 +115,9 @@ class TestTraining(unittest.TestCase):
         loss = np.mean(epoch_losses)
         self.assertFalse(np.isnan(loss))
 
-    def test_patch_wise_training(self):
+    def test_patchwise_training(self):
         """
-        Test model training with patch-wise tasks.
+        Test model training with patchwise tasks.
         """
         tl = TaskLoader(context=self.da, target=self.da)
         model = ConvNP(self.data_processor, tl, unet_channels=(5, 5, 5), verbose=False)
@@ -125,7 +125,7 @@ class TestTraining(unittest.TestCase):
         # generate training tasks
         n_train_dates = 10
         dates = [np.random.choice(self.da.time.values) for i in range(n_train_dates)]
-        train_tasks = tl.generate_tasks(
+        train_tasks = tl(
             dates,
             context_sampling="all",
             target_sampling="all",
@@ -159,7 +159,7 @@ class TestTraining(unittest.TestCase):
         # generate training tasks
         n_train_dates = 3
         dates = [np.random.choice(self.da.time.values) for i in range(n_train_dates)]
-        train_tasks = tl.generate_tasks(
+        train_tasks = tl(
             dates,
             context_sampling="all",
             target_sampling="all",
