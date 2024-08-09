@@ -621,6 +621,337 @@ class DeepSensorModel(ProbabilisticModel):
         return pred
 
 
+    def predict_patch(
+        self,
+        tasks: Union[List[Task], Task],
+        X_t: Union[
+            xr.Dataset,
+            xr.DataArray,
+            pd.DataFrame,
+            pd.Series,
+            pd.Index,
+            np.ndarray,
+        ],
+        data_processor: Union[
+            xr.DataArray,
+            xr.Dataset,
+            pd.DataFrame,
+            List[Union[xr.DataArray, xr.Dataset, pd.DataFrame]],
+        ],
+        stride_size: Union[float, tuple[float]],
+        patch_size: Union[float, tuple[float]],
+        X_t_mask: Optional[Union[xr.Dataset, xr.DataArray]] = None,
+        X_t_is_normalised: bool = False,
+        aux_at_targets_override: Union[xr.Dataset, xr.DataArray] = None,
+        aux_at_targets_override_is_normalised: bool = False,
+        resolution_factor: int = 1,
+        pred_params: tuple[str] = ("mean", "std"),
+        n_samples: int = 0,
+        ar_sample: bool = False,
+        ar_subsample_factor: int = 1,
+        unnormalise: bool = False,
+        seed: int = 0,
+        append_indexes: dict = None,
+        progress_bar: int = 0,
+        verbose: bool = False,
+
+    ) -> Prediction:
+        """
+        Predict on a regular grid or at off-grid locations.
+
+        Args:
+            tasks (List[Task] | Task):
+                List of tasks containing context data.
+            data_processor (:class:`~.data.processor.DataProcessor`):
+                Used for unnormalising the coordinates of the bounding boxes of patches.
+            stride_size (Union[float, tuple[float]]):
+                Length of stride between adjacent patches in x1/x2 normalised coordinates.
+            patch_size (Union[float, tuple[float]]):
+                Height and width of patch in x1/x2 normalised coordinates.
+            X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
+                Target locations to predict at. Can be an xarray object
+                containingon-grid locations or a pandas object containing off-grid locations.
+            X_t_mask: :class:`xarray.Dataset` | :class:`xarray.DataArray`, optional
+                2D mask to apply to gridded ``X_t`` (zero/False will be NaNs). Will be interpolated
+                to the same grid as ``X_t``. Default None (no mask).
+            X_t_is_normalised (bool):
+                Whether the ``X_t`` coords are normalised. If False, will normalise
+                the coords before passing to model. Default ``False``.
+            aux_at_targets_override (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+                Optional auxiliary xarray data to override from the task_loader.
+            aux_at_targets_override_is_normalised (bool):
+                Whether the `aux_at_targets_override` coords are normalised.
+                If False, the DataProcessor will normalise the coords before passing to model.
+                Default False.
+            pred_params (tuple[str]):
+                Tuple of prediction parameters to return. The strings refer to methods
+                of the model class which will be called and stored in the Prediction object.
+                Default ("mean", "std").
+            resolution_factor (float):
+                Optional factor to increase the resolution of the target grid
+                by. E.g. 2 will double the target resolution, 0.5 will halve
+                it.Applies to on-grid predictions only. Default 1.
+            n_samples (int):
+                Number of joint samples to draw from the model. If 0, will not
+                draw samples. Default 0.
+            ar_sample (bool):
+                Whether to use autoregressive sampling. Default ``False``.
+            unnormalise (bool):
+                Whether to unnormalise the predictions. Only works if ``self``
+                hasa ``data_processor`` and ``task_loader`` attribute. Default
+                ``True``.
+            seed (int):
+                Random seed for deterministic sampling. Default 0.
+            append_indexes (dict):
+                Dictionary of index metadata to append to pandas indexes in the
+                off-grid case. Default ``None``.
+            progress_bar (int):
+                Whether to display a progress bar over tasks. Default 0.
+            verbose (bool):
+                Whether to print time taken for prediction. Default ``False``.
+
+        Returns:
+            :class:`~.model.pred.Prediction`):
+                A `dict`-like object mapping from target variable IDs to xarray or pandas objects
+                containing model predictions.
+                - If ``X_t`` is a pandas object, returns pandas objects
+                containing off-grid predictions.
+                - If ``X_t`` is an xarray object, returns xarray object
+                containing on-grid predictions.
+                - If ``n_samples`` == 0, returns only mean and std predictions.
+                - If ``n_samples`` > 0, returns mean, std and samples
+                predictions.
+
+        Raises:
+            ValueError
+                If ``X_t`` is not an xarray object and
+                ``resolution_factor`` is not 1 or ``ar_subsample_factor`` is
+                not 1.
+            ValueError
+                If ``X_t`` is not a pandas object and ``append_indexes`` is not
+                ``None``.
+            ValueError
+                If ``X_t`` is not an xarray, pandas or numpy object.
+            ValueError
+                If ``append_indexes`` are not all the same length as ``X_t``.
+        """
+        
+        def get_patches_per_row(preds, X_t) -> int:
+            """
+            Calculate number of patches per row. 
+            Required to stitch patches back together. 
+            Args:
+                preds (List[class:`~.model.pred.Prediction`]):
+                        A list of `dict`-like objects containing patchwise predictions.
+            
+            Returns:
+                patches_per_row: int
+                    Number of patches per row.
+            """   
+            patches_per_row = 0
+            vars = list(preds[0][0].data_vars)
+            var = vars[0]    
+            y_val = preds[0][0][var].coords['y'].min()  
+              
+            for p in preds:
+                if p[0][var].coords['y'].min() == y_val:
+                    patches_per_row = patches_per_row + 1  
+
+            return patches_per_row
+
+
+         
+        def get_patch_overlap(overlap_norm, data_processor, X_t_ds) -> int:
+            """
+            Calculate overlap between adjacent patches in pixels. 
+            
+            Parameters
+            ----------
+            overlap_norm : tuple[float]. 
+                Normalised size of overlap in x1/x2.
+            
+            data_processor (:class:`~.data.processor.DataProcessor`):
+                Used for unnormalising the coordinates of the bounding boxes of patches. 
+
+            X_t_ds (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
+                Data array containing target locations to predict at. 
+            
+            Returns
+            -------
+            patch_overlap : tuple (int)
+                Unnormalised size of overlap between adjacent patches. 
+            """
+            # Place stride and patch size values in Xarray to pass into unnormalise()
+            overlap_list = [0, overlap_norm[0], 0, overlap_norm[1]]
+            x1 = xr.DataArray([overlap_list[0], overlap_list[1]], dims='x1', name='x1')
+            x2 = xr.DataArray([overlap_list[2], overlap_list[3]], dims='x2', name='x2')
+            overlap_norm_xr = xr.Dataset(coords={'x1': x1, 'x2': x2})
+            
+            # Unnormalise coordinates of bounding boxes
+            overlap_unnorm_xr = data_processor.unnormalise(overlap_norm_xr)
+            unnorm_overlap_x1 = overlap_unnorm_xr.coords['x'].values[1]
+            unnorm_overlap_x2 = overlap_unnorm_xr.coords['y'].values[1]
+
+            # Find the position of these indices within the DataArray
+            x_overlap_index = int(np.ceil((np.argmin(np.abs(X_t_ds.coords['x'].values - unnorm_overlap_x1))/2)))
+            y_overlap_index = int(np.ceil((np.argmin(np.abs(X_t_ds.coords['y'].values - unnorm_overlap_x2))/2)))
+            xy_overlap = (x_overlap_index, y_overlap_index)
+
+            return xy_overlap
+
+        def get_index(*args, x1 = True) -> Union[int, Tuple[List[int], List[int]]]:
+            """
+            Convert coordinates into pixel row/column (index).
+            
+            Parameters
+            ----------
+            args : tuple
+                If one argument (numeric), it represents the coordinate value.
+                If two arguments (lists), they represent lists of coordinate values.
+
+            x1 : bool, optional
+                If True, compute index for x1 (default is True).
+            
+            Returns
+            -------
+                Union[int, Tuple[List[int], List[int]]]
+                If one argument is provided and x1 is True or False, returns the index position.
+                If two arguments are provided, returns a tuple containing two lists:
+                - First list: indices corresponding to x1 coordinates.
+                - Second list: indices corresponding to x2 coordinates.  
+
+            """
+            if len(args) == 1:
+                patch_coord = args
+                if x1:
+                    coord_index = np.argmin(np.abs(X_t.coords['y'].values - patch_coord))
+                else:
+                    coord_index = np.argmin(np.abs(X_t.coords['x'].values - patch_coord)) 
+                return coord_index
+
+            elif len(args) == 2:
+                patch_x1, patch_x2 = args       
+                x1_index = [np.argmin(np.abs(X_t.coords['y'].values - target_x1)) for target_x1 in patch_x1]           
+                x2_index = [np.argmin(np.abs(X_t.coords['x'].values - target_x2)) for target_x2 in patch_x2]
+                return (x1_index, x2_index)
+            
+        
+        def stitch_clipped_predictions(patch_preds, patch_overlap, patches_per_row) -> dict:
+            """
+            Stitch patchwise predictions to form prediction at original extent. 
+
+            Parameters
+            ----------
+            patch_preds : list (class:`~.model.pred.Prediction`)
+                List of patchwise predictions
+            
+            patch_overlap: int
+                Overlap between adjacent patches in pixels.
+            
+            patches_per_row: int
+                Number of patchwise predictions in each row.
+           
+            Returns
+            -------
+            combined: dict
+                Dictionary object containing the stitched model predictions.
+            """
+            
+            data_x1 = X_t.coords['y'].min().values, X_t.coords['y'].max().values
+            data_x2 = X_t.coords['x'].min().values, X_t.coords['x'].max().values   
+            data_x1_index, data_x2_index = get_index(data_x1, data_x2)
+            patches_clipped = {var_name: [] for var_name in patch_preds[0].keys()}
+
+
+            for i, patch_pred in enumerate(patch_preds):
+                for var_name, data_array in patch_pred.items(): #previously patch
+                    if var_name in patch_pred:
+                        # Get row/col index values of each patch
+                        patch_x1 = data_array.coords['y'].min().values, data_array.coords['y'].max().values
+                        patch_x2 = data_array.coords['x'].min().values, data_array.coords['x'].max().values
+                        patch_x1_index, patch_x2_index =  get_index(patch_x1, patch_x2)
+                        
+                        b_x1_min, b_x1_max = patch_overlap[0], patch_overlap[0]
+                        b_x2_min, b_x2_max = patch_overlap[1], patch_overlap[1]
+                        # Do not remove border for the patches along top and left of dataset
+                        # and change overlap size for last patch in rows and columns.
+                        if patch_x2_index[0] == data_x2_index[0]:
+                            b_x2_min = 0
+                        elif patch_x2_index[1] == data_x2_index[1]:
+                            b_x2_max = 0
+                            patch_row_prev = preds[i-1]
+                            prev_patch_x2_max = get_index(int(patch_row_prev[var_name].coords['x'].max()), x1 = False)
+                            b_x2_min = (prev_patch_x2_max - patch_x2_index[0])-patch_overlap[1]
+
+                        if patch_x1_index[0] == data_x1_index[0]:
+                            b_x1_min = 0
+                        elif abs(patch_x1_index[1] - data_x1_index[1])<2:
+                            b_x1_max = 0
+                            patch_prev = preds[i-patches_per_row]
+                            prev_patch_x1_max = get_index(int(patch_prev[var_name].coords['y'].max()), x1 = True)
+                            b_x1_min = (prev_patch_x1_max - patch_x1_index[0])- patch_overlap[0]
+
+                        patch_clip_x1_min = int(b_x1_min)
+                        patch_clip_x1_max = int(data_array.sizes['y'] - b_x1_max)
+                        patch_clip_x2_min = int(b_x2_min)
+                        patch_clip_x2_max = int(data_array.sizes['x'] - b_x2_max)
+
+                        patch_clip = data_array.isel(y=slice(patch_clip_x1_min, patch_clip_x1_max),
+                                                    x=slice(patch_clip_x2_min, patch_clip_x2_max))
+
+                        patches_clipped[var_name].append(patch_clip)
+
+            combined = {var_name: xr.combine_by_coords(patches, compat='no_conflicts') for var_name, patches in patches_clipped.items()}
+
+            return combined
+
+        # Perform patchwise predictions
+        preds = []
+        for task in tasks:
+            bbox = task['bbox']
+
+            # Unnormalise coordinates of bounding box of patch
+            x1 = xr.DataArray([bbox[0], bbox[1]], dims='x1', name='x1')
+            x2 = xr.DataArray([bbox[2], bbox[3]], dims='x2', name='x2')
+            bbox_norm = xr.Dataset(coords={'x1': x1, 'x2': x2})
+            bbox_unnorm = data_processor.unnormalise(bbox_norm)
+            unnorm_bbox_x1 = bbox_unnorm['x'].values.min(), bbox_unnorm['x'].values.max()
+            unnorm_bbox_x2 = bbox_unnorm['y'].values.min(), bbox_unnorm['y'].values.max()
+            # Determine X_t for patch
+            task_X_t = X_t.sel(x = slice(unnorm_bbox_x1[0], unnorm_bbox_x1[1]),
+                                y = slice(unnorm_bbox_x2[0], unnorm_bbox_x2[1]))
+            # Patchwise prediction
+            pred = self.predict(task, task_X_t)
+            # Append patchwise DeepSensor prediction object to list
+            preds.append(pred)
+          
+        overlap_norm = tuple(patch - stride for patch, stride in zip(patch_size, stride_size))
+        patch_overlap_unnorm = get_patch_overlap(overlap_norm, data_processor, X_t)
+        patches_per_row = get_patches_per_row(preds, X_t)
+        stitched_prediction = stitch_clipped_predictions(preds, patch_overlap_unnorm, patches_per_row)
+        
+        ## Cast prediction into DeepSensor.Prediction object.
+        # Todo: make this into seperate method. 
+        prediction= copy.deepcopy(preds[0])
+
+        # Generate new blank DeepSensor.prediction object in original coordinate system.
+        for var_name_copy, data_array_copy in prediction.items():
+
+            # set x and y coords
+            stitched_preds = xr.Dataset(coords={'x': X_t['x'], 'y': X_t['y']})
+
+            # Set time to same as patched prediction
+            stitched_preds['time'] = data_array_copy['time']
+
+            # set variable names to those in patched prediction, make values blank
+            for var_name_i in data_array_copy.data_vars:
+                stitched_preds[var_name_i] = data_array_copy[var_name_i]
+                stitched_preds[var_name_i][:] = np.nan
+            prediction[var_name_copy]= stitched_preds
+            prediction[var_name_copy] = stitched_prediction[var_name_copy]
+
+        return prediction
+
 def main():  # pragma: no cover
     import deepsensor.tensorflow
     from deepsensor.data.loader import TaskLoader
