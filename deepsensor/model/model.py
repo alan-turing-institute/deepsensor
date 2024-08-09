@@ -921,7 +921,7 @@ class DeepSensorModel(ProbabilisticModel):
                 f"stride must be smaller than patch_size in the corresponding dimensions. Got: patch_size: {patch_size}, stride: {stride}"
                 )
 
-        for val in zip(stride, patch_size):
+        for val in list(stride + patch_size):
             if val>1.0 or val<0.0:
                 raise ValueError(
                     f"Values of stride and patch_size must be between 0 & 1. Got: patch_size: {patch_size}, stride: {stride}"
