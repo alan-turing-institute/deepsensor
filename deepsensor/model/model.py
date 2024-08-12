@@ -898,7 +898,7 @@ class DeepSensorModel(ProbabilisticModel):
                             patch_x2 = data_array.coords[orig_x2_name].max().values, data_array.coords[orig_x2_name].min().values
                         patch_x1_index, patch_x2_index =  get_index(patch_x1, patch_x2)
                         
-                        print('coords of patch', patch_x1[0].item(), patch_x1[1].item(), patch_x2[0].item(), patch_x2[1].item())
+                        #print('coords of patch', patch_x1[0].item(), patch_x1[1].item(), patch_x2[0].item(), patch_x2[1].item())
                         print('row and column values of patch', patch_x1_index, patch_x2_index)
                         b_x1_min, b_x1_max = patch_overlap[0], patch_overlap[0]
                         b_x2_min, b_x2_max = patch_overlap[1], patch_overlap[1]
@@ -937,7 +937,9 @@ class DeepSensorModel(ProbabilisticModel):
                                 b_x1_min = (prev_patch_x1_max - patch_x1_index[0])- patch_overlap[0]
                             else:
                                 prev_patch_x1_min = get_index(int(patch_prev[var_name].coords[orig_x1_name].min()), x1 = True)
-                                b_x1_min = (patch_x1_index[0] - prev_patch_x1_min)- patch_overlap[0]
+
+                                b_x1_min = (prev_patch_x1_min- patch_x1_index[0])- patch_overlap[0]
+
 
                         patch_clip_x1_min = int(b_x1_min)
                         patch_clip_x1_max = int(data_array.sizes[orig_x1_name] - b_x1_max)
@@ -955,12 +957,13 @@ class DeepSensorModel(ProbabilisticModel):
                         else: 
                             patch_clip_x2_max = int(b_x2_max - data_array.sizes[orig_x2_name])
                         """
-                        print('x1 and x2 sizes', data_array.sizes[orig_x1_name], data_array.sizes[orig_x2_name])
+                        #print('x1 and x2 sizes', data_array.sizes[orig_x1_name], data_array.sizes[orig_x2_name])
                         # patch_clip = data_array.isel(y=slice(patch_clip_x1_min, patch_clip_x1_max),
                         #                             x=slice(patch_clip_x2_min, patch_clip_x2_max))
                         patch_clip_x1_min = int(b_x1_min)
-                        print('final clip coord values', patch_clip_x1_min, patch_clip_x1_max, patch_clip_x2_min, patch_clip_x2_max)
-
+                        #print('final clip coord values', patch_clip_x1_min, patch_clip_x1_max, patch_clip_x2_min, patch_clip_x2_max)
+                        print('row and column values of clipped patch', patch_x1_index[0]-int(b_x1_min) , patch_x1_index[1]+int(b_x1_max),  
+                              patch_x2_index[0]+int(b_x2_min) , patch_x2_index[1]-int(b_x2_max))
                         patch_clip = data_array.isel(**{orig_x1_name: slice(patch_clip_x1_min, patch_clip_x1_max), orig_x2_name: slice(patch_clip_x2_min, patch_clip_x2_max)})
 
                         patches_clipped[var_name].append(patch_clip)
@@ -1014,7 +1017,7 @@ class DeepSensorModel(ProbabilisticModel):
         overlap_norm = tuple(patch - stride for patch, stride in zip(patch_size, stride_size))
         patch_overlap_unnorm = get_patch_overlap(overlap_norm, data_processor, X_t)
         print('pred bbox coords', overlap_norm, patch_overlap_unnorm)
-        patch_overlap_unnorm = (5,5)
+        patch_overlap_unnorm = (10,10)
         print('pred bbox coords', overlap_norm, patch_overlap_unnorm)
         patches_per_row = get_patches_per_row(preds)
         stitched_prediction = stitch_clipped_predictions(preds, patch_overlap_unnorm, patches_per_row, x1_ascending, x2_ascending)
