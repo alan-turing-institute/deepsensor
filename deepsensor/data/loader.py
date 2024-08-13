@@ -837,10 +837,10 @@ class TaskLoader:
 
         Returns
         -------
-        x1_ascend: str
-            Boolean: If x1 coords ascend from left to right = True, if descend = False
-        x1_ascend: str
-            Boolean: If x2 coords ascend from top to bottom = True, if descend = False
+        coord_directions: dict(str)
+            String containing two booleans: x1_ascend and x2_ascend, 
+            defining if these coordings increase or decrease from top left corner. 
+ 
         """      
 
         for var in itertools.chain(self.context, self.target):
@@ -849,7 +849,7 @@ class TaskLoader:
                 coord_x1_right= var.x1[-1]
                 coord_x2_top= var.x2[0]
                 coord_x2_bottom= var.x2[-1]
-                #Todo- what to input for pd.dataframe
+            #Todo- what to input for pd.dataframe
             elif isinstance(var, (pd.DataFrame, pd.Series)):
                 var_x1_min = var.index.get_level_values("x1").min()
                 var_x1_max = var.index.get_level_values("x1").max()
@@ -860,17 +860,14 @@ class TaskLoader:
             x2_ascend = True
             if coord_x1_left < coord_x1_right:
                 x1_ascend = True
-                print('x1 ascending')
             if coord_x1_left > coord_x1_right:
                 x1_ascend = False
-                print("x1 descending")
 
             if coord_x2_top < coord_x2_bottom:
                 x2_ascend = True
-                print('x2 ascending')
             if coord_x2_top > coord_x2_bottom:
                 x2_ascend = False
-                print("x2 descending")
+
 
 
         coord_directions = {
@@ -1421,15 +1418,13 @@ class TaskLoader:
             stride = patch_size
         
         dy, dx = stride
-        print('stride size', dy, dx)
         # Calculate the global bounds of context and target set.
         x1_min, x1_max, x2_min, x2_max = self.coord_bounds
-        print('in sample_sliding_window', self.coord_directions)
         ## start with first patch top left hand corner at x1_min, x2_min
         patch_list = []
 
+        # Todo: simplify these elif statements
         if self.coord_directions['x1'] == False and self.coord_directions['x2'] == True:
-            print('rocking the scenario')
             for y in np.arange(x1_max, x1_min, -dy):
                 for x in np.arange(x2_min, x2_max, dx):
                     if y - x1_extend < x1_min:
@@ -1443,6 +1438,38 @@ class TaskLoader:
 
                     # bbox of x1_min, x1_max, x2_min, x2_max per patch
                     bbox = [y0 - x1_extend, y0, x0, x0 + x2_extend]
+                    patch_list.append(bbox)
+
+        elif self.coord_directions['x1'] == False and self.coord_directions['x2'] == False:
+            for y in np.arange(x1_max, x1_min, -dy):
+                for x in np.arange(x2_max, x2_min, -dx):
+                    if y - x1_extend < x1_min:
+                        y0 = x1_min + x1_extend
+                    else:
+                        y0 = y
+                    if x - x2_extend < x2_min:
+                        x0 = x2_min + x2_extend
+                    else:
+                        x0 = x
+
+                    # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                    bbox = [y0 - x1_extend, y0, x0 - x2_extend, x0]
+                    patch_list.append(bbox)
+
+        elif self.coord_directions['x1'] == True and self.coord_directions['x2'] == False:
+            for y in np.arange(x1_min, x1_max, dy):
+                for x in np.arange(x2_max, x2_min, -dx):
+                    if y + x1_extend > x1_max:
+                        y0 = x1_max - x1_extend
+                    else:
+                        y0 = y
+                    if x - x2_extend < x2_min:
+                        x0 = x2_min + x2_extend
+                    else:
+                        x0 = x
+
+                    # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                    bbox = [y0, y0 + x1_extend, x0 - x2_extend, x0]
                     patch_list.append(bbox)
         else:
             for y in np.arange(x1_min, x1_max, dy):
@@ -1461,8 +1488,17 @@ class TaskLoader:
 
                     patch_list.append(bbox)
 
-        print('patch list', patch_list)
-        return patch_list
+        # Remove duplicate patches while preserving order
+        seen = set()
+        unique_patch_list = []
+        for lst in patch_list:
+            # Convert list to tuple for immutability
+            tuple_lst = tuple(lst)
+            if tuple_lst not in seen:
+                seen.add(tuple_lst)
+                unique_patch_list.append(lst)
+
+        return unique_patch_list
 
     def __call__(
         self,
