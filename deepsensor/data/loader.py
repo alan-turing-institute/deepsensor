@@ -1344,6 +1344,48 @@ class TaskLoader:
                     f"with the `links` attribute if using the 'gapfill' sampling strategy"
                 )
 
+                context_var = context_slices[context_idx]
+                target_var = target_slices[target_idx]
+
+                for var in [context_var, target_var]:
+                    assert isinstance(var, (xr.DataArray, xr.Dataset)), (
+                        f"If using 'gapfill' sampling strategy for linked context and target sets, "
+                        f"the context and target sets must be xarray DataArrays or Datasets, "
+                        f"but got {type(var)}."
+                    )
+
+                split_seed = seed + gapfill_i if seed is not None else None
+                rng = np.random.default_rng(split_seed)
+
+                # Keep trying until we get a target set with at least one target point
+                keep_searching = True
+                while keep_searching:
+                    added_mask_date = rng.choice(self.context[context_idx].time)
+                    added_mask = (
+                        self.context[context_idx].sel(time=added_mask_date).isnull()
+                    )
+                    curr_mask = context_var.isnull()
+
+                    # Mask out added missing values
+                    context_var = context_var.where(~added_mask)
+
+                    # TEMP: Inefficient to convert all non-targets to NaNs and then remove NaNs
+                    #   when we could just slice the target values here
+                    target_mask = added_mask & ~curr_mask
+                    if isinstance(target_var, xr.Dataset):
+                        keep_searching = np.all(target_mask.to_array().data == False)
+                    else:
+                        keep_searching = np.all(target_mask.data == False)
+                    if keep_searching:
+                        continue  # No target points -- use a different `added_mask`
+
+                    target_var = target_var.where(
+                        target_mask
+                    )  # Only keep target locations
+
+                    context_slices[context_idx] = context_var
+                    target_slices[target_idx] = target_var
+
         for i, (var, sampling_strat) in enumerate(
             zip(context_slices, context_sampling)
         ):

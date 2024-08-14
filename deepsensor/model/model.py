@@ -955,15 +955,14 @@ class DeepSensorModel(ProbabilisticModel):
                         patch_clip_x2_min = int(b_x2_min)
                         patch_clip_x2_max = int(data_array.sizes[orig_x2_name] - b_x2_max)
 
-                        patch_clip = data_array.isel(**{orig_x1_name: slice(patch_clip_x1_min, patch_clip_x1_max), orig_x2_name: slice(patch_clip_x2_min, patch_clip_x2_max)})
+                        patch_clip = data_array.isel(y=slice(patch_clip_x1_min, patch_clip_x1_max),
+                                                    x=slice(patch_clip_x2_min, patch_clip_x2_max))
 
                         patches_clipped[var_name].append(patch_clip)
 
             combined = {var_name: xr.combine_by_coords(patches, compat='no_conflicts') for var_name, patches in patches_clipped.items()}
 
             return combined
-
-        
 
         # Perform patchwise predictions
         preds = []
@@ -1009,7 +1008,7 @@ class DeepSensorModel(ProbabilisticModel):
         patches_per_row = get_patches_per_row(preds)
         stitched_prediction = stitch_clipped_predictions(preds, patch_overlap_unnorm, patches_per_row, x1_ascending, x2_ascending)
         
-        ## Cast prediction into DeepSensor.Prediction object.orig_x2_name
+        ## Cast prediction into DeepSensor.Prediction object.
         # Todo: make this into seperate method. 
         prediction= copy.deepcopy(preds[0])
 
