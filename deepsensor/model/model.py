@@ -1028,7 +1028,9 @@ class DeepSensorModel(ProbabilisticModel):
 
             if bbox is None:
                 raise AttributeError(
-                    "Tasks require non-None ``bbox`` for patchwise inference."
+                    "For patchwise prediction, only tasks generated using a patch_strategy of 'sliding' are valid. \
+                        This task has a bbox value of None, indicating that it was generated with a patch_strategy of \
+                            'random' or None."
                 )
 
             # Unnormalise coordinates of bounding box of patch
