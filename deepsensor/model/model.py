@@ -81,7 +81,7 @@ class ProbabilisticModel:
         var = self.variance(task)
         return var**0.5
 
-    def stddev(self, *args, **kwargs): # noqa
+    def stddev(self, *args, **kwargs):  # noqa
         return self.std(*args, **kwargs)
 
     def covariance(self, task: Task, *args, **kwargs):

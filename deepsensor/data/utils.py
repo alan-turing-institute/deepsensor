@@ -29,7 +29,7 @@ def construct_x1x2_ds(gridded_ds):
 
 def construct_circ_time_ds(dates, freq):
     """Return an :class:`xarray.Dataset` containing a circular variable for time.
-    
+
     The ``freq`` entry dictates the frequency of cycling of the circular
     variable. E.g.:
 
