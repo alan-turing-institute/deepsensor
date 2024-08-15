@@ -286,12 +286,13 @@ class GreedyAlgorithm:
 
     def _sample_y_infill(self, infill_ds, time, x1, x2):
         """Sample infill values at a single location."""
-        if isinstance(infill_ds, (xr.Dataset, xr.DataArray)):
-            y = infill_ds.sel(time=time, x1=x1, x2=x2)
-            if isinstance(y, xr.Dataset):
-                y = y.to_array()
-            y = y.data
-            y = y.reshape(1, y.size)  # 1 observation with N dimensions
+        assert isinstance(infill_ds, (xr.Dataset, xr.DataArray))
+        y = infill_ds.sel(time=time, x1=x1, x2=x2)
+        if isinstance(y, xr.Dataset):
+            y = y.to_array()
+        y = y.data
+        if "sample" not in infill_ds.dims:
+            return y.reshape(1, y.size)  # 1 observation with N_target_dims
         else:
             # TODO confirm or force that dim ordering is (N_samples, N_target_dims)
             return y
@@ -318,7 +319,7 @@ class GreedyAlgorithm:
         return acquisition_fn_ds
 
     def _init_acquisition_fn_object(self, X_s: xr.Dataset):
-        """Instantiate acquisition function object"""
+        """Instantiate acquisition function object."""
         # Unnormalise before instantiating
         X_s = self.model.data_processor.map_coords(X_s, unnorm=True)
         if isinstance(X_s, (xr.Dataset, xr.DataArray)):
