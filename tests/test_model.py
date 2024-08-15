@@ -526,7 +526,7 @@ class TestModel(unittest.TestCase):
         """Test that ``.predict_patch`` runs correctly."""
 
         patch_size = (0.6, 0.6)
-        stride_size = (0.5, 0.5)
+        stride = (0.5, 0.5)
 
         tl = TaskLoader(context=self.da, target=self.da)
 
@@ -536,7 +536,7 @@ class TestModel(unittest.TestCase):
             target_sampling="all",
             patch_strategy="sliding",
             patch_size=patch_size,
-            stride=stride_size,
+            stride=stride,
         )
 
         model = ConvNP(self.dp, tl)
@@ -545,7 +545,7 @@ class TestModel(unittest.TestCase):
             tasks=task,
             X_t=self.da,
             data_processor=self.dp,
-            stride=stride_size,
+            stride=stride,
             patch_size=patch_size,
         )
 
@@ -571,7 +571,7 @@ class TestModel(unittest.TestCase):
             (-0.1, 0.6),  # and below allowed range
         ]
     )
-    def test_patchwise_prediction_parameter_handling(self, patch_size, stride_size):
+    def test_patchwise_prediction_parameter_handling(self, patch_size, stride):
         """Test that correct errors and warnings are raised by ``.predict_patch``."""
 
         tl = TaskLoader(context=self.da, target=self.da)
@@ -582,7 +582,7 @@ class TestModel(unittest.TestCase):
             target_sampling="all",
             patch_strategy="sliding",
             patch_size=patch_size,
-            stride=stride_size,
+            stride=stride,
         )
 
         model = ConvNP(self.dp, tl)
@@ -592,7 +592,7 @@ class TestModel(unittest.TestCase):
                 tasks=task,
                 X_t=self.da,
                 data_processor=self.dp,
-                stride=stride_size,
+                stride=stride,
                 patch_size=patch_size,
             )
 

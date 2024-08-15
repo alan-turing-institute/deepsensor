@@ -983,7 +983,7 @@ class DeepSensorModel(ProbabilisticModel):
             preds.append(pred)
 
         
-        overlap_norm = tuple(patch - stride for patch, stride in zip(patch_size, stride_size))
+        overlap_norm = tuple(patch - stride for patch, stride in zip(patch_size, stride))
         patch_overlap_unnorm = get_patch_overlap(overlap_norm, data_processor, X_t)
         
         patches_per_row = get_patches_per_row(preds)
