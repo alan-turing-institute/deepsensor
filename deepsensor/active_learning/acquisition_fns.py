@@ -23,13 +23,13 @@ class AcquisitionFunction:
         target_set_idx: int = 0,
     ):
         """Args:
-          model (:class:`~.model.model.ProbabilisticModel`):
-              [Description of the model parameter.]
-          context_set_idx (int):
-              Index of context set to add new observations to when computing
-              the acquisition function.
+        model (:class:`~.model.model.ProbabilisticModel`):
+            [Description of the model parameter.]
+        context_set_idx (int):
+            Index of context set to add new observations to when computing
+            the acquisition function.
         target_set_idx (int):
-              Index of target set to compute acquisition function for.
+            Index of target set to compute acquisition function for.
         """
         self.model = model
         self.context_set_idx = context_set_idx

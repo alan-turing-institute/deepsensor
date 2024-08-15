@@ -35,8 +35,7 @@ TorchModel = ModuleType("torch.nn", "Module")
 
 
 class ConvNP(DeepSensorModel):
-    """
-    A Convolutional Neural Process (ConvNP) regression probabilistic model (by default a ConvCNP).
+    """A Convolutional Neural Process (ConvNP) regression probabilistic model (by default a ConvCNP).
 
     Wraps around the ``neuralprocesses`` package to construct a ConvNP model.
     See: https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py.
@@ -607,8 +606,7 @@ class ConvNP(DeepSensorModel):
 
     @dispatch
     def k(self, task: Task) -> Union[np.ndarray, List[np.ndarray]]:
-        """
-        k parameter values of model's distribution at target locations in task.
+        """K parameter values of model's distribution at target locations in task.
 
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
@@ -644,8 +642,7 @@ class ConvNP(DeepSensorModel):
 
     @dispatch
     def scale(self, task: Task) -> Union[np.ndarray, List[np.ndarray]]:
-        """
-        Scale parameter values of model's distribution at target locations in task.
+        """Scale parameter values of model's distribution at target locations in task.
 
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
@@ -1057,8 +1054,7 @@ class ConvNP(DeepSensorModel):
 
 
 def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
-    """
-    Concatenate a list of tasks into a single task containing multiple batches.
+    """Concatenate a list of tasks into a single task containing multiple batches.
 
     ```{warning}
     `concat_tasks` has been moved to deepsensor.data.task and will be removed from "

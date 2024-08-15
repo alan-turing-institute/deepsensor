@@ -304,8 +304,7 @@ def offgrid_context(
     colors: Optional[str] = None,
     **scatter_kwargs,
 ) -> None:
-    """
-    Plot the off-grid context points on ``axes``.
+    """Plot the off-grid context points on ``axes``.
 
     Uses a provided :class:`~.data.processor.DataProcessor` to unnormalise the
     context coordinates if provided.
