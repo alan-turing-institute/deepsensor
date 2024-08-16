@@ -326,7 +326,7 @@ class TestTaskLoader(unittest.TestCase):
             num_samples_per_date=2,
         )
 
-    @parameterized.expand([[(0.2, 0.2), (1, 1)], [(0.3, 0.4), (1, 1)]])
+    @parameterized.expand([[0.5, 0.1], [(0.3, 0.4), (0.1, 0.1)]])
     def test_sliding_window(self, patch_size, stride) -> None:
         """Test sliding window sampling."""
         # need to redefine the data generators because the patch size samplin

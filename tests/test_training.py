@@ -164,8 +164,8 @@ class TestTraining(unittest.TestCase):
             context_sampling="all",
             target_sampling="all",
             patch_strategy="sliding",
-            patch_size=(0.5, 0.5),
-            stride=(1, 1),
+            patch_size=(0.4, 0.4),
+            stride=(0.1, 0.1),
         )
 
         # Train
