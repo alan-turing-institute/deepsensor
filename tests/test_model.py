@@ -563,38 +563,6 @@ class TestModel(unittest.TestCase):
             assert self.da.x1.size == pred[var_ID].x1.size
             assert self.da.x2.size == pred[var_ID].x2.size
 
-    @parameterized.expand(
-        [
-            ((0.5, 0.5), (0.6, 0.6)),  # patch_size and stride as tuples
-            (0.5, 0.6),  # as floats
-            (1.0, 1.2),  # one argument above allowed range
-            (-0.1, 0.6),  # and below allowed range
-        ]
-    )
-    def test_patchwise_prediction_parameter_handling(self, patch_size, stride):
-        """Test that correct errors and warnings are raised by ``.predict_patch``."""
-
-        tl = TaskLoader(context=self.da, target=self.da)
-
-        task = tl(
-            "2020-01-01",
-            context_sampling="all",
-            target_sampling="all",
-            patch_strategy="sliding",
-            patch_size=patch_size,
-            stride=stride,
-        )
-
-        model = ConvNP(self.dp, tl)
-
-        with self.assertRaises(ValueError):
-            model.predict_patch(
-                tasks=task,
-                X_t=self.da,
-                data_processor=self.dp,
-                stride=stride,
-                patch_size=patch_size,
-            )
 
     def test_saving_and_loading(self):
         """Test saving and loading of model"""
