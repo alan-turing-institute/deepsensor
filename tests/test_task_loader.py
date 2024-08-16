@@ -367,6 +367,29 @@ class TestTaskLoader(unittest.TestCase):
             stride=stride,
         )
 
+    @parameterized.expand(
+    [
+        ((0.5, 0.5), (0.6, 0.6)),  # patch_size and stride as tuples
+        (0.5, 0.6),  # as floats
+        (1.0, 1.2),  # one argument above allowed range
+        (-0.1, 0.6),  # and below allowed range
+    ]
+    )
+    def test_patchwise_task_loader_parameter_handling(self, patch_size, stride):
+        """Test that correct errors and warnings are raised by ``.predict_patch``."""
+
+        tl = TaskLoader(context=self.da, target=self.da)
+
+        with self.assertRaises(ValueError):
+            task = tl(
+                "2020-01-01",
+                context_sampling="all",
+                target_sampling="all",
+                patch_strategy="sliding",
+                patch_size=patch_size,
+                stride=stride,
+            )
+
     def test_saving_and_loading(self):
         """Test saving and loading TaskLoader"""
         with tempfile.TemporaryDirectory() as tmp_dir:
