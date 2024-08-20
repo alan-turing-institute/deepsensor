@@ -678,11 +678,11 @@ class TaskLoader:
         seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
         """
-        Sample a DataArray according to a given strategy.
+        Sample a DataFrame according to a given strategy.
 
         Args:
             df (:class:`pandas.DataFrame` | :class:`pandas.Series`):
-                DataArray to sample, assumed to be time-sliced for the task
+                Dataframe to sample, assumed to be time-sliced for the task
                 already.
             sampling_strat (str | int | float | :class:`numpy:numpy.ndarray`):
                 Sampling strategy, either "all" or an integer for random grid
@@ -720,20 +720,24 @@ class TaskLoader:
             X_c = df.reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
             Y_c = df.values.T
         elif isinstance(sampling_strat, np.ndarray):
-            X_c = sampling_strat.astype(self.dtype)
-            x1match = np.in1d(df.index.get_level_values("x1"), X_c[0])
-            x2match = np.in1d(df.index.get_level_values("x2"), X_c[1])
-            num_matches = np.sum(x1match & x2match)
-
-            # Check that we got all the samples we asked for
-            if num_matches != X_c.shape[1]:
+            if df.index.get_level_values("x1").dtype != sampling_strat.dtype:
                 raise InvalidSamplingStrategyError(
-                    f"Passed a numpy coordinate array to sample pandas DataFrame, "
-                    f"but the DataFrame did not contain all the requested samples. "
-                    f"Requested {X_c.shape[1]} samples but only got {num_matches}."
+                    "Passed a numpy coordinate array to sample pandas DataFrame, "
+                    "but the coordinate array has a different dtype than the DataFrame. "
+                    f"Got {sampling_strat.dtype} but expected {df.index.get_level_values('x1').dtype}."
                 )
-
-            Y_c = df[x1match & x2match].values.T
+            X_c = sampling_strat.astype(self.dtype)
+            try:
+                Y_c = df.loc[pd.IndexSlice[:, X_c[0], X_c[1]]].values.T
+            except KeyError:
+                raise InvalidSamplingStrategyError(
+                    "Passed a numpy coordinate array to sample pandas DataFrame, "
+                    "but the DataFrame did not contain all the requested samples.\n"
+                    f"Indexes: {df.index}\n"
+                    f"Sampling coords: {X_c}\n"
+                    "If this is unexpected, check that your numpy sampling array matches "
+                    "the DataFrame index values *exactly*."
+                )
         else:
             raise InvalidSamplingStrategyError(
                 f"Unknown sampling strategy {sampling_strat}"

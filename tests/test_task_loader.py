@@ -192,6 +192,23 @@ class TestTaskLoader(unittest.TestCase):
                 with self.assertRaises(InvalidSamplingStrategyError):
                     task = tl("2020-01-01", invalid_sampling_strategy)
 
+    def test_different_dtype_when_sampling_offgrid_data_at_specific_numpy_locs(self):
+        """Test different dtype when sampling off-grid data at specific numpy locations."""
+        sampling_strat = np.array(
+            [np.linspace(0, 1, 10), np.linspace(0, 1, 10)], dtype=np.float16
+        )
+
+        tl = TaskLoader(
+            context=self.df,
+            target=self.df,
+        )
+
+        assert sampling_strat.dtype != tl.context[0].index.get_level_values("x1").dtype
+        assert sampling_strat.dtype != tl.context[0].index.get_level_values("x2").dtype
+
+        with self.assertRaises(InvalidSamplingStrategyError):
+            task = tl("2020-01-01", sampling_strat, sampling_strat)
+
     def test_wrong_links(self):
         """Test link indexes out of range."""
         with self.assertRaises(ValueError):
