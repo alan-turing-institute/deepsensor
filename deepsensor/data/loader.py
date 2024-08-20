@@ -720,9 +720,16 @@ class TaskLoader:
             X_c = df.reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
             Y_c = df.values.T
         elif isinstance(sampling_strat, np.ndarray):
+            if df.index.get_level_values("x1").dtype != sampling_strat.dtype:
+                raise InvalidSamplingStrategyError(
+                    f"Passed a numpy coordinate array to sample pandas DataFrame, "
+                    f"but the coordinate array has a different dtype than the DataFrame. "
+                    f"Got {sampling_strat.dtype} but expected {df.index.get_level_values('x1').dtype}."
+                )
+
             X_c = sampling_strat.astype(self.dtype)
-            x1match = np.in1d(df.index.get_level_values("x1").astype(self.dtype), X_c[0])
-            x2match = np.in1d(df.index.get_level_values("x2").astype(self.dtype), X_c[1])
+            x1match = np.in1d(df.index.get_level_values("x1"), X_c[0])
+            x2match = np.in1d(df.index.get_level_values("x2"), X_c[1])
             num_matches = np.sum(x1match & x2match)
 
             # Check that we got all the samples we asked for
