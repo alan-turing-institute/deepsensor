@@ -722,8 +722,8 @@ class TaskLoader:
         elif isinstance(sampling_strat, np.ndarray):
             if df.index.get_level_values("x1").dtype != sampling_strat.dtype:
                 raise InvalidSamplingStrategyError(
-                    f"Passed a numpy coordinate array to sample pandas DataFrame, "
-                    f"but the coordinate array has a different dtype than the DataFrame. "
+                    "Passed a numpy coordinate array to sample pandas DataFrame, "
+                    "but the coordinate array has a different dtype than the DataFrame. "
                     f"Got {sampling_strat.dtype} but expected {df.index.get_level_values('x1').dtype}."
                 )
 
@@ -735,9 +735,11 @@ class TaskLoader:
             # Check that we got all the samples we asked for
             if num_matches != X_c.shape[1]:
                 raise InvalidSamplingStrategyError(
-                    f"Passed a numpy coordinate array to sample pandas DataFrame, "
-                    f"but the DataFrame did not contain all the requested samples. "
-                    f"Requested {X_c.shape[1]} samples but only got {num_matches}."
+                    "Passed a numpy coordinate array to sample pandas DataFrame, "
+                    "but the DataFrame did not contain all the requested samples. "
+                    f"Requested {X_c.shape[1]} samples but only got {num_matches}. "
+                    "If this is unexpected, check that your numpy sampling array matches "
+                    "the DataFrame index values *exactly*."
                 )
 
             Y_c = df[x1match & x2match].values.T
