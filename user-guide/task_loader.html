@@ -1,0 +1,1172 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>TaskLoader &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user-guide/task_loader';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ConvNP" href="convnp.html" />
+    <link rel="prev" title="Tasks" href="task.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">User Guide</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="task.html">Tasks</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2Fuser-guide/task_loader.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user-guide/task_loader.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>TaskLoader</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialising-a-taskloader">Initialising a TaskLoader</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calling-a-taskloader">Calling a TaskLoader</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#taskloader-tour">TaskLoader tour</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spatial-interpolation">Spatial interpolation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#interpolating-gridded-xarray-data">Interpolating gridded <code class="docutils literal notranslate"><span class="pre">xarray</span></code> data</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#randomly-sampling-a-float-fraction-of-points">Randomly sampling a <code class="docutils literal notranslate"><span class="pre">float</span></code> fraction of points</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#randomly-sampling-a-int-number-of-points">Randomly sampling a <code class="docutils literal notranslate"><span class="pre">int</span></code> number of points</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#interpolating-pointwise-pandas-data">Interpolating pointwise <code class="docutils literal notranslate"><span class="pre">pandas</span></code> data</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#forecasting">Forecasting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#downscaling">Downscaling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gap-filling">Gap-filling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combinations-of-data-fusion-tasks">Combinations of data fusion tasks</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#controlling-randomness-in-the-taskloader">Controlling randomness in the TaskLoader</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-and-loading-a-taskloader">Saving and loading a TaskLoader</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="taskloader">
+<h1>TaskLoader<a class="headerlink" href="#taskloader" title="Permalink to this heading">#</a></h1>
+<p><a class="reference internal" href="../reference/data/loader.html"><span class="doc std std-doc">The <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code></span></a> generates <code class="docutils literal notranslate"><span class="pre">Task</span></code> objects for training, testing, and inference with DeepSensor models.
+The <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> can generate <code class="docutils literal notranslate"><span class="pre">Task</span></code>s for different kinds of predictions, such as: spatial interpolation, forecasting, downscaling, or some combination of these.
+It achieves this by temporally slicing spatiotemporal data and then providing a suite of spatial sampling methods for generating context and target sets from the temporal slices.</p>
+<p>Mastering DeepSensor requires a good understanding of all the ways you can initialise and call a <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> for a wide range of data fusion applications.
+The <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> is best understood through examples, which we will see in this page.
+Let’s import the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> class and get started.</p>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">captureWarnings</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">deepsensor.torch</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data</span> <span class="kn">import</span> <span class="n">DataProcessor</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.sources</span> <span class="kn">import</span> <span class="n">get_ghcnd_station_data</span><span class="p">,</span> <span class="n">get_era5_reanalysis_data</span><span class="p">,</span> <span class="n">get_earthenv_auxiliary_data</span><span class="p">,</span> <span class="n">get_gldas_land_mask</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># Using the same settings allows use to use pre-downloaded cached data</span>
+<span class="n">data_range</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;2016-06-25&quot;</span><span class="p">,</span> <span class="s2">&quot;2016-06-30&quot;</span><span class="p">)</span>
+<span class="n">extent</span> <span class="o">=</span> <span class="s2">&quot;europe&quot;</span>
+<span class="n">station_var_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TAVG&quot;</span><span class="p">,</span> <span class="s2">&quot;PRCP&quot;</span><span class="p">]</span>
+<span class="n">era5_var_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;10m_u_component_of_wind&quot;</span><span class="p">,</span> <span class="s2">&quot;10m_v_component_of_wind&quot;</span><span class="p">]</span>
+<span class="n">auxiliary_var_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;elevation&quot;</span><span class="p">,</span> <span class="s2">&quot;tpi&quot;</span><span class="p">]</span>
+<span class="n">cache_dir</span> <span class="o">=</span> <span class="s2">&quot;../../.datacache&quot;</span>
+
+<span class="n">station_raw_df</span> <span class="o">=</span> <span class="n">get_ghcnd_station_data</span><span class="p">(</span><span class="n">station_var_IDs</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="n">data_range</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">era5_raw_ds</span> <span class="o">=</span> <span class="n">get_era5_reanalysis_data</span><span class="p">(</span><span class="n">era5_var_IDs</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="n">data_range</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">auxiliary_raw_ds</span> <span class="o">=</span> <span class="n">get_earthenv_auxiliary_data</span><span class="p">(</span><span class="n">auxiliary_var_IDs</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="s2">&quot;10KM&quot;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">land_mask_raw_ds</span> <span class="o">=</span> <span class="n">get_gldas_land_mask</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+
+<span class="n">data_processor</span> <span class="o">=</span> <span class="n">DataProcessor</span><span class="p">(</span><span class="n">x1_name</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">x2_name</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">)</span>
+<span class="n">era5_ds</span> <span class="o">=</span> <span class="n">data_processor</span><span class="p">(</span><span class="n">era5_raw_ds</span><span class="p">)</span>
+<span class="n">aux_ds</span><span class="p">,</span> <span class="n">land_mask_ds</span> <span class="o">=</span> <span class="n">data_processor</span><span class="p">([</span><span class="n">auxiliary_raw_ds</span><span class="p">,</span> <span class="n">land_mask_raw_ds</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;min_max&quot;</span><span class="p">)</span>
+<span class="n">station_df</span> <span class="o">=</span> <span class="n">data_processor</span><span class="p">(</span><span class="n">station_raw_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">deepsensor.data</span> <span class="kn">import</span> <span class="n">TaskLoader</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="initialising-a-taskloader">
+<h2>Initialising a TaskLoader<a class="headerlink" href="#initialising-a-taskloader" title="Permalink to this heading">#</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> is initialised with list of <code class="docutils literal notranslate"><span class="pre">context</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> variables.
+These variables can either be <code class="docutils literal notranslate"><span class="pre">xarray</span></code> or <code class="docutils literal notranslate"><span class="pre">pandas</span></code> objects, and are assumed to have been standardised by a <code class="docutils literal notranslate"><span class="pre">DataProcessor</span></code>.</p>
+<p>We will use the normalised station and reanalysis data from the previous <a class="reference internal" href="data_processor.html"><span class="doc std std-doc">DataProcessor</span></a> page.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="n">era5_ds</span><span class="p">,</span> <span class="n">land_mask_ds</span><span class="p">],</span>
+    <span class="n">target</span><span class="o">=</span><span class="n">station_df</span><span class="p">,</span>
+    <span class="n">aux_at_targets</span><span class="o">=</span><span class="n">aux_ds</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task_loader</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TaskLoader(2 context sets, 1 target sets)
+Context variable IDs: ((&#39;2m_temperature&#39;, &#39;10m_u_component_of_wind&#39;, &#39;10m_v_component_of_wind&#39;), (&#39;GLDAS_mask&#39;,))
+Target variable IDs: ((&#39;PRCP&#39;, &#39;TAVG&#39;),)
+Auxiliary-at-target variable IDs: (&#39;elevation&#39;, &#39;tpi&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="calling-a-taskloader">
+<h2>Calling a TaskLoader<a class="headerlink" href="#calling-a-taskloader" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> is called with a timestamp and single entries or lists of entries for the <code class="docutils literal notranslate"><span class="pre">context_sampling</span></code> and <code class="docutils literal notranslate"><span class="pre">target_sampling</span></code> arguments.
+These arguments can either be single entries (applying the same sampling strategy to each context/target set)
+or a list of entries equal to the number of context/target sets (applying different sampling strategies to
+each context/target set).</p>
+<p>For an up-to-date list of the available sampling strategies and what they do, see the
+<a class="reference external" href="https://alan-turing-institute.github.io/deepsensor/reference/data/loader.html#deepsensor.data.loader.TaskLoader.task_generation"><code class="docutils literal notranslate"><span class="pre">TaskLoader.task_generation</span></code> documentation</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2016-06-25&quot;</span><span class="p">,</span> <span class="n">context_sampling</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">target_sampling</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>time: 2016-06-25 00:00:00
+ops: []
+X_c: [((1, 141), (1, 221)), ((1, 140), (1, 220))]
+Y_c: [(3, 141, 221), (1, 140, 220)]
+X_t: [(2, 519)]
+Y_t: [(2, 519)]
+Y_t_aux: (2, 519)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/758de58cada0eddb31da248a36ce2a3fc4fadfe065d7c3e0d980af4c4f2b882c.png" src="../_images/758de58cada0eddb31da248a36ce2a3fc4fadfe065d7c3e0d980af4c4f2b882c.png" />
+</div>
+</div>
+</section>
+<section id="taskloader-tour">
+<h2>TaskLoader tour<a class="headerlink" href="#taskloader-tour" title="Permalink to this heading">#</a></h2>
+<p>Now that we’ve got the basics of the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> init and call signatures,
+let’s see some concrete examples of to generate <code class="docutils literal notranslate"><span class="pre">Task</span></code> objects for
+spatial interpolation, forecasting, downscaling, and gap-filling.</p>
+<section id="spatial-interpolation">
+<h3>Spatial interpolation<a class="headerlink" href="#spatial-interpolation" title="Permalink to this heading">#</a></h3>
+<p>Spatial interpolation tasks can be generated either from:</p>
+<ul class="simple">
+<li><p>gridded <code class="docutils literal notranslate"><span class="pre">xarray</span></code> data, by randomly sampling points from the grid, or</p></li>
+<li><p>pointwise <code class="docutils literal notranslate"><span class="pre">pandas</span></code> data, by randomly splitting the data into context and target sets.</p></li>
+</ul>
+<section id="interpolating-gridded-xarray-data">
+<h4>Interpolating gridded <code class="docutils literal notranslate"><span class="pre">xarray</span></code> data<a class="headerlink" href="#interpolating-gridded-xarray-data" title="Permalink to this heading">#</a></h4>
+<section id="randomly-sampling-a-float-fraction-of-points">
+<h5>Randomly sampling a <code class="docutils literal notranslate"><span class="pre">float</span></code> fraction of points<a class="headerlink" href="#randomly-sampling-a-float-fraction-of-points" title="Permalink to this heading">#</a></h5>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">era5_ds</span><span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="n">era5_ds</span><span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">])</span>
+<span class="n">task</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2016-06-28&quot;</span><span class="p">,</span> <span class="n">context_sampling</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">target_sampling</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>time: 2016-06-28 00:00:00
+ops: []
+X_c: [(2, 934)]
+Y_c: [(1, 934)]
+X_t: [((1, 141), (1, 221))]
+Y_t: [(1, 141, 221)]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/9f3f4f597ff02b15f6aa76fa7aea1f36648133beeae8f006a80c2f9e158d841b.png" src="../_images/9f3f4f597ff02b15f6aa76fa7aea1f36648133beeae8f006a80c2f9e158d841b.png" />
+</div>
+</div>
+</section>
+<section id="randomly-sampling-a-int-number-of-points">
+<h5>Randomly sampling a <code class="docutils literal notranslate"><span class="pre">int</span></code> number of points<a class="headerlink" href="#randomly-sampling-a-int-number-of-points" title="Permalink to this heading">#</a></h5>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2016-06-25&quot;</span><span class="p">,</span> <span class="n">context_sampling</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">target_sampling</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>time: 2016-06-25 00:00:00
+ops: []
+X_c: [(2, 100)]
+Y_c: [(1, 100)]
+X_t: [(2, 1000)]
+Y_t: [(1, 1000)]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/571b9c0473337cb87e975564853ab154297f228dcd399e21408c5a5d646db2d0.png" src="../_images/571b9c0473337cb87e975564853ab154297f228dcd399e21408c5a5d646db2d0.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="interpolating-pointwise-pandas-data">
+<h4>Interpolating pointwise <code class="docutils literal notranslate"><span class="pre">pandas</span></code> data<a class="headerlink" href="#interpolating-pointwise-pandas-data" title="Permalink to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">station_df</span><span class="p">[</span><span class="s2">&quot;TAVG&quot;</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="n">station_df</span><span class="p">[</span><span class="s2">&quot;TAVG&quot;</span><span class="p">],</span> <span class="n">links</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2016-06-25&quot;</span><span class="p">,</span> <span class="n">context_sampling</span><span class="o">=</span><span class="s2">&quot;split&quot;</span><span class="p">,</span> <span class="n">target_sampling</span><span class="o">=</span><span class="s2">&quot;split&quot;</span><span class="p">,</span> <span class="n">split_frac</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>time: 2016-06-25 00:00:00
+ops: []
+X_c: [(2, 72)]
+Y_c: [(1, 72)]
+X_t: [(2, 592)]
+Y_t: [(1, 592)]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/2c2c8ee16bbfcc6327079590834ae77ee505d64debb3e76564cf1e9e79036519.png" src="../_images/2c2c8ee16bbfcc6327079590834ae77ee505d64debb3e76564cf1e9e79036519.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="forecasting">
+<h3>Forecasting<a class="headerlink" href="#forecasting" title="Permalink to this heading">#</a></h3>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">context_delta_t</span></code> and/or <code class="docutils literal notranslate"><span class="pre">target_delta_t</span></code> arguments, we can generate <code class="docutils literal notranslate"><span class="pre">Task</span></code>s for forecasting.
+The values of <code class="docutils literal notranslate"><span class="pre">context_delta_t</span></code> and <code class="docutils literal notranslate"><span class="pre">target_delta_t</span></code> are time differences relative to the time slice passed to the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> (which may be considered as an ‘initialisation time’).
+The units of these time detlas are determined by the <code class="docutils literal notranslate"><span class="pre">time_freq</span></code> argument, which defaults to <code class="docutils literal notranslate"><span class="pre">&quot;D&quot;</span></code> (days).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="n">era5_ds</span><span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">],]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">context_delta_t</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="n">target</span><span class="o">=</span><span class="n">era5_ds</span><span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">],</span>
+    <span class="n">target_delta_t</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">time_freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span>  <span class="c1"># daily frequency (the default)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task_loader</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TaskLoader(3 context sets, 1 target sets)
+Context variable IDs: ((&#39;2m_temperature&#39;,), (&#39;2m_temperature&#39;,), (&#39;2m_temperature&#39;,))
+Target variable IDs: ((&#39;2m_temperature&#39;,),)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2016-06-27&quot;</span><span class="p">,</span> <span class="n">context_sampling</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">target_sampling</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>time: 2016-06-27 00:00:00
+ops: []
+X_c: [((1, 141), (1, 221)), ((1, 141), (1, 221)), ((1, 141), (1, 221))]
+Y_c: [(1, 141, 221), (1, 141, 221), (1, 141, 221)]
+X_t: [((1, 141), (1, 221))]
+Y_t: [(1, 141, 221)]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c29dbd4f7f0c5166fa175351f3030a04b98a190064ae7ffe316cd46fab78f3e0.png" src="../_images/c29dbd4f7f0c5166fa175351f3030a04b98a190064ae7ffe316cd46fab78f3e0.png" />
+</div>
+</div>
+</section>
+<section id="downscaling">
+<h3>Downscaling<a class="headerlink" href="#downscaling" title="Permalink to this heading">#</a></h3>
+<p>In statistical downscaling, the goal is often to learn a mapping from a coarse gridded data set (e.g. reanalysis data) to localised observations (e.g. weather station data).
+A downscaling <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> can be instantiated by passing the coarse gridded variable in the <code class="docutils literal notranslate"><span class="pre">context</span></code> list and station observations in the <code class="docutils literal notranslate"><span class="pre">target</span></code> list.</p>
+<p>Optionally, we can also pass a high-resolution auxiliary <code class="docutils literal notranslate"><span class="pre">xarray</span></code> variable (e.g. local topgraphic information) via the <code class="docutils literal notranslate"><span class="pre">aux_at_targets</span></code> argument.
+When calling the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code>, the <code class="docutils literal notranslate"><span class="pre">aux_at_targets</span></code> variable will be interpolated at the target locations and added to the <code class="docutils literal notranslate"><span class="pre">Task</span></code> as the <code class="docutils literal notranslate"><span class="pre">&quot;Y_t_aux&quot;</span></code> entry.
+The <code class="docutils literal notranslate"><span class="pre">&quot;Y_t_aux&quot;</span></code> data can be modelled differently from the context data, for example, by using a pointwise MLP rather than a convolutional neural network.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> also permits an <code class="docutils literal notranslate"><span class="pre">aux_at_contexts</span></code> argument for passing high-resolution auxiliary variables at off-grid context locations.
+For brevity, we will not demonstrate this here.</p>
+</div>
+<p>Hypothetically, with the right auxiliary information and enough data, a model can distinguish between an observation from the top of a mountain vs a valley vs a city vs a field.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="n">era5_ds</span><span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">],</span> <span class="n">land_mask_ds</span><span class="p">],</span>
+    <span class="n">target</span><span class="o">=</span><span class="n">station_df</span><span class="p">[</span><span class="s2">&quot;TAVG&quot;</span><span class="p">],</span>
+    <span class="n">aux_at_targets</span><span class="o">=</span><span class="n">aux_ds</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task_loader</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TaskLoader(2 context sets, 1 target sets)
+Context variable IDs: ((&#39;2m_temperature&#39;,), (&#39;GLDAS_mask&#39;,))
+Target variable IDs: ((&#39;TAVG&#39;,),)
+Auxiliary-at-target variable IDs: (&#39;elevation&#39;, &#39;tpi&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2016-06-25&quot;</span><span class="p">,</span> <span class="n">context_sampling</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">target_sampling</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>time: 2016-06-25 00:00:00
+ops: []
+X_c: [((1, 141), (1, 221)), ((1, 140), (1, 220))]
+Y_c: [(1, 141, 221), (1, 140, 220)]
+X_t: [(2, 664)]
+Y_t: [(1, 664)]
+Y_t_aux: (2, 664)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/4bc19ff34148935d8dfa16c86d3b8009f15dfe4d47334fd88dd5ed18c2d60c43.png" src="../_images/4bc19ff34148935d8dfa16c86d3b8009f15dfe4d47334fd88dd5ed18c2d60c43.png" />
+</div>
+</div>
+</section>
+<section id="gap-filling">
+<h3>Gap-filling<a class="headerlink" href="#gap-filling" title="Permalink to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> can be used to generate training <code class="docutils literal notranslate"><span class="pre">Task</span></code>s for filling missing data gaps in an <code class="docutils literal notranslate"><span class="pre">xarray</span></code> object.</p>
+<p>Let’s generate some fake missing data in the normalised <code class="docutils literal notranslate"><span class="pre">era5_ds</span></code> object by setting all normalised temperature values
+below -0.75 to NaN.
+In practice, these may be missing due to cloud coverage, satellite orbit gaps, sensor issues, or other reasons.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">era5_gappy_ds</span> <span class="o">=</span> <span class="n">era5_ds</span><span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">era5_ds</span><span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">era5_gappy_ds</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f5be28482b9f49c4d04fdb59b6502f56c0f8ee636541aacf73452bad89035642.png" src="../_images/f5be28482b9f49c4d04fdb59b6502f56c0f8ee636541aacf73452bad89035642.png" />
+</div>
+</div>
+<p>If we pass the <code class="docutils literal notranslate"><span class="pre">&quot;gapfill&quot;</span></code> argument to the <code class="docutils literal notranslate"><span class="pre">context_sampling</span></code> and <code class="docutils literal notranslate"><span class="pre">target_sampling</span></code> arguments, the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> does the following:</p>
+<ul class="simple">
+<li><p>randomly samples a missing data mask from another time slice,</p></li>
+<li><p>adds this new mask to the context set (increasing the amount of missing data in the context set),</p></li>
+<li><p>the context points which were just removed by the new mask become the target set.</p></li>
+</ul>
+<p>This may produce NaNs in the target set due to overlap between the original mask and new mask.
+To remove these NaNs, use the <code class="docutils literal notranslate"><span class="pre">Task.remove_context_nans</span></code> and <code class="docutils literal notranslate"><span class="pre">Task.remove_target_nans</span></code> methods.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">era5_gappy_ds</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">era5_gappy_ds</span><span class="p">,</span> <span class="n">links</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+<span class="n">task</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2016-06-25&quot;</span><span class="p">,</span> <span class="n">context_sampling</span><span class="o">=</span><span class="s2">&quot;gapfill&quot;</span><span class="p">,</span> <span class="n">target_sampling</span><span class="o">=</span><span class="s2">&quot;gapfill&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">remove_context_nans</span><span class="p">()</span><span class="o">.</span><span class="n">remove_target_nans</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>time: 2016-06-25 00:00:00
+ops: [&#39;context_nans_removed&#39;, &#39;target_nans_removed&#39;]
+X_c: [(2, 22491)]
+Y_c: [(1, 22491)]
+X_t: [(2, 867)]
+Y_t: [(1, 867)]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/69d9ac2bc475aab34768f0f8ccacb79dc6424d401fbd3b0129cdb7016b9cff7b.png" src="../_images/69d9ac2bc475aab34768f0f8ccacb79dc6424d401fbd3b0129cdb7016b9cff7b.png" />
+</div>
+</div>
+<p>The spatial characteristics of the missing data in the context set appear realistic and
+will be similar to what the model will see when attempting to fill real missing data gaps.</p>
+<p>Once a model is trained with <code class="docutils literal notranslate"><span class="pre">Task</span></code>s generated with the <code class="docutils literal notranslate"><span class="pre">&quot;gapfill&quot;</span></code> strategy, the model can
+be used to fill real missing data by passing <code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code> for <code class="docutils literal notranslate"><span class="pre">context_sampling</span></code>.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Recall that we generated missing data by masking any normalised temperature values below -0.75
+to NaN.
+This means that the true missing data is <em>not representative</em> of the observed
+data; the distribution of observed data is very different to the distribution of missing data.
+A model trained with the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> <code class="docutils literal notranslate"><span class="pre">&quot;gapfill&quot;</span></code> strategy will never see values below -0.75
+and therefore its predictions will be heavily biased.</p>
+<p>This is an extreme example, but the same effect can occur in real data sets.
+For example, if missing data comes from
+clouds and the target variable is temperature, a model trained with the <code class="docutils literal notranslate"><span class="pre">&quot;gapfill&quot;</span></code> strategy
+will not learn the effect of clouds on temperature.</p>
+</div>
+</section>
+<section id="combinations-of-data-fusion-tasks">
+<h3>Combinations of data fusion tasks<a class="headerlink" href="#combinations-of-data-fusion-tasks" title="Permalink to this heading">#</a></h3>
+<p>Real applications may involve a combination of the above data fusion tasks.
+The flexibility of the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> makes it easy to generate <code class="docutils literal notranslate"><span class="pre">Task</span></code>s for
+diverse data fusion problems.
+Here’s a concrete example combining forecasting with downscaling, using the past
+two days of ERA5 data to forecast the next day of station observations,
+leveraging high-resolution auxiliary data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="n">era5_ds</span><span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">],</span> <span class="n">era5_ds</span><span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">],</span> <span class="n">land_mask_ds</span><span class="p">],</span>
+    <span class="n">context_delta_t</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="n">target</span><span class="o">=</span><span class="n">station_df</span><span class="p">[</span><span class="s2">&quot;TAVG&quot;</span><span class="p">],</span>
+    <span class="n">target_delta_t</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">aux_at_targets</span><span class="o">=</span><span class="n">aux_ds</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task_loader</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TaskLoader(3 context sets, 1 target sets)
+Context variable IDs: ((&#39;2m_temperature&#39;,), (&#39;2m_temperature&#39;,), (&#39;GLDAS_mask&#39;,))
+Target variable IDs: ((&#39;TAVG&#39;,),)
+Auxiliary-at-target variable IDs: (&#39;elevation&#39;, &#39;tpi&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2016-06-28&quot;</span><span class="p">,</span> <span class="n">context_sampling</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">target_sampling</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>time: 2016-06-28 00:00:00
+ops: []
+X_c: [((1, 141), (1, 221)), ((1, 141), (1, 221)), ((1, 140), (1, 220))]
+Y_c: [(1, 141, 221), (1, 141, 221), (1, 140, 220)]
+X_t: [(2, 667)]
+Y_t: [(1, 667)]
+Y_t_aux: (2, 667)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/4af075153c0c37778b7d6eb6ba678cf64909a1a89089d2b520ccfab3b3a44931.png" src="../_images/4af075153c0c37778b7d6eb6ba678cf64909a1a89089d2b520ccfab3b3a44931.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="controlling-randomness-in-the-taskloader">
+<h2>Controlling randomness in the TaskLoader<a class="headerlink" href="#controlling-randomness-in-the-taskloader" title="Permalink to this heading">#</a></h2>
+<p>There are two additional arguments in the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> call method for controlling randomness:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">datewise_deterministic</span></code>: If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the same random seed will be used for a particlar date. Useful for,
+say, generating a reproducible validation set which is the same between Python sessions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seed_override</span></code>: If not <code class="docutils literal notranslate"><span class="pre">None</span></code>, this seed will be used instead of the default seed.</p></li>
+</ul>
+</section>
+<section id="saving-and-loading-a-taskloader">
+<h2>Saving and loading a TaskLoader<a class="headerlink" href="#saving-and-loading-a-taskloader" title="Permalink to this heading">#</a></h2>
+<p>You can save the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> object to a file using the <code class="docutils literal notranslate"><span class="pre">.save</span></code> method.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, saving a <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> is only supported it it has been initialised with <code class="docutils literal notranslate"><span class="pre">str</span></code> paths to NetCDF or CSV files,
+allowing the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> to be represented with a configuration file which can then be saved and loaded.
+It would be useful to be able to save <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code>s initialised with <code class="docutils literal notranslate"><span class="pre">xarray</span></code> or <code class="docutils literal notranslate"><span class="pre">pandas</span></code> objects by saving
+the objects to NetCDF or CSV files under the hood.
+There is an <a class="reference external" href="https://github.com/tom-andersson/deepsensor/issues/84">issue</a> open about this.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_fpath</span> <span class="o">=</span> <span class="s2">&quot;tmp.nc&quot;</span>
+<span class="n">era5_ds</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">data_fpath</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">data_fpath</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">data_fpath</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task_loader</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TaskLoader(1 context sets, 1 target sets)
+Context variable IDs: ((&#39;2m_temperature&#39;, &#39;10m_u_component_of_wind&#39;, &#39;10m_v_component_of_wind&#39;),)
+Target variable IDs: ((&#39;2m_temperature&#39;, &#39;10m_u_component_of_wind&#39;, &#39;10m_v_component_of_wind&#39;),)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;tmp/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader_loaded</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span><span class="s2">&quot;tmp/&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task_loader_loaded</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TaskLoader(1 context sets, 1 target sets)
+Context variable IDs: ((&#39;2m_temperature&#39;, &#39;10m_u_component_of_wind&#39;, &#39;10m_v_component_of_wind&#39;),)
+Target variable IDs: ((&#39;2m_temperature&#39;, &#39;10m_u_component_of_wind&#39;, &#39;10m_v_component_of_wind&#39;),)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">data_fpath</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s2">&quot;tmp/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user-guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="task.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Tasks</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="convnp.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ConvNP</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialising-a-taskloader">Initialising a TaskLoader</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calling-a-taskloader">Calling a TaskLoader</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#taskloader-tour">TaskLoader tour</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spatial-interpolation">Spatial interpolation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#interpolating-gridded-xarray-data">Interpolating gridded <code class="docutils literal notranslate"><span class="pre">xarray</span></code> data</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#randomly-sampling-a-float-fraction-of-points">Randomly sampling a <code class="docutils literal notranslate"><span class="pre">float</span></code> fraction of points</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#randomly-sampling-a-int-number-of-points">Randomly sampling a <code class="docutils literal notranslate"><span class="pre">int</span></code> number of points</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#interpolating-pointwise-pandas-data">Interpolating pointwise <code class="docutils literal notranslate"><span class="pre">pandas</span></code> data</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#forecasting">Forecasting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#downscaling">Downscaling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gap-filling">Gap-filling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combinations-of-data-fusion-tasks">Combinations of data fusion tasks</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#controlling-randomness-in-the-taskloader">Controlling randomness in the TaskLoader</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-and-loading-a-taskloader">Saving and loading a TaskLoader</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
