@@ -1006,6 +1006,8 @@ class TaskLoader:
         ] = None,
         split_frac: float = 0.5,
         bbox: Sequence[float] = None,
+        patch_size: Union[float, tuple[float]] = None,
+        stride: Union[float, tuple[float]] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
@@ -1042,6 +1044,10 @@ class TaskLoader:
         bbox : Sequence[float], optional
             Bounding box to spatially slice the data, should be of the form [x1_min, x1_max, x2_min, x2_max].
             Useful when considering the entire available region is computationally prohibitive for model forward pass.
+        patch_size : Union(Tuple|float), optional
+            Only used by patchwise inference. Height and width of patch in x1/x2 normalised coordinates.
+        stride: Union(Tuple|float), optional
+            Only used by patchwise inference. Length of stride between adjacent patches in x1/x2 normalised coordinates.
         datewise_deterministic : bool
             Whether random sampling is datewise_deterministic based on the
             date. Default is ``False``.
@@ -1233,6 +1239,8 @@ class TaskLoader:
         task["time"] = date
         task["ops"] = []
         task["bbox"] = bbox
+        task["patch_size"] = patch_size # store patch_size and stride in task for use in stitching in prediction
+        task["stride"] = stride
         task["X_c"] = []
         task["Y_c"] = []
         if target_sampling is not None:
@@ -1724,6 +1732,8 @@ class TaskLoader:
                                 split_frac=split_frac,
                                 datewise_deterministic=datewise_deterministic,
                                 seed_override=seed_override,
+                                patch_size=patch_size,
+                                stride=stride
                             )
                             for bbox in bboxes
                         ]
@@ -1739,6 +1749,8 @@ class TaskLoader:
                         split_frac=split_frac,
                         datewise_deterministic=datewise_deterministic,
                         seed_override=seed_override,
+                        patch_size=patch_size,
+                        stride=stride
                     )
                     for bbox in bboxes
                 ]
