@@ -735,14 +735,10 @@ class DeepSensorModel(ProbabilisticModel):
             ValueError
                 If ``append_indexes`` are not all the same length as ``X_t``.
         """
-        
         # Get coordinate names of original unnormalised dataset.
-        unnorm_coord_names = {
-                "x1": self.data_processor.raw_spatial_coord_names[0],
-                "x2": self.data_processor.raw_spatial_coord_names[1],
-            }
-
-
+        orig_x1_name = data_processor.x1_name
+        orig_x2_name = data_processor.x2_name
+        
         def get_patches_per_row(preds) -> int:
             """
             Calculate number of patches per row. 
@@ -757,19 +753,18 @@ class DeepSensorModel(ProbabilisticModel):
             """   
             patches_per_row = 0
             vars = list(preds[0][0].data_vars)
-            
-            var = vars[0]  
-            y_val = preds[0][0][var].coords[unnorm_coord_names['x1']].min()  
+            var = vars[0]    
+            x1_val = preds[0][0][var].coords[orig_x1_name].min()  
               
-            for p in preds:
-                if p[0][var].coords[unnorm_coord_names['x1']].min() == y_val:
+            for pred in preds:
+                if pred[0][var].coords[orig_x1_name].min() == x1_val:
                     patches_per_row = patches_per_row + 1  
 
             return patches_per_row
 
 
          
-        def get_patch_overlap(overlap_norm, data_processor, X_t_ds) -> int:
+        def get_patch_overlap(overlap_norm, data_processor, X_t_ds, x1_ascend, x2_ascend) -> int:
             """
             Calculate overlap between adjacent patches in pixels. 
             
@@ -784,12 +779,19 @@ class DeepSensorModel(ProbabilisticModel):
             X_t_ds (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
                 Data array containing target locations to predict at. 
             
+            x1_ascend : str:
+                Boolean defining whether the x1 coords ascend (increase) from top to bottom, default = True. 
+            
+            x2_ascend : str:
+                Boolean defining whether the x2 coords ascend (increase) from left to right, default = True. 
+            
             Returns
             -------
             patch_overlap : tuple (int)
                 Unnormalised size of overlap between adjacent patches. 
             """
-            # Place stride and patch size values in Xarray to pass into unnormalise()
+            # Todo- check if there is simplier and more robust way to convert overlap into pixels. 
+            # Place x1/x2 overlap values in Xarray to pass into unnormalise()
             overlap_list = [0, overlap_norm[0], 0, overlap_norm[1]]
             x1 = xr.DataArray([overlap_list[0], overlap_list[1]], dims='x1', name='x1')
             x2 = xr.DataArray([overlap_list[2], overlap_list[3]], dims='x2', name='x2')
@@ -797,14 +799,23 @@ class DeepSensorModel(ProbabilisticModel):
             
             # Unnormalise coordinates of bounding boxes
             overlap_unnorm_xr = data_processor.unnormalise(overlap_norm_xr)
-            unnorm_overlap_x1 = overlap_unnorm_xr.coords[unnorm_coord_names['x1']].values[1]
-            unnorm_overlap_x2 = overlap_unnorm_xr.coords[unnorm_coord_names['x2']].values[1]
 
-            # Find the position of these indices within the DataArray
-            x_overlap_index = int(np.ceil((np.argmin(np.abs(X_t_ds.coords[unnorm_coord_names['x1']].values - unnorm_overlap_x1))/2)))
-            y_overlap_index = int(np.ceil((np.argmin(np.abs(X_t_ds.coords[unnorm_coord_names['x2']].values - unnorm_overlap_x2))/2)))
-            xy_overlap = (x_overlap_index, y_overlap_index)
-            return xy_overlap
+            unnorm_overlap_x1 = overlap_unnorm_xr.coords[orig_x1_name].values[1]
+            unnorm_overlap_x2 = overlap_unnorm_xr.coords[orig_x2_name].values[1]
+
+            # Find size of overlap for x1/x2 in pixels
+            if x1_ascend:
+                x1_overlap_index = int(np.ceil((np.argmin(np.abs(X_t_ds.coords[orig_x1_name].values - unnorm_overlap_x1))/2)))
+            else:
+                x1_overlap_index = int(np.floor((X_t_ds.coords[orig_x1_name].values.size- int(np.ceil((np.argmin(np.abs(X_t_ds.coords[orig_x1_name].values- unnorm_overlap_x1))))))/2))
+            if x2_ascend:
+                x2_overlap_index = int(np.ceil((np.argmin(np.abs(X_t_ds.coords[orig_x2_name].values - unnorm_overlap_x2))/2)))
+            else:
+                x2_overlap_index = int(np.floor((X_t_ds.coords[orig_x2_name].values.size- int(np.ceil((np.argmin(np.abs(X_t_ds.coords[orig_x2_name].values- unnorm_overlap_x2))))))/2))
+
+            x1_x2_overlap = (x1_overlap_index, x2_overlap_index)
+
+            return x1_x2_overlap
 
         def get_index(*args, x1 = True) -> Union[int, Tuple[List[int], List[int]]]:
             """
@@ -831,19 +842,19 @@ class DeepSensorModel(ProbabilisticModel):
             if len(args) == 1:
                 patch_coord = args
                 if x1:
-                    coord_index = np.argmin(np.abs(X_t.coords[unnorm_coord_names['x1']].values - patch_coord))
+                    coord_index = np.argmin(np.abs(X_t.coords[orig_x1_name].values - patch_coord))
                 else:
-                    coord_index = np.argmin(np.abs(X_t.coords[unnorm_coord_names['x2']].values - patch_coord)) 
+                    coord_index = np.argmin(np.abs(X_t.coords[orig_x2_name].values - patch_coord)) 
                 return coord_index
 
             elif len(args) == 2:
                 patch_x1, patch_x2 = args       
-                x1_index = [np.argmin(np.abs(X_t.coords[unnorm_coord_names['x1']].values - target_x1)) for target_x1 in patch_x1]           
-                x2_index = [np.argmin(np.abs(X_t.coords[unnorm_coord_names['x2']].values - target_x2)) for target_x2 in patch_x2]
+                x1_index = [np.argmin(np.abs(X_t.coords[orig_x1_name].values - target_x1)) for target_x1 in patch_x1]           
+                x2_index = [np.argmin(np.abs(X_t.coords[orig_x2_name].values - target_x2)) for target_x2 in patch_x2]
                 return (x1_index, x2_index)
             
         
-        def stitch_clipped_predictions(patch_preds, patch_overlap, patches_per_row) -> dict:
+        def stitch_clipped_predictions(patch_preds, patch_overlap, patches_per_row, x1_ascend=True, x2_ascend=True) -> dict:
             """
             Stitch patchwise predictions to form prediction at original extent. 
 
@@ -857,6 +868,12 @@ class DeepSensorModel(ProbabilisticModel):
             
             patches_per_row: int
                 Number of patchwise predictions in each row.
+            
+            x1_ascend : str
+                Boolean defining whether the x1 coords ascend (increase) from top to bottom, default = True. 
+            
+            x2_ascend : str
+                Boolean defining whether the x2 coords ascend (increase) from left to right, default = True. 
            
             Returns
             -------
@@ -864,46 +881,79 @@ class DeepSensorModel(ProbabilisticModel):
                 Dictionary object containing the stitched model predictions.
             """
 
+            # Get row/col index values of X_t. Order depends on whether coordinate is ascending or descending.
+            if x1_ascend:
+                data_x1 = X_t.coords[orig_x1_name].min().values, X_t.coords[orig_x1_name].max().values
+            else: 
+                data_x1 = X_t.coords[orig_x1_name].max().values, X_t.coords[orig_x1_name].min().values
+            if x2_ascend:
+                data_x2 = X_t.coords[orig_x2_name].min().values, X_t.coords[orig_x2_name].max().values
+            else:
+                data_x2 = X_t.coords[orig_x2_name].max().values, X_t.coords[orig_x2_name].min().values
 
-            
-            data_x1 = X_t.coords[unnorm_coord_names['x1']].min().values, X_t.coords[unnorm_coord_names['x1']].max().values
-            data_x2 = X_t.coords[unnorm_coord_names['x2']].min().values, X_t.coords[unnorm_coord_names['x2']].max().values   
             data_x1_index, data_x2_index = get_index(data_x1, data_x2)
             patches_clipped = {var_name: [] for var_name in patch_preds[0].keys()}
-
 
             for i, patch_pred in enumerate(patch_preds):
                 for var_name, data_array in patch_pred.items(): #previously patch
                     if var_name in patch_pred:
-                        # Get row/col index values of each patch
-                        patch_x1 = data_array.coords[unnorm_coord_names['x1']].min().values, data_array.coords[unnorm_coord_names['x1']].max().values
-                        patch_x2 = data_array.coords[unnorm_coord_names['x2']].min().values, data_array.coords[unnorm_coord_names['x2']].max().values
+                        # Get row/col index values of each patch. Order depends on whether coordinate is ascending or descending.
+                        if x1_ascend:                      
+                            patch_x1 = data_array.coords[orig_x1_name].min().values, data_array.coords[orig_x1_name].max().values
+                        else:
+                            patch_x1 = data_array.coords[orig_x1_name].max().values, data_array.coords[orig_x1_name].min().values
+                        if x2_ascend:
+                            patch_x2 = data_array.coords[orig_x2_name].min().values, data_array.coords[orig_x2_name].max().values
+                        else:
+                            patch_x2 = data_array.coords[orig_x2_name].max().values, data_array.coords[orig_x2_name].min().values
                         patch_x1_index, patch_x2_index =  get_index(patch_x1, patch_x2)
                         
                         b_x1_min, b_x1_max = patch_overlap[0], patch_overlap[0]
                         b_x2_min, b_x2_max = patch_overlap[1], patch_overlap[1]
-                        # Do not remove border for the patches along top and left of dataset
-                        # and change overlap size for last patch in each row and column.
+
+                        """
+                        Do not remove border for the patches along top and left of dataset and change overlap size for last patch in each row and column.
+                        
+                        At end of row (when patch_x2_index = data_x2_index), to calculate the number of pixels to remove from left hand side of patch:
+                        If x2 is ascending, subtract previous patch x2 max value from current patch x2 min value to get bespoke overlap in column pixels.
+                        To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels 
+                        to get the number of pixels to remove from left hand side of patch.
+
+                        If x2 is descending. Subtract current patch max x2 value from previous patch min x2 value to get bespoke overlap in column pixels. 
+                        To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels 
+                        to get the number of pixels to remove from left hand side of patch.
+
+                        """
                         if patch_x2_index[0] == data_x2_index[0]:
                             b_x2_min = 0
                         elif patch_x2_index[1] == data_x2_index[1]:
                             b_x2_max = 0
                             patch_row_prev = preds[i-1]
-                            prev_patch_x2_max = get_index(int(patch_row_prev[var_name].coords[unnorm_coord_names['x2']].max()), x1 = False)
-                            b_x2_min = (prev_patch_x2_max - patch_x2_index[0])-patch_overlap[1]
+                            if x2_ascend:
+                                prev_patch_x2_max = get_index(int(patch_row_prev[var_name].coords[orig_x2_name].max()), x1 = False)
+                                b_x2_min = (prev_patch_x2_max - patch_x2_index[0])-patch_overlap[1]
+                            else:
+                                prev_patch_x2_min = get_index(int(patch_row_prev[var_name].coords[orig_x2_name].min()), x1 = False)
+                                b_x2_min = (patch_x2_index[0] -prev_patch_x2_min)-patch_overlap[1]
 
                         if patch_x1_index[0] == data_x1_index[0]:
                             b_x1_min = 0
                         elif abs(patch_x1_index[1] - data_x1_index[1])<2:
                             b_x1_max = 0
                             patch_prev = preds[i-patches_per_row]
-                            prev_patch_x1_max = get_index(int(patch_prev[var_name].coords[unnorm_coord_names['x1']].max()), x1 = True)
-                            b_x1_min = (prev_patch_x1_max - patch_x1_index[0])- patch_overlap[0]
+                            if x1_ascend:
+                                prev_patch_x1_max = get_index(int(patch_prev[var_name].coords[orig_x1_name].max()), x1 = True)
+                                b_x1_min = (prev_patch_x1_max - patch_x1_index[0])- patch_overlap[0]
+                            else:
+                                prev_patch_x1_min = get_index(int(patch_prev[var_name].coords[orig_x1_name].min()), x1 = True)
+
+                                b_x1_min = (prev_patch_x1_min- patch_x1_index[0])- patch_overlap[0]
+
 
                         patch_clip_x1_min = int(b_x1_min)
-                        patch_clip_x1_max = int(data_array.sizes[unnorm_coord_names['x1']] - b_x1_max)
+                        patch_clip_x1_max = int(data_array.sizes[orig_x1_name] - b_x1_max)
                         patch_clip_x2_min = int(b_x2_min)
-                        patch_clip_x2_max = int(data_array.sizes[unnorm_coord_names['x2']] - b_x2_max)
+                        patch_clip_x2_max = int(data_array.sizes[orig_x2_name] - b_x2_max)
 
                         patch_clip = data_array.isel(y=slice(patch_clip_x1_min, patch_clip_x1_max),
                                                     x=slice(patch_clip_x2_min, patch_clip_x2_max))
@@ -923,27 +973,40 @@ class DeepSensorModel(ProbabilisticModel):
             x2 = xr.DataArray([bbox[2], bbox[3]], dims='x2', name='x2')
             bbox_norm = xr.Dataset(coords={'x1': x1, 'x2': x2})
             bbox_unnorm = data_processor.unnormalise(bbox_norm)
-            unnorm_bbox_x1 = bbox_unnorm[unnorm_coord_names['x1']].values.min(), bbox_unnorm[unnorm_coord_names['x1']].values.max()
-            unnorm_bbox_x2 = bbox_unnorm[unnorm_coord_names['x2']].values.min(), bbox_unnorm[unnorm_coord_names['x2']].values.max()
-            
-            # Determine X_t for patch
-            task_extent_dict = {
-                unnorm_coord_names['x1']: slice(unnorm_bbox_x1[0], unnorm_bbox_x1[1]),
-                unnorm_coord_names['x2']: slice(unnorm_bbox_x2[0], unnorm_bbox_x2[1])
-            }
-            task_X_t = X_t.sel(**task_extent_dict)
+            unnorm_bbox_x1 = bbox_unnorm[orig_x1_name].values.min(), bbox_unnorm[orig_x1_name].values.max()
+            unnorm_bbox_x2 = bbox_unnorm[orig_x2_name].values.min(), bbox_unnorm[orig_x2_name].values.max()
 
+            # Determine X_t for patch, however, cannot assume min/max ordering of slice coordinates
+            # Check the order of coordinates in X_t, sometimes they are increasing or decreasing in order.
+            x1_coords = X_t.coords[orig_x1_name].values
+            x2_coords = X_t.coords[orig_x2_name].values
+
+            if x1_coords[0] < x1_coords[-1]:
+                x1_slice = slice(unnorm_bbox_x1[0], unnorm_bbox_x1[1])
+                x1_ascending = True
+            else:
+                x1_slice = slice(unnorm_bbox_x1[1], unnorm_bbox_x1[0])
+                x1_ascending = False
+
+            if x2_coords[0] < x2_coords[-1]:
+                x2_slice = slice(unnorm_bbox_x2[0], unnorm_bbox_x2[1])
+                x2_ascending = True
+            else:
+                x2_slice = slice(unnorm_bbox_x2[1], unnorm_bbox_x2[0])
+                x2_ascending = False
+
+            # Determine X_t for patch with correct slice direction
+            task_X_t = X_t.sel(**{orig_x1_name: x1_slice, orig_x2_name: x2_slice})
+            
             # Patchwise prediction
             pred = self.predict(task, task_X_t)
             # Append patchwise DeepSensor prediction object to list
             preds.append(pred)
 
-        
         overlap_norm = tuple(patch - stride for patch, stride in zip(patch_size, stride_size))
-        patch_overlap_unnorm = get_patch_overlap(overlap_norm, data_processor, X_t)
-        
+        patch_overlap_unnorm = get_patch_overlap(overlap_norm, data_processor, X_t, x1_ascending, x2_ascending)
         patches_per_row = get_patches_per_row(preds)
-        stitched_prediction = stitch_clipped_predictions(preds, patch_overlap_unnorm, patches_per_row)
+        stitched_prediction = stitch_clipped_predictions(preds, patch_overlap_unnorm, patches_per_row, x1_ascending, x2_ascending)
         
         ## Cast prediction into DeepSensor.Prediction object.
         # Todo: make this into seperate method. 
@@ -953,7 +1016,7 @@ class DeepSensorModel(ProbabilisticModel):
         for var_name_copy, data_array_copy in prediction.items():
 
             # set x and y coords
-            stitched_preds = xr.Dataset(coords={'x1': X_t[unnorm_coord_names['x1']], 'x2': X_t[unnorm_coord_names['x2']]})
+            stitched_preds = xr.Dataset(coords={orig_x1_name: X_t[orig_x1_name], orig_x2_name: X_t[orig_x2_name]})
 
             # Set time to same as patched prediction
             stitched_preds['time'] = data_array_copy['time']
