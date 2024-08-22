@@ -26,37 +26,33 @@ from deepsensor.data.processor import DataProcessor, xarray_to_coord_array_norma
 from deepsensor.model.convnp import ConvNP
 
 
-# from deepsensor.active_learning.acquisition_fns import
-
-
 class TestActiveLearning(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def setUpClass(cls):
 
         # It's safe to share data between tests because the TaskLoader does not modify data
         ds_raw = xr.tutorial.open_dataset("air_temperature")["air"]
-        self.ds_raw = ds_raw
-        self.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
-        self.ds = self.data_processor(ds_raw)
+        cls.ds_raw = ds_raw
+        cls.data_processor = DataProcessor(x1_name="lat", x2_name="lon")
+        cls.ds = cls.data_processor(ds_raw)
         # Set up a model with two context sets and two target sets for generality
-        self.task_loader = TaskLoader(
-            context=[self.ds, self.ds], target=[self.ds, self.ds]
-        )
-        self.model = ConvNP(
-            self.data_processor,
-            self.task_loader,
+        cls.task_loader = TaskLoader(context=[cls.ds, cls.ds], target=[cls.ds, cls.ds])
+        cls.model = ConvNP(
+            cls.data_processor,
+            cls.task_loader,
             unet_channels=(5, 5, 5),
             verbose=False,
         )
 
         # Set up model with aux-at-target data
-        aux_at_targets = self.ds.isel(time=0).drop_vars("time")
-        self.task_loader_with_aux = TaskLoader(
-            context=self.ds, target=self.ds, aux_at_targets=aux_at_targets
+        aux_at_targets = cls.ds.isel(time=0).drop_vars("time")
+        cls.task_loader_with_aux = TaskLoader(
+            context=cls.ds, target=cls.ds, aux_at_targets=aux_at_targets
         )
-        self.model_with_aux = ConvNP(
-            self.data_processor,
-            self.task_loader_with_aux,
+        cls.model_with_aux = ConvNP(
+            cls.data_processor,
+            cls.task_loader_with_aux,
             unet_channels=(5, 5, 5),
             verbose=False,
         )
