@@ -1569,10 +1569,12 @@ class TaskLoader:
         elif patch_strategy == "random":
 
             if patch_size is None:
-                raise ValueError("Patch size must be specified for random patch sampling")
-        
-            coord_bounds = [self.coord_bounds[0:2],self.coord_bounds[2:]]
-            for i,val in enumerate(patch_size):
+                raise ValueError(
+                    "Patch size must be specified for random patch sampling"
+                )
+
+            coord_bounds = [self.coord_bounds[0:2], self.coord_bounds[2:]]
+            for i, val in enumerate(patch_size):
                 if val < coord_bounds[i][0] or val > coord_bounds[i][1]:
                     raise ValueError(
                         f"Values of stride must be between the normalised coordinate bounds of: {self.coord_bounds}. \
@@ -1618,18 +1620,20 @@ class TaskLoader:
 
         elif patch_strategy == "sliding":
             # sliding window sampling of patch
-            
+
             for val in (patch_size, stride):
                 if val is None:
-                    raise ValueError(f"patch_size and stride must be specified for sliding window sampling, got patch_size: {patch_size} and stride: {stride}.")
+                    raise ValueError(
+                        f"patch_size and stride must be specified for sliding window sampling, got patch_size: {patch_size} and stride: {stride}."
+                    )
 
             if stride[0] > patch_size[0] or stride[1] > patch_size[1]:
                 raise Warning(
                     f"stride should generally be smaller than patch_size in the corresponding dimensions. Got: patch_size: {patch_size}, stride: {stride}"
                 )
 
-            coord_bounds = [self.coord_bounds[0:2],self.coord_bounds[2:]]
-            for i in (0,1):
+            coord_bounds = [self.coord_bounds[0:2], self.coord_bounds[2:]]
+            for i in (0, 1):
                 for val in (patch_size[i], stride[i]):
                     if val < coord_bounds[i][0] or val > coord_bounds[i][1]:
                         raise ValueError(
