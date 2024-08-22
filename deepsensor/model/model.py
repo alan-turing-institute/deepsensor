@@ -771,11 +771,11 @@ class DeepSensorModel(ProbabilisticModel):
             X_t_ds (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
                 Data array containing target locations to predict at. 
             
-            x1_ascend : bool:
-                Boolean defining whether the x1 coords ascend (increase) from top to bottom. 
+            x1_ascend : str:
+                Boolean defining whether the x1 coords ascend (increase) from top to bottom, default = True. 
             
-            x2_ascend : bool:
-                Boolean defining whether the x2 coords ascend (increase) from left to right. 
+            x2_ascend : str:
+                Boolean defining whether the x2 coords ascend (increase) from left to right, default = True. 
             
             Returns
             -------
@@ -861,10 +861,10 @@ class DeepSensorModel(ProbabilisticModel):
             patches_per_row: int
                 Number of patchwise predictions in each row.
             
-            x1_ascend : bool
+            x1_ascend : str
                 Boolean defining whether the x1 coords ascend (increase) from top to bottom, default = True. 
             
-            x2_ascend : bool
+            x2_ascend : str
                 Boolean defining whether the x2 coords ascend (increase) from left to right, default = True. 
            
             Returns
@@ -947,8 +947,8 @@ class DeepSensorModel(ProbabilisticModel):
                         patch_clip_x2_min = int(b_x2_min)
                         patch_clip_x2_max = int(data_array.sizes[orig_x2_name] - b_x2_max)
 
-                        patch_clip = data_array.isel(y=slice(patch_clip_x1_min, patch_clip_x1_max),
-                                                    x=slice(patch_clip_x2_min, patch_clip_x2_max))
+                        patch_clip = data_array.isel(**{orig_x1_name: slice(patch_clip_x1_min, patch_clip_x1_max),
+                                                        orig_x2_name: slice(patch_clip_x2_min, patch_clip_x2_max)})
 
 
                         patches_clipped[var_name].append(patch_clip)
