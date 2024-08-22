@@ -526,7 +526,7 @@ class TestModel(unittest.TestCase):
         """Test that ``.predict_patch`` runs correctly."""
 
         patch_size = (0.6, 0.6)
-        stride = (0.5, 0.5)
+        stride = (0.3, 0.3)
 
         tl = TaskLoader(context=self.da, target=self.da)
 
