@@ -191,6 +191,7 @@ class TaskLoader:
         ) = self.infer_context_and_target_var_IDs()
 
         self.coord_bounds = self._compute_global_coordinate_bounds()
+        self.coord_directions = self._compute_x1x2_direction()
 
     def _set_config(self):
         """Instantiate a config dictionary for the TaskLoader object"""
@@ -829,6 +830,52 @@ class TaskLoader:
                 x2_max = var_x2_max
 
         return [x1_min, x1_max, x2_min, x2_max]
+    
+    def _compute_x1x2_direction(self) -> str:
+        """
+        Compute whether the x1 and x2 coords are ascending or descending.
+
+        Returns
+        -------
+        coord_directions: dict(str)
+            String containing two booleans: x1_ascend and x2_ascend, 
+            defining if these coordings increase or decrease from top left corner. 
+ 
+        """      
+
+        for var in itertools.chain(self.context, self.target):
+            if isinstance(var, (xr.Dataset, xr.DataArray)):
+                coord_x1_left= var.x1[0]
+                coord_x1_right= var.x1[-1]
+                coord_x2_top= var.x2[0]
+                coord_x2_bottom= var.x2[-1]
+            #Todo- what to input for pd.dataframe
+            elif isinstance(var, (pd.DataFrame, pd.Series)):
+                var_x1_min = var.index.get_level_values("x1").min()
+                var_x1_max = var.index.get_level_values("x1").max()
+                var_x2_min = var.index.get_level_values("x2").min()
+                var_x2_max = var.index.get_level_values("x2").max()
+
+            x1_ascend = True
+            x2_ascend = True
+            if coord_x1_left < coord_x1_right:
+                x1_ascend = True
+            if coord_x1_left > coord_x1_right:
+                x1_ascend = False
+
+            if coord_x2_top < coord_x2_bottom:
+                x2_ascend = True
+            if coord_x2_top > coord_x2_bottom:
+                x2_ascend = False
+
+
+
+        coord_directions = {
+                "x1": x1_ascend,
+                "x2": x2_ascend,
+            }
+
+        return coord_directions 
 
     def sample_random_window(self, patch_size: Tuple[float]) -> Sequence[float]:
         """
@@ -959,6 +1006,8 @@ class TaskLoader:
         ] = None,
         split_frac: float = 0.5,
         bbox: Sequence[float] = None,
+        patch_size: Union[float, tuple[float]] = None,
+        stride: Union[float, tuple[float]] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
@@ -995,6 +1044,10 @@ class TaskLoader:
         bbox : Sequence[float], optional
             Bounding box to spatially slice the data, should be of the form [x1_min, x1_max, x2_min, x2_max].
             Useful when considering the entire available region is computationally prohibitive for model forward pass.
+        patch_size : Union(Tuple|float), optional
+            Only used by patchwise inference. Height and width of patch in x1/x2 normalised coordinates.
+        stride: Union(Tuple|float), optional
+            Only used by patchwise inference. Length of stride between adjacent patches in x1/x2 normalised coordinates.
         datewise_deterministic : bool
             Whether random sampling is datewise_deterministic based on the
             date. Default is ``False``.
@@ -1186,6 +1239,8 @@ class TaskLoader:
         task["time"] = date
         task["ops"] = []
         task["bbox"] = bbox
+        task["patch_size"] = patch_size # store patch_size and stride in task for use in stitching in prediction
+        task["stride"] = stride
         task["X_c"] = []
         task["Y_c"] = []
         if target_sampling is not None:
@@ -1413,30 +1468,87 @@ class TaskLoader:
             stride = patch_size
 
         dy, dx = stride
-
         # Calculate the global bounds of context and target set.
         x1_min, x1_max, x2_min, x2_max = self.coord_bounds
-
         ## start with first patch top left hand corner at x1_min, x2_min
         patch_list = []
 
-        for y in np.arange(x1_min, x1_max, dy):
-            for x in np.arange(x2_min, x2_max, dx):
-                if y + x1_extend > x1_max:
-                    y0 = x1_max - x1_extend
-                else:
-                    y0 = y
-                if x + x2_extend > x2_max:
-                    x0 = x2_max - x2_extend
-                else:
-                    x0 = x
+        # Todo: simplify these elif statements
+        if self.coord_directions['x1'] == False and self.coord_directions['x2'] == True:
+            for y in np.arange(x1_max, x1_min, -dy):
+                for x in np.arange(x2_min, x2_max, dx):
+                    if y - x1_extend < x1_min:
+                        y0 = x1_min + x1_extend
+                    else:
+                        y0 = y
+                    if x + x2_extend > x2_max:
+                        x0 = x2_max - x2_extend
+                    else:
+                        x0 = x
 
-                # bbox of x1_min, x1_max, x2_min, x2_max per patch
-                bbox = [y0, y0 + x1_extend, x0, x0 + x2_extend]
+                    # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                    bbox = [y0 - x1_extend, y0, x0, x0 + x2_extend]
+                    patch_list.append(bbox)
 
-                patch_list.append(bbox)
+        elif self.coord_directions['x1'] == False and self.coord_directions['x2'] == False:
+            for y in np.arange(x1_max, x1_min, -dy):
+                for x in np.arange(x2_max, x2_min, -dx):
+                    if y - x1_extend < x1_min:
+                        y0 = x1_min + x1_extend
+                    else:
+                        y0 = y
+                    if x - x2_extend < x2_min:
+                        x0 = x2_min + x2_extend
+                    else:
+                        x0 = x
 
-        return patch_list
+                    # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                    bbox = [y0 - x1_extend, y0, x0 - x2_extend, x0]
+                    patch_list.append(bbox)
+
+        elif self.coord_directions['x1'] == True and self.coord_directions['x2'] == False:
+            for y in np.arange(x1_min, x1_max, dy):
+                for x in np.arange(x2_max, x2_min, -dx):
+                    if y + x1_extend > x1_max:
+                        y0 = x1_max - x1_extend
+                    else:
+                        y0 = y
+                    if x - x2_extend < x2_min:
+                        x0 = x2_min + x2_extend
+                    else:
+                        x0 = x
+
+                    # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                    bbox = [y0, y0 + x1_extend, x0 - x2_extend, x0]
+                    patch_list.append(bbox)
+        else:
+            for y in np.arange(x1_min, x1_max, dy):
+                for x in np.arange(x2_min, x2_max, dx):
+                    if y + x1_extend > x1_max:
+                        y0 = x1_max - x1_extend
+                    else:
+                        y0 = y
+                    if x + x2_extend > x2_max:
+                        x0 = x2_max - x2_extend
+                    else:
+                        x0 = x
+
+                    # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                    bbox = [y0, y0 + x1_extend, x0, x0 + x2_extend]
+
+                    patch_list.append(bbox)
+
+        # Remove duplicate patches while preserving order
+        seen = set()
+        unique_patch_list = []
+        for lst in patch_list:
+            # Convert list to tuple for immutability
+            tuple_lst = tuple(lst)
+            if tuple_lst not in seen:
+                seen.add(tuple_lst)
+                unique_patch_list.append(lst)
+
+        return unique_patch_list
 
     def __call__(
         self,
@@ -1655,6 +1767,8 @@ class TaskLoader:
                                 split_frac=split_frac,
                                 datewise_deterministic=datewise_deterministic,
                                 seed_override=seed_override,
+                                patch_size=patch_size,
+                                stride=stride
                             )
                             for bbox in bboxes
                         ]
@@ -1670,6 +1784,8 @@ class TaskLoader:
                         split_frac=split_frac,
                         datewise_deterministic=datewise_deterministic,
                         seed_override=seed_override,
+                        patch_size=patch_size,
+                        stride=stride
                     )
                     for bbox in bboxes
                 ]

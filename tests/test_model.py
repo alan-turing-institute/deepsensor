@@ -525,12 +525,12 @@ class TestModel(unittest.TestCase):
     def test_patchwise_prediction(self):
         """Test that ``.predict_patch`` runs correctly."""
 
-        patch_size = (0.6, 0.6)
-        stride = (0.3, 0.3)
+        patch_size = (0.2, 0.2)
+        stride = (0.1, 0.1)
 
         tl = TaskLoader(context=self.da, target=self.da)
 
-        task = tl(
+        tasks = tl(
             "2020-01-01",
             context_sampling="all",
             target_sampling="all",
@@ -542,11 +542,9 @@ class TestModel(unittest.TestCase):
         model = ConvNP(self.dp, tl)
 
         pred = model.predict_patch(
-            tasks=task,
+            tasks=tasks,
             X_t=self.da,
             data_processor=self.dp,
-            stride=stride,
-            patch_size=patch_size,
         )
 
         # gridded predictions
