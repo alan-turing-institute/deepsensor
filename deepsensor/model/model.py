@@ -771,11 +771,11 @@ class DeepSensorModel(ProbabilisticModel):
             X_t_ds (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
                 Data array containing target locations to predict at. 
             
-            x1_ascend : str:
-                Boolean defining whether the x1 coords ascend (increase) from top to bottom, default = True. 
+            x1_ascend : bool:
+                Boolean defining whether the x1 coords ascend (increase) from top to bottom. 
             
-            x2_ascend : str:
-                Boolean defining whether the x2 coords ascend (increase) from left to right, default = True. 
+            x2_ascend : bool:
+                Boolean defining whether the x2 coords ascend (increase) from left to right. 
             
             Returns
             -------
@@ -861,10 +861,10 @@ class DeepSensorModel(ProbabilisticModel):
             patches_per_row: int
                 Number of patchwise predictions in each row.
             
-            x1_ascend : str
+            x1_ascend : bool
                 Boolean defining whether the x1 coords ascend (increase) from top to bottom, default = True. 
             
-            x2_ascend : str
+            x2_ascend : bool
                 Boolean defining whether the x2 coords ascend (increase) from left to right, default = True. 
            
             Returns
