@@ -869,7 +869,7 @@ class DeepSensorModel(ProbabilisticModel):
             patches_clipped = {var_name: [] for var_name in patch_preds[0].keys()}
 
             for i, patch_pred in enumerate(patch_preds):
-                for var_name, data_array in patch_pred.items():  # previously patch
+                for var_name, data_array in patch_pred.items():
                     if var_name in patch_pred:
                         # Get row/col index values of each patch
                         patch_x1 = data_array.coords[unnorm_coord_names['x1']].min().values, data_array.coords[unnorm_coord_names['x1']].max().values
