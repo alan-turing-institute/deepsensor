@@ -960,8 +960,11 @@ class DeepSensorModel(ProbabilisticModel):
 
             return combined
 
-        # sanitise patch_size and stride arguments
+        # load patch_size and stride from task
+        patch_size = tasks[0]["patch_size"]
+        stride = tasks[0]["stride"]
 
+        # sanitise patch_size and stride arguments
         if isinstance(patch_size, float) and patch_size is not None:
             patch_size = (patch_size, patch_size)
 
@@ -1033,7 +1036,7 @@ class DeepSensorModel(ProbabilisticModel):
             # Append patchwise DeepSensor prediction object to list
             preds.append(pred)
 
-        overlap_norm = tuple(patch - stride for patch, stride in zip(task["patch_size"], task["stride"]))
+        overlap_norm = tuple(patch - stride for patch, stride in zip(patch_size, stride))
         patch_overlap_unnorm = get_patch_overlap(overlap_norm, data_processor, X_t, x1_ascending, x2_ascending)
 
         patches_per_row = get_patches_per_row(preds)
