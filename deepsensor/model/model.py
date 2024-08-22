@@ -930,8 +930,8 @@ class DeepSensorModel(ProbabilisticModel):
             stride = (stride, stride)
 
         if stride[0] > patch_size[0] or stride[1] > patch_size[1]:
-            raise ValueError(
-                f"stride must be smaller than patch_size in the corresponding dimensions. Got: patch_size: {patch_size}, stride: {stride}"
+            raise Warning(
+                f"stride should generally be smaller than patch_size in the corresponding dimensions. Got: patch_size: {patch_size}, stride: {stride}"
             )
 
         # Get coordinate names of original unnormalised dataset.

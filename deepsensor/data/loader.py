@@ -1624,8 +1624,8 @@ class TaskLoader:
                     raise ValueError(f"patch_size and stride must be specified for sliding window sampling, got patch_size: {patch_size} and stride: {stride}.")
 
             if stride[0] > patch_size[0] or stride[1] > patch_size[1]:
-                raise ValueError(
-                    f"stride must be smaller than patch_size in the corresponding dimensions. Got: patch_size: {patch_size}, stride: {stride}"
+                raise Warning(
+                    f"stride should generally be smaller than patch_size in the corresponding dimensions. Got: patch_size: {patch_size}, stride: {stride}"
                 )
 
             coord_bounds = [self.coord_bounds[0:2],self.coord_bounds[2:]]
