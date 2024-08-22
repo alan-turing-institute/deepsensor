@@ -1531,10 +1531,11 @@ class TaskLoader:
                 Task object or list of task objects for each date containing
                 the context and target data.
         """
-        assert patch_strategy in [None, "random", "sliding"], (
-            f"Invalid patch strategy {patch_strategy}. "
-            f"Must be one of [None, 'random', 'sliding']."
-        )
+        if patch_strategy not in [None, "random", "sliding"]:
+            raise ValueError(
+                f"Invalid patch strategy {patch_strategy}. "
+                f"Must be one of [None, 'random', 'sliding']."
+            )
 
         if isinstance(patch_size, float) and patch_size is not None:
             patch_size = (patch_size, patch_size)
@@ -1567,10 +1568,9 @@ class TaskLoader:
 
         elif patch_strategy == "random":
 
-            assert (
-                patch_size is not None
-            ), "Patch size must be specified for random patch sampling"
-
+            if patch_size is None:
+                raise ValueError("Patch size must be specified for random patch sampling")
+        
             coord_bounds = [self.coord_bounds[0:2],self.coord_bounds[2:]]
             for i,val in enumerate(patch_size):
                 if val < coord_bounds[i][0] or val > coord_bounds[i][1]:
@@ -1618,13 +1618,10 @@ class TaskLoader:
 
         elif patch_strategy == "sliding":
             # sliding window sampling of patch
-            assert (
-                patch_size is not None
-            ), "patch_size must be specified for sliding window sampling"
-
-            assert (
-                stride is not None
-            ), "stride must be specified for sliding window sampling"
+            
+            for val in (patch_size, stride):
+                if val is None:
+                    raise ValueError(f"patch_size and stride must be specified for sliding window sampling, got patch_size: {patch_size} and stride: {stride}.")
 
             if stride[0] > patch_size[0] or stride[1] > patch_size[1]:
                 raise ValueError(
