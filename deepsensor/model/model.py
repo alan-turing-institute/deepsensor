@@ -933,6 +933,15 @@ class DeepSensorModel(ProbabilisticModel):
             raise ValueError(
                 f"stride must be smaller than patch_size in the corresponding dimensions for patchwise prediction. Got: patch_size: {patch_size}, stride: {stride}"
             )
+        
+        # patchwise prediction does not yet support more than a single date
+        num_task_dates = len(set([t["time"] for t in tasks]))
+        if num_task_dates > 1:
+            raise NotImplementedError(
+                f"Patchwise prediction does not yet support more than a single date at a time, got {num_task_dates}. \n\
+                                      Contributions to the DeepSensor package are very welcome. \n\
+                                      Please see the contributing guide at https://alan-turing-institute.github.io/deepsensor/community/contributing.html"
+            )
 
         # Get coordinate names of original unnormalised dataset.
         unnorm_coord_names = {
