@@ -52,7 +52,9 @@
         "bug",
         "mentoring",
         "ideas",
-        "research"
+        "research",
+        "code",
+        "test"
       ]
     },
     {
@@ -186,7 +188,9 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/24752124?v=4",
       "profile": "http://davidwilby.dev",
       "contributions": [
-        "doc"
+        "doc",
+        "test",
+        "maintenance"
       ]
     }
   ]
