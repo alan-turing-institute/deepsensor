@@ -3,6 +3,7 @@ import itertools
 import tempfile
 
 from parameterized import parameterized
+from hypothesis import example, given, strategies as st
 
 import os
 import xarray as xr
@@ -553,11 +554,12 @@ class TestModel(unittest.TestCase):
         with self.assertRaises(AttributeError):
             model.predict(task, X_t=self.da, pred_params=["invalid_param"])
 
-    def test_patchwise_prediction(self):
+    @given(st.data())
+    def test_patchwise_prediction(self, data):
         """Test that ``.predict_patch`` runs correctly."""
 
-        patch_size = (0.2, 0.2)
-        stride = (0.1, 0.1)
+        patch_size = data.draw(st.floats(min_value=0.1, max_value=1.0))
+        stride = data.draw(st.floats(min_value=0.1, max_value=patch_size))
 
         tl = TaskLoader(context=self.da, target=self.da)
 

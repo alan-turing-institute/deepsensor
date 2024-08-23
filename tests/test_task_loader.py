@@ -343,7 +343,7 @@ class TestTaskLoader(unittest.TestCase):
             num_samples_per_date=2,
         )
 
-    @parameterized.expand([[(0.2, 0.2), (1, 1)], [(0.3, 0.4), (1, 1)]])
+    @parameterized.expand([[0.5, 0.1], [(0.3, 0.4), (0.1, 0.1)]])
     def test_sliding_window(self, patch_size, stride) -> None:
         """Test sliding window sampling."""
         # need to redefine the data generators because the patch size samplin
@@ -383,6 +383,30 @@ class TestTaskLoader(unittest.TestCase):
             patch_strategy="sliding",
             stride=stride,
         )
+
+    @parameterized.expand(
+    [
+        ("sliding", (0.5, 0.5), (0.6, 0.6)), # patch_size and stride as tuples
+        ("sliding", 0.5, 0.6),               # as floats
+        ("sliding", 1.0, 1.2),               # one argument above allowed range
+        ("sliding", -0.1, 0.6),              # and below allowed range
+        ("random", 1.1, None)                # for sliding window as well
+    ]
+    )
+    def test_patchwise_task_loader_parameter_handling(self, patch_strategy, patch_size, stride):
+        """Test that correct errors and warnings are raised by ``.predict_patch``."""
+
+        tl = TaskLoader(context=self.da, target=self.da)
+
+        with self.assertRaises(ValueError):
+            tl(
+                "2020-01-01",
+                context_sampling="all",
+                target_sampling="all",
+                patch_strategy=patch_strategy,
+                patch_size=patch_size,
+                stride=stride,
+            )
 
     def test_saving_and_loading(self):
         """Test saving and loading TaskLoader"""

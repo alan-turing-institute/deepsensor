@@ -620,7 +620,6 @@ class DeepSensorModel(ProbabilisticModel):
 
         return pred
 
-
     def predict_patch(
         self,
         tasks: Union[List[Task], Task],
@@ -652,7 +651,6 @@ class DeepSensorModel(ProbabilisticModel):
         append_indexes: dict = None,
         progress_bar: int = 0,
         verbose: bool = False,
-
     ) -> Prediction:
         """
         Predict on a regular grid or at off-grid locations.
@@ -735,16 +733,16 @@ class DeepSensorModel(ProbabilisticModel):
         
         def get_patches_per_row(preds) -> int:
             """
-            Calculate number of patches per row. 
-            Required to stitch patches back together. 
+            Calculate number of patches per row.
+            Required to stitch patches back together.
             Args:
                 preds (List[class:`~.model.pred.Prediction`]):
                         A list of `dict`-like objects containing patchwise predictions.
-            
+
             Returns:
                 patches_per_row: int
                     Number of patches per row.
-            """   
+            """
             patches_per_row = 0
             vars = list(preds[0][0].data_vars)
             var = vars[0]    
@@ -760,15 +758,15 @@ class DeepSensorModel(ProbabilisticModel):
          
         def get_patch_overlap(overlap_norm, data_processor, X_t_ds, x1_ascend, x2_ascend) -> int:
             """
-            Calculate overlap between adjacent patches in pixels. 
-            
+            Calculate overlap between adjacent patches in pixels.
+
             Parameters
             ----------
-            overlap_norm : tuple[float]. 
+            overlap_norm : tuple[float].
                 Normalised size of overlap in x1/x2.
-            
+
             data_processor (:class:`~.data.processor.DataProcessor`):
-                Used for unnormalising the coordinates of the bounding boxes of patches. 
+                Used for unnormalising the coordinates of the bounding boxes of patches.
 
             X_t_ds (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
                 Data array containing target locations to predict at. 
@@ -782,15 +780,15 @@ class DeepSensorModel(ProbabilisticModel):
             Returns
             -------
             patch_overlap : tuple (int)
-                Unnormalised size of overlap between adjacent patches. 
+                Unnormalised size of overlap between adjacent patches.
             """
             # Todo- check if there is simplier and more robust way to convert overlap into pixels. 
             # Place x1/x2 overlap values in Xarray to pass into unnormalise()
             overlap_list = [0, overlap_norm[0], 0, overlap_norm[1]]
-            x1 = xr.DataArray([overlap_list[0], overlap_list[1]], dims='x1', name='x1')
-            x2 = xr.DataArray([overlap_list[2], overlap_list[3]], dims='x2', name='x2')
-            overlap_norm_xr = xr.Dataset(coords={'x1': x1, 'x2': x2})
-            
+            x1 = xr.DataArray([overlap_list[0], overlap_list[1]], dims="x1", name="x1")
+            x2 = xr.DataArray([overlap_list[2], overlap_list[3]], dims="x2", name="x2")
+            overlap_norm_xr = xr.Dataset(coords={"x1": x1, "x2": x2})
+
             # Unnormalise coordinates of bounding boxes
             overlap_unnorm_xr = data_processor.unnormalise(overlap_norm_xr)
 
@@ -811,10 +809,10 @@ class DeepSensorModel(ProbabilisticModel):
 
             return x1_x2_overlap
 
-        def get_index(*args, x1 = True) -> Union[int, Tuple[List[int], List[int]]]:
+        def get_index(*args, x1=True) -> Union[int, Tuple[List[int], List[int]]]:
             """
             Convert coordinates into pixel row/column (index).
-            
+
             Parameters
             ----------
             args : tuple
@@ -823,14 +821,14 @@ class DeepSensorModel(ProbabilisticModel):
 
             x1 : bool, optional
                 If True, compute index for x1 (default is True).
-            
+
             Returns
             -------
                 Union[int, Tuple[List[int], List[int]]]
                 If one argument is provided and x1 is True or False, returns the index position.
                 If two arguments are provided, returns a tuple containing two lists:
                 - First list: indices corresponding to x1 coordinates.
-                - Second list: indices corresponding to x2 coordinates.  
+                - Second list: indices corresponding to x2 coordinates.
 
             """
             if len(args) == 1:
@@ -850,16 +848,16 @@ class DeepSensorModel(ProbabilisticModel):
         
         def stitch_clipped_predictions(patch_preds, patch_overlap, patches_per_row, x1_ascend=True, x2_ascend=True) -> dict:
             """
-            Stitch patchwise predictions to form prediction at original extent. 
+            Stitch patchwise predictions to form prediction at original extent.
 
             Parameters
             ----------
             patch_preds : list (class:`~.model.pred.Prediction`)
                 List of patchwise predictions
-            
+
             patch_overlap: int
                 Overlap between adjacent patches in pixels.
-            
+
             patches_per_row: int
                 Number of patchwise predictions in each row.
             
@@ -889,7 +887,7 @@ class DeepSensorModel(ProbabilisticModel):
             patches_clipped = {var_name: [] for var_name in patch_preds[0].keys()}
 
             for i, patch_pred in enumerate(patch_preds):
-                for var_name, data_array in patch_pred.items(): #previously patch
+                for var_name, data_array in patch_pred.items():
                     if var_name in patch_pred:
                         # Get row/col index values of each patch. Order depends on whether coordinate is ascending or descending.
                         if x1_ascend:                      
@@ -932,7 +930,7 @@ class DeepSensorModel(ProbabilisticModel):
 
                         if patch_x1_index[0] == data_x1_index[0]:
                             b_x1_min = 0
-                        elif abs(patch_x1_index[1] - data_x1_index[1])<2:
+                        elif abs(patch_x1_index[1] - data_x1_index[1]) < 2:
                             b_x1_max = 0
                             patch_prev = preds[i-patches_per_row]
                             if x1_ascend:
@@ -949,23 +947,64 @@ class DeepSensorModel(ProbabilisticModel):
                         patch_clip_x2_min = int(b_x2_min)
                         patch_clip_x2_max = int(data_array.sizes[orig_x2_name] - b_x2_max)
 
-                        patch_clip = data_array.isel(y=slice(patch_clip_x1_min, patch_clip_x1_max),
-                                                    x=slice(patch_clip_x2_min, patch_clip_x2_max))
+                        patch_clip = data_array.isel(**{orig_x1_name: slice(patch_clip_x1_min, patch_clip_x1_max),
+                                                        orig_x2_name: slice(patch_clip_x2_min, patch_clip_x2_max)})
+
 
                         patches_clipped[var_name].append(patch_clip)
 
-            combined = {var_name: xr.combine_by_coords(patches, compat='no_conflicts') for var_name, patches in patches_clipped.items()}
+            combined = {
+                var_name: xr.combine_by_coords(patches, compat="no_conflicts")
+                for var_name, patches in patches_clipped.items()
+            }
 
             return combined
+
+        # load patch_size and stride from task
+        patch_size = tasks[0]["patch_size"]
+        stride = tasks[0]["stride"]
+
+        # sanitise patch_size and stride arguments
+        if isinstance(patch_size, float) and patch_size is not None:
+            patch_size = (patch_size, patch_size)
+
+        if isinstance(stride, float) and stride is not None:
+            stride = (stride, stride)
+
+        if stride[0] > patch_size[0] or stride[1] > patch_size[1]:
+            raise ValueError(
+                f"stride must be smaller than patch_size in the corresponding dimensions for patchwise prediction. Got: patch_size: {patch_size}, stride: {stride}"
+            )
+
+        # patchwise prediction does not yet support more than a single date
+        num_task_dates = len(set([t["time"] for t in tasks]))
+        if num_task_dates > 1:
+            raise NotImplementedError(
+                f"Patchwise prediction does not yet support more than a single date at a time, got {num_task_dates}. \n\
+                                      Contributions to the DeepSensor package are very welcome. \n\
+                                      Please see the contributing guide at https://alan-turing-institute.github.io/deepsensor/community/contributing.html"
+            )
+
+        # tasks should be iterable, if only one is provided, make it a list
+        if type(tasks) is Task:
+            tasks = [tasks]
 
         # Perform patchwise predictions
         preds = []
         for task in tasks:
-            bbox = task['bbox']
+            bbox = task["bbox"]
+
+            if bbox is None:
+                raise AttributeError(
+                    "For patchwise prediction, only tasks generated using a patch_strategy of 'sliding' are valid. \
+                        This task has a bbox value of None, indicating that it was generated with a patch_strategy of \
+                            'random' or None."
+                )
+
             # Unnormalise coordinates of bounding box of patch
-            x1 = xr.DataArray([bbox[0], bbox[1]], dims='x1', name='x1')
-            x2 = xr.DataArray([bbox[2], bbox[3]], dims='x2', name='x2')
-            bbox_norm = xr.Dataset(coords={'x1': x1, 'x2': x2})
+            x1 = xr.DataArray([bbox[0], bbox[1]], dims="x1", name="x1")
+            x2 = xr.DataArray([bbox[2], bbox[3]], dims="x2", name="x2")
+            bbox_norm = xr.Dataset(coords={"x1": x1, "x2": x2})
             bbox_unnorm = data_processor.unnormalise(bbox_norm)
             unnorm_bbox_x1 = bbox_unnorm[orig_x1_name].values.min(), bbox_unnorm[orig_x1_name].values.max()
             unnorm_bbox_x2 = bbox_unnorm[orig_x2_name].values.min(), bbox_unnorm[orig_x2_name].values.max()
@@ -997,15 +1036,15 @@ class DeepSensorModel(ProbabilisticModel):
             # Append patchwise DeepSensor prediction object to list
             preds.append(pred)
 
-        overlap_norm = tuple(patch - stride for patch, stride in zip(task["patch_size"], task["stride"]))
-        patch_overlap_unnorm = get_patch_overlap(overlap_norm, data_processor, X_t)
+        overlap_norm = tuple(patch - stride for patch, stride in zip(patch_size, stride))
+        patch_overlap_unnorm = get_patch_overlap(overlap_norm, data_processor, X_t, x1_ascending, x2_ascending)
 
         patches_per_row = get_patches_per_row(preds)
         stitched_prediction = stitch_clipped_predictions(preds, patch_overlap_unnorm, patches_per_row, x1_ascending, x2_ascending)
         
         ## Cast prediction into DeepSensor.Prediction object.
-        # Todo: make this into seperate method. 
-        prediction= copy.deepcopy(preds[0])
+        # TODO make this into seperate method.
+        prediction = copy.deepcopy(preds[0])
 
         # Generate new blank DeepSensor.prediction object in original coordinate system.
         for var_name_copy, data_array_copy in prediction.items():
@@ -1014,16 +1053,17 @@ class DeepSensorModel(ProbabilisticModel):
             stitched_preds = xr.Dataset(coords={orig_x1_name: X_t[orig_x1_name], orig_x2_name: X_t[orig_x2_name]})
 
             # Set time to same as patched prediction
-            stitched_preds['time'] = data_array_copy['time']
+            stitched_preds["time"] = data_array_copy["time"]
 
             # set variable names to those in patched prediction, make values blank
             for var_name_i in data_array_copy.data_vars:
                 stitched_preds[var_name_i] = data_array_copy[var_name_i]
                 stitched_preds[var_name_i][:] = np.nan
-            prediction[var_name_copy]= stitched_preds
+            prediction[var_name_copy] = stitched_preds
             prediction[var_name_copy] = stitched_prediction[var_name_copy]
 
         return prediction
+
 
 def main():  # pragma: no cover
     import deepsensor.tensorflow

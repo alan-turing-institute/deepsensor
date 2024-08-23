@@ -959,7 +959,7 @@ class TaskLoader:
         Returns:
             var (...)
                 Sliced variable.
-        
+
         Raises:
             ValueError
                 If the variable is of an unknown type.
@@ -1470,7 +1470,7 @@ class TaskLoader:
         # define stride length in x1/x2 or set to patch_size if undefined
         if stride is None:
             stride = patch_size
-        
+
         dy, dx = stride
         # Calculate the global bounds of context and target set.
         x1_min, x1_max, x2_min, x2_max = self.coord_bounds
@@ -1574,9 +1574,9 @@ class TaskLoader:
             ]
         ] = None,
         split_frac: float = 0.5,
-        patch_size: Sequence[float] = None,
+        patch_size: Union[float, tuple[float]] = None,
         patch_strategy: Optional[str] = None,
-        stride: Optional[Sequence[int]] = None,
+        stride: Union[float, tuple[float]] = None,
         num_samples_per_date: int = 1,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
@@ -1624,14 +1624,16 @@ class TaskLoader:
                 the "split" sampling strategy for linked context and target set
                 pairs. The remaining observations are used for the target set.
                 Default is 0.5.
-            patch_size : Sequence[float], optional
-                Desired patch size in x1/x2 used for patchwise task generation. Usefule when considering
-                the entire available region is computationally prohibitive for model forward pass
+            patch_size : Union[float, tuple[float]], optional
+                Desired patch size in x1/x2 used for patchwise task generation. Useful when considering
+                the entire available region is computationally prohibitive for model forward pass.
+                If passed a single float, will use value for both x1 & x2.
             patch_strategy:
                 Patch strategy to use for patchwise task generation. Default is None.
                 Possible options are 'random' or 'sliding'.
-            stride: Sequence[int], optional
+            stride: Union[float, tuple[float]], optional
                 Step size between each sliding window patch along x1 and x2 axis. Default is None.
+                If passed a single float, will use value for both x1 & x2.
             datewise_deterministic (bool, optional):
                 Whether random sampling is datewise deterministic based on the
                 date. Default is ``False``.
@@ -1645,10 +1647,17 @@ class TaskLoader:
                 Task object or list of task objects for each date containing
                 the context and target data.
         """
-        assert patch_strategy in [None, "random", "sliding"], (
-            f"Invalid patch strategy {patch_strategy}. "
-            f"Must be one of [None, 'random', 'sliding']."
-        )
+        if patch_strategy not in [None, "random", "sliding"]:
+            raise ValueError(
+                f"Invalid patch strategy {patch_strategy}. "
+                f"Must be one of [None, 'random', 'sliding']."
+            )
+
+        if isinstance(patch_size, float) and patch_size is not None:
+            patch_size = (patch_size, patch_size)
+
+        if isinstance(stride, float) and stride is not None:
+            stride = (stride, stride)
 
         if patch_strategy is None:
             if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
@@ -1674,10 +1683,19 @@ class TaskLoader:
                 )
 
         elif patch_strategy == "random":
-            
-            assert (
-                patch_size is not None
-            ), "Patch size must be specified for random patch sampling"
+
+            if patch_size is None:
+                raise ValueError(
+                    "Patch size must be specified for random patch sampling"
+                )
+
+            coord_bounds = [self.coord_bounds[0:2], self.coord_bounds[2:]]
+            for i, val in enumerate(patch_size):
+                if val < coord_bounds[i][0] or val > coord_bounds[i][1]:
+                    raise ValueError(
+                        f"Values of stride must be between the normalised coordinate bounds of: {self.coord_bounds}. \
+                            Got: patch_size: {patch_size}."
+                    )
 
             if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
                 for d in date:
@@ -1700,27 +1718,44 @@ class TaskLoader:
 
             else:
                 bboxes = [
-                        self.sample_random_window(patch_size)
-                        for _ in range(num_samples_per_date)
-                    ]
+                    self.sample_random_window(patch_size)
+                    for _ in range(num_samples_per_date)
+                ]
                 tasks = [
-                        self.task_generation(
-                            date,
-                            bbox=bbox,
-                            context_sampling=context_sampling,
-                            target_sampling=target_sampling,
-                            split_frac=split_frac,
-                            datewise_deterministic=datewise_deterministic,
-                            seed_override=seed_override,
-                        )
-                        for bbox in bboxes
-                    ]
+                    self.task_generation(
+                        date,
+                        bbox=bbox,
+                        context_sampling=context_sampling,
+                        target_sampling=target_sampling,
+                        split_frac=split_frac,
+                        datewise_deterministic=datewise_deterministic,
+                        seed_override=seed_override,
+                    )
+                    for bbox in bboxes
+                ]
 
         elif patch_strategy == "sliding":
             # sliding window sampling of patch
-            assert (
-                patch_size is not None
-            ), "Patch size must be specified for sliding window sampling"
+
+            for val in (patch_size, stride):
+                if val is None:
+                    raise ValueError(
+                        f"patch_size and stride must be specified for sliding window sampling, got patch_size: {patch_size} and stride: {stride}."
+                    )
+
+            if stride[0] > patch_size[0] or stride[1] > patch_size[1]:
+                raise Warning(
+                    f"stride should generally be smaller than patch_size in the corresponding dimensions. Got: patch_size: {patch_size}, stride: {stride}"
+                )
+
+            coord_bounds = [self.coord_bounds[0:2], self.coord_bounds[2:]]
+            for i in (0, 1):
+                for val in (patch_size[i], stride[i]):
+                    if val < coord_bounds[i][0] or val > coord_bounds[i][1]:
+                        raise ValueError(
+                            f"Values of stride and patch_size must be between the normalised coordinate bounds of: {self.coord_bounds}. \
+                                Got: patch_size: {patch_size}, stride: {stride}"
+                        )
 
             if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
                 tasks = []

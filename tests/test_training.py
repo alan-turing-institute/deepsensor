@@ -116,9 +116,9 @@ class TestTraining(unittest.TestCase):
         loss = np.mean(epoch_losses)
         self.assertFalse(np.isnan(loss))
 
-    def test_patch_wise_training(self):
+    def test_patchwise_training(self):
         """
-        Test model training with patch-wise tasks.
+        Test model training with patchwise tasks.
         """
         tl = TaskLoader(context=self.da, target=self.da)
         model = ConvNP(self.data_processor, tl, unet_channels=(5, 5, 5), verbose=False)
@@ -126,7 +126,7 @@ class TestTraining(unittest.TestCase):
         # generate training tasks
         n_train_dates = 10
         dates = [np.random.choice(self.da.time.values) for i in range(n_train_dates)]
-        train_tasks = tl.generate_tasks(
+        train_tasks = tl(
             dates,
             context_sampling="all",
             target_sampling="all",
@@ -160,19 +160,27 @@ class TestTraining(unittest.TestCase):
         # generate training tasks
         n_train_dates = 3
         dates = [np.random.choice(self.da.time.values) for i in range(n_train_dates)]
-        train_tasks = tl.generate_tasks(
+        train_tasks = tl(
             dates,
             context_sampling="all",
             target_sampling="all",
             patch_strategy="sliding",
-            patch_size=(0.5, 0.5),
-            stride=(1, 1),
+            patch_size=(0.4, 0.4),
+            stride=(0.1, 0.1),
         )
 
         # Train
         trainer = Trainer(model, lr=5e-5)
         batch_size = None
         n_epochs = 2
+        epoch_losses = []
+        for epoch in tqdm(range(n_epochs)):
+            batch_losses = trainer(train_tasks, batch_size=batch_size)
+            epoch_losses.append(np.mean(batch_losses))
+
+        # Check for NaNs in the loss
+        loss = np.mean(epoch_losses)
+        self.assertFalse(np.isnan(loss))
 
     def test_training_multidim(self):
         """A basic test of the training loop with multidimensional context sets"""
