@@ -842,7 +842,7 @@ class TaskLoader:
         Returns
         -------
         coord_directions: dict(str)
-            String containing two booleans: x1_ascend and x2_ascend, 
+            Dictionary containing two keys: x1 and x2, with boolean values
             defining if these coordings increase or decrease from top left corner. 
  
         """      
@@ -853,7 +853,8 @@ class TaskLoader:
                 coord_x1_right= var.x1[-1]
                 coord_x2_top= var.x2[0]
                 coord_x2_bottom= var.x2[-1]
-            #Todo- what to input for pd.dataframe
+            
+            #TODO- what to input for pd.dataframe
             elif isinstance(var, (pd.DataFrame, pd.Series)):
                 var_x1_min = var.index.get_level_values("x1").min()
                 var_x1_max = var.index.get_level_values("x1").max()
@@ -871,8 +872,6 @@ class TaskLoader:
                 x2_ascend = True
             if coord_x2_top > coord_x2_bottom:
                 x2_ascend = False
-
-
 
         coord_directions = {
                 "x1": x1_ascend,
