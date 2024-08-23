@@ -3,6 +3,7 @@ import itertools
 import tempfile
 
 from parameterized import parameterized
+from hypothesis import example, given, strategies as st
 
 import os
 import xarray as xr
@@ -552,6 +553,47 @@ class TestModel(unittest.TestCase):
         # Check that passing an invalid parameter raises an AttributeError
         with self.assertRaises(AttributeError):
             model.predict(task, X_t=self.da, pred_params=["invalid_param"])
+
+    @given(st.data())
+    def test_patchwise_prediction(self, data):
+        """Test that ``.predict_patch`` runs correctly."""
+
+        patch_size = data.draw(st.floats(min_value=0.1, max_value=1.0))
+        stride = data.draw(st.floats(min_value=0.1, max_value=patch_size))
+
+        tl = TaskLoader(context=self.da, target=self.da)
+
+        tasks = tl(
+            "2020-01-01",
+            context_sampling="all",
+            target_sampling="all",
+            patch_strategy="sliding",
+            patch_size=patch_size,
+            stride=stride,
+        )
+
+        model = ConvNP(self.dp, tl)
+
+        pred = model.predict_patch(
+            tasks=tasks,
+            X_t=self.da,
+            data_processor=self.dp,
+        )
+
+        # gridded predictions
+        assert [isinstance(ds, xr.Dataset) for ds in pred.values()]
+        for var_ID in pred:
+            assert_shape(
+                pred[var_ID]["mean"],
+                (1, self.da.x1.size, self.da.x2.size),
+            )
+            assert_shape(
+                pred[var_ID]["std"],
+                (1, self.da.x1.size, self.da.x2.size),
+            )
+            assert self.da.x1.size == pred[var_ID].x1.size
+            assert self.da.x2.size == pred[var_ID].x2.size
+
 
     def test_saving_and_loading(self):
         """Test saving and loading of model"""
