@@ -854,29 +854,25 @@ class TaskLoader:
                 coord_x2_top= var.x2[0]
                 coord_x2_bottom= var.x2[-1]
             
+                x1_ascend = True if coord_x1_left <= coord_x1_right else False
+                x2_ascend = True if coord_x2_top <= coord_x2_bottom else False
+
+                coord_directions = {
+                        "x1": x1_ascend,
+                        "x2": x2_ascend,
+                    }
+
             #TODO- what to input for pd.dataframe
             elif isinstance(var, (pd.DataFrame, pd.Series)):
-                var_x1_min = var.index.get_level_values("x1").min()
-                var_x1_max = var.index.get_level_values("x1").max()
-                var_x2_min = var.index.get_level_values("x2").min()
-                var_x2_max = var.index.get_level_values("x2").max()
+                # var_x1_min = var.index.get_level_values("x1").min()
+                # var_x1_max = var.index.get_level_values("x1").max()
+                # var_x2_min = var.index.get_level_values("x2").min()
+                # var_x2_max = var.index.get_level_values("x2").max()
 
-            x1_ascend = True
-            x2_ascend = True
-            if coord_x1_left < coord_x1_right:
-                x1_ascend = True
-            if coord_x1_left > coord_x1_right:
-                x1_ascend = False
-
-            if coord_x2_top < coord_x2_bottom:
-                x2_ascend = True
-            if coord_x2_top > coord_x2_bottom:
-                x2_ascend = False
-
-        coord_directions = {
-                "x1": x1_ascend,
-                "x2": x2_ascend,
-            }
+                coord_directions = {
+                    "x1": None,
+                    "x2": None
+                }
 
         return coord_directions 
 
