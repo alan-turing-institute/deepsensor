@@ -28,42 +28,99 @@ from typing import Union, List, Tuple, Optional
 
 
 class GreedyAlgorithm:
-    """Greedy algorithm for active learning
+    """Greedy active learning sensor placement algorithm.
+
+    Given a set of :class:`~.data.task.Task` objects containing existing context data, the algorithm
+    iteratively (i.e. 'greedily') proposes $N$ locations for new context points
+    from a search grid, using active learning with a DeepSensorModel.
+
+    Within each greedy iteration, the algorithm evaluates an acquisition function
+    over the search grid. The acquisition function value at a given query location
+    relates to the merit of a new observation at that point, and is averaged over
+    all :class:`~.data.task.Task` objects. The algorithm then
+    selects the context location with the 'best' (max or min) acquisition function value.
+    A new context observation is added to each :class:`~.data.task.Task` at that location.
+    This process is repeated until $N$ new context locations have been proposed.
+
+    The algorithm either computes the acquisition function values
+    in parallel over all query locations, or sequentially. This is dictated by the
+    type of acquisition function passed to the algorithm:
+
+        1. :class:`~.active_learning.acquisition_fns.AcquisitionFunction`:
+        Returns a scalar acquisition function for
+        a given query location. For example, the model's mean standard deviation
+        over target locations (``MeanStddev``). For a given :class:`~.data.task.Task`
+        this requires running the model *once for every query location* with a new
+        context point at that location, so these acquisition functions can be slow.
+
+        2. :class:`~.active_learning.acquisition_fns.AcquisitionFunctionParallel`:
+        Returns all acquisition function values in parallel.
+        For example, the model's standard deviation at query locations given
+        the existing context data, which only requires running the model once for a
+        given :class:`~.data.task.Task`. These acquisition functions are faster than
+        their sequential counterparts but are likely less informative.
+
+    Acquisition functions that inherit from
+    :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`
+    require ground truth target values at target locations. In this case, the algorithm
+    must be provided with a :class:`~.data.loader.TaskLoader` object to sample these values.
+
+    .. note::
+        The algorithm is described in more detail in 'Environmental Sensor Placement with
+        Convolutional Gaussian Neural Processes' (2023), https://doi.org/10.1017/eds.2023.22.
 
     Args:
         model (:class:`~.model.model.DeepSensorModel`):
-            Trained model to use for proposing new context points.
-        X_s (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index`):
-            Search coordinates.
-        X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
-            Target coordinates.
+            Model to use for proposing new context points.
+        X_s (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+            Xarray object containing the spatial coordinates that define the search grid.
+        X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | pd.DataFrame):
+            Target spatial coordinates. Can either be an xarray object containing the spatial
+            coordinates of the target grid, or a pandas DataFrame containing a set of off-grid
+            target locations.
         X_s_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):
-            Mask for search coordinates. If provided, only points where mask
-            is True will be considered. Defaults to None.
+            Optional 2D mask for gridded search coordinates to ignore. If provided, the acquisition
+            function will only be computed at locations where the mask is True. Defaults to None.
         X_t_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):
-            [Description of the X_t_mask parameter.], defaults to None.
+            Optional 2D mask (for gridded target coordinates) to ignore.
+            Useful e.g. if you only care about improving the model's predictions over a certain
+            area. Defaults to None.
         N_new_context (int, optional):
-            [Description of the N_new_context parameter.], defaults to 1.
+            Number of new context points to propose (i.e. number of greedy iterations), defaults to 1.
         X_normalised (bool, optional):
-            [Description of the X_normalised parameter.], defaults to False.
+            Whether the coordinates of the X_* arguments above have been normalised
+            by a :class:`~.data.processor.DataProcessor`. Defaults to False.
         model_infill_method (str, optional):
-            [Description of the model_infill_method parameter.], defaults to "mean".
+            Method for generating pseudo observations from the model at search points,
+            which are appended to Tasks when computing acquisition functions or at the
+            end of a greedy iteration (unless overridden by ``query_infill`` or ``proposed_infill`` below).
+            Currently, only "mean" infilling is supported. Defaults to "mean".
         query_infill (:class:`xarray.DataArray`, optional):
-            [Description of the query_infill parameter.], defaults to None.
+            Gridded xarray object containing observations to use when querying candidate context
+            points. Must have all the same time points as the :class:`~.data.task.Task` objects
+            the algorithm is called with. If not on the same grid as ``X_s``, it will be linearly
+            interpolated to the same grid. Useful for providing the model with true observations
+            rather than its own predictions. Defaults to None.
         proposed_infill (:class:`xarray.DataArray`, optional):
-            [Description of the proposed_infill parameter.], defaults to None.
+            Similar to ``query_infill``, but used when infilling pseudo observations at the end
+            of a greedy iteration (rather than using model predictions). Useful e.g. to
+            simulate the case where the model can obtain ground truth after requesting
+            a sensor placement. Defaults to None.
         context_set_idx (int, optional):
-            [Description of the context_set_idx parameter.], defaults to 0.
+            Context set index to run the sensor placement algorithm on. E.g. if a model
+            ingest two context sets ["aux_data", "sensor_data"], this should be set to 1
+            (corresponding to the sensor context set). Defaults to 0.
         target_set_idx (int, optional):
-            [Description of the target_set_idx parameter.], defaults to 0.
+            Target set index corresponding to predictions of the context set that the
+            algorithm is run on. Defaults to 0.
         progress_bar (bool, optional):
-            [Description of the progress_bar parameter.], defaults to False.
-        min_or_max (str, optional):
-            [Description of the min_or_max parameter.], defaults to "min".
+            Whether to display a progress bar when running the algorithm. Defaults to False.
         task_loader (:class:`~.data.loader.TaskLoader`, optional):
-            [Description of the task_loader parameter.], defaults to None.
+            If using an :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`,
+            a TaskLoader object is required to sample ground truth target values at target
+            locations. Defaults to None.
         verbose (bool, optional):
-            [Description of the verbose parameter.], defaults to False.
+            Whether to print some status messages. Defaults to False.
 
     Raises:
         ValueError:
@@ -74,8 +131,8 @@ class GreedyAlgorithm:
     def __init__(
         self,
         model: DeepSensorModel,
-        X_s: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
-        X_t: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
+        X_s: Union[xr.Dataset, xr.DataArray],
+        X_t: Union[xr.Dataset, xr.DataArray, pd.DataFrame],
         X_s_mask: Optional[Union[xr.Dataset, xr.DataArray]] = None,
         X_t_mask: Optional[Union[xr.Dataset, xr.DataArray]] = None,
         N_new_context: int = 1,
@@ -198,23 +255,7 @@ class GreedyAlgorithm:
         self,
         X_s: Union[xr.Dataset, xr.DataArray, pd.DataFrame, pd.Series, pd.Index],
     ):
-        """
-        Computes and sets the model infill y-values over whole search grid
-        before running greedy optimisation. Results are returned with
-        additional first axis, with ``size > 1`` if
-        ``model_infill_method == 'sample'`` or ``'ar_sample_*'``, and
-        acquisition function will be averaged over the samples in the first
-        axis. If ``model_infill_method != 'sample'``, first axis size is 1 and
-        the averaging is only over one value (i.e. no averaging).
-
-        Infilled y-values at all placement search locations are appended to
-        each dataset with the key (`'Y_model_infilled'`) for use during the
-        placement search.
-
-        Also adds a sample dimension to the context station observations, which
-        will be looped over for MCMC sampling of the acquisition function
-        importance values of the placement criterion.
-        """
+        """Computes and model infill y-values over whole search grid."""
         if self.model_infill_method == "mean":
             pred = self.model.predict(
                 self.tasks,
@@ -225,10 +266,11 @@ class GreedyAlgorithm:
             infill_ds = pred[self.target_set_idx]["mean"]
 
         elif self.model_infill_method == "sample":
-            # _, _, infill_ds = self.model.predict(
+            # pred = self.model.predict(
             #     self.tasks, X_s, X_t_normalised=True, unnormalise=False,
             #     n_samples=self.model_infill_samples,
             # )
+            # infill_ds = pred[self.target_set_idx]["samples"]
             raise NotImplementedError("TODO")
 
         elif self.model_infill_method == "zeros":
@@ -244,23 +286,22 @@ class GreedyAlgorithm:
 
     def _sample_y_infill(self, infill_ds, time, x1, x2):
         """Sample infill values at a single location"""
-        if isinstance(infill_ds, (xr.Dataset, xr.DataArray)):
-            y = infill_ds.sel(time=time, x1=x1, x2=x2)
-            if isinstance(y, xr.Dataset):
-                y = y.to_array()
-            y = y.data
-            y = y.reshape(1, y.size)  # 1 observation with N dimensions
+        assert isinstance(infill_ds, (xr.Dataset, xr.DataArray))
+        y = infill_ds.sel(time=time, x1=x1, x2=x2)
+        if isinstance(y, xr.Dataset):
+            y = y.to_array()
+        y = y.data
+        if "sample" not in infill_ds.dims:
+            return y.reshape(1, y.size)  # 1 observation with N_target_dims
         else:
-            raise NotImplementedError(
-                f"infill_ds must be xr.Dataset or xr.DataArray, "
-                f"not {type(infill_ds)}"
-            )
-        return y
+            # TODO confirm or force that dim ordering is (N_samples, N_target_dims)
+            return y
 
     def _build_acquisition_fn_ds(self, X_s: Union[xr.Dataset, xr.DataArray]):
         """
         Initialise xr.DataArray for storing acquisition function values on
-        search grid"""
+        search grid
+        """
         prepend_dims = ["iteration"]  # , "sample"]  # MC sample TODO
         prepend_coords = {
             "iteration": range(self.N_new_context),
@@ -278,7 +319,7 @@ class GreedyAlgorithm:
 
         return acquisition_fn_ds
 
-    def _init_acquisition_fn_ds(self, X_s: xr.Dataset):
+    def _init_acquisition_fn_object(self, X_s: xr.Dataset):
         """Instantiate acquisition function object"""
         # Unnormalise before instantiating
         X_s = self.model.data_processor.map_coords(X_s, unnorm=True)
@@ -297,16 +338,6 @@ class GreedyAlgorithm:
         """
         Run one greedy pass by looping over each point in ``X_s`` and
         computing the acquisition function.
-
-        If the search algorithm can be run over all points in parallel,
-        this method should be overridden by the child class so that
-        ``self.run()`` uses the parallel implementation.
-
-        ..
-            TODO check if below is still valid in GreedyOptimal:
-            If the search method uses the y-values at search points (i.e. for
-            an optimal benchmark), its ``acquisition_fn`` should expect a
-            ``y_query`` input.
         """
         importances_list = []
 
@@ -384,7 +415,7 @@ class GreedyAlgorithm:
         return np.mean(importances_list, axis=0)
 
     def _select_best(self, importances, X_s_arr):
-        """Select sensor location corresponding to the best importance value.
+        """Select context location corresponding to the best importance value.
 
         Appends the chosen search index to a list of chosen search indexes.
         """
@@ -395,7 +426,7 @@ class GreedyAlgorithm:
 
         best_x_query = X_s_arr[:, best_idx : best_idx + 1]
 
-        # Index into original search space of chosen sensor location
+        # Index into original search space of chosen context location
         self.best_idxs_all.append(
             np.where((self.X_s_arr == best_x_query).all(axis=0))[0][0]
         )
@@ -405,7 +436,7 @@ class GreedyAlgorithm:
     def _single_greedy_iteration(self, acquisition_fn: AcquisitionFunction):
         """
         Run a single greedy grid search iteration and append the optimal
-        sensor location to self.X_new.
+        context location to self.X_new.
         """
         importances = self._search(acquisition_fn)
         best_x_query = self._select_best(importances, self.X_s_arr)
@@ -421,17 +452,36 @@ class GreedyAlgorithm:
         diff: bool = False,
     ) -> Tuple[pd.DataFrame, xr.Dataset]:
         """
-        Iteratively... docstring TODO
+        Iteratively propose new context points using the greedy sensor placement algorithm.
 
         Args:
             acquisition_fn (:class:`~.active_learning.acquisition_fns.AcquisitionFunction`):
-                [Description of the acquisition_fn parameter.]
+                The acquisition function to optimise.
             tasks (List[:class:`~.data.task.Task`] | :class:`~.data.task.Task`):
-                [Description of the tasks parameter.]
+                Tasks containing existing context data. If a list of Tasks, the acquisition
+                function will be averaged over Tasks.
+            diff (bool, optional):
+                For sequential acquisition functions only: Whether to compute the *change* in
+                acquisition function value after adding the new context point, i.e.
+                ``acquisition_fn(task_with_new) - acquisition_fn(task)``. Can be useful
+                for making the acquisition function values more interpretable, or for
+                comparing with the change in metric that the acquisition function targets
+                (see https://doi.org/10.1017/eds.2023.22). Defaults to False.
 
         Returns:
-            Tuple[:class:`pandas.DataFrame`, :class:`xarray.Dataset`]:
-                X_new_df, acquisition_fn_ds - [Description of the return values.]
+            Tuple[:class:`pandas.DataFrame`, :class:`xarray.DataArray`]:
+                A tuple containing two objects:
+
+                - **X_new_df** (:class:`pandas.DataFrame`):
+                Proposed sensor placements. Columns are the x1 and x2 coordinates of the
+                sensor placements, and the index is the index of the greedy iteration
+                at which the sensor placement was proposed (which can be interpreted as
+                a priority order, with iteration 0 being the highest priority).
+
+                - **acquisition_fn_ds** (:class:`xarray.DataArray`):
+                Gridded acquisition function values at each search point. Dimensions
+                are ``iteration``, ``time`` (inferred from the input ``tasks``), followed
+                by the x1 and x2 coordinates of the spatial grid.
 
         Raises:
             ValueError:
@@ -502,7 +552,7 @@ class GreedyAlgorithm:
                 self.proposed_infill = model_infill
 
         # Instantiate empty acquisition function object
-        self._init_acquisition_fn_ds(self.X_s)
+        self._init_acquisition_fn_object(self.X_s)
 
         # Dataframe for storing proposed context locations
         self.X_new_df = pd.DataFrame(columns=[self.x1_name, self.x2_name])
@@ -518,8 +568,8 @@ class GreedyAlgorithm:
         total_iterations = self.N_new_context * len(self.tasks)
         if not isinstance(acquisition_fn, AcquisitionFunctionParallel):
             total_iterations *= self.X_s_arr.shape[-1]
-        # TODO make class attribute for list of sample methods
-        if self.model_infill_method == "sample":
+        # TODO make class attribute for list of sample-based infill methods
+        if self.model_infill_method in ["sample", "ar_sample"]:
             total_iterations *= self.n_samples
 
         with tqdm(total=total_iterations, disable=not self.progress_bar) as self.pbar:

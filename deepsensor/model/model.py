@@ -243,7 +243,7 @@ class DeepSensorModel(ProbabilisticModel):
         aux_at_targets_override: Union[xr.Dataset, xr.DataArray] = None,
         aux_at_targets_override_is_normalised: bool = False,
         resolution_factor: int = 1,
-        pred_params: tuple[str] = ("mean", "std"),
+        pred_params: Tuple[str] = ("mean", "std"),
         n_samples: int = 0,
         ar_sample: bool = False,
         ar_subsample_factor: int = 1,
@@ -274,7 +274,7 @@ class DeepSensorModel(ProbabilisticModel):
                 Whether the `aux_at_targets_override` coords are normalised.
                 If False, the DataProcessor will normalise the coords before passing to model.
                 Default False.
-            pred_params (tuple[str]):
+            pred_params (Tuple[str]):
                 Tuple of prediction parameters to return. The strings refer to methods
                 of the model class which will be called and stored in the Prediction object.
                 Default ("mean", "std").
@@ -385,7 +385,7 @@ class DeepSensorModel(ProbabilisticModel):
         elif isinstance(X_t, (xr.DataArray, xr.Dataset)):
             # Remove time dimension if present
             if "time" in X_t.coords:
-                X_t = X_t.isel(time=0).drop("time")
+                X_t = X_t.isel(time=0).drop_vars("time")
 
         if mode == "off-grid" and append_indexes is not None:
             # Check append_indexes are all same length as X_t

@@ -11,7 +11,7 @@ data with neural processes</p>
 
 -----------
 
-[![release](https://img.shields.io/badge/release-v0.3.6-green?logo=github)](https://github.com/alan-turing-institute/deepsensor/releases)
+[![release](https://img.shields.io/badge/release-v0.3.8-green?logo=github)](https://github.com/alan-turing-institute/deepsensor/releases)
 [![Latest Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://alan-turing-institute.github.io/deepsensor/)
 ![Tests](https://github.com/alan-turing-institute/deepsensor/actions/workflows/tests.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/alan-turing-institute/deepsensor/badge.svg?branch=main)](https://coveralls.io/github/alan-turing-institute/deepsensor?branch=main)
@@ -112,7 +112,7 @@ ds = data_processor(ds_raw)
 # Set up task loader
 task_loader = TaskLoader(context=ds, target=ds)
 
-# Set up model
+# Set up ConvNP, which by default instantiates a ConvCNP with Gaussian marginals
 model = ConvNP(data_processor, task_loader)
 
 # Generate training tasks with up 100 grid cells as context and all grid cells
@@ -207,9 +207,9 @@ if you would like to join this list!
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/acocac"><img src="https://avatars.githubusercontent.com/u/13321552?v=4?s=100" width="100px;" alt="Alejandro ©"/><br /><sub><b>Alejandro ©</b></sub></a><br /><a href="#userTesting-acocac" title="User Testing">📓</a> <a href="#bug-acocac" title="Bug reports">🐛</a> <a href="#mentoring-acocac" title="Mentoring">🧑‍🏫</a> <a href="#ideas-acocac" title="Ideas, Planning, & Feedback">🤔</a> <a href="#research-acocac" title="Research">🔬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/acocac"><img src="https://avatars.githubusercontent.com/u/13321552?v=4?s=100" width="100px;" alt="Alejandro ©"/><br /><sub><b>Alejandro ©</b></sub></a><br /><a href="#userTesting-acocac" title="User Testing">📓</a> <a href="#bug-acocac" title="Bug reports">🐛</a> <a href="#mentoring-acocac" title="Mentoring">🧑‍🏫</a> <a href="#ideas-acocac" title="Ideas, Planning, & Feedback">🤔</a> <a href="#research-acocac" title="Research">🔬</a> <a href="#code-acocac" title="Code">💻</a> <a href="#test-acocac" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/annavaughan"><img src="https://avatars.githubusercontent.com/u/45528489?v=4?s=100" width="100px;" alt="Anna Vaughan"/><br /><sub><b>Anna Vaughan</b></sub></a><br /><a href="#research-annavaughan" title="Research">🔬</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://davidwilby.dev"><img src="https://avatars.githubusercontent.com/u/24752124?v=4?s=100" width="100px;" alt="David Wilby"/><br /><sub><b>David Wilby</b></sub></a><br /><a href="#doc-davidwilby" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://davidwilby.dev"><img src="https://avatars.githubusercontent.com/u/24752124?v=4?s=100" width="100px;" alt="David Wilby"/><br /><sub><b>David Wilby</b></sub></a><br /><a href="#doc-davidwilby" title="Documentation">📖</a> <a href="#test-davidwilby" title="Tests">⚠️</a> <a href="#maintenance-davidwilby" title="Maintenance">🚧</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://inconsistentrecords.co.uk"><img src="https://avatars.githubusercontent.com/u/731727?v=4?s=100" width="100px;" alt="Jim Circadian"/><br /><sub><b>Jim Circadian</b></sub></a><br /><a href="#ideas-JimCircadian" title="Ideas, Planning, & Feedback">🤔</a> <a href="#projectManagement-JimCircadian" title="Project Management">📆</a> <a href="#maintenance-JimCircadian" title="Maintenance">🚧</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jonas-scholz123"><img src="https://avatars.githubusercontent.com/u/37850411?v=4?s=100" width="100px;" alt="Jonas Scholz"/><br /><sub><b>Jonas Scholz</b></sub></a><br /><a href="#userTesting-jonas-scholz123" title="User Testing">📓</a> <a href="#research-jonas-scholz123" title="Research">🔬</a> <a href="#code-jonas-scholz123" title="Code">💻</a> <a href="#bug-jonas-scholz123" title="Bug reports">🐛</a> <a href="#ideas-jonas-scholz123" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://www.westerling.nu"><img src="https://avatars.githubusercontent.com/u/7298727?v=4?s=100" width="100px;" alt="Kalle Westerling"/><br /><sub><b>Kalle Westerling</b></sub></a><br /><a href="#doc-kallewesterling" title="Documentation">📖</a> <a href="#infra-kallewesterling" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#ideas-kallewesterling" title="Ideas, Planning, & Feedback">🤔</a> <a href="#projectManagement-kallewesterling" title="Project Management">📆</a> <a href="#promotion-kallewesterling" title="Promotion">📣</a> <a href="#question-kallewesterling" title="Answering Questions">💬</a></td>
