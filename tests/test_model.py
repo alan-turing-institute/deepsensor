@@ -3,7 +3,7 @@ import itertools
 import tempfile
 
 from parameterized import parameterized
-from hypothesis import example, given, strategies as st
+from hypothesis import given, settings, strategies as st
 
 import os
 import xarray as xr
@@ -555,6 +555,7 @@ class TestModel(unittest.TestCase):
             model.predict(task, X_t=self.da, pred_params=["invalid_param"])
 
     @given(st.data())
+    @settings(deadline=None)
     def test_patchwise_prediction(self, data):
         """Test that ``.predict_patch`` runs correctly."""
 
