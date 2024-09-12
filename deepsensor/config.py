@@ -1,6 +1,4 @@
-"""
-Configuration file for deepsensor
-"""
+"""Configuration file for deepsensor."""
 
 DEFAULT_LAB_EPSILON = 1e-6
 """

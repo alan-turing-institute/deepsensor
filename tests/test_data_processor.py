@@ -76,8 +76,7 @@ class TestDataProcessor(unittest.TestCase):
                 )
 
     def test_different_names_xr(self):
-        """
-        The time, x1 and x2 dimensions can have arbitrary names and these should be restored
+        """The time, x1 and x2 dimensions can have arbitrary names and these should be restored
         after unnormalisation.
         """
         da_raw = _gen_data_xr()
@@ -100,8 +99,7 @@ class TestDataProcessor(unittest.TestCase):
         )
 
     def test_same_names_xr(self):
-        """
-        Test edge case when dim names are already in standard form.
+        """Test edge case when dim names are already in standard form.
         """
         da_raw = _gen_data_xr()
         da_raw = da_raw.rename({"lat": "x1", "lon": "x2"})
@@ -144,8 +142,7 @@ class TestDataProcessor(unittest.TestCase):
             dp(da_raw, method="not_a_valid_method")
 
     def test_different_names_pandas(self):
-        """
-        The time, x1 and x2 dimensions can have arbitrary names and these should be restored
+        """The time, x1 and x2 dimensions can have arbitrary names and these should be restored
         after unnormalisation.
         """
         df_raw = _gen_data_pandas()
@@ -165,8 +162,7 @@ class TestDataProcessor(unittest.TestCase):
         )
 
     def test_same_names_pandas(self):
-        """
-        Test edge case when dim names are already in standard form.
+        """Test edge case when dim names are already in standard form.
         """
         df_raw = _gen_data_pandas()
         df_raw.index.names = ["time", "x1", "x2"]
@@ -195,8 +191,7 @@ class TestDataProcessor(unittest.TestCase):
             dp(df_raw)
 
     def test_extra_indexes_preserved_pandas(self):
-        """
-        Other metadata indexes are allowed (only *after* the default dimension indexes of
+        """Other metadata indexes are allowed (only *after* the default dimension indexes of
         [time, x1, x2] or just [x1, x2]), and these should be preserved during normalisation.
         """
         coords = dict(
@@ -219,8 +214,7 @@ class TestDataProcessor(unittest.TestCase):
         )
 
     def test_wrong_extra_indexes_pandas(self):
-        """
-        Other metadata indexes are allowed but if they are not *after* the default dimension
+        """Other metadata indexes are allowed but if they are not *after* the default dimension
         indexes of [time, x1, x2] or just [x1, x2], then an error should be raised.
         """
         coords = dict(
