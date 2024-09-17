@@ -131,7 +131,7 @@ class TestTraining(unittest.TestCase):
             context_sampling="all",
             target_sampling="all",
             patch_strategy="random",
-            patch_size=(0.8, 0.8),
+            patch_size=(0.4, 0.8),
         )
 
         # TODO pytest can also be more succinct with pytest.fixtures

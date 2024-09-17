@@ -386,19 +386,19 @@ class TestTaskLoader(unittest.TestCase):
 
     @parameterized.expand(
     [
-        ("sliding", (0.5, 0.5), (0.6, 0.6)), # patch_size and stride as tuples
-        ("sliding", 0.5, 0.6),               # as floats
-        ("sliding", 1.0, 1.2),               # one argument above allowed range
-        ("sliding", -0.1, 0.6),              # and below allowed range
-        ("random", 1.1, None)                # for sliding window as well
+        ("sliding", (0.5, 0.5), (0.6, 0.6), Warning), # patch_size and stride as tuples
+        ("sliding", 0.5, 0.6, Warning),               # as floats
+        ("sliding", 1.0, 1.2, Warning),               # one argument above allowed range
+        ("sliding", -0.1, 0.6, Warning),              # and below allowed range
+        ("random", 1.1, None, ValueError)                # for sliding window as well
     ]
     )
-    def test_patchwise_task_loader_parameter_handling(self, patch_strategy, patch_size, stride):
+    def test_patchwise_task_loader_parameter_handling(self, patch_strategy, patch_size, stride, raised):
         """Test that correct errors and warnings are raised by ``.predict_patch``."""
 
         tl = TaskLoader(context=self.da, target=self.da)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(raised):
             tl(
                 "2020-01-01",
                 context_sampling="all",
