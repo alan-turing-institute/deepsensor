@@ -5,7 +5,7 @@ rioxarray
 numpy
 dask
 distributed
-neuralprocesses>=0.2.2
+neuralprocesses>=0.2.6
 tensorflow
 tensorflow_probability[tf]
 torch>=2
