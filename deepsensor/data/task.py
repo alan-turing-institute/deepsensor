@@ -30,6 +30,7 @@ class Task(dict):
 
     @classmethod
     def summarise_str(cls, k, v):
+        """Return string summaries for the _str__ method."""
         if plum.isinstance(v, B.Numeric):
             return v.shape
         elif plum.isinstance(v, tuple):
