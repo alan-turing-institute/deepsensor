@@ -8,8 +8,7 @@ from typing import Union, Optional
 def gen_random_data_xr(
     coords: dict, dims: Optional[list] = None, data_vars: Optional[list] = None
 ):
-    """
-    Generate random xarray data.
+    """Generate random xarray data.
 
     Args:
         coords (dict):
@@ -42,8 +41,7 @@ def gen_random_data_xr(
 
 
 def gen_random_data_pandas(coords: dict, dims: list = None, cols: list = None):
-    """
-    Generate random pandas data.
+    """Generate random pandas data.
 
     Args:
         coords (dict):
