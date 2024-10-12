@@ -14,9 +14,7 @@ jobs:
             - name: "Upgrade pip"
               run: pip install --upgrade pip
             - name: "Install dependencies"
-              run: pip install -r requirements/requirements.txt
-            - name: "Install jupyterbook"
-              run: pip install -r requirements/requirements.docs.txt
+              run: pip install .[docs]
             - name: "Run jupyterbook"
               run: jupyter-book build docs --all
             - name: "Deploy"
