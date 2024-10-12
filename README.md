@@ -85,8 +85,7 @@ over the US. First, pip install the package. In this case we will use the PyTorc
 want GPU support).
 
 ```bash
-pip install deepsensor
-pip install torch
+pip install deepsensor[torch]
 ```
 
 We can go from imports to predictions with a trained model in less than 30 lines of code!
