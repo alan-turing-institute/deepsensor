@@ -918,7 +918,7 @@ class DeepSensorModel(ProbabilisticModel):
                         """
                         if patch_x2_index[0] == data_x2_index[0]:
                             b_x2_min = 0
-                            # This line, as well as 933, 940 and 950 address the different shapes between the input and prediction
+                            # The +1 operations here and elsewhere in this block address the different shapes between the input and prediction
                             # TODO: Try to resolve this issue in data/loader.py by ensuring patches are perfectly square. 
                             b_x2_max = b_x2_max + 1
                         elif patch_x2_index[1] == data_x2_index[1]:
