@@ -651,8 +651,9 @@ class TestModel(unittest.TestCase):
         """Test that the times returned by a forecasting model are valid."""
         lead_times_days = [1, 2, 3]
         init_date = "2020-01-01"
+        expected_lead_times = [pd.Timedelta(days=lt) for lt in lead_times_days]
         expected_valid_times = [
-            pd.Timestamp(init_date) + pd.DateOffset(days=lt) for lt in lead_times_days
+            pd.Timestamp(init_date) + lt for lt in expected_lead_times
         ]
 
         tl = TaskLoader(
@@ -669,6 +670,9 @@ class TestModel(unittest.TestCase):
         pred = model.predict(task, X_t=self.da)
         np.testing.assert_array_equal(
             pred[self.var_ID]["mean"].time.values, expected_valid_times
+        )
+        np.testing.assert_array_equal(
+            pred[self.var_ID]["mean"].lead_time.values, expected_lead_times
         )
 
 
