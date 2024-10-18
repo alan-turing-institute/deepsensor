@@ -657,14 +657,19 @@ class TestModel(unittest.TestCase):
 
         tl = TaskLoader(
             context=self.da,
-            target=[self.da,] * len(lead_times_days),
+            target=[
+                self.da,
+            ]
+            * len(lead_times_days),
             target_delta_t=lead_times_days,
             time_freq="D",
         )
         model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
         task = tl(init_date, context_sampling=10)
         pred = model.predict(task, X_t=self.da)
-        np.testing.assert_array_equal(pred[self.var_ID]["mean"].time.values, expected_valid_times)
+        np.testing.assert_array_equal(
+            pred[self.var_ID]["mean"].time.values, expected_valid_times
+        )
 
 
 def assert_shape(x, shape: tuple):
