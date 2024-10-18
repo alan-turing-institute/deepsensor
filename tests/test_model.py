@@ -55,8 +55,15 @@ class TestModel(unittest.TestCase):
     def setUpClass(cls):
         # super().__init__(*args, **kwargs)
         # It's safe to share data between tests because the TaskLoader does not modify data
+        cls.var_ID = "2m_temp"
         cls.da = _gen_data_xr()
+        cls.da.name = cls.var_ID
         cls.df = _gen_data_pandas()
+        cls.df.name = cls.var_ID
+        # Various tests assume we have a single target set with a single variable.
+        # If a test requires multiple target sets or variables, this is set up in the test.
+        assert isinstance(cls.da, xr.DataArray)
+        assert isinstance(cls.df, pd.Series)
 
         cls.dp = DataProcessor()
         _ = cls.dp([cls.da, cls.df])  # Compute normalisation parameters
@@ -417,10 +424,10 @@ class TestModel(unittest.TestCase):
         task = tl("2020-01-01")
         pred = model.predict(task, X_t=da_raw)
 
-        assert np.array_equal(
+        np.testing.assert_array_equal(
             pred["dummy_data"]["mean"]["latitude"], da_raw["latitude"]
         )
-        assert np.array_equal(
+        np.testing.assert_array_equal(
             pred["dummy_data"]["mean"]["longitude"], da_raw["longitude"]
         )
 
@@ -493,14 +500,14 @@ class TestModel(unittest.TestCase):
             # Check that nothing breaks and the correct parameters are returned
             pred = model.predict(task, X_t=X_t, pred_params=pred_params)
             for pred_param in pred_params:
-                assert pred_param in pred["var"]
+                assert pred_param in pred[self.var_ID]
 
             # Test mixture probs special case
             pred_params = ["mixture_probs"]
             pred = model.predict(task, X_t=self.da, pred_params=pred_params)
             for component in range(model.N_mixture_components):
                 pred_param = f"mixture_probs_{component}"
-                assert pred_param in pred["var"]
+                assert pred_param in pred[self.var_ID]
 
     def test_highlevel_predict_with_pred_params_xarray(self):
         """
@@ -528,14 +535,14 @@ class TestModel(unittest.TestCase):
             # Check that nothing breaks and the correct parameters are returned
             pred = model.predict(task, X_t=self.da, pred_params=pred_params)
             for pred_param in pred_params:
-                assert pred_param in pred["var"]
+                assert pred_param in pred[self.var_ID]
 
             # Test mixture probs special case
             pred_params = ["mixture_probs"]
             pred = model.predict(task, X_t=self.da, pred_params=pred_params)
             for component in range(model.N_mixture_components):
                 pred_param = f"mixture_probs_{component}"
-                assert pred_param in pred["var"]
+                assert pred_param in pred[self.var_ID]
 
     def test_highlevel_predict_with_invalid_pred_params(self):
         """Test that passing ``pred_params`` to ``.predict`` works."""
@@ -639,6 +646,25 @@ class TestModel(unittest.TestCase):
                 X_t=self.da,
                 ar_sample=True,
             )
+
+    def test_forecasting_model_predict_return_valid_times(self):
+        """Test that the times returned by a forecasting model are valid."""
+        lead_times_days = [1, 2, 3]
+        init_date = "2020-01-01"
+        expected_valid_times = [
+            pd.Timestamp(init_date) + pd.DateOffset(days=lt) for lt in lead_times_days
+        ]
+
+        tl = TaskLoader(
+            context=self.da,
+            target=[self.da,] * len(lead_times_days),
+            target_delta_t=lead_times_days,
+            time_freq="D",
+        )
+        model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
+        task = tl(init_date, context_sampling=10)
+        pred = model.predict(task, X_t=self.da)
+        np.testing.assert_array_equal(pred[self.var_ID]["mean"].time.values, expected_valid_times)
 
 
 def assert_shape(x, shape: tuple):
