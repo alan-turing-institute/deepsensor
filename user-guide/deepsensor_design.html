@@ -1,0 +1,624 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>DeepSensor design &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user-guide/deepsensor_design';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DataProcessor" href="data_processor.html" />
+    <link rel="prev" title="User Guide" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">User Guide</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2Fuser-guide/deepsensor_design.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user-guide/deepsensor_design.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>DeepSensor design</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-overview">Design overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-principles">Design principles</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="deepsensor-design">
+<h1>DeepSensor design<a class="headerlink" href="#deepsensor-design" title="Permalink to this heading">#</a></h1>
+<p>Some users will find it useful to understand the design of DeepSensor
+before they begin. Others would prefer to just see some examples and
+get started right away.</p>
+<p>If you fall into the latter category,
+feel free to jump straight to the next page (<a class="reference internal" href="data_processor.html"><span class="doc std std-doc">DataProcessor</span></a>).</p>
+<section id="design-overview">
+<h2>Design overview<a class="headerlink" href="#design-overview" title="Permalink to this heading">#</a></h2>
+<p>A schematic overview of the core components of DeepSensor is shown below.
+This shows how the package’s components process data &amp; interact from end-to-end.</p>
+<p><img alt="DeepSensor design" src="../_images/deepsensor_design.png" /></p>
+<p>The key classes are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DataProcessor</span></code>: Maps <code class="docutils literal notranslate"><span class="pre">xarray</span></code> and <code class="docutils literal notranslate"><span class="pre">pandas</span></code> data from their native units
+to a normalised and standardised format (and vice versa).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code>: Slices and samples normalised <code class="docutils literal notranslate"><span class="pre">xarray</span></code> and <code class="docutils literal notranslate"><span class="pre">pandas</span></code> data to generate <code class="docutils literal notranslate"><span class="pre">Task</span></code> objects for
+training and inference.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Task</span></code>: Container for context and target data. Subclass of <code class="docutils literal notranslate"><span class="pre">dict</span></code> with additional methods
+for processing and summarising the data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DeepSensorModel</span></code>: Base class for DeepSensor models, implementing a high-level <code class="docutils literal notranslate"><span class="pre">.predict</span></code>
+method for predicting straight to <code class="docutils literal notranslate"><span class="pre">xarray</span></code>/<code class="docutils literal notranslate"><span class="pre">pandas</span></code> in original coordinates and units.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConvNP</span></code>: Convolutional neural process (ConvNP) model class (subclass of <code class="docutils literal notranslate"><span class="pre">DeepSensorModel</span></code>).
+Uses the <code class="docutils literal notranslate"><span class="pre">neuralprocesses</span></code> library. This is currently the only model provided by DeepSensor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Trainer</span></code>: Class for training on <code class="docutils literal notranslate"><span class="pre">Task</span></code> objects using backpropagation and the Adam optimiser.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AcquisitionFunction</span></code>: Base class for active learning acquisition functions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GreedyAlgorithm</span></code>: Greedy search algorithm for active learning.</p></li>
+</ul>
+<p>In addition, a <a class="reference internal" href="../reference/plot.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">deepsensor.plot</span></code></span></a> module provides useful plotting functions for
+visualising:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Task</span></code> context and target sets,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DeepSensorModel</span></code> predictions,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> internals (encoding and feature maps),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GreedyAlgorithm</span></code> active learning outputs.</p></li>
+</ul>
+<p>You will see examples of these <code class="docutils literal notranslate"><span class="pre">deepsensor.plot</span></code> visualisation functions
+throughout the documentation.</p>
+</section>
+<section id="design-principles">
+<h2>Design principles<a class="headerlink" href="#design-principles" title="Permalink to this heading">#</a></h2>
+<p>A few key design principles have guided the development of DeepSensor:</p>
+<ul class="simple">
+<li><p><strong>User-friendly interface</strong>: The interface should be simple and intuitive, with the flexibility to
+handle a wide range of use cases.</p></li>
+<li><p><strong>Leverage powerful and ubiquitous data science libraries</strong>: Users can stay within the familiar <code class="docutils literal notranslate"><span class="pre">xarray</span></code>/<code class="docutils literal notranslate"><span class="pre">pandas</span></code>
+ecosystem from start to finish in their DeepSensor research workflows.</p></li>
+<li><p><strong>Infer sensible defaults</strong>: DeepSensor should leverage information in the data to infer
+sensible defaults for hyperparameters, with the option to override these defaults if desired.</p></li>
+<li><p><strong>Extensible</strong>: Extend DeepSensor with new models by sub-classing <code class="docutils literal notranslate"><span class="pre">DeepSensorModel</span></code> and
+implementing the low-level prediction methods of <code class="docutils literal notranslate"><span class="pre">ProbabilisticModel</span></code>.</p></li>
+<li><p><strong>Modular</strong>: The <code class="docutils literal notranslate"><span class="pre">DataProcessor</span></code> and <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> classes can be used independently of
+the downstream modelling and active learning components, and can thus be used outside of
+a DeepSensor workflow.</p></li>
+<li><p><strong>Deep learning library agnostic</strong>: DeepSensor is compatible with both
+TensorFlow and PyTorch thanks to the <a class="reference external" href="https://github.com/wesselb/lab"><code class="docutils literal notranslate"><span class="pre">backends</span></code></a> library - simply <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">deepsensor.tensorflow</span></code> or
+<code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">deepsensor.torch</span></code>.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user-guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">User Guide</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="data_processor.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DataProcessor</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-overview">Design overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-principles">Design principles</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,936 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>ConvNP &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user-guide/convnp';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Training" href="training.html" />
+    <link rel="prev" title="TaskLoader" href="task_loader.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">User Guide</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2Fuser-guide/convnp.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user-guide/convnp.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>ConvNP</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convnp-architecture">ConvNP architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialising-a-convnp">Initialising a ConvNP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-convnp-s-internal-grid">The ConvNP’s internal grid</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setconv-context-encoding">SetConv context encoding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#breaking-convnp-stationarity-using-auxiliary-variables">Breaking ConvNP stationarity using auxiliary variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#receptive-field">Receptive field</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-likelihood-parameter">The likelihood parameter</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-and-loading-a-convnp">Saving and loading a ConvNP</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="convnp">
+<h1>ConvNP<a class="headerlink" href="#convnp" title="Permalink to this heading">#</a></h1>
+<p><a class="reference internal" href="../reference/model/convnp.html"><span class="doc std std-doc">The <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> class</span></a> implements a convolutional neural process, and is a subclass of <code class="docutils literal notranslate"><span class="pre">DeepSensorModel</span></code>.
+This page will walk through the ConvNP architecture, explain important features, and provide some tips for using the model.
+For further background reading, check out the <a class="reference internal" href="../resources.html"><span class="doc std std-doc">Resources</span></a> page.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> class wraps around the fanstastic <a class="reference external" href="https://github.com/wesselb/neuralprocesses"><code class="docutils literal notranslate"><span class="pre">neuralprocesses</span></code> library</a> by Wessel Bruinsma. Go and give it a star to show your appreciation! ⭐</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The ‘ConvNP’ is actually a <em>class</em> of model architectures, rather than a single model.
+There are different variants of the ConvNP, such as the conditional NP (ConvCNP), the Gaussian NP (ConvGNP), and the
+latent NP (ConvLNP). Each of these can be instantiated from the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> class by initialising the model with
+different hyperparameters. By default, the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> initialises a ConvCNP with Gaussian marginals.
+See the further reading options above if you are still confused after reading this page!</p>
+</div>
+<section id="convnp-architecture">
+<h2>ConvNP architecture<a class="headerlink" href="#convnp-architecture" title="Permalink to this heading">#</a></h2>
+<p>Here is a high-level schematic of the ConvNP architecture used in DeepSensor:</p>
+<a class="reference internal image-reference" href="../_images/convnp_arch.png"><img alt="ConvNP architecture" src="../_images/convnp_arch.png" style="width: 700px;" /></a>
+<p>The ConvNP learns: <span class="math notranslate nohighlight">\(p_\theta ( \mathbf{y}^{(t)} ; \mathbf{x}^{(t)}, \phi(C))\)</span>,
+where <span class="math notranslate nohighlight">\(p_\theta\)</span> specifies a predictive distribution over target values <span class="math notranslate nohighlight">\(\mathbf{y}^{(t)}\)</span> given target locations <span class="math notranslate nohighlight">\(\mathbf{x}^{(t)}\)</span> and the context data <span class="math notranslate nohighlight">\(C\)</span>.
+All the distribution parameters <span class="math notranslate nohighlight">\(\phi\)</span> (such as the mean and variance of a Gaussian likelihood) <em>depend on the entire context set <span class="math notranslate nohighlight">\(C\)</span>, including the <span class="math notranslate nohighlight">\(y\)</span>-values</em>!
+One effect of this is that the ConvNP’s uncertainty can hypothetically become <em>more uncertain</em> if neighbouring observations disagree.
+This makes the ConvNP far more flexible than standard probabilistic models, like GPs.</p>
+<p>Other benefits of the ConvNP are that it can handle:</p>
+<ul class="simple">
+<li><p>Fusing multiple context sets</p></li>
+<li><p>Off-the-grid and gridded modalities</p></li>
+<li><p>Multi-resolution data</p></li>
+<li><p>Missing data</p></li>
+<li><p>Predicting at arbitrary target locations</p></li>
+<li><p>Predicting multiple (disjoint) target sets</p></li>
+<li><p>Uncertainty quantification</p></li>
+<li><p><span class="math notranslate nohighlight">\(O(N)\)</span> inference cost (for most variants)</p></li>
+</ul>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>It’s important to note that the flexibility of the ConvNP makes it a <em>data hungry model</em>.
+It has to <em>learn how to condition on data</em> from scratch, which requires
+seeing many examples of different context sets and target sets during training.
+The <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> provides the necessary functionality for this.
+However, if your data is spatially or temporally sparse (and there isn’t
+a more abundant dataset to transfer learn from), then the ConvNP may not be
+the best model for your use case.</p>
+</div>
+</section>
+<section id="initialising-a-convnp">
+<h2>Initialising a ConvNP<a class="headerlink" href="#initialising-a-convnp" title="Permalink to this heading">#</a></h2>
+<p>The key arguments for initialising a <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> are:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">DataProcessor</span></code>: Used to inherit the high-level <code class="docutils literal notranslate"><span class="pre">.predict</span></code> method from the <code class="docutils literal notranslate"><span class="pre">DeepSensorModel</span></code> base class (detailed in the <a class="reference internal" href="prediction.html"><span class="doc std std-doc">Prediction</span></a> page).</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code>: Under the hood, DeepSensor will use the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code>’s context/target data and configuration to infer sensible defaults for hyperparameters that are not set by the user.</p></li>
+</ul>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">captureWarnings</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">deepsensor.data</span> <span class="kn">import</span> <span class="n">DataProcessor</span><span class="p">,</span> <span class="n">TaskLoader</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data</span> <span class="kn">import</span> <span class="n">construct_circ_time_ds</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.sources</span> <span class="kn">import</span> <span class="n">get_ghcnd_station_data</span><span class="p">,</span> <span class="n">get_era5_reanalysis_data</span><span class="p">,</span> <span class="n">get_earthenv_auxiliary_data</span><span class="p">,</span> <span class="n">get_gldas_land_mask</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># Using the same settings allows use to use pre-downloaded cached data</span>
+<span class="n">data_range</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;2015-06-25&quot;</span><span class="p">,</span> <span class="s2">&quot;2015-06-30&quot;</span><span class="p">)</span>
+<span class="n">extent</span> <span class="o">=</span> <span class="s2">&quot;europe&quot;</span>
+<span class="n">station_var_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TAVG&quot;</span><span class="p">,</span> <span class="s2">&quot;PRCP&quot;</span><span class="p">]</span>
+<span class="n">era5_var_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;2m_temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;10m_u_component_of_wind&quot;</span><span class="p">,</span> <span class="s2">&quot;10m_v_component_of_wind&quot;</span><span class="p">]</span>
+<span class="n">auxiliary_var_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;elevation&quot;</span><span class="p">,</span> <span class="s2">&quot;tpi&quot;</span><span class="p">]</span>
+<span class="n">cache_dir</span> <span class="o">=</span> <span class="s2">&quot;../../.datacache&quot;</span>
+
+<span class="n">station_raw_df</span> <span class="o">=</span> <span class="n">get_ghcnd_station_data</span><span class="p">(</span><span class="n">station_var_IDs</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="n">data_range</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">era5_raw_ds</span> <span class="o">=</span> <span class="n">get_era5_reanalysis_data</span><span class="p">(</span><span class="n">era5_var_IDs</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="n">data_range</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">auxiliary_raw_ds</span> <span class="o">=</span> <span class="n">get_earthenv_auxiliary_data</span><span class="p">(</span><span class="n">auxiliary_var_IDs</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="s2">&quot;1KM&quot;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">land_mask_raw_ds</span> <span class="o">=</span> <span class="n">get_gldas_land_mask</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+
+<span class="n">data_processor</span> <span class="o">=</span> <span class="n">DataProcessor</span><span class="p">(</span><span class="s2">&quot;../deepsensor_config/&quot;</span><span class="p">)</span>
+<span class="n">era5_ds</span> <span class="o">=</span> <span class="n">data_processor</span><span class="p">(</span><span class="n">era5_raw_ds</span><span class="p">)</span>
+<span class="n">aux_ds</span><span class="p">,</span> <span class="n">land_mask_ds</span> <span class="o">=</span> <span class="n">data_processor</span><span class="p">([</span><span class="n">auxiliary_raw_ds</span><span class="p">,</span> <span class="n">land_mask_raw_ds</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;min_max&quot;</span><span class="p">)</span>
+<span class="n">station_df</span> <span class="o">=</span> <span class="n">data_processor</span><span class="p">(</span><span class="n">station_raw_df</span><span class="p">)</span>
+
+<span class="c1"># Add 2D circular day of year variable to land mask context set</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">era5_ds</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">era5_ds</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+<span class="n">doy_ds</span> <span class="o">=</span> <span class="n">construct_circ_time_ds</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+<span class="n">land_mask_ds</span><span class="p">[</span><span class="s2">&quot;cos_D&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doy_ds</span><span class="p">[</span><span class="s2">&quot;cos_D&quot;</span><span class="p">]</span>
+<span class="n">land_mask_ds</span><span class="p">[</span><span class="s2">&quot;sin_D&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doy_ds</span><span class="p">[</span><span class="s2">&quot;sin_D&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">deepsensor.torch</span>
+<span class="kn">from</span> <span class="nn">deepsensor.model</span> <span class="kn">import</span> <span class="n">ConvNP</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="n">station_df</span><span class="p">[</span><span class="s2">&quot;TAVG&quot;</span><span class="p">],</span> <span class="n">era5_ds</span><span class="p">,</span> <span class="n">land_mask_ds</span><span class="p">],</span>
+    <span class="n">target</span><span class="o">=</span><span class="n">station_df</span><span class="p">[</span><span class="s2">&quot;TAVG&quot;</span><span class="p">],</span>
+    <span class="n">aux_at_targets</span><span class="o">=</span><span class="n">aux_ds</span><span class="p">,</span>
+    <span class="n">links</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">task_loader</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TaskLoader(3 context sets, 1 target sets)
+Context variable IDs: ((&#39;TAVG&#39;,), (&#39;2m_temperature&#39;, &#39;10m_u_component_of_wind&#39;, &#39;10m_v_component_of_wind&#39;), (&#39;GLDAS_mask&#39;,))
+Target variable IDs: ((&#39;TAVG&#39;,),)
+Auxiliary-at-target variable IDs: (&#39;elevation&#39;, &#39;tpi&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ConvNP</span><span class="p">(</span><span class="n">data_processor</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">,</span> <span class="n">internal_density</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dim_yc inferred from TaskLoader: (1, 3, 1)
+dim_yt inferred from TaskLoader: 1
+dim_aux_t inferred from TaskLoader: 2
+Setting aux_t_mlp_layers: (64, 64, 64)
+encoder_scales inferred from TaskLoader: [0.001, 0.0022727272007614374, 0.0022727272007614374]
+decoder_scale inferred from TaskLoader: 0.002
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ConvNP with config:
+{
+    &quot;dim_x&quot;: 2,
+    &quot;dim_yc&quot;: [
+        1,
+        3,
+        1
+    ],
+    &quot;dim_yt&quot;: 1,
+    &quot;dim_aux_t&quot;: 2,
+    &quot;dim_lv&quot;: 0,
+    &quot;conv_arch&quot;: &quot;unet&quot;,
+    &quot;unet_channels&quot;: [
+        64,
+        64,
+        64,
+        64
+    ],
+    &quot;unet_resize_convs&quot;: true,
+    &quot;unet_resize_conv_interp_method&quot;: &quot;bilinear&quot;,
+    &quot;aux_t_mlp_layers&quot;: [
+        64,
+        64,
+        64
+    ],
+    &quot;likelihood&quot;: &quot;het&quot;,
+    &quot;unet_kernels&quot;: 5,
+    &quot;internal_density&quot;: 500,
+    &quot;encoder_scales&quot;: [
+        0.001,
+        0.0022727272007614374,
+        0.0022727272007614374
+    ],
+    &quot;encoder_scales_learnable&quot;: false,
+    &quot;decoder_scale&quot;: 0.002,
+    &quot;decoder_scale_learnable&quot;: false,
+    &quot;num_basis_functions&quot;: 64,
+    &quot;epsilon&quot;: 0.01
+}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-convnp-s-internal-grid">
+<h2>The ConvNP’s internal grid<a class="headerlink" href="#the-convnp-s-internal-grid" title="Permalink to this heading">#</a></h2>
+<p>The ConvNP uses a discretised internal grid to process the context data.
+The density of internal grid points is defined by the <code class="docutils literal notranslate"><span class="pre">internal_density</span></code> parameter.
+An <code class="docutils literal notranslate"><span class="pre">internal_density</span></code> of 500 means a 1x1 patch of input space will contain 500x500 internal grid points.</p>
+<p>Generally, the <code class="docutils literal notranslate"><span class="pre">internal_density</span></code> should be as high as the highest-resolution context or target variable.
+Beyond this point, increasing the <code class="docutils literal notranslate"><span class="pre">internal_density</span></code> will not improve the model’s performance.
+Thankfully, DeepSensor will determine the highest-resolution variable and set the <code class="docutils literal notranslate"><span class="pre">internal_density</span></code> under-the-hood
+if you don’t specify <code class="docutils literal notranslate"><span class="pre">internal_density</span></code> in the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> constructor.
+However, the computationl cost of the model scales quadratically with <code class="docutils literal notranslate"><span class="pre">internal_density</span></code>, so
+you may wish to lower the <code class="docutils literal notranslate"><span class="pre">internal_density</span></code> to speed up training and inference.</p>
+</section>
+<section id="setconv-context-encoding">
+<h2>SetConv context encoding<a class="headerlink" href="#setconv-context-encoding" title="Permalink to this heading">#</a></h2>
+<p>The SetConv encoder maps the various context sets onto the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code>’s internal grid.
+This works by placing a Gaussian kernel at each <span class="math notranslate nohighlight">\((\mathbf{x}, \mathbf{y})\)</span> context observation, weighted by the <span class="math notranslate nohighlight">\(N\)</span>-D observation values <span class="math notranslate nohighlight">\(\mathbf{y}\)</span>, and then evaluating the sum of the kernels on the internal grid. These <span class="math notranslate nohighlight">\(N\)</span> channels are called the ‘data channels’.
+Each encoded context set also has a ‘density channel’, formed using the same Gaussian kernel procedure but without weighting the kernels by the observation values, capturing the density of context observations and revealing areas of missing data.</p>
+<p>The output of the SetConv encoder for a particular collection of context sets is the concatenation of all the density and data channels for each context set in a <code class="docutils literal notranslate"><span class="pre">Task</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2015-06-25&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="n">encoding</span> <span class="o">=</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">compute_encoding_tensor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SetConv encoding tensor shape: </span><span class="si">{</span><span class="n">encoding</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>SetConv encoding tensor shape: (1, 8, 432, 608)
+</pre></div>
+</div>
+</div>
+</div>
+<p>The gridded context encoding of a particular <code class="docutils literal notranslate"><span class="pre">Task</span></code> can be visualised using the <code class="docutils literal notranslate"><span class="pre">deepsensor.plot.context_encoding</span></code> function.</p>
+<p>This can also be an extremely useful debugging tool. For example:</p>
+<ul class="simple">
+<li><p>Help with understanding the <code class="docutils literal notranslate"><span class="pre">context_sampling</span></code> schemes provided by the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code>. Try using different <code class="docutils literal notranslate"><span class="pre">context_sampling</span></code> schemes and visualise the SetConv encoding to see how the context sets are sampled (as well as printing the <code class="docutils literal notranslate"><span class="pre">Task</span></code> to see the data shapes).</p></li>
+<li><p>Do the length scales of the encoded data seem reasonable (i.e. avoids blurring high frequency components while not being so small to induce checkerboard artefacts)?</p></li>
+<li><p>Are the channel magnitudes in the encoding reasonable?</p></li>
+<li><p>Are there any nan values?</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">context_encoding</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/633eb6dce0859a9b8298cb085d99a6a4d47d66be4846a5431d66b055089f226f.png" src="../_images/633eb6dce0859a9b8298cb085d99a6a4d47d66be4846a5431d66b055089f226f.png" />
+</div>
+</div>
+<p>It’s tricky to see the encoded station context points, so let’s zoom in on that context set specifically to get a feel for how the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> receives station data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">context_encoding</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">,</span> <span class="n">context_set_idxs</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/5a1b9c5ce24cf77cd4270719c96568b4e3108bf4daf3c230934915564ed79778.png" src="../_images/5a1b9c5ce24cf77cd4270719c96568b4e3108bf4daf3c230934915564ed79778.png" />
+</div>
+</div>
+</section>
+<section id="breaking-convnp-stationarity-using-auxiliary-variables">
+<h2>Breaking ConvNP stationarity using auxiliary variables<a class="headerlink" href="#breaking-convnp-stationarity-using-auxiliary-variables" title="Permalink to this heading">#</a></h2>
+<p>The convolutional architecture of U-Net module of the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> is translation equivariant.
+This means shifting the context data results in a corresponding shift in the output prediction.
+If we only had one context set, the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> would be <em>stationary</em>.
+However, environmental data is often highly spatially <em>non-stationary</em>.
+The behaviour of geophysical variables can vary significantly in different regions of the globe.
+Modelling this spatial non-stationarity is important for making accurate predictions from the
+available data.</p>
+<p>A trick for breaking stationarity/translation equivariance in the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> is to add auxiliary variables to its
+context sets.
+Now, if an observation is shifted, the static auxiliary variable/s will be different, and the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> prediction
+will also be different.</p>
+<p>It is generally advisable to use auxiliary variables that are physically grounded (rather than
+hand-crafted features like latitude/longitude).
+Elevation can be a good auxiliary variable to use, as it is often correlated with surface geophysical variables,
+and it allows the model to transfer knowledge about topographic effects from one region to another.</p>
+<p>To add <em>temporal non-stationarity</em>, we can also add a circular time variable to one of the context sets.
+This is shown above with the <code class="docutils literal notranslate"><span class="pre">cos_D</span></code> and <code class="docutils literal notranslate"><span class="pre">sin_D</span></code> variables (the cosine and sine of the day of year).
+DeepSensor provides a <code class="docutils literal notranslate"><span class="pre">construct_circ_time_ds</span></code> function for this purpose (shown in one of the collapsed
+code cells above).</p>
+</section>
+<section id="receptive-field">
+<h2>Receptive field<a class="headerlink" href="#receptive-field" title="Permalink to this heading">#</a></h2>
+<p>The use of a convolutional architecture (U-Net) in the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> model means that the model has a receptive field. This is the area of the input data that influences the prediction at a given point. The receptive field is a function of the U-Net architecture, such as number of layers, filter size, and internal discretisation density.</p>
+<p>The receptive field can be visualised using the <code class="docutils literal notranslate"><span class="pre">deepsensor.plot.receptive_field</span></code> function. This will unnormalise the receptive field and plot it on a map of the globe, which can be useful for understanding the spatial extent of the receptive field.</p>
+<p>Some things to consider are:</p>
+<ul class="simple">
+<li><p>Is the receptive field too large (i.e. much larger than the range of context and target data)? This can cause excessive zero-padding.</p></li>
+<li><p>Is the receptive field too small (i.e. smaller than the correlation length scale between context and target data)? The <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> cannot learn correlations greater than the receptive field.</p></li>
+</ul>
+<p>You can increase/decrease the receptive field by:</p>
+<ul class="simple">
+<li><p>Increasing/decreasing the number of layers in the U-Net</p></li>
+<li><p>Increasing/decreasing the filter size in the U-Net</p></li>
+<li><p>Decreasing/increasing the internal discretisation density of the U-Net</p></li>
+</ul>
+<p>Note that the first two options will also affect the number of parameters in the model, decreasing or increasing model capacity. To counteract this, the number of channels in the U-Net (which has no effect on receptive field) can be adjusted.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cf</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">receptive_field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">receptive_field</span><span class="p">,</span> <span class="n">data_processor</span><span class="p">,</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span> <span class="s2">&quot;europe&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">BORDERS</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;cartopy.mpl.feature_artist.FeatureArtist at 0x7f9edefdea90&gt;
+</pre></div>
+</div>
+<img alt="../_images/1102d5acf830210369344c64345b23987b401afa2521cc8f6a1e39a3adc0a194.png" src="../_images/1102d5acf830210369344c64345b23987b401afa2521cc8f6a1e39a3adc0a194.png" />
+</div>
+</div>
+</section>
+<section id="the-likelihood-parameter">
+<h2>The likelihood parameter<a class="headerlink" href="#the-likelihood-parameter" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">likelihood</span></code> parameter specifies the output distribution of the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code>.</p>
+<p>The current options for this kwarg are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;cnp&quot;</span></code> (the default): Conditional neural process (CNP) with a Gaussian likelihood. Here, ‘conditional’ means that the target variables are modelled as conditionally independent given the context set (i.e. the model does not learn correlations between the target variables).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;cnp-spikes-beta&quot;</span></code>: CNP with two delta functions (spikes) at 0 and 1, and a Beta distribution between 0 and 1. Useful for modelling data that lies in [0, 1] (e.g. fractional cloud cover).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;bernoulli-gamma&quot;</span></code>: CNP with a delta function at 0, and a Gamma distribution. Useful for modelling data that lies in [0, inf) (e.g. precipitation).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;gnp&quot;</span></code>: Gaussian neural process (GNP) with a joint Gaussian likelihood. This is a generalisation of the CNP that allows for correlations between the target variables.</p></li>
+</ul>
+</section>
+<section id="saving-and-loading-a-convnp">
+<h2>Saving and loading a ConvNP<a class="headerlink" href="#saving-and-loading-a-convnp" title="Permalink to this heading">#</a></h2>
+<p>Similarly to the <code class="docutils literal notranslate"><span class="pre">DataProcessor</span></code> and <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> objects, a <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> object can be saved using the <code class="docutils literal notranslate"><span class="pre">save</span></code> method, and then loaded using the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> constructor.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;../deepsensor_config/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_loaded</span> <span class="o">=</span> <span class="n">ConvNP</span><span class="p">(</span><span class="n">data_processor</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">,</span> <span class="s2">&quot;../deepsensor_config/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_bef</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+<span class="n">mean_loaded</span> <span class="o">=</span> <span class="n">model_loaded</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">mean_bef</span><span class="p">,</span> <span class="n">mean_loaded</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user-guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="task_loader.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">TaskLoader</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="training.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Training</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convnp-architecture">ConvNP architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialising-a-convnp">Initialising a ConvNP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-convnp-s-internal-grid">The ConvNP’s internal grid</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setconv-context-encoding">SetConv context encoding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#breaking-convnp-stationarity-using-auxiliary-variables">Breaking ConvNP stationarity using auxiliary variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#receptive-field">Receptive field</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-likelihood-parameter">The likelihood parameter</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-and-loading-a-convnp">Saving and loading a ConvNP</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

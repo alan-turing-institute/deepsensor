@@ -1,0 +1,817 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>deepsensor.plot &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/plot';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="deepsensor.active_learning.algorithms" href="active_learning/algorithms.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2Freference/plot.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/reference/plot.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>deepsensor.plot</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-deepsensor.plot">
+<span id="deepsensor-plot"></span><h1>deepsensor.plot<a class="headerlink" href="#module-deepsensor.plot" title="Permalink to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.plot.acquisition_fn">
+<span class="sig-name descname"><span class="pre">acquisition_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acquisition_fn_ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_new_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iteration'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Greys_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ncol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/deepsensor/plot.html#acquisition_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.plot.acquisition_fn" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<a class="reference internal" href="data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – Task containing the context set used to compute the acquisition
+function.</p></li>
+<li><p><strong>acquisition_fn_ds</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>) – Acquisition function dataset.</p></li>
+<li><p><strong>X_new_df</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a>) – Dataframe containing the placement locations.</p></li>
+<li><p><strong>data_processor</strong> (<a class="reference internal" href="data/processor.html#deepsensor.data.processor.DataProcessor" title="deepsensor.data.processor.DataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProcessor</span></code></a>) – Data processor used to unnormalise the context set and placement
+locations.</p></li>
+<li><p><strong>crs</strong> (<em>cartopy CRS</em>) – Coordinate reference system for the plots.</p></li>
+<li><p><strong>col_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Column dimension to plot over, by default “iteration”.</p></li>
+<li><p><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.9.2)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>optional</em>) – Color map to use for the plots, by default “Greys_r”.</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Figure size in inches, by default 3.</p></li>
+<li><p><strong>add_colorbar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to add a colorbar to the plots, by default True.</p></li>
+<li><p><strong>max_ncol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Maximum number of columns to use for the plots, by default 5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>matplotlib.pyplot.Figure</dt><dd><p>A figure containing the acquisition function plots.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If a column dimension is encountered that is not one of
+    <code class="docutils literal notranslate"><span class="pre">[&quot;time&quot;,</span> <span class="pre">&quot;sample&quot;]</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AssertionError" title="(in Python v3.13)"><strong>AssertionError</strong></a> – If the number of columns in the acquisition function dataset is
+    greater than <code class="docutils literal notranslate"><span class="pre">max_ncol</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.plot.context_encoding">
+<span class="sig-name descname"><span class="pre">context_encoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_set_idxs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">land_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_titles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">titles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/deepsensor/plot.html#context_encoding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.plot.context_encoding" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> SetConv encoding of a context set in a task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="model/convnp.html#deepsensor.model.convnp.ConvNP" title="deepsensor.model.convnp.ConvNP"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvNP</span></code></a>) – ConvNP model.</p></li>
+<li><p><strong>task</strong> (<a class="reference internal" href="data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – Task containing context set to plot encoding of …</p></li>
+<li><p><strong>task_loader</strong> (<a class="reference internal" href="data/loader.html#deepsensor.data.loader.TaskLoader" title="deepsensor.data.loader.TaskLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskLoader</span></code></a>) – DataLoader used to load the data, containing context set metadata
+used for plotting.</p></li>
+<li><p><strong>batch_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Batch index in encoding to plot, by default 0.</p></li>
+<li><p><strong>context_set_idxs</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Indices of context sets to plot, by default None (plots all context
+sets).</p></li>
+<li><p><strong>land_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the land mask in the encoding (used to overlay land
+contour on plots), by default None.</p></li>
+<li><p><strong>cbar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to add a colorbar to the plots, by default True.</p></li>
+<li><p><strong>clim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>, </em><em>optional</em>) – Colorbar limits, by default None.</p></li>
+<li><p><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.9.2)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>optional</em>) – Color map to use for the plots, by default “viridis”.</p></li>
+<li><p><strong>verbose_titles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to include verbose titles for the variable IDs in the
+context set (including the time index), by default True.</p></li>
+<li><p><strong>titles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Dict of titles to override for each subplot, by default None. If
+None, titles are generated from context set metadata.</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Size of the figure in inches, by default 3.</p></li>
+<li><p><strong>return_axes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to return the axes of the figure, by default False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.figure.Figure</span></code></a> | Tuple[<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.figure.Figure</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.pyplot.Axes</span></code>] –     Either a figure containing the context set encoding plots, or a
+tuple containing the <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">figure</span></code></a> and
+the <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.9.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axes</span></code></a> of the figure (if
+<code class="docutils literal notranslate"><span class="pre">return_axes</span></code> was set to <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.plot.extent_str_to_tuple">
+<span class="sig-name descname"><span class="pre">extent_str_to_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/deepsensor/plot.html#extent_str_to_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.plot.extent_str_to_tuple" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert extent string to (lon_min, lon_max, lat_min, lat_max) tuple.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>extent</strong> – str
+String of region name. Options are: “global”, “usa”, “uk”, “europe”.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>tuple</dt><dd><p>Tuple of (lon_min, lon_max, lat_min, lat_max).</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.plot.feature_maps">
+<span class="sig-name descname"><span class="pre">feature_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_features_per_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Greys'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/deepsensor/plot.html#feature_maps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.plot.feature_maps" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot the feature maps of a <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> model’s decoder layers after a
+forward pass with a <code class="docutils literal notranslate"><span class="pre">Task</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ConvNP</span></code>) – <p>…</p>
+</p></li>
+<li><p><strong>task</strong> (<a class="reference internal" href="data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – <p>…</p>
+</p></li>
+<li><p><strong>n_features_per_layer</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – …, by default 1.</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – …, by default None.</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – …, by default 3.</p></li>
+<li><p><strong>add_colorbar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – …, by default False.</p></li>
+<li><p><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.9.2)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>optional</em>) – …, by default “Greys”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>matplotlib.figure.Figure</em> –     A figure containing the feature maps.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the backend is not recognised.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.plot.offgrid_context">
+<span class="sig-name descname"><span class="pre">offgrid_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_processor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_set_idxs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">scatter_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/deepsensor/plot.html#offgrid_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.plot.offgrid_context" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot the off-grid context points on <code class="docutils literal notranslate"><span class="pre">axes</span></code>.</p>
+<p>Uses a provided <a class="reference internal" href="data/processor.html#deepsensor.data.processor.DataProcessor" title="deepsensor.data.processor.DataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProcessor</span></code></a> to unnormalise the
+context coordinates if provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axes</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.9.2)"><code class="docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code></a>] | Tuple[<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.9.2)"><code class="docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code></a>]) – Axes to plot on.</p></li>
+<li><p><strong>task</strong> (<a class="reference internal" href="data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – Task containing the context set to plot.</p></li>
+<li><p><strong>data_processor</strong> (<a class="reference internal" href="data/processor.html#deepsensor.data.processor.DataProcessor" title="deepsensor.data.processor.DataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProcessor</span></code></a>, optional) – Data processor used to unnormalise the context set, by default
+None.</p></li>
+<li><p><strong>task_loader</strong> (<a class="reference internal" href="data/loader.html#deepsensor.data.loader.TaskLoader" title="deepsensor.data.loader.TaskLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskLoader</span></code></a>, optional) – Task loader used to load the data, containing context set metadata
+used for plotting, by default None.</p></li>
+<li><p><strong>plot_target</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to plot the target set, by default False.</p></li>
+<li><p><strong>add_legend</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to add a legend to the plot, by default True.</p></li>
+<li><p><strong>context_set_idxs</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Indices of context sets to plot, by default None (plots all context
+sets).</p></li>
+<li><p><strong>markers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Marker styles to use for each context set, by default None.</p></li>
+<li><p><strong>colors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Colors to use for each context set, by default None.</p></li>
+<li><p><strong>scatter_kwargs</strong> – Additional keyword arguments to pass to the scatter plot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.plot.offgrid_context_observations">
+<span class="sig-name descname"><span class="pre">offgrid_context_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_set_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/deepsensor/plot.html#offgrid_context_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.plot.offgrid_context_observations" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot unnormalised context observation values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axes</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.9.2)"><code class="docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code></a>] | Tuple[<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.9.2)"><code class="docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code></a>]) – Axes to plot on.</p></li>
+<li><p><strong>task</strong> (<a class="reference internal" href="data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – Task containing the context set to plot.</p></li>
+<li><p><strong>data_processor</strong> (<a class="reference internal" href="data/processor.html#deepsensor.data.processor.DataProcessor" title="deepsensor.data.processor.DataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProcessor</span></code></a>) – Data processor used to unnormalise the context set.</p></li>
+<li><p><strong>task_loader</strong> (<a class="reference internal" href="data/loader.html#deepsensor.data.loader.TaskLoader" title="deepsensor.data.loader.TaskLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskLoader</span></code></a>) – Task loader used to load the data, containing context set metadata
+used for plotting.</p></li>
+<li><p><strong>context_set_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index of the context set to plot.</p></li>
+<li><p><strong>format_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Format string for the context observation values. By default
+<code class="docutils literal notranslate"><span class="pre">&quot;{:.2f}&quot;</span></code>.</p></li>
+<li><p><strong>extent</strong> (<em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>, </em><em>optional</em>) – Extent of the plot, by default None.</p></li>
+<li><p><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Color of the text, by default “black”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AssertionError" title="(in Python v3.13)"><strong>AssertionError</strong></a> – If the context set is gridded.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AssertionError" title="(in Python v3.13)"><strong>AssertionError</strong></a> – If the context set is not 1D.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AssertionError" title="(in Python v3.13)"><strong>AssertionError</strong></a> – If the task’s “Y_c” value for the context set ID is not 2D.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AssertionError" title="(in Python v3.13)"><strong>AssertionError</strong></a> – If the task’s “Y_c” value for the context set ID does not have
+    exactly one variable.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.plot.placements">
+<span class="sig-name descname"><span class="pre">placements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_new_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">scatter_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/deepsensor/plot.html#placements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.plot.placements" title="Permalink to this definition">#</a></dt>
+<dd><p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<a class="reference internal" href="data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – Task containing the context set used to compute the acquisition
+function.</p></li>
+<li><p><strong>X_new_df</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a>) – Dataframe containing the placement locations.</p></li>
+<li><p><strong>data_processor</strong> (<a class="reference internal" href="data/processor.html#deepsensor.data.processor.DataProcessor" title="deepsensor.data.processor.DataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProcessor</span></code></a>) – Data processor used to unnormalise the context set and placement
+locations.</p></li>
+<li><p><strong>crs</strong> (<em>cartopy CRS</em>) – Coordinate reference system for the plots.</p></li>
+<li><p><strong>extent</strong> (<em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Extent of the plots, by default None.</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Figure size in inches, by default 3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><code class="docutils literal notranslate"><span class="pre">matplotlib.figure.Figure</span></code></a></dt><dd><p>A figure containing the placement plots.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.plot.prediction">
+<span class="sig-name descname"><span class="pre">prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_processor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/deepsensor/plot.html#prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.plot.prediction" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot the mean and standard deviation of a prediction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pred</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Prediction</span></code>) – Prediction to plot.</p></li>
+<li><p><strong>date</strong> (str | <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v2.2.3)"><code class="docutils literal notranslate"><span class="pre">pandas.Timestamp</span></code></a>) – Date of the prediction.</p></li>
+<li><p><strong>data_processor</strong> (<a class="reference internal" href="data/processor.html#deepsensor.data.processor.DataProcessor" title="deepsensor.data.processor.DataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProcessor</span></code></a>) – Data processor used to unnormalise the context set.</p></li>
+<li><p><strong>task_loader</strong> (<a class="reference internal" href="data/loader.html#deepsensor.data.loader.TaskLoader" title="deepsensor.data.loader.TaskLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskLoader</span></code></a>) – Task loader used to load the data, containing context set metadata
+used for plotting.</p></li>
+<li><p><strong>task</strong> (<a class="reference internal" href="data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>, optional) – Task containing the context data to overlay.</p></li>
+<li><p><strong>prediction_parameters</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Prediction parameters to plot, by default “all”.</p></li>
+<li><p><strong>crs</strong> (<em>cartopy CRS</em><em>, </em><em>optional</em>) – Coordinate reference system for the plots, by default None.</p></li>
+<li><p><strong>colorbar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to add a colorbar to the plots, by default True.</p></li>
+<li><p><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Colormap to use for the plots. By default “viridis”.</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Size of the figure in inches per axis, by default 5.</p></li>
+<li><p><strong>extent</strong> – (tuple | str, optional):
+Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.
+Options are: “global”, “usa”, “uk”, “europe”. Defaults to None (no
+setting of extent).</p></li>
+<li><p><strong>c</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.plot.receptive_field">
+<span class="sig-name descname"><span class="pre">receptive_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">receptive_field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'global'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/deepsensor/plot.html#receptive_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.plot.receptive_field" title="Permalink to this definition">#</a></dt>
+<dd><p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>receptive_field</strong> – Receptive field to plot.</p></li>
+<li><p><strong>data_processor</strong> (<a class="reference internal" href="data/processor.html#deepsensor.data.processor.DataProcessor" title="deepsensor.data.processor.DataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProcessor</span></code></a>) – Data processor used to unnormalise the context set.</p></li>
+<li><p><strong>crs</strong> (<em>cartopy CRS</em>) – Coordinate reference system for the plots.</p></li>
+<li><p><strong>extent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em><em>, </em><em>optional</em>) – Extent of the plot, in format (x2_min, x2_max, x1_min, x1_max), e.g. in
+lat-lon format (lon_min, lon_max, lat_min, lat_max). By default “global”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.plot.task">
+<span class="sig-name descname"><span class="pre">task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markersize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_aspect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/deepsensor/plot.html#task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.plot.task" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot the context and target sets of a task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<a class="reference internal" href="data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – Task to plot.</p></li>
+<li><p><strong>task_loader</strong> (<a class="reference internal" href="data/loader.html#deepsensor.data.loader.TaskLoader" title="deepsensor.data.loader.TaskLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskLoader</span></code></a>) – Task loader used to load <code class="docutils literal notranslate"><span class="pre">task</span></code>, containing variable IDs used for
+plotting.</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Figure size in inches, by default 3.</p></li>
+<li><p><strong>markersize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Marker size (in units of points squared), by default None. If None,
+the marker size is set to <code class="docutils literal notranslate"><span class="pre">(2**2)</span> <span class="pre">*</span> <span class="pre">figsize</span> <span class="pre">/</span> <span class="pre">3</span></code>.</p></li>
+<li><p><strong>equal_aspect</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to set the aspect ratio of the plots to be equal, by
+default False.</p></li>
+<li><p><strong>plot_ticks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to plot the coordinate ticks on the axes, by default False.</p></li>
+<li><p><strong>extent</strong> (<em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>, </em><em>optional</em>) – Extent of the plot in format (x2_min, x2_max, x1_min, x1_max).
+Defaults to None (uses the smallest extent that contains all data points
+across all context and target sets).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><code class="docutils literal notranslate"><span class="pre">matplotlib.figure.Figure</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./reference"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="active_learning/algorithms.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">deepsensor.active_learning.algorithms</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
