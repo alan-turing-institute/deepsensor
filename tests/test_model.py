@@ -18,6 +18,7 @@ from deepsensor.data.processor import DataProcessor
 from deepsensor.data.loader import TaskLoader
 from deepsensor.model.convnp import ConvNP
 from deepsensor.train.train import Trainer
+from deepsensor.eval.metrics import compute_errors
 
 from tests.utils import gen_random_data_xr, gen_random_data_pandas
 
@@ -686,9 +687,15 @@ class TestModel(unittest.TestCase):
 
             if isinstance(pred_var, xr.Dataset):
                 # Check we can compute errors using the valid time coord ('time')
-                errors = pred_var["mean"] - self.da.sel(time=pred_var.time)
-                assert errors.dims == ("lead_time", "init_time", "x1", "x2")
-                assert errors.shape == pred_var["mean"].shape
+                errors = compute_errors(pred, self.da.to_dataset())
+                for var_ID in errors.keys():
+                    assert tuple(errors[var_ID].dims) == (
+                        "lead_time",
+                        "init_time",
+                        "x1",
+                        "x2",
+                    )
+                    assert errors[var_ID].shape == pred[var_ID]["mean"].shape
             elif isinstance(pred_var, pd.DataFrame):
                 # Makes coordinate checking easier by avoiding repeat values
                 pred_var = pred_var.to_xarray().isel(x1=0, x2=0)
