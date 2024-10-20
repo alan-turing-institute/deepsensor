@@ -954,6 +954,8 @@ def prediction(
             ax = axes[row_i, col_i]
 
             if pred.mode == "on-grid":
+                if "init_time" in pred[0].indexes:
+                    raise ValueError("Plotting forecasts not currently supported.")
                 if param == "std":
                     vmin = 0
                 else:
@@ -1000,6 +1002,8 @@ def prediction(
                     # )
 
             elif pred.mode == "off-grid":
+                if "init_time" in pred[0].index.names:
+                    raise ValueError("Plotting forecasts not currently supported.")
                 import seaborn as sns
 
                 hue = (
