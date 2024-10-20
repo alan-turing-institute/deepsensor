@@ -684,7 +684,12 @@ class TestModel(unittest.TestCase):
 
             pred_var = pred[self.var_ID]
 
-            if isinstance(pred_var, pd.DataFrame):
+            if isinstance(pred_var, xr.Dataset):
+                # Check we can compute errors using the valid time coord ('time')
+                errors = pred_var["mean"] - self.da.sel(time=pred_var.time)
+                assert errors.dims == ("lead_time", "init_time", "x1", "x2")
+                assert errors.shape == pred_var.shape
+            elif isinstance(pred_var, pd.DataFrame):
                 # Makes coordinate checking easier by avoiding repeat values
                 pred_var = pred_var.to_xarray().isel(x1=0, x2=0)
 
