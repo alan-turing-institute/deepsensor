@@ -659,7 +659,7 @@ class TestModel(unittest.TestCase):
         )
 
         expected_valid_times = np.array(
-            expected_lead_times[:, None] + expected_init_times[None, :]
+            expected_init_times[:, None] + expected_lead_times[None, :]
         )
 
         tl = TaskLoader(
@@ -690,8 +690,8 @@ class TestModel(unittest.TestCase):
                 errors = compute_errors(pred, self.da.to_dataset())
                 for var_ID in errors.keys():
                     assert tuple(errors[var_ID].dims) == (
-                        "lead_time",
                         "init_time",
+                        "lead_time",
                         "x1",
                         "x2",
                     )

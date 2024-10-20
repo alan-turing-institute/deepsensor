@@ -652,7 +652,7 @@ class DeepSensorModel(ProbabilisticModel):
                         )
 
         if forecasting_mode:
-            pred = add_valid_time_coord_to_pred(pred)
+            pred = add_valid_time_coord_to_pred_and_move_time_dims(pred)
 
         if verbose:
             dur = time.time() - tic
@@ -661,10 +661,11 @@ class DeepSensorModel(ProbabilisticModel):
         return pred
 
 
-def add_valid_time_coord_to_pred(pred: Prediction) -> Prediction:
+def add_valid_time_coord_to_pred_and_move_time_dims(pred: Prediction) -> Prediction:
     """
     Add a valid time coordinate "time" to a Prediction object based on the
-    initialisation times "init_time" and lead times "lead_time".
+    initialisation times "init_time" and lead times "lead_time", and
+    reorder the time dims from ("lead_time", "init_time") to ("init_time", "lead_time").
 
     Args:
         pred (:class:`~.model.pred.Prediction`):
@@ -678,13 +679,14 @@ def add_valid_time_coord_to_pred(pred: Prediction) -> Prediction:
         if isinstance(pred[var_ID], pd.DataFrame):
             x = pred[var_ID].reset_index()
             pred[var_ID]["time"] = (x["lead_time"] + x["init_time"]).values
-            print(f"{x}")
-            print(f"{x.dtypes}")
+            pred[var_ID] = pred[var_ID].swaplevel("init_time", "lead_time")
+            pred[var_ID] = pred[var_ID].sort_index()
         elif isinstance(pred[var_ID], xr.Dataset):
             x = pred[var_ID]
             pred[var_ID] = pred[var_ID].assign_coords(
                 time=x["lead_time"] + x["init_time"]
             )
+            pred[var_ID] = pred[var_ID].transpose("init_time", "lead_time", ...)
         else:
             raise ValueError(f"Unsupported prediction type {type(pred[var_ID])}.")
     return pred
