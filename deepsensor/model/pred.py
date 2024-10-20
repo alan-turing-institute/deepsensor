@@ -205,7 +205,7 @@ class Prediction(dict):
                         index = (lead_times[i], date)
                     else:
                         index = date
-                    self[var_ID][prediction_parameter].loc[index] = pred
+                    self[var_ID].loc[index, prediction_parameter] = pred
             elif prediction_parameter == "samples":
                 assert len(data.shape) == 3, (
                     f"If prediction_parameter is 'samples', and mode is 'off-grid', data must"
@@ -219,7 +219,7 @@ class Prediction(dict):
                             index = (lead_times[i], date)
                         else:
                             index = date
-                        self[var_ID][f"sample_{sample_i}"].loc[index] = pred
+                        self[var_ID].loc[index, f"sample_{sample_i}"] = pred
 
 
 def create_empty_spatiotemporal_xarray(
