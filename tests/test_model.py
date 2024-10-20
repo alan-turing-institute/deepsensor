@@ -649,12 +649,17 @@ class TestModel(unittest.TestCase):
 
     def test_forecasting_model_predict_return_valid_times(self):
         """Test that the times returned by a forecasting model are valid."""
+        init_dates = ["2020-01-01", "2020-01-02"]
+        expected_init_times = np.array(init_dates).astype(np.datetime64)
+
         lead_times_days = [1, 2, 3]
-        init_date = "2020-01-01"
-        expected_lead_times = [pd.Timedelta(days=lt) for lt in lead_times_days]
-        expected_valid_times = [
-            pd.Timestamp(init_date) + lt for lt in expected_lead_times
-        ]
+        expected_lead_times = np.array(
+            [np.timedelta64(lt, "D") for lt in lead_times_days]
+        )
+
+        expected_valid_times = np.array(
+            expected_lead_times[:, None] + expected_init_times[None, :]
+        )
 
         tl = TaskLoader(
             context=self.da,
@@ -666,14 +671,30 @@ class TestModel(unittest.TestCase):
             time_freq="D",
         )
         model = ConvNP(self.dp, tl, unet_channels=(5, 5, 5), verbose=False)
-        task = tl(init_date, context_sampling=10)
-        pred = model.predict(task, X_t=self.da)
-        np.testing.assert_array_equal(
-            pred[self.var_ID]["mean"].time.values, expected_valid_times
-        )
-        np.testing.assert_array_equal(
-            pred[self.var_ID]["mean"].lead_time.values, expected_lead_times
-        )
+        tasks = tl(init_dates, context_sampling=10)
+
+        X_ts = [
+            # Gridded predictions (xarray)
+            self.da,
+            # Off-grid prediction (pandas)
+            np.array([[0.0, 0.5, 1.0], [0.0, 0.5, 1.0]]),
+        ]
+        for X_t in X_ts:
+            pred = model.predict(tasks, X_t=X_t)
+
+            pred_var = pred[self.var_ID]
+
+            if isinstance(pred_var, pd.DataFrame):
+                # Makes coordinate checking easier by avoiding repeat values
+                pred_var = pred_var.to_xarray().isel(x1=0, x2=0)
+
+            np.testing.assert_array_equal(
+                pred_var.lead_time.values, expected_lead_times
+            )
+            np.testing.assert_array_equal(
+                pred_var.init_time.values, expected_init_times
+            )
+            np.testing.assert_array_equal(pred_var.time.values, expected_valid_times)
 
 
 def assert_shape(x, shape: tuple):

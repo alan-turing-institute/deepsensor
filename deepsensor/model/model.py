@@ -348,6 +348,34 @@ class DeepSensorModel(ProbabilisticModel):
         if ar_sample and n_samples < 1:
             raise ValueError("Must pass `n_samples` > 0 to use `ar_sample`.")
 
+        target_delta_t = self.task_loader.target_delta_t
+        dts = [pd.Timedelta(dt) for dt in target_delta_t]
+        dts_all_zero = all([dt == pd.Timedelta(seconds=0) for dt in dts])
+        if target_delta_t is not None and dts_all_zero:
+            forecasting_mode = False
+            lead_times = None
+        elif target_delta_t is not None and not dts_all_zero:
+            target_var_IDs_set = set(self.task_loader.target_var_IDs)
+            msg = f"""
+            Got more than one set of target variables in target sets,
+            but predictions can only be made with one set of target variables
+            to simplify implementation.
+            Got {target_var_IDs_set}.
+            """
+            assert len(target_var_IDs_set) == 1, msg
+            # Repeat lead_tim for each variable in each target set
+            lead_times = []
+            for target_set_idx, dt in enumerate(target_delta_t):
+                target_set_dim = self.task_loader.target_dims[target_set_idx]
+                lead_times += [
+                    pd.Timedelta(dt, unit=self.task_loader.time_freq)
+                    for _ in range(target_set_dim)
+                ]
+            forecasting_mode = True
+        else:
+            forecasting_mode = False
+            lead_times = None
+
         if type(tasks) is Task:
             tasks = [tasks]
 
@@ -355,12 +383,14 @@ class DeepSensorModel(ProbabilisticModel):
             B.set_random_seed(seed)
             np.random.seed(seed)
 
-        dates = [task["time"] for task in tasks]
+        init_dates = [task["time"] for task in tasks]
 
         # Flatten tuple of tuples to single list
         target_var_IDs = [
             var_ID for set in self.task_loader.target_var_IDs for var_ID in set
         ]
+        if lead_times is not None:
+            assert len(lead_times) == len(target_var_IDs)
 
         # TODO consider removing this logic, can we just depend on the dim names in X_t?
         if not unnormalise:
@@ -450,11 +480,13 @@ class DeepSensorModel(ProbabilisticModel):
         pred = Prediction(
             target_var_IDs,
             pred_params_to_store,
-            dates,
+            init_dates,
             X_t,
             X_t_mask,
             coord_names,
             n_samples=n_samples,
+            forecasting_mode=forecasting_mode,
+            lead_times=lead_times,
         )
 
         def unnormalise_pred_array(arr, **kwargs):
@@ -605,20 +637,57 @@ class DeepSensorModel(ProbabilisticModel):
             # Assign predictions to Prediction object
             for param, arr in prediction_arrs.items():
                 if param != "mixture_probs":
-                    pred.assign(param, task["time"], arr)
+                    pred.assign(param, task["time"], arr, lead_times=lead_times)
                 elif param == "mixture_probs":
                     assert arr.shape[0] == self.N_mixture_components, (
                         f"Number of mixture components ({arr.shape[0]}) does not match "
                         f"model attribute N_mixture_components ({self.N_mixture_components})."
                     )
                     for component_i, probs in enumerate(arr):
-                        pred.assign(f"{param}_{component_i}", task["time"], probs)
+                        pred.assign(
+                            f"{param}_{component_i}",
+                            task["time"],
+                            probs,
+                            lead_times=lead_times,
+                        )
+
+        if forecasting_mode:
+            pred = add_valid_time_coord_to_pred(pred)
 
         if verbose:
             dur = time.time() - tic
             print(f"Done in {np.floor(dur / 60)}m:{dur % 60:.0f}s.\n")
 
         return pred
+
+
+def add_valid_time_coord_to_pred(pred: Prediction) -> Prediction:
+    """
+    Add a valid time coordinate "time" to a Prediction object based on the
+    initialisation times "init_time" and lead times "lead_time".
+
+    Args:
+        pred (:class:`~.model.pred.Prediction`):
+            Prediction object to add valid time coordinate to.
+
+    Returns:
+        :class:`~.model.pred.Prediction`:
+            Prediction object with valid time coordinate added.
+    """
+    for var_ID in pred.keys():
+        if isinstance(pred[var_ID], pd.DataFrame):
+            x = pred[var_ID].reset_index()
+            pred[var_ID]["time"] = (x["lead_time"] + x["init_time"]).values
+            print(f"{x}")
+            print(f"{x.dtypes}")
+        elif isinstance(pred[var_ID], xr.Dataset):
+            x = pred[var_ID]
+            pred[var_ID] = pred[var_ID].assign_coords(
+                time=x["lead_time"] + x["init_time"]
+            )
+        else:
+            raise ValueError(f"Unsupported prediction type {type(pred[var_ID])}.")
+    return pred
 
 
 def main():  # pragma: no cover

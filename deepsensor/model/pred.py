@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+Timestamp = Union[str, pd.Timestamp, np.datetime64]
+
 
 class Prediction(dict):
     """
@@ -32,13 +34,20 @@ class Prediction(dict):
         n_samples (int)
             Number of joint samples to draw from the model. If 0, will not
             draw samples. Default 0.
+        forecasting_mode (bool)
+            If True, stored forecast predictions with an init_time and lead_time dimension,
+            and a valid_time coordinate. If False, stores prediction at t=0 only
+            (i.e. spatial interpolation), with only a single time dimension. Default False.
+        lead_times (List[pd.Timedelta], optional)
+            List of lead times to store in predictions. Must be provided if
+            forecasting_mode is True. Default None.
     """
 
     def __init__(
         self,
         target_var_IDs: List[str],
         pred_params: List[str],
-        dates: List[Union[str, pd.Timestamp]],
+        dates: List[Timestamp],
         X_t: Union[
             xr.Dataset,
             xr.DataArray,
@@ -50,6 +59,8 @@ class Prediction(dict):
         X_t_mask: Optional[Union[xr.Dataset, xr.DataArray]] = None,
         coord_names: dict = None,
         n_samples: int = 0,
+        forecasting_mode: bool = False,
+        lead_times: Optional[List[pd.Timedelta]] = None,
     ):
         self.target_var_IDs = target_var_IDs
         self.X_t_mask = X_t_mask
@@ -57,6 +68,13 @@ class Prediction(dict):
             coord_names = {"x1": "x1", "x2": "x2"}
         self.x1_name = coord_names["x1"]
         self.x2_name = coord_names["x2"]
+
+        self.forecasting_mode = forecasting_mode
+        if forecasting_mode:
+            assert (
+                lead_times is not None
+            ), "If forecasting_mode is True, lead_times must be provided."
+        self.lead_times = lead_times
 
         self.mode = infer_prediction_modality_from_X_t(X_t)
 
@@ -67,15 +85,25 @@ class Prediction(dict):
                 *[f"sample_{i}" for i in range(n_samples)],
             ]
 
+        # Create empty xarray/pandas objects to store predictions
         if self.mode == "on-grid":
             for var_ID in self.target_var_IDs:
-                # Create empty xarray/pandas objects to store predictions
+                if self.forecasting_mode:
+                    prepend_dims = ["lead_time"]
+                    prepend_coords = {"lead_time": lead_times}
+                else:
+                    prepend_dims = None
+                    prepend_coords = None
                 self[var_ID] = create_empty_spatiotemporal_xarray(
                     X_t,
                     dates,
                     data_vars=self.pred_params,
                     coord_names=coord_names,
+                    prepend_dims=prepend_dims,
+                    prepend_coords=prepend_coords,
                 )
+                if self.forecasting_mode:
+                    self[var_ID] = self[var_ID].rename(time="init_time")
             if self.X_t_mask is None:
                 # Create 2D boolean array of True values to simplify indexing
                 self.X_t_mask = (
@@ -86,8 +114,18 @@ class Prediction(dict):
                 )
         elif self.mode == "off-grid":
             # Repeat target locs for each date to create multiindex
-            idxs = [(date, *idxs) for date in dates for idxs in X_t.index]
-            index = pd.MultiIndex.from_tuples(idxs, names=["time", *X_t.index.names])
+            if self.forecasting_mode:
+                index_names = ["lead_time", "init_time", *X_t.index.names]
+                idxs = [
+                    (lt, date, *idxs)
+                    for lt in lead_times
+                    for date in dates
+                    for idxs in X_t.index
+                ]
+            else:
+                index_names = ["time", *X_t.index.names]
+                idxs = [(date, *idxs) for date in dates for idxs in X_t.index]
+            index = pd.MultiIndex.from_tuples(idxs, names=index_names)
             for var_ID in self.target_var_IDs:
                 self[var_ID] = pd.DataFrame(index=index, columns=self.pred_params)
 
@@ -106,6 +144,7 @@ class Prediction(dict):
         prediction_parameter: str,
         date: Union[str, pd.Timestamp],
         data: np.ndarray,
+        lead_times: Optional[List[pd.Timedelta]] = None,
     ):
         """
 
@@ -117,11 +156,29 @@ class Prediction(dict):
             data (np.ndarray)
                 If off-grid: Shape (N_var, N_targets) or (N_samples, N_var, N_targets).
                 If on-grid: Shape (N_var, N_x1, N_x2) or (N_samples, N_var, N_x1, N_x2).
+            lead_time (pd.Timedelta, optional)
+                Lead time of the forecast. Required if forecasting_mode is True. Default None.
         """
+        if self.forecasting_mode:
+            assert (
+                lead_times is not None
+            ), "If forecasting_mode is True, lead_times must be provided."
+
+            msg = f"""
+            If forecasting_mode is True, lead_times must be of equal length to the number of
+            variables in the data (the first dimension). Got {lead_times=} of length
+            {len(lead_times)} lead times and data shape {data.shape}.
+            """
+            assert len(lead_times) == data.shape[0], msg
+
         if self.mode == "on-grid":
             if prediction_parameter != "samples":
-                for var_ID, pred in zip(self.target_var_IDs, data):
-                    self[var_ID][prediction_parameter].loc[date].data[
+                for i, (var_ID, pred) in enumerate(zip(self.target_var_IDs, data)):
+                    if self.forecasting_mode:
+                        index = (lead_times[i], date)
+                    else:
+                        index = date
+                    self[var_ID][prediction_parameter].loc[index].data[
                         self.X_t_mask.data
                     ] = pred.ravel()
             elif prediction_parameter == "samples":
@@ -130,28 +187,44 @@ class Prediction(dict):
                     f"have shape (N_samples, N_var, N_x1, N_x2). Got {data.shape}."
                 )
                 for sample_i, sample in enumerate(data):
-                    for var_ID, pred in zip(self.target_var_IDs, sample):
-                        self[var_ID][f"sample_{sample_i}"].loc[date].data[
+                    for i, (var_ID, pred) in enumerate(
+                        zip(self.target_var_IDs, sample)
+                    ):
+                        if self.forecasting_mode:
+                            index = (lead_times[i], date)
+                        else:
+                            index = date
+                        self[var_ID][f"sample_{sample_i}"].loc[index].data[
                             self.X_t_mask.data
                         ] = pred.ravel()
 
         elif self.mode == "off-grid":
             if prediction_parameter != "samples":
-                for var_ID, pred in zip(self.target_var_IDs, data):
-                    self[var_ID][prediction_parameter].loc[date] = pred
+                for i, (var_ID, pred) in enumerate(zip(self.target_var_IDs, data)):
+                    if self.forecasting_mode:
+                        index = (lead_times[i], date)
+                    else:
+                        index = date
+                    self[var_ID][prediction_parameter].loc[index] = pred
             elif prediction_parameter == "samples":
                 assert len(data.shape) == 3, (
                     f"If prediction_parameter is 'samples', and mode is 'off-grid', data must"
                     f"have shape (N_samples, N_var, N_targets). Got {data.shape}."
                 )
                 for sample_i, sample in enumerate(data):
-                    for var_ID, pred in zip(self.target_var_IDs, sample):
-                        self[var_ID][f"sample_{sample_i}"].loc[date] = pred
+                    for i, (var_ID, pred) in enumerate(
+                        zip(self.target_var_IDs, sample)
+                    ):
+                        if self.forecasting_mode:
+                            index = (lead_times[i], date)
+                        else:
+                            index = date
+                        self[var_ID][f"sample_{sample_i}"].loc[index] = pred
 
 
 def create_empty_spatiotemporal_xarray(
     X: Union[xr.Dataset, xr.DataArray],
-    dates: List,
+    dates: List[Timestamp],
     coord_names: dict = None,
     data_vars: List[str] = None,
     prepend_dims: Optional[List[str]] = None,
@@ -230,10 +303,6 @@ def create_empty_spatiotemporal_xarray(
 
     # Convert time coord to pandas timestamps
     pred_ds = pred_ds.assign_coords(time=pd.to_datetime(pred_ds.time.values))
-
-    # TODO: Convert init time to forecast time?
-    # pred_ds = pred_ds.assign_coords(
-    #     time=pred_ds['time'] + pd.Timedelta(days=task_loader.target_delta_t[0]))
 
     return pred_ds
 
