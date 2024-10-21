@@ -19,7 +19,7 @@ warn_unused_configs = true
 no_implicit_reexport = true
 
 [tool.ruff]
-exclude = ["tests/*", "docs/*"]
+exclude = ["tests", "docs", "*.ipynb"]
 lint.select = [
     "D",
     "NPY201"
