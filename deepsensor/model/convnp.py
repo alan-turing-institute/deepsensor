@@ -1,4 +1,4 @@
-# ruff: noqa: D102 
+# ruff: noqa: D102
 
 import copy
 import os.path
