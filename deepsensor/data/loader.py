@@ -1,15 +1,15 @@
-from deepsensor.data.task import Task, flatten_X
-
-import os
-import json
 import copy
+import itertools
+import json
+import os
+import random
+from typing import List, Optional, Sequence, Tuple, Union
 
 import numpy as np
-import xarray as xr
 import pandas as pd
+import xarray as xr
 
-from typing import List, Tuple, Union, Optional
-
+from deepsensor.data.task import Task, flatten_X
 from deepsensor.errors import InvalidSamplingStrategyError
 
 
@@ -189,6 +189,9 @@ class TaskLoader:
             self.target_var_IDs_and_delta_t,
             self.aux_at_target_var_IDs,
         ) = self.infer_context_and_target_var_IDs()
+
+        self.coord_bounds = self._compute_global_coordinate_bounds()
+        self.coord_directions = self._compute_x1x2_direction()
 
     def _set_config(self):
         """Instantiate a config dictionary for the TaskLoader object"""
@@ -783,6 +786,7 @@ class TaskLoader:
             xt2 = xt2.ravel()
         else:
             xt1, xt2 = xr.DataArray(X_t[0]), xr.DataArray(X_t[1])
+
         Y_t_aux = offgrid_aux.sel(x1=xt1, x2=xt2, method="nearest")
         if isinstance(Y_t_aux, xr.Dataset):
             Y_t_aux = Y_t_aux.to_array()
@@ -793,6 +797,124 @@ class TaskLoader:
             # Reshape to (variable, *spatial_dims)
             Y_t_aux = Y_t_aux.reshape(1, *Y_t_aux.shape)
         return Y_t_aux
+
+    def _compute_global_coordinate_bounds(self) -> List[float]:
+        """
+        Compute global coordinate bounds in order to sample spatial bounds if desired.
+
+        Returns
+        -------
+        bbox: List[float]
+            sequence of global spatial extent as [x1_min, x1_max, x2_min, x2_max]
+        """
+        x1_min, x1_max, x2_min, x2_max = np.PINF, np.NINF, np.PINF, np.NINF
+
+        for var in itertools.chain(self.context, self.target):
+            if isinstance(var, (xr.Dataset, xr.DataArray)):
+                var_x1_min = var.x1.min().item()
+                var_x1_max = var.x1.max().item()
+                var_x2_min = var.x2.min().item()
+                var_x2_max = var.x2.max().item()
+            elif isinstance(var, (pd.DataFrame, pd.Series)):
+                var_x1_min = var.index.get_level_values("x1").min()
+                var_x1_max = var.index.get_level_values("x1").max()
+                var_x2_min = var.index.get_level_values("x2").min()
+                var_x2_max = var.index.get_level_values("x2").max()
+
+            if var_x1_min < x1_min:
+                x1_min = var_x1_min
+
+            if var_x1_max > x1_max:
+                x1_max = var_x1_max
+
+            if var_x2_min < x2_min:
+                x2_min = var_x2_min
+
+            if var_x2_max > x2_max:
+                x2_max = var_x2_max
+
+        return [x1_min, x1_max, x2_min, x2_max]
+    
+    def _compute_x1x2_direction(self) -> str:
+        """
+        Compute whether the x1 and x2 coords are ascending or descending.
+
+        Returns
+        -------
+        coord_directions: dict(str)
+            String containing two booleans: x1_ascend and x2_ascend, 
+            defining if these coordings increase or decrease from top left corner. 
+ 
+        """      
+
+        for var in itertools.chain(self.context, self.target):
+            if isinstance(var, (xr.Dataset, xr.DataArray)):
+                coord_x1_left= var.x1[0]
+                coord_x1_right= var.x1[-1]
+                coord_x2_top= var.x2[0]
+                coord_x2_bottom= var.x2[-1]
+            #Todo- what to input for pd.dataframe
+            elif isinstance(var, (pd.DataFrame, pd.Series)):
+                var_x1_min = var.index.get_level_values("x1").min()
+                var_x1_max = var.index.get_level_values("x1").max()
+                var_x2_min = var.index.get_level_values("x2").min()
+                var_x2_max = var.index.get_level_values("x2").max()
+
+            x1_ascend = True
+            x2_ascend = True
+            if coord_x1_left < coord_x1_right:
+                x1_ascend = True
+            if coord_x1_left > coord_x1_right:
+                x1_ascend = False
+
+            if coord_x2_top < coord_x2_bottom:
+                x2_ascend = True
+            if coord_x2_top > coord_x2_bottom:
+                x2_ascend = False
+
+
+
+        coord_directions = {
+                "x1": x1_ascend,
+                "x2": x2_ascend,
+            }
+
+        return coord_directions 
+
+    def sample_random_window(self, patch_size: Tuple[float]) -> Sequence[float]:
+        """
+        Sample random window uniformly from global coordinates to slice data.
+
+        Parameters
+        ----------
+        patch_size : Tuple[float]
+            Tuple of window extent
+
+        Returns
+        -------
+        bbox: List[float]
+            sequence of patch spatial extent as [x1_min, x1_max, x2_min, x2_max]
+        """
+        x1_extend, x2_extend = patch_size
+
+        x1_side = x1_extend / 2
+        x2_side = x2_extend / 2
+
+        # sample a point that satisfies the context and target global bounds
+        x1_min, x1_max, x2_min, x2_max = self.coord_bounds
+
+        x1_point = random.uniform(x1_min + x1_side, x1_max - x1_side)
+        x2_point = random.uniform(x2_min + x2_side, x2_max - x2_side)
+
+        # bbox of x1_min, x1_max, x2_min, x2_max
+        bbox = [
+            x1_point - x1_side,
+            x1_point + x1_side,
+            x2_point - x2_side,
+            x2_point + x2_side,
+        ]
+
+        return bbox
 
     def time_slice_variable(self, var, date, delta_t=0):
         """
@@ -824,6 +946,49 @@ class TaskLoader:
             raise ValueError(f"Unknown variable type {type(var)}")
         return var
 
+    def spatial_slice_variable(self, var, window: List[float]):
+        """
+        Slice a variable by a given window size.
+
+        Args:
+            var (...):
+                Variable to slice.
+            window (List[float]):
+                List of coordinates specifying the window [x1_min, x1_max, x2_min, x2_max].
+
+        Returns:
+            var (...)
+                Sliced variable.
+
+        Raises:
+            ValueError
+                If the variable is of an unknown type.
+        """
+        x1_min, x1_max, x2_min, x2_max = window
+        if isinstance(var, (xr.Dataset, xr.DataArray)):
+            # we cannot assume that the coordinates are sorted from small to large
+            if var.x1[0] > var.x1[-1]:
+                x1_slice = slice(x1_max, x1_min)
+            else:
+                x1_slice = slice(x1_min, x1_max)
+            if var.x2[0] > var.x2[-1]:
+                x2_slice = slice(x2_max, x2_min)
+            else:
+                x2_slice = slice(x2_min, x2_max)
+            var = var.sel(x1=x1_slice, x2=x2_slice)
+        elif isinstance(var, (pd.DataFrame, pd.Series)):
+            # retrieve desired patch size
+            var = var[
+                (var.index.get_level_values("x1") >= x1_min)
+                & (var.index.get_level_values("x1") <= x1_max)
+                & (var.index.get_level_values("x2") >= x2_min)
+                & (var.index.get_level_values("x2") <= x2_max)
+            ]
+        else:
+            raise ValueError(f"Unknown variable type {type(var)}")
+
+        return var
+
     def task_generation(
         self,
         date: pd.Timestamp,
@@ -844,9 +1009,62 @@ class TaskLoader:
             ]
         ] = None,
         split_frac: float = 0.5,
+        bbox: Sequence[float] = None,
+        patch_size: Union[float, tuple[float]] = None,
+        stride: Union[float, tuple[float]] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
+        """
+        Generate a task for a given date.
+
+        There are several sampling strategies available for the context and
+        target data:
+
+            - "all": Sample all observations.
+            - int: Sample N observations uniformly at random.
+            - float: Sample a fraction of observations uniformly at random.
+            - :class:`numpy:numpy.ndarray`, shape (2, N): Sample N observations
+              at the given x1, x2 coordinates. Coords are assumed to be
+              unnormalised.
+
+        Parameters
+        ----------
+        date : :class:`pandas.Timestamp`
+            Date for which to generate the task.
+        context_sampling : str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`]
+            Sampling strategy for the context data, either a list of sampling
+            strategies for each context set, or a single strategy applied to
+            all context sets. Default is ``"all"``.
+        target_sampling : str | int | float | :class:`numpy:numpy.ndarray` | List[str | int | float | :class:`numpy:numpy.ndarray`]
+            Sampling strategy for the target data, either a list of sampling
+            strategies for each target set, or a single strategy applied to all
+            target sets. Default is ``"all"``.
+        split_frac : float
+            The fraction of observations to use for the context set with the
+            "split" sampling strategy for linked context and target set pairs.
+            The remaining observations are used for the target set. Default is
+            0.5.
+        bbox : Sequence[float], optional
+            Bounding box to spatially slice the data, should be of the form [x1_min, x1_max, x2_min, x2_max].
+            Useful when considering the entire available region is computationally prohibitive for model forward pass.
+        patch_size : Union(Tuple|float), optional
+            Only used by patchwise inference. Height and width of patch in x1/x2 normalised coordinates.
+        stride: Union(Tuple|float), optional
+            Only used by patchwise inference. Length of stride between adjacent patches in x1/x2 normalised coordinates.
+        datewise_deterministic : bool
+            Whether random sampling is datewise_deterministic based on the
+            date. Default is ``False``.
+        seed_override : Optional[int]
+            Override the seed for random sampling. This can be used to use the
+            same random sampling at different ``date``. Default is None.
+
+        Returns
+        -------
+        task : :class:`~.data.task.Task`
+            Task object containing the context and target data.
+        """
+
         def check_sampling_strat(sampling_strat, set):
             """
             Check the sampling strategy.
@@ -891,6 +1109,13 @@ class TaskLoader:
                 if not isinstance(strat, (str, int, np.integer, float, np.ndarray)):
                     raise InvalidSamplingStrategyError(
                         f"Unknown sampling strategy {strat} of type {type(strat)}"
+                    )
+                elif isinstance(strat, str) and strat == "gapfill":
+                    assert all(
+                        isinstance(item, (xr.Dataset, xr.DataArray)) for item in set
+                    ), (
+                        "Gapfill sampling strategy can only be used with xarray "
+                        "datasets or data arrays"
                     )
                 elif isinstance(strat, str) and strat not in [
                     "all",
@@ -1017,6 +1242,9 @@ class TaskLoader:
 
         task["time"] = date
         task["ops"] = []
+        task["bbox"] = bbox
+        task["patch_size"] = patch_size # store patch_size and stride in task for use in stitching in prediction
+        task["stride"] = stride
         task["X_c"] = []
         task["Y_c"] = []
         if target_sampling is not None:
@@ -1026,6 +1254,7 @@ class TaskLoader:
             task["X_t"] = None
             task["Y_t"] = None
 
+        # temporal slices
         context_slices = [
             self.time_slice_variable(var, date, delta_t)
             for var, delta_t in zip(self.context, self.context_delta_t)
@@ -1034,6 +1263,20 @@ class TaskLoader:
             self.time_slice_variable(var, date, delta_t)
             for var, delta_t in zip(self.target, self.target_delta_t)
         ]
+
+        # check bbox size
+        if bbox is not None:
+            assert (
+                len(bbox) == 4
+            ), "bbox must be a list of length 4 with [x1_min, x1_max, x2_min, x2_max]"
+
+            # spatial slices
+            context_slices = [
+                self.spatial_slice_variable(var, bbox) for var in context_slices
+            ]
+            target_slices = [
+                self.spatial_slice_variable(var, bbox) for var in target_slices
+            ]
 
         # TODO move to method
         if (
@@ -1204,9 +1447,116 @@ class TaskLoader:
 
         return Task(task)
 
+    def sample_sliding_window(
+        self, patch_size: Tuple[float], stride: Tuple[int]
+    ) -> Sequence[float]:
+        """
+        Sample data using sliding window from global coordinates to slice data.
+        Parameters
+        ----------
+        patch_size : Tuple[float]
+            Tuple of window extent
+
+        Stride : Tuple[float]
+            Tuple of step size between each patch along x1 and x2 axis.
+        Returns
+        -------
+        bbox: List[float] ## check type of return.
+            sequence of patch spatial extent as [x1_min, x1_max, x2_min, x2_max]
+        """
+        # define patch size in x1/x2
+        x1_extend, x2_extend = patch_size
+
+        # define stride length in x1/x2 or set to patch_size if undefined
+        if stride is None:
+            stride = patch_size
+
+        dy, dx = stride
+        # Calculate the global bounds of context and target set.
+        x1_min, x1_max, x2_min, x2_max = self.coord_bounds
+        ## start with first patch top left hand corner at x1_min, x2_min
+        patch_list = []
+
+        # Todo: simplify these elif statements
+        if self.coord_directions['x1'] == False and self.coord_directions['x2'] == True:
+            for y in np.arange(x1_max, x1_min, -dy):
+                for x in np.arange(x2_min, x2_max, dx):
+                    if y - x1_extend < x1_min:
+                        y0 = x1_min + x1_extend
+                    else:
+                        y0 = y
+                    if x + x2_extend > x2_max:
+                        x0 = x2_max - x2_extend
+                    else:
+                        x0 = x
+
+                    # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                    bbox = [y0 - x1_extend, y0, x0, x0 + x2_extend]
+                    patch_list.append(bbox)
+
+        elif self.coord_directions['x1'] == False and self.coord_directions['x2'] == False:
+            for y in np.arange(x1_max, x1_min, -dy):
+                for x in np.arange(x2_max, x2_min, -dx):
+                    if y - x1_extend < x1_min:
+                        y0 = x1_min + x1_extend
+                    else:
+                        y0 = y
+                    if x - x2_extend < x2_min:
+                        x0 = x2_min + x2_extend
+                    else:
+                        x0 = x
+
+                    # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                    bbox = [y0 - x1_extend, y0, x0 - x2_extend, x0]
+                    patch_list.append(bbox)
+
+        elif self.coord_directions['x1'] == True and self.coord_directions['x2'] == False:
+            for y in np.arange(x1_min, x1_max, dy):
+                for x in np.arange(x2_max, x2_min, -dx):
+                    if y + x1_extend > x1_max:
+                        y0 = x1_max - x1_extend
+                    else:
+                        y0 = y
+                    if x - x2_extend < x2_min:
+                        x0 = x2_min + x2_extend
+                    else:
+                        x0 = x
+
+                    # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                    bbox = [y0, y0 + x1_extend, x0 - x2_extend, x0]
+                    patch_list.append(bbox)
+        else:
+            for y in np.arange(x1_min, x1_max, dy):
+                for x in np.arange(x2_min, x2_max, dx):
+                    if y + x1_extend > x1_max:
+                        y0 = x1_max - x1_extend
+                    else:
+                        y0 = y
+                    if x + x2_extend > x2_max:
+                        x0 = x2_max - x2_extend
+                    else:
+                        x0 = x
+
+                    # bbox of x1_min, x1_max, x2_min, x2_max per patch
+                    bbox = [y0, y0 + x1_extend, x0, x0 + x2_extend]
+
+                    patch_list.append(bbox)
+
+        # Remove duplicate patches while preserving order
+        seen = set()
+        unique_patch_list = []
+        for lst in patch_list:
+            # Convert list to tuple for immutability
+            tuple_lst = tuple(lst)
+            if tuple_lst not in seen:
+                seen.add(tuple_lst)
+                unique_patch_list.append(lst)
+
+        return unique_patch_list
+
     def __call__(
         self,
-        date: pd.Timestamp,
+        date: Union[pd.Timestamp, Sequence[pd.Timestamp]],
         context_sampling: Union[
             str,
             int,
@@ -1224,6 +1574,10 @@ class TaskLoader:
             ]
         ] = None,
         split_frac: float = 0.5,
+        patch_size: Union[float, tuple[float]] = None,
+        patch_strategy: Optional[str] = None,
+        stride: Union[float, tuple[float]] = None,
+        num_samples_per_date: int = 1,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Union[Task, List[Task]]:
@@ -1270,6 +1624,16 @@ class TaskLoader:
                 the "split" sampling strategy for linked context and target set
                 pairs. The remaining observations are used for the target set.
                 Default is 0.5.
+            patch_size : Union[float, tuple[float]], optional
+                Desired patch size in x1/x2 used for patchwise task generation. Useful when considering
+                the entire available region is computationally prohibitive for model forward pass.
+                If passed a single float, will use value for both x1 & x2.
+            patch_strategy:
+                Patch strategy to use for patchwise task generation. Default is None.
+                Possible options are 'random' or 'sliding'.
+            stride: Union[float, tuple[float]], optional
+                Step size between each sliding window patch along x1 and x2 axis. Default is None.
+                If passed a single float, will use value for both x1 & x2.
             datewise_deterministic (bool, optional):
                 Whether random sampling is datewise deterministic based on the
                 date. Default is ``False``.
@@ -1283,24 +1647,156 @@ class TaskLoader:
                 Task object or list of task objects for each date containing
                 the context and target data.
         """
-        if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
-            return [
-                self.task_generation(
-                    d,
-                    context_sampling,
-                    target_sampling,
-                    split_frac,
-                    datewise_deterministic,
-                    seed_override,
-                )
-                for d in date
-            ]
-        else:
-            return self.task_generation(
-                date,
-                context_sampling,
-                target_sampling,
-                split_frac,
-                datewise_deterministic,
-                seed_override,
+        if patch_strategy not in [None, "random", "sliding"]:
+            raise ValueError(
+                f"Invalid patch strategy {patch_strategy}. "
+                f"Must be one of [None, 'random', 'sliding']."
             )
+
+        if isinstance(patch_size, float) and patch_size is not None:
+            patch_size = (patch_size, patch_size)
+
+        if isinstance(stride, float) and stride is not None:
+            stride = (stride, stride)
+
+        if patch_strategy is None:
+            if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
+                tasks = [
+                    self.task_generation(
+                        d,
+                        context_sampling=context_sampling,
+                        target_sampling=target_sampling,
+                        split_frac=split_frac,
+                        datewise_deterministic=datewise_deterministic,
+                        seed_override=seed_override,
+                    )
+                    for d in date
+                ]
+            else:
+                tasks = self.task_generation(
+                    date=date,
+                    context_sampling=context_sampling,
+                    target_sampling=target_sampling,
+                    split_frac=split_frac,
+                    datewise_deterministic=datewise_deterministic,
+                    seed_override=seed_override,
+                )
+
+        elif patch_strategy == "random":
+
+            if patch_size is None:
+                raise ValueError(
+                    "Patch size must be specified for random patch sampling"
+                )
+
+            coord_bounds = [self.coord_bounds[0:2], self.coord_bounds[2:]]
+            for i, val in enumerate(patch_size):
+                if val < coord_bounds[i][0] or val > coord_bounds[i][1]:
+                    raise ValueError(
+                        f"Values of stride must be between the normalised coordinate bounds of: {self.coord_bounds}. \
+                            Got: patch_size: {patch_size}."
+                    )
+
+            if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
+                for d in date:
+                    bboxes = [
+                        self.sample_random_window(patch_size)
+                        for _ in range(num_samples_per_date)
+                    ]
+                    tasks = [
+                        self.task_generation(
+                            d,
+                            bbox=bbox,
+                            context_sampling=context_sampling,
+                            target_sampling=target_sampling,
+                            split_frac=split_frac,
+                            datewise_deterministic=datewise_deterministic,
+                            seed_override=seed_override,
+                        )
+                        for bbox in bboxes
+                    ]
+
+            else:
+                bboxes = [
+                    self.sample_random_window(patch_size)
+                    for _ in range(num_samples_per_date)
+                ]
+                tasks = [
+                    self.task_generation(
+                        date,
+                        bbox=bbox,
+                        context_sampling=context_sampling,
+                        target_sampling=target_sampling,
+                        split_frac=split_frac,
+                        datewise_deterministic=datewise_deterministic,
+                        seed_override=seed_override,
+                    )
+                    for bbox in bboxes
+                ]
+
+        elif patch_strategy == "sliding":
+            # sliding window sampling of patch
+
+            for val in (patch_size, stride):
+                if val is None:
+                    raise ValueError(
+                        f"patch_size and stride must be specified for sliding window sampling, got patch_size: {patch_size} and stride: {stride}."
+                    )
+
+            if stride[0] > patch_size[0] or stride[1] > patch_size[1]:
+                raise Warning(
+                    f"stride should generally be smaller than patch_size in the corresponding dimensions. Got: patch_size: {patch_size}, stride: {stride}"
+                )
+
+            coord_bounds = [self.coord_bounds[0:2], self.coord_bounds[2:]]
+            for i in (0, 1):
+                for val in (patch_size[i], stride[i]):
+                    if val < coord_bounds[i][0] or val > coord_bounds[i][1]:
+                        raise ValueError(
+                            f"Values of stride and patch_size must be between the normalised coordinate bounds of: {self.coord_bounds}. \
+                                Got: patch_size: {patch_size}, stride: {stride}"
+                        )
+
+            if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
+                tasks = []
+                for d in date:
+                    bboxes = self.sample_sliding_window(patch_size, stride)
+                    tasks.extend(
+                        [
+                            self.task_generation(
+                                d,
+                                bbox=bbox,
+                                context_sampling=context_sampling,
+                                target_sampling=target_sampling,
+                                split_frac=split_frac,
+                                datewise_deterministic=datewise_deterministic,
+                                seed_override=seed_override,
+                                patch_size=patch_size,
+                                stride=stride
+                            )
+                            for bbox in bboxes
+                        ]
+                    )
+            else:
+                bboxes = self.sample_sliding_window(patch_size, stride)
+                tasks = [
+                    self.task_generation(
+                        date,
+                        bbox=bbox,
+                        context_sampling=context_sampling,
+                        target_sampling=target_sampling,
+                        split_frac=split_frac,
+                        datewise_deterministic=datewise_deterministic,
+                        seed_override=seed_override,
+                        patch_size=patch_size,
+                        stride=stride
+                    )
+                    for bbox in bboxes
+                ]
+        else:
+            raise ValueError(
+                f"Invalid patch strategy {patch_strategy}. "
+                f"Must be one of [None, 'random', 'sliding']."
+            )
+
+        return tasks
