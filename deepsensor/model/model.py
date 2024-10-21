@@ -650,8 +650,7 @@ class DeepSensorModel(ProbabilisticModel):
 
 
 def add_valid_time_coord_to_pred_and_move_time_dims(pred: Prediction) -> Prediction:
-    """
-    Add a valid time coordinate "time" to a Prediction object based on the
+    """Add a valid time coordinate "time" to a Prediction object based on the
     initialisation times "init_time" and lead times "lead_time", and
     reorder the time dims from ("lead_time", "init_time") to ("init_time", "lead_time").
 
@@ -680,7 +679,7 @@ def add_valid_time_coord_to_pred_and_move_time_dims(pred: Prediction) -> Predict
     return pred
 
 
-def main():  # pragma: no cover # noqa
+def main():  # pragma: no cover # noqa: D103
     import deepsensor.tensorflow
     from deepsensor.data.loader import TaskLoader
     from deepsensor.data.processor import DataProcessor

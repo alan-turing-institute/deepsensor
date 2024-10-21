@@ -145,18 +145,16 @@ class Prediction(dict):
         data: np.ndarray,
         lead_times: Optional[List[pd.Timedelta]] = None,
     ):
-        """
-
-        Args:
-            prediction_parameter (str)
-                ...
-            date (Union[str, pd.Timestamp])
-                ...
-            data (np.ndarray)
-                If off-grid: Shape (N_var, N_targets) or (N_samples, N_var, N_targets).
-                If on-grid: Shape (N_var, N_x1, N_x2) or (N_samples, N_var, N_x1, N_x2).
-            lead_time (pd.Timedelta, optional)
-                Lead time of the forecast. Required if forecasting_mode is True. Default None.
+        """Args:
+        prediction_parameter (str)
+            ...
+        date (Union[str, pd.Timestamp])
+            ...
+        data (np.ndarray)
+            If off-grid: Shape (N_var, N_targets) or (N_samples, N_var, N_targets).
+            If on-grid: Shape (N_var, N_x1, N_x2) or (N_samples, N_var, N_x1, N_x2).
+        lead_time (pd.Timedelta, optional)
+            Lead time of the forecast. Required if forecasting_mode is True. Default None.
         """
         if self.forecasting_mode:
             assert (
