@@ -666,8 +666,7 @@ class TaskLoader:
         sampling_strat: Union[str, int, float, np.ndarray],
         seed: Optional[int] = None,
     ) -> (np.ndarray, np.ndarray):
-        """
-        Sample a DataFrame according to a given strategy.
+        """Sample a DataFrame according to a given strategy.
 
         Args:
             df (:class:`pandas.DataFrame` | :class:`pandas.Series`):
