@@ -3,8 +3,7 @@ from deepsensor.model.pred import Prediction
 
 
 def compute_errors(pred: Prediction, target: xr.Dataset) -> xr.Dataset:
-    """
-    Compute errors between predictions and targets.
+    """Compute errors between predictions and targets.
 
     Args:
         pred: Prediction object.

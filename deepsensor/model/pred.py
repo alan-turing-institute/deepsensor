@@ -8,8 +8,7 @@ Timestamp = Union[str, pd.Timestamp, np.datetime64]
 
 
 class Prediction(dict):
-    """
-    Object to store model predictions in a dictionary-like format.
+    """Object to store model predictions in a dictionary-like format.
 
     Maps from target variable IDs to xarray/pandas objects containing
     prediction parameters (depending on the output distribution of the model).
@@ -146,18 +145,16 @@ class Prediction(dict):
         data: np.ndarray,
         lead_times: Optional[List[pd.Timedelta]] = None,
     ):
-        """
-
-        Args:
-            prediction_parameter (str)
-                ...
-            date (Union[str, pd.Timestamp])
-                ...
-            data (np.ndarray)
-                If off-grid: Shape (N_var, N_targets) or (N_samples, N_var, N_targets).
-                If on-grid: Shape (N_var, N_x1, N_x2) or (N_samples, N_var, N_x1, N_x2).
-            lead_time (pd.Timedelta, optional)
-                Lead time of the forecast. Required if forecasting_mode is True. Default None.
+        """Args:
+        prediction_parameter (str)
+            ...
+        date (Union[str, pd.Timestamp])
+            ...
+        data (np.ndarray)
+            If off-grid: Shape (N_var, N_targets) or (N_samples, N_var, N_targets).
+            If on-grid: Shape (N_var, N_x1, N_x2) or (N_samples, N_var, N_x1, N_x2).
+        lead_time (pd.Timedelta, optional)
+            Lead time of the forecast. Required if forecasting_mode is True. Default None.
         """
         if self.forecasting_mode:
             assert (
@@ -230,8 +227,7 @@ def create_empty_spatiotemporal_xarray(
     prepend_dims: Optional[List[str]] = None,
     prepend_coords: Optional[dict] = None,
 ):
-    """
-        ...
+    """...
 
     Args:
         X (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
@@ -312,8 +308,7 @@ def increase_spatial_resolution(
     resolution_factor,
     coord_names: dict = None,
 ):
-    """
-    ...
+    """...
 
     ..
         # TODO wasteful to interpolate X_t_normalised
@@ -347,11 +342,9 @@ def increase_spatial_resolution(
 
 
 def infer_prediction_modality_from_X_t(
-    X_t: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, pd.Index, np.ndarray]
+    X_t: Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, pd.Index, np.ndarray],
 ) -> str:
-    """
-
-    Args:
+    """Args:
         X_t (Union[xr.DataArray, xr.Dataset, pd.DataFrame, pd.Series, pd.Index, np.ndarray]):
             ...
 
