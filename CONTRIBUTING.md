@@ -98,7 +98,13 @@ commits that are no longer necessary.
 Make sure you're using the developer dependencies.
 If you're working locally on the source code, *before* commiting, please run `pip install -r requirements/requirements.dev.txt` to install some useful dependencies just for development.
 This includes `pre-commit` and `ruff` which are used to check and format your code style when you run `git commit`, so that you don't have to.
-To make this work, just run `pre-commit install`.
+
+Using pre-commit:
++ To make this work, just run `pre-commit install` and when you commit, `ruff` will be run to check the style of the files that you've changed.
++ Note, you may find that if `ruff` needs to edit your files, you'll have to run `git add ...` and `git commit ..` again as the pre-commit hook will stop the commit until the changes pass its tests, `ruff` will also have slightly edited the files you added, so you'll need to stage and commit again.
+
+Without pre-commit:
++ Alternatively, you can run `ruff` yourself (without) `pre-commit` by installing `ruff` as above and just running `ruff format`.
 
 You should also run `pytest` and check that your changes don't break any of the existing tests.
 If you've made changes to the source code, you may need to add some tests to make sure that they don't get broken in the future.
