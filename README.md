@@ -19,7 +19,7 @@ data with neural processes</p>
 [![slack](https://img.shields.io/badge/slack-deepsensor-purple.svg?logo=slack)](https://ai4environment.slack.com/archives/C05NQ76L87R)
 [![All Contributors](https://img.shields.io/github/all-contributors/alan-turing-institute/deepsensor?color=ee8449&style=flat-square)](#contributors)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/alan-turing-institute/deepsensor/blob/main/LICENSE)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q1n7RGxEQJ_6z1DpBSg9FKF9bVQF-GRV?usp=sharing]
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q1n7RGxEQJ_6z1DpBSg9FKF9bVQF-GRV?usp=sharing)
 
 DeepSensor streamlines the application of neural processes (NPs) to environmental sciences by
 providing a simple interface for building, training, and evaluating NPs using `xarray` and `pandas`
