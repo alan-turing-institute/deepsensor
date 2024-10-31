@@ -1243,19 +1243,6 @@ class TaskLoader:
             for var, delta_t in zip(self.target, self.target_delta_t)
         ]
 
-        # check bbox size
-        if bbox is not None:
-            assert (
-                len(bbox) == 4
-            ), "bbox must be a list of length 4 with [x1_min, x1_max, x2_min, x2_max]"
-
-            # spatial slices
-            context_slices = [
-                self.spatial_slice_variable(var, bbox) for var in context_slices
-            ]
-            target_slices = [
-                self.spatial_slice_variable(var, bbox) for var in target_slices
-            ]
 
         # TODO move to method
         if (
@@ -1376,6 +1363,20 @@ class TaskLoader:
 
                     context_slices[context_idx] = context_var
                     target_slices[target_idx] = target_var
+        
+        # check bbox size
+        if bbox is not None:
+            assert (
+                len(bbox) == 4
+            ), "bbox must be a list of length 4 with [x1_min, x1_max, x2_min, x2_max]"
+
+            # spatial slices
+            context_slices = [
+                self.spatial_slice_variable(var, bbox) for var in context_slices
+            ]
+            target_slices = [
+                self.spatial_slice_variable(var, bbox) for var in target_slices
+            ]
 
         for i, (var, sampling_strat) in enumerate(
             zip(context_slices, context_sampling)
