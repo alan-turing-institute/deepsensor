@@ -91,7 +91,8 @@ class TestTaskLoader(unittest.TestCase):
     @parameterized.expand(range(1, 4))
     def test_loader_call(self, n_context_and_target):
         """Test TaskLoader.__call__ for all possible combinations of context/
-        target sampling methods."""
+        target sampling methods.
+        """
         # Convert to list of strings containing every possible combination of "xr" and "pd"
         context_ID_list = list(
             itertools.product(["xr", "pd"], repeat=n_context_and_target)
@@ -101,8 +102,7 @@ class TestTaskLoader(unittest.TestCase):
         )
 
         def data_type_ID_to_data(set_list):
-            """
-            Converts a list of data type IDs ("pd" or "xr") to a list of data
+            """Converts a list of data type IDs ("pd" or "xr") to a list of data
             objects of that type
 
             E.g. ["xr", "pd", "xr"] -> [self.da, self.df, self.da]

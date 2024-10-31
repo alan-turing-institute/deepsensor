@@ -10,8 +10,7 @@ from ..errors import TaskSetIndexError, GriddedDataError
 
 
 class Task(dict):
-    """
-    Task dictionary class.
+    """Task dictionary class.
 
     Inherits from ``dict`` and adds methods for printing and modifying the
     data.
@@ -31,6 +30,7 @@ class Task(dict):
 
     @classmethod
     def summarise_str(cls, k, v):
+        """Return string summaries for the _str__ method."""
         if isinstance(v, float):
             return v
         elif plum.isinstance(v, B.Numeric):
@@ -44,8 +44,7 @@ class Task(dict):
 
     @classmethod
     def summarise_repr(cls, k, v) -> str:
-        """
-        Summarise the task in a representation that can be printed.
+        """Summarise the task in a representation that can be printed.
 
         Args:
             cls (:class:`deepsensor.data.task.Task`:):
@@ -75,8 +74,7 @@ class Task(dict):
             return f"{type(v).__name__}/{v}"
 
     def __str__(self) -> str:
-        """
-        Print a convenient summary of the task dictionary.
+        """Print a convenient summary of the task dictionary.
 
         For array entries, print their shape, otherwise print the value.
         """
@@ -88,8 +86,7 @@ class Task(dict):
         return s
 
     def __repr__(self) -> str:
-        """
-        Print a convenient summary of the task dictionary.
+        """Print a convenient summary of the task dictionary.
 
         Print the type of each entry and if it is an array, print its shape,
         otherwise print the value.
@@ -100,8 +97,7 @@ class Task(dict):
         return s
 
     def op(self, f: Callable, op_flag: Optional[str] = None):
-        """
-        Apply function f to the array elements of a task dictionary.
+        """Apply function f to the array elements of a task dictionary.
 
         Useful for recasting to a different dtype or reshaping (e.g. adding a
         batch dimension).
@@ -139,8 +135,7 @@ class Task(dict):
         return self  # altered by reference, but return anyway
 
     def add_batch_dim(self):
-        """
-        Add a batch dimension to the arrays in the task dictionary.
+        """Add a batch dimension to the arrays in the task dictionary.
 
         Returns:
             :class:`deepsensor.data.task.Task`:
@@ -149,8 +144,7 @@ class Task(dict):
         return self.op(lambda x: x[None, ...], op_flag="batch_dim")
 
     def cast_to_float32(self):
-        """
-        Cast the arrays in the task dictionary to float32.
+        """Cast the arrays in the task dictionary to float32.
 
         Returns:
             :class:`deepsensor.data.task.Task`:
@@ -159,8 +153,7 @@ class Task(dict):
         return self.op(lambda x: x.astype(np.float32), op_flag="float32")
 
     def flatten_gridded_data(self):
-        """
-        Convert any gridded data in ``Task`` to flattened arrays.
+        """Convert any gridded data in ``Task`` to flattened arrays.
 
         Necessary for AR sampling, which doesn't yet permit gridded context sets.
 
@@ -184,8 +177,7 @@ class Task(dict):
         return self
 
     def remove_context_nans(self):
-        """
-        If NaNs are present in task["Y_c"], remove them (and corresponding task["X_c"])
+        """If NaNs are present in task["Y_c"], remove them (and corresponding task["X_c"]).
 
         Returns:
             :class:`deepsensor.data.task.Task`:
@@ -224,8 +216,7 @@ class Task(dict):
         return self
 
     def remove_target_nans(self):
-        """
-        If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"])
+        """If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"]).
 
         Returns:
             :class:`deepsensor.data.task.Task`:
@@ -268,8 +259,7 @@ class Task(dict):
         return self
 
     def mask_nans_numpy(self):
-        """
-        Replace NaNs with zeroes and set a mask to indicate where the NaNs
+        """Replace NaNs with zeroes and set a mask to indicate where the NaNs
         were.
 
         Returns:
@@ -299,8 +289,7 @@ class Task(dict):
         return self.op(lambda x: f(x), op_flag="numpy_mask")
 
     def mask_nans_nps(self):
-        """
-        ...
+        """...
 
         Returns:
             :class:`deepsensor.data.task.Task`:
@@ -322,8 +311,7 @@ class Task(dict):
         return self.op(lambda x: f(x), op_flag="nps_mask")
 
     def convert_to_tensor(self):
-        """
-        Convert to tensor object based on deep learning backend.
+        """Convert to tensor object based on deep learning backend.
 
         Returns:
             :class:`deepsensor.data.task.Task`:
@@ -349,8 +337,7 @@ def append_obs_to_task(
     Y_new: B.Numeric,
     context_set_idx: int,
 ):
-    """
-    Append a single observation to a context set in ``task``.
+    """Append a single observation to a context set in ``task``.
 
     Makes a deep copy of the data structure to avoid affecting the original
     object.
@@ -401,8 +388,7 @@ def append_obs_to_task(
 
 
 def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
-    """
-    Convert tuple of gridded coords to (2, N) array if necessary.
+    """Convert tuple of gridded coords to (2, N) array if necessary.
 
     Args:
         X (:class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]):
@@ -419,8 +405,7 @@ def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
 
 
 def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
-    """
-    Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2)
+    """Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2)
     array if necessary.
 
     Args:
@@ -437,11 +422,11 @@ def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
 
 
 def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
-    """
-    Concatenate a list of tasks into a single task containing multiple batches.
+    """Concatenate a list of tasks into a single task containing multiple batches.
 
     ..
-        TODO:
+
+    Todo:
         - Consider moving to ``nps.py`` as this leverages ``neuralprocesses``
           functionality.
         - Raise error if ``aux_t`` values passed (not supported I don't think)

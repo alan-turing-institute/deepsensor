@@ -17,3 +17,19 @@ warn_return_any = true
 warn_unreachable = true
 warn_unused_configs = true
 no_implicit_reexport = true
+
+[tool.ruff]
+exclude = ["tests", "docs", "*.ipynb"]
+lint.select = [
+    "D",
+    "NPY201"
+    ]
+lint.ignore = [
+    "D100", # Missing docstring in public module
+    "D104", # Missing docstring in public package
+    "D105", # Missing docstring in magic method
+    "D107", # Missing docstring in __init__
+    "D205", # 1 blank line required between summary line and description
+    "D417", # Missing argument description in function docstring
+]
+lint.pydocstyle.convention = "google"

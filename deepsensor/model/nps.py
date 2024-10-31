@@ -6,8 +6,7 @@ from typing import Tuple, Optional, Literal
 
 
 def convert_task_to_nps_args(task: Task):
-    """
-    Infer & build model call signature from ``task`` dict.
+    """Infer & build model call signature from ``task`` dict.
 
     ..
         TODO move to ConvNP class?
@@ -75,8 +74,7 @@ def run_nps_model(
     n_samples: Optional[int] = None,
     requires_grad: bool = False,
 ):
-    """
-    Run ``neuralprocesses`` model.
+    """Run ``neuralprocesses`` model.
 
     Args:
         neural_process (neuralprocesses.Model):
@@ -108,8 +106,7 @@ def run_nps_model(
 
 
 def run_nps_model_ar(neural_process, task: Task, num_samples: int = 1):
-    """
-    Run ``neural_process`` in AR mode.
+    """Run ``neural_process`` in AR mode.
 
     Args:
         neural_process (neuralprocesses.Model):
@@ -157,8 +154,7 @@ def construct_neural_process(
     num_basis_functions: int = 64,
     epsilon: float = 1e-2,
 ):
-    """
-    Construct a ``neuralprocesses`` ConvNP model.
+    """Construct a ``neuralprocesses`` ConvNP model.
 
     See: https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py
 
@@ -294,8 +290,7 @@ def construct_neural_process(
 
 
 def compute_encoding_tensor(model, task: Task):
-    """
-    Compute the encoding tensor for a given task.
+    """Compute the encoding tensor for a given task.
 
     Args:
         model (...):

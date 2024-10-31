@@ -28,15 +28,13 @@ import lab as B
 
 
 class ProbabilisticModel:
-    """
-    Base class for probabilistic model used for DeepSensor.
+    """Base class for probabilistic model used for DeepSensor.
     Ensures a set of methods required for DeepSensor
     are implemented by specific model classes that inherit from it.
     """
 
     def mean(self, task: Task, *args, **kwargs):
-        """
-        Computes the model mean prediction over target points based on given context
+        """Computes the model mean prediction over target points based on given context
         data.
 
         Args:
@@ -53,8 +51,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def variance(self, task: Task, *args, **kwargs):
-        """
-        Model marginal variance over target points given context points.
+        """Model marginal variance over target points given context points.
         Shape (N,).
 
         Args:
@@ -71,8 +68,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def std(self, task: Task):
-        """
-        Model marginal standard deviation over target points given context
+        """Model marginal standard deviation over target points given context
         points. Shape (N,).
 
         Args:
@@ -85,12 +81,11 @@ class ProbabilisticModel:
         var = self.variance(task)
         return var**0.5
 
-    def stddev(self, *args, **kwargs):
+    def stddev(self, *args, **kwargs):  # noqa
         return self.std(*args, **kwargs)
 
     def covariance(self, task: Task, *args, **kwargs):
-        """
-        Computes the model covariance matrix over target points based on given
+        """Computes the model covariance matrix over target points based on given
         context data. Shape (N, N).
 
         Args:
@@ -107,8 +102,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def mean_marginal_entropy(self, task: Task, *args, **kwargs):
-        """
-        Computes the mean marginal entropy over target points based on given
+        """Computes the mean marginal entropy over target points based on given
         context data.
 
         .. note::
@@ -129,8 +123,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def joint_entropy(self, task: Task, *args, **kwargs):
-        """
-        Computes the model joint entropy over target points based on given
+        """Computes the model joint entropy over target points based on given
         context data.
 
 
@@ -148,8 +141,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def logpdf(self, task: Task, *args, **kwargs):
-        """
-        Computes the joint model logpdf over target points based on given
+        """Computes the joint model logpdf over target points based on given
         context data.
 
         Args:
@@ -166,8 +158,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def loss(self, task: Task, *args, **kwargs):
-        """
-        Computes the model loss over target points based on given context data.
+        """Computes the model loss over target points based on given context data.
 
         Args:
             task (:class:`~.data.task.Task`):
@@ -183,8 +174,7 @@ class ProbabilisticModel:
         raise NotImplementedError()
 
     def sample(self, task: Task, n_samples=1, *args, **kwargs):
-        """
-        Draws ``n_samples`` joint samples over target points based on given
+        """Draws ``n_samples`` joint samples over target points based on given
         context data. Returned shape is ``(n_samples, n_target)``.
 
 
@@ -205,8 +195,7 @@ class ProbabilisticModel:
 
 
 class DeepSensorModel(ProbabilisticModel):
-    """
-    Implements DeepSensor prediction functionality of a ProbabilisticModel.
+    """Implements DeepSensor prediction functionality of a ProbabilisticModel.
     Allows for outputting an xarray object containing on-grid predictions or a
     pandas object containing off-grid predictions.
 
@@ -253,8 +242,7 @@ class DeepSensorModel(ProbabilisticModel):
         progress_bar: int = 0,
         verbose: bool = False,
     ) -> Prediction:
-        """
-        Predict on a regular grid or at off-grid locations.
+        """Predict on a regular grid or at off-grid locations.
 
         Args:
             tasks (List[Task] | Task):
@@ -348,6 +336,34 @@ class DeepSensorModel(ProbabilisticModel):
         if ar_sample and n_samples < 1:
             raise ValueError("Must pass `n_samples` > 0 to use `ar_sample`.")
 
+        target_delta_t = self.task_loader.target_delta_t
+        dts = [pd.Timedelta(dt) for dt in target_delta_t]
+        dts_all_zero = all([dt == pd.Timedelta(seconds=0) for dt in dts])
+        if target_delta_t is not None and dts_all_zero:
+            forecasting_mode = False
+            lead_times = None
+        elif target_delta_t is not None and not dts_all_zero:
+            target_var_IDs_set = set(self.task_loader.target_var_IDs)
+            msg = f"""
+            Got more than one set of target variables in target sets,
+            but predictions can only be made with one set of target variables
+            to simplify implementation.
+            Got {target_var_IDs_set}.
+            """
+            assert len(target_var_IDs_set) == 1, msg
+            # Repeat lead_tim for each variable in each target set
+            lead_times = []
+            for target_set_idx, dt in enumerate(target_delta_t):
+                target_set_dim = self.task_loader.target_dims[target_set_idx]
+                lead_times += [
+                    pd.Timedelta(dt, unit=self.task_loader.time_freq)
+                    for _ in range(target_set_dim)
+                ]
+            forecasting_mode = True
+        else:
+            forecasting_mode = False
+            lead_times = None
+
         if type(tasks) is Task:
             tasks = [tasks]
 
@@ -355,12 +371,14 @@ class DeepSensorModel(ProbabilisticModel):
             B.set_random_seed(seed)
             np.random.seed(seed)
 
-        dates = [task["time"] for task in tasks]
+        init_dates = [task["time"] for task in tasks]
 
         # Flatten tuple of tuples to single list
         target_var_IDs = [
             var_ID for set in self.task_loader.target_var_IDs for var_ID in set
         ]
+        if lead_times is not None:
+            assert len(lead_times) == len(target_var_IDs)
 
         # TODO consider removing this logic, can we just depend on the dim names in X_t?
         if not unnormalise:
@@ -450,11 +468,13 @@ class DeepSensorModel(ProbabilisticModel):
         pred = Prediction(
             target_var_IDs,
             pred_params_to_store,
-            dates,
+            init_dates,
             X_t,
             X_t_mask,
             coord_names,
             n_samples=n_samples,
+            forecasting_mode=forecasting_mode,
+            lead_times=lead_times,
         )
 
         def unnormalise_pred_array(arr, **kwargs):
@@ -605,14 +625,22 @@ class DeepSensorModel(ProbabilisticModel):
             # Assign predictions to Prediction object
             for param, arr in prediction_arrs.items():
                 if param != "mixture_probs":
-                    pred.assign(param, task["time"], arr)
+                    pred.assign(param, task["time"], arr, lead_times=lead_times)
                 elif param == "mixture_probs":
                     assert arr.shape[0] == self.N_mixture_components, (
                         f"Number of mixture components ({arr.shape[0]}) does not match "
                         f"model attribute N_mixture_components ({self.N_mixture_components})."
                     )
                     for component_i, probs in enumerate(arr):
-                        pred.assign(f"{param}_{component_i}", task["time"], probs)
+                        pred.assign(
+                            f"{param}_{component_i}",
+                            task["time"],
+                            probs,
+                            lead_times=lead_times,
+                        )
+
+        if forecasting_mode:
+            pred = add_valid_time_coord_to_pred_and_move_time_dims(pred)
 
         if verbose:
             dur = time.time() - tic
@@ -1074,7 +1102,37 @@ class DeepSensorModel(ProbabilisticModel):
         return prediction
 
 
-def main():  # pragma: no cover
+def add_valid_time_coord_to_pred_and_move_time_dims(pred: Prediction) -> Prediction:
+    """Add a valid time coordinate "time" to a Prediction object based on the
+    initialisation times "init_time" and lead times "lead_time", and
+    reorder the time dims from ("lead_time", "init_time") to ("init_time", "lead_time").
+
+    Args:
+        pred (:class:`~.model.pred.Prediction`):
+            Prediction object to add valid time coordinate to.
+
+    Returns:
+        :class:`~.model.pred.Prediction`:
+            Prediction object with valid time coordinate added.
+    """
+    for var_ID in pred.keys():
+        if isinstance(pred[var_ID], pd.DataFrame):
+            x = pred[var_ID].reset_index()
+            pred[var_ID]["time"] = (x["lead_time"] + x["init_time"]).values
+            pred[var_ID] = pred[var_ID].swaplevel("init_time", "lead_time")
+            pred[var_ID] = pred[var_ID].sort_index()
+        elif isinstance(pred[var_ID], xr.Dataset):
+            x = pred[var_ID]
+            pred[var_ID] = pred[var_ID].assign_coords(
+                time=x["lead_time"] + x["init_time"]
+            )
+            pred[var_ID] = pred[var_ID].transpose("init_time", "lead_time", ...)
+        else:
+            raise ValueError(f"Unsupported prediction type {type(pred[var_ID])}.")
+    return pred
+
+
+def main():  # pragma: no cover # noqa: D103
     import deepsensor.tensorflow
     from deepsensor.data.loader import TaskLoader
     from deepsensor.data.processor import DataProcessor

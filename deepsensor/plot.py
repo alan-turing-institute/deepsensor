@@ -27,8 +27,7 @@ def task(
     plot_ticks=False,
     extent=None,
 ) -> plt.Figure:
-    """
-    Plot the context and target sets of a task.
+    """Plot the context and target sets of a task.
 
     Args:
         task (:class:`~.data.task.Task`):
@@ -305,8 +304,7 @@ def offgrid_context(
     colors: Optional[str] = None,
     **scatter_kwargs,
 ) -> None:
-    """
-    Plot the off-grid context points on ``axes``.
+    """Plot the off-grid context points on ``axes``.
 
     Uses a provided :class:`~.data.processor.DataProcessor` to unnormalise the
     context coordinates if provided.
@@ -408,8 +406,7 @@ def offgrid_context_observations(
     extent: Optional[Tuple[int, int, int, int]] = None,
     color: str = "black",
 ) -> None:
-    """
-    Plot unnormalised context observation values.
+    """Plot unnormalised context observation values.
 
     Args:
         axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]):
@@ -488,8 +485,7 @@ def receptive_field(
     crs,
     extent: Union[str, Tuple[float, float, float, float]] = "global",
 ) -> plt.Figure:  # pragma: no cover
-    """
-    ...
+    """...
 
     Args:
         receptive_field (...):
@@ -559,8 +555,7 @@ def feature_maps(
     add_colorbar: bool = False,
     cmap: Union[str, Colormap] = "Greys",
 ) -> plt.Figure:
-    """
-    Plot the feature maps of a ``ConvNP`` model's decoder layers after a
+    """Plot the feature maps of a ``ConvNP`` model's decoder layers after a
     forward pass with a ``Task``.
 
     Args:
@@ -692,8 +687,7 @@ def placements(
     figsize: int = 3,
     **scatter_kwargs,
 ) -> plt.Figure:  # pragma: no cover
-    """
-    ...
+    """...
 
     Args:
         task (:class:`~.data.task.Task`):
@@ -742,9 +736,7 @@ def acquisition_fn(
     add_colorbar: bool = True,
     max_ncol: int = 5,
 ) -> plt.Figure:  # pragma: no cover
-    """
-
-    Args:
+    """Args:
         task (:class:`~.data.task.Task`):
             Task containing the context set used to compute the acquisition
             function.
@@ -878,8 +870,7 @@ def prediction(
     size: int = 5,
     extent: Optional[Union[Tuple[float, float, float, float], str]] = None,
 ) -> plt.Figure:  # pragma: no cover
-    """
-    Plot the mean and standard deviation of a prediction.
+    """Plot the mean and standard deviation of a prediction.
 
     Args:
         pred (:class:`~.model.prediction.Prediction`):
@@ -954,6 +945,8 @@ def prediction(
             ax = axes[row_i, col_i]
 
             if pred.mode == "on-grid":
+                if "init_time" in pred[0].indexes:
+                    raise ValueError("Plotting forecasts not currently supported.")
                 if param == "std":
                     vmin = 0
                 else:
@@ -1000,6 +993,8 @@ def prediction(
                     # )
 
             elif pred.mode == "off-grid":
+                if "init_time" in pred[0].index.names:
+                    raise ValueError("Plotting forecasts not currently supported.")
                 import seaborn as sns
 
                 hue = (
@@ -1036,8 +1031,7 @@ def prediction(
 
 
 def extent_str_to_tuple(extent: str) -> Tuple[float, float, float, float]:
-    """
-    Convert extent string to (lon_min, lon_max, lat_min, lat_max) tuple.
+    """Convert extent string to (lon_min, lon_max, lat_min, lat_max) tuple.
 
     Args:
         extent: str

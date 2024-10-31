@@ -15,10 +15,8 @@ If you are interested in contributing to the project, check out our [](./contrib
 
 * Patch-wise training and inference
 * Saving a ``TaskLoader`` when instantiated with raw xarray/pandas objects
-* Non-Gaussian likelihoods
 * Spatial-only modelling
 * Continuous time measurements (i.e. not just discrete, uniformly sampled data on the same time grid)
-* Improve forecasting functionality
 * Test the framework with other models (e.g. GPs)
 * Add simple baselines models (e.g. linear interpolation, GPs)
 * Test and extend support for using ``dask`` in the ``DataProcessor`` and ``TaskLoader``

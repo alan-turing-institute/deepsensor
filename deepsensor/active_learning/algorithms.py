@@ -240,7 +240,7 @@ class GreedyAlgorithm:
             )
 
     def _get_times_from_tasks(self):
-        """Get times from tasks"""
+        """Get times from tasks."""
         times = [task["time"] for task in self.tasks]
         # Check for any repeats
         if len(times) != len(set(times)):
@@ -285,7 +285,7 @@ class GreedyAlgorithm:
         return infill_ds
 
     def _sample_y_infill(self, infill_ds, time, x1, x2):
-        """Sample infill values at a single location"""
+        """Sample infill values at a single location."""
         assert isinstance(infill_ds, (xr.Dataset, xr.DataArray))
         y = infill_ds.sel(time=time, x1=x1, x2=x2)
         if isinstance(y, xr.Dataset):
@@ -298,9 +298,8 @@ class GreedyAlgorithm:
             return y
 
     def _build_acquisition_fn_ds(self, X_s: Union[xr.Dataset, xr.DataArray]):
-        """
-        Initialise xr.DataArray for storing acquisition function values on
-        search grid
+        """Initialise xr.DataArray for storing acquisition function values on
+        search grid.
         """
         prepend_dims = ["iteration"]  # , "sample"]  # MC sample TODO
         prepend_coords = {
@@ -320,7 +319,7 @@ class GreedyAlgorithm:
         return acquisition_fn_ds
 
     def _init_acquisition_fn_object(self, X_s: xr.Dataset):
-        """Instantiate acquisition function object"""
+        """Instantiate acquisition function object."""
         # Unnormalise before instantiating
         X_s = self.model.data_processor.map_coords(X_s, unnorm=True)
         if isinstance(X_s, (xr.Dataset, xr.DataArray)):
@@ -335,8 +334,7 @@ class GreedyAlgorithm:
             raise TypeError(f"Unsupported type for X_s: {type(X_s)}")
 
     def _search(self, acquisition_fn: AcquisitionFunction):
-        """
-        Run one greedy pass by looping over each point in ``X_s`` and
+        """Run one greedy pass by looping over each point in ``X_s`` and
         computing the acquisition function.
         """
         importances_list = []
@@ -434,8 +432,7 @@ class GreedyAlgorithm:
         return best_x_query
 
     def _single_greedy_iteration(self, acquisition_fn: AcquisitionFunction):
-        """
-        Run a single greedy grid search iteration and append the optimal
+        """Run a single greedy grid search iteration and append the optimal
         context location to self.X_new.
         """
         importances = self._search(acquisition_fn)
@@ -451,8 +448,7 @@ class GreedyAlgorithm:
         tasks: Union[List[Task], Task],
         diff: bool = False,
     ) -> Tuple[pd.DataFrame, xr.Dataset]:
-        """
-        Iteratively propose new context points using the greedy sensor placement algorithm.
+        """Iteratively propose new context points using the greedy sensor placement algorithm.
 
         Args:
             acquisition_fn (:class:`~.active_learning.acquisition_fns.AcquisitionFunction`):
