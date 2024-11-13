@@ -983,8 +983,8 @@ class TaskLoader:
         ] = None,
         split_frac: float = 0.5,
         bbox: Sequence[float] = None,
-        patch_size: Union[float, tuple[float]] = None,
-        stride: Union[float, tuple[float]] = None,
+        patch_size: Union[float, Tuple[float]] = None,
+        stride: Union[float, Tuple[float]] = None,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Task:
@@ -1551,9 +1551,9 @@ class TaskLoader:
             ]
         ] = None,
         split_frac: float = 0.5,
-        patch_size: Union[float, tuple[float]] = None,
+        patch_size: Union[float, Tuple[float]] = None,
         patch_strategy: Optional[str] = None,
-        stride: Union[float, tuple[float]] = None,
+        stride: Union[float, Tuple[float]] = None,
         num_samples_per_date: int = 1,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,

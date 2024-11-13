@@ -670,7 +670,7 @@ class DeepSensorModel(ProbabilisticModel):
         aux_at_targets_override: Union[xr.Dataset, xr.DataArray] = None,
         aux_at_targets_override_is_normalised: bool = False,
         resolution_factor: int = 1,
-        pred_params: tuple[str] = ("mean", "std"),
+        pred_params: Tuple[str] = ("mean", "std"),
         n_samples: int = 0,
         ar_sample: bool = False,
         ar_subsample_factor: int = 1,
