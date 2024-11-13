@@ -1139,9 +1139,7 @@ class DeepSensorModel(ProbabilisticModel):
         num_task_dates = len(set([t["time"] for t in tasks]))
         if num_task_dates > 1:
             raise NotImplementedError(
-                f"Patchwise prediction does not yet support more than a single date at a time, got {num_task_dates}. \n\
-                                      Contributions to the DeepSensor package are very welcome. \n\
-                                      Please see the contributing guide at https://alan-turing-institute.github.io/deepsensor/community/contributing.html"
+                f"Patchwise prediction does not yet support more than a single date at a time, got {num_task_dates}."
             )
 
         # tasks should be iterable, if only one is provided, make it a list
