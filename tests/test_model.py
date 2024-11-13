@@ -706,7 +706,7 @@ class TestModel(unittest.TestCase):
 
 
 def test_patchwise_prediction():
-    """Test that ``.predict_patch`` runs correctly."""
+    """Test that ``.predict_patchwise`` runs correctly."""
 
     patch_size = 0.5
     stride = 0.15
@@ -734,7 +734,7 @@ def test_patchwise_prediction():
 
     model = ConvNP(dp, tl)
 
-    pred = model.predict_patch(
+    pred = model.predict_patchwise(
         tasks=tasks,
         X_t=da,
         data_processor=dp,

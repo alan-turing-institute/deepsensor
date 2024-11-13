@@ -648,7 +648,7 @@ class DeepSensorModel(ProbabilisticModel):
 
         return pred
 
-    def predict_patch(
+    def predict_patchwise(
         self,
         tasks: Union[List[Task], Task],
         X_t: Union[

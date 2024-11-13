@@ -394,7 +394,7 @@ class TestTaskLoader(unittest.TestCase):
     ]
     )
     def test_patchwise_task_loader_parameter_handling(self, patch_strategy, patch_size, stride, raised):
-        """Test that correct errors and warnings are raised by ``.predict_patch``."""
+        """Test that correct errors and warnings are raised"""
 
         tl = TaskLoader(context=self.da, target=self.da)
 
