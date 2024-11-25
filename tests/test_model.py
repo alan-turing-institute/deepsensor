@@ -713,8 +713,8 @@ def test_patchwise_prediction():
 
     da = _gen_data_xr(dict(
             time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
-            x1=np.linspace(0, 1, 325),
-            x2=np.linspace(0, 1, 650),
+            x1=np.linspace(0, 1, 30),
+            x2=np.linspace(0, 1, 60),
         ),
         data_vars=["var"])
 
