@@ -821,81 +821,48 @@ class DeepSensorModel(ProbabilisticModel):
             unnorm_overlap_x1 = overlap_unnorm_xr.coords[orig_x1_name].values[1]
             unnorm_overlap_x2 = overlap_unnorm_xr.coords[orig_x2_name].values[1]
 
-            # Find size of overlap for x1/x2 in pixels
-            if x1_ascend:
-                x1_overlap_index = int(
-                    np.ceil(
-                        (
-                            np.argmin(
-                                np.abs(
-                                    X_t_ds.coords[orig_x1_name].values
-                                    - unnorm_overlap_x1
-                                )
-                            )
-                            / 2
-                        )
-                    )
-                )
-            else:
-                x1_overlap_index = int(
-                    np.floor(
-                        (
-                            X_t_ds.coords[orig_x1_name].values.size
-                            - int(
-                                np.ceil(
-                                    (
-                                        np.argmin(
-                                            np.abs(
-                                                X_t_ds.coords[orig_x1_name].values
-                                                - unnorm_overlap_x1
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                        / 2
-                    )
-                )
-            if x2_ascend:
-                x2_overlap_index = int(
-                    np.ceil(
-                        (
-                            np.argmin(
-                                np.abs(
-                                    X_t_ds.coords[orig_x2_name].values
-                                    - unnorm_overlap_x2
-                                )
-                            )
-                            / 2
-                        )
-                    )
-                )
-            else:
-                x2_overlap_index = int(
-                    np.floor(
-                        (
-                            X_t_ds.coords[orig_x2_name].values.size
-                            - int(
-                                np.ceil(
-                                    (
-                                        np.argmin(
-                                            np.abs(
-                                                X_t_ds.coords[orig_x2_name].values
-                                                - unnorm_overlap_x2
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                        / 2
-                    )
-                )
+            def overlap_index(
+                coords: np.ndarray, ascend: bool, unnorm_overlap: float
+            ) -> int:
+                """Find size of overlap in a single coordinate direction, in units of pixels.
 
-            x1_x2_overlap = (x1_overlap_index, x2_overlap_index)
+                Parameters
+                ----------
+                coords : np.ndarray
 
-            return x1_x2_overlap
+                ascend : bool
+                    Boolean defining whether coords ascend (increase) from top to bottom or left to right.
+
+                unnorm_overlap : float
+                    The patch overlap in unnormalised coordinates.
+
+                Returns:
+                -------
+                int : The number of pixels in the overlap.
+                """
+                pixel_coords_overlap_diffs = np.abs(coords - unnorm_overlap)
+                if ascend:
+                    trim_size = np.argmin(pixel_coords_overlap_diffs) / 2
+                    trim_size_rounded = int(np.ceil(trim_size))
+                    return trim_size_rounded
+
+                else:
+                    overlap_pixel_size = np.argmin(pixel_coords_overlap_diffs)
+                    overlap_pixel_size_rounded = np.ceil(overlap_pixel_size)
+                    trim_size = (
+                        (coords.size - int(overlap_pixel_size_rounded)) / 2
+                    )  # this extra step is so we get the overlap with respect to the largest value (i.e. is the number of pixels = 360, coords.size = 360)
+                    trim_size_rounded = int(np.floor(trim_size))
+                    return trim_size_rounded
+
+            return (
+                overlap_index(
+                    X_t_ds.coords[orig_x1_name].values, x1_ascend, unnorm_overlap_x1
+                ),
+                overlap_index(
+                    X_t_ds.coords[orig_x2_name].values, x2_ascend, unnorm_overlap_x2
+                ),
+            )
 
         def get_index(*args, x1=True) -> Union[int, Tuple[List[int], List[int]]]:
             """Convert coordinates into pixel row/column (index).
