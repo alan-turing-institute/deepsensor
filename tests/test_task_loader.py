@@ -1,5 +1,6 @@
 import copy
 import itertools
+import math
 import os
 import shutil
 import tempfile
@@ -343,7 +344,7 @@ class TestTaskLoader(unittest.TestCase):
             num_samples_per_date=2,
         )
 
-    @parameterized.expand([[0.5, 0.1], [(0.3, 0.4), (0.1, 0.1)]])
+    @parameterized.expand([[0.5, 0.45], [(0.3, 0.4), (0.3, 0.35)]])
     def test_sliding_window(self, patch_size, stride) -> None:
         """Test sliding window sampling."""
         # need to redefine the data generators because the patch size samplin
@@ -371,7 +372,7 @@ class TestTaskLoader(unittest.TestCase):
         context = [da_data_0_1, da_data_smaller, da_data_larger]
         tl = TaskLoader(
             context=context,  # gridded xarray and off-grid pandas contexts
-            target=self.df,  # off-grid pandas targets
+            target=self.df,   # off-grid pandas targets
         )
 
         # test date range
@@ -383,6 +384,14 @@ class TestTaskLoader(unittest.TestCase):
             patch_strategy="sliding",
             stride=stride,
         )
+
+        # test patch sizes are correct
+        for task in tasks:
+            assert math.isclose(task['bbox'][1] - task['bbox'][0], task['patch_size'][0])
+            assert math.isclose(task['bbox'][3] - task['bbox'][2], task['patch_size'][1])
+
+        # test stride sizes are correct
+        assert math.isclose(abs(tasks[0]['bbox'][2] - tasks[1]['bbox'][2]), tasks[0]['stride'][1])
 
     @parameterized.expand(
     [
