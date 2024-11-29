@@ -1085,11 +1085,42 @@ class DeepSensorModel(ProbabilisticModel):
 
                         patches_clipped[var_name].append(patch_clip)
 
+            #combined = patches_clipped[0]  # Start with the first patch
+            """
+            combined = {}
+            for var_name, patches in patches_clipped.items():
+                combined[var_name] = patches[0]  # Start with the first patch
+                for patch in patches[1:]:
+                    combined[var_name] = xr.merge([combined[var_name], patch], compat='no_conflicts', combine_attrs="override")
+            """
+            combined = {}
+            for var_name, patches in patches_clipped.items():
+                combined[var_name] = patches[0]  # Start with the first patch
+                for patch in patches[1:]:
+                    # Merge the current combined patch with the next one
+                    combined[var_name] = xr.merge([combined[var_name], patch], compat="override", combine_attrs="override")
+
+            """
+            combined = {}
+            for var_name, patches in patches_clipped.items():
+                combined[var_name] = patches[0]  # Start with the first patch
+                for patch in patches[1:]:
+                    combined[var_name] = combined[var_name].update(patch)
+            #print(patches_clipped)
+            #for patches in patches_clipped[1:]:
+            #    print('patches')
+            
+                combined = {
+                var_name: xr.merge([combined, patches], combine_attrs="override")
+                for var_name, patches in patches_clipped.items()
+            }
+                #combined = xr.merge([combined, patch], combine_attrs="override")  
+            
             combined = {
                 var_name: xr.combine_by_coords(patches, compat="no_conflicts")
                 for var_name, patches in patches_clipped.items()
             }
-
+            """
             return combined
 
         # load patch_size and stride from task
