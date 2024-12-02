@@ -680,7 +680,7 @@ class DeepSensorModel(ProbabilisticModel):
         progress_bar: int = 0,
         verbose: bool = False,
     ) -> Prediction:
-        """Predict using a tasks loaded using a sliding window patching strategy. Uses the `predict` method.
+        """Predict using tasks loaded using a sliding window patching strategy. Uses the `predict` method.
 
         .. versionadded:: 0.4.3
             :py:func:`predict_patchwise()` method.
