@@ -737,7 +737,6 @@ def test_patchwise_prediction():
     pred = model.predict_patchwise(
         tasks=tasks,
         X_t=da,
-        data_processor=dp,
     )
 
     # gridded predictions
