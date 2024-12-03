@@ -1471,6 +1471,7 @@ class TaskLoader:
         patch_list = []
 
         # define some lambda functions for use below
+        # round to 12 figures to avoid floating point error but reduce likelihood of unintentional rounding
         r = lambda x: round(x, 12)
         bbox_coords_ascend = lambda a, b: [r(a), r(a + b)]
         bbox_coords_descend = lambda a, b: bbox_coords_ascend(a, b)[::-1]
@@ -1489,6 +1490,7 @@ class TaskLoader:
                 compare[c] = operator.lt
                 bbox_coords[c] = bbox_coords_descend
 
+        # Define the bounding boxes for all patches, starting in top left corner of dataArray
         for y, x in itertools.product(
             np.arange(coord_min["x1"], coord_max["x1"], step["x1"]),
             np.arange(coord_min["x2"], coord_max["x2"], step["x2"]),
