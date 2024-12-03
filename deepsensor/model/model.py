@@ -1084,44 +1084,48 @@ class DeepSensorModel(ProbabilisticModel):
                         )
 
                         patches_clipped[var_name].append(patch_clip)
-
-            #combined = patches_clipped[0]  # Start with the first patch
-            """
-            combined = {}
-            for var_name, patches in patches_clipped.items():
-                combined[var_name] = patches[0]  # Start with the first patch
-                for patch in patches[1:]:
-                    combined[var_name] = xr.merge([combined[var_name], patch], compat='no_conflicts', combine_attrs="override")
-            """
-            combined = {}
-            for var_name, patches in patches_clipped.items():
-                combined[var_name] = patches[0]  # Start with the first patch
-                for patch in patches[1:]:
-                    # Merge the current combined patch with the next one
-                    combined[var_name] = xr.merge([combined[var_name], patch], compat="override", combine_attrs="override")
-
-            """
-            combined = {}
-            for var_name, patches in patches_clipped.items():
-                combined[var_name] = patches[0]  # Start with the first patch
-                for patch in patches[1:]:
-                    combined[var_name] = combined[var_name].update(patch)
-            #print(patches_clipped)
-            #for patches in patches_clipped[1:]:
-            #    print('patches')
             
-                combined = {
-                var_name: xr.merge([combined, patches], combine_attrs="override")
-                for var_name, patches in patches_clipped.items()
-            }
-                #combined = xr.merge([combined, patch], combine_attrs="override")  
-            
-            combined = {
-                var_name: xr.combine_by_coords(patches, compat="no_conflicts")
-                for var_name, patches in patches_clipped.items()
-            }
-            """
-            return combined
+            # Create blank prediction dataframe. 
+            pred_copy = copy.deepcopy(patches_clipped)
+
+            # Generate new blank DeepSensor.prediction object with same extent and coordinate system as X_t.
+            for var_name_copy, data_array_list in pred_copy.items():
+                first_patchwise_pred = data_array_list[0]
+
+                # Define coordinate extent and time
+                blank_pred_copy = xr.Dataset(coords={orig_x1_name: X_t[orig_x1_name], 
+                                                    orig_x2_name: X_t[orig_x2_name],
+                                                    'time': first_patchwise_pred['time']}) # Is this fine or can 'time' assume a different name?'
+
+                # Set variable names to those in patched prediction, make values blank.
+                # This is normally mean and std, but I think can vary. 
+                for var_name_i in first_patchwise_pred.data_vars:
+                    blank_pred_copy[var_name_i] = first_patchwise_pred[var_name_i]
+                    blank_pred_copy[var_name_i][:] = np.nan
+                pred_copy[var_name_copy]= blank_pred_copy
+
+            # Merge patchwise predictions to create stitched dataset. 
+            combined_dataset = pred_copy  # Use the previously initialized dictionary
+
+            # Iterate over each variable (key) in the prediction dictionary
+            for var_name, patches in patches_clipped.items():
+                
+                # Retrieve the blank dataset for the current variable
+                combined_array= combined_dataset[var_name]
+                
+                # Merge each patch into the combined dataset
+                for patch in patches:
+                    for var in patch.data_vars:
+                        # Reindex the patch to align it with the combined dataset
+                        reindexed_patch = patch[var].reindex_like(combined_array[var], method='nearest', tolerance=1e-6)
+                        
+                        # Combine data, prioritizing non-NaN values from patches
+                        combined_array[var] = combined_array[var].where(
+                            np.isnan(reindexed_patch), reindexed_patch)
+                
+                # Update the dictionary with the merged dataset
+                combined_dataset[var_name] = combined_array
+            return combined_dataset
 
         # load patch_size and stride from task
         patch_size = tasks[0]["patch_size"]
