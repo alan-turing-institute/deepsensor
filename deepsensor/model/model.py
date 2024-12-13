@@ -851,7 +851,7 @@ class DeepSensorModel(ProbabilisticModel):
                     trim_size = np.argmin(pixel_coords_overlap_diffs) / 2
                     trim_size_rounded = int(
                         np.floor(trim_size)
-                    )  # Always round down trim slide as new method can handle slight overlaps
+                    )  # Always round down trim slide as stitching method can handle slight overlaps
                     return trim_size_rounded
 
                 else:
@@ -1100,7 +1100,7 @@ class DeepSensorModel(ProbabilisticModel):
                         orig_x2_name: X_t[orig_x2_name],
                         "time": first_patchwise_pred["time"],
                     }
-                )  # Is this fine or can 'time' assume a different name?'
+                )
 
                 # Set variable names to those in patched predictions, set values to Nan.
                 for var_name_i in first_patchwise_pred.data_vars:
