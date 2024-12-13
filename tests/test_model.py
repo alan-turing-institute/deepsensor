@@ -743,17 +743,17 @@ def test_patchwise_prediction():
     # gridded predictions
     assert [isinstance(ds, xr.Dataset) for ds in pred.values()]
     # TODO come back to this, for artificial datasets here, shapes of predictions don't match inputs
-    # for var_ID in pred:
-    #     assert_shape(
-    #         pred[var_ID]["mean"],
-    #         (1, da.x1.size, da.x2.size),
-    #     )
-    #     assert_shape(
-    #         pred[var_ID]["std"],
-    #         (1, da.x1.size, da.x2.size),
-    #     )
-    #     assert da.x1.size == pred[var_ID].x1.size
-    #     assert da.x2.size == pred[var_ID].x2.size
+    for var_ID in pred:
+        assert_shape(
+            pred[var_ID]["mean"],
+            (1, da.x1.size, da.x2.size),
+        )
+        assert_shape(
+            pred[var_ID]["std"],
+            (1, da.x1.size, da.x2.size),
+        )
+        assert da.x1.size == pred[var_ID].x1.size
+        assert da.x2.size == pred[var_ID].x2.size
 
 def assert_shape(x, shape: tuple):
     """Assert that the shape of ``x`` matches ``shape``."""
