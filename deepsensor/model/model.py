@@ -849,7 +849,9 @@ class DeepSensorModel(ProbabilisticModel):
                 pixel_coords_overlap_diffs = np.abs(coords - unnorm_overlap)
                 if ascend:
                     trim_size = np.argmin(pixel_coords_overlap_diffs) / 2
-                    trim_size_rounded = int(np.floor(trim_size)) # Always round down trim slide as new method can handle slight overlaps
+                    trim_size_rounded = int(
+                        np.floor(trim_size)
+                    )  # Always round down trim slide as new method can handle slight overlaps
                     return trim_size_rounded
 
                 else:
@@ -1083,8 +1085,8 @@ class DeepSensorModel(ProbabilisticModel):
                         )
 
                         patches_clipped[var_name].append(patch_clip)
-            
-            # Create blank prediction dataframe. 
+
+            # Create blank prediction dataframe.
             patchwise_pred_copy = copy.deepcopy(patches_clipped)
 
             # Generate new blank DeepSensor.prediction object with same extent and coordinate system as X_t.
@@ -1092,35 +1094,43 @@ class DeepSensorModel(ProbabilisticModel):
                 first_patchwise_pred = data_array_list[0]
 
                 # Define coordinate extent and time
-                blank_pred_copy = xr.Dataset(coords={orig_x1_name: X_t[orig_x1_name], 
-                                                    orig_x2_name: X_t[orig_x2_name],
-                                                    'time': first_patchwise_pred['time']}) # Is this fine or can 'time' assume a different name?'
+                blank_pred_copy = xr.Dataset(
+                    coords={
+                        orig_x1_name: X_t[orig_x1_name],
+                        orig_x2_name: X_t[orig_x2_name],
+                        "time": first_patchwise_pred["time"],
+                    }
+                )  # Is this fine or can 'time' assume a different name?'
 
-                # Set variable names to those in patched predictions, set values to Nan. 
+                # Set variable names to those in patched predictions, set values to Nan.
                 for var_name_i in first_patchwise_pred.data_vars:
                     blank_pred_copy[var_name_i] = first_patchwise_pred[var_name_i]
                     blank_pred_copy[var_name_i][:] = np.nan
-                patchwise_pred_copy[var_name_copy]= blank_pred_copy
+                patchwise_pred_copy[var_name_copy] = blank_pred_copy
 
-            # Merge patchwise predictions to create final combined dataset. 
-            combined_dataset = patchwise_pred_copy  # Use the previously initialized dictionary
+            # Merge patchwise predictions to create final combined dataset.
+            combined_dataset = (
+                patchwise_pred_copy  # Use the previously initialized dictionary
+            )
 
             # Iterate over each variable (key) in the prediction dictionary
             for var_name, patches in patches_clipped.items():
-                
                 # Retrieve the blank dataset for the current variable
-                combined_array= combined_dataset[var_name]
-                
+                combined_array = combined_dataset[var_name]
+
                 # Merge each patch into the combined dataset
                 for patch in patches:
                     for var in patch.data_vars:
                         # Reindex the patch to catch any slight rounding errors and misalignment with the combined dataset
-                        reindexed_patch = patch[var].reindex_like(combined_array[var], method='nearest', tolerance=1e-6)
-                        
+                        reindexed_patch = patch[var].reindex_like(
+                            combined_array[var], method="nearest", tolerance=1e-6
+                        )
+
                         # Combine data, prioritizing non-NaN values from patches
                         combined_array[var] = combined_array[var].where(
-                            np.isnan(reindexed_patch), reindexed_patch)
-                
+                            np.isnan(reindexed_patch), reindexed_patch
+                        )
+
                 # Update the dictionary with the merged dataset
                 combined_dataset[var_name] = combined_array
             return combined_dataset
