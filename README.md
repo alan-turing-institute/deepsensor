@@ -227,6 +227,7 @@ if you would like to join this list!
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://patel-zeel.github.io"><img src="https://avatars.githubusercontent.com/u/59758528?v=4?s=100" width="100px;" alt="Zeel B Patel"/><br /><sub><b>Zeel B Patel</b></sub></a><br /><a href="#bug-patel-zeel" title="Bug reports">🐛</a> <a href="#code-patel-zeel" title="Code">💻</a> <a href="#userTesting-patel-zeel" title="User Testing">📓</a> <a href="#ideas-patel-zeel" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ots22"><img src="https://avatars.githubusercontent.com/u/5434836?v=4?s=100" width="100px;" alt="ots22"/><br /><sub><b>ots22</b></sub></a><br /><a href="#ideas-ots22" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/vinayakrana"><img src="https://avatars.githubusercontent.com/u/95575600?v=4?s=100" width="100px;" alt="vinayakrana"/><br /><sub><b>vinayakrana</b></sub></a><br /><a href="#doc-vinayakrana" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
