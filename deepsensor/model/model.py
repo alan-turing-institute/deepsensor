@@ -849,7 +849,9 @@ class DeepSensorModel(ProbabilisticModel):
                 pixel_coords_overlap_diffs = np.abs(coords - unnorm_overlap)
                 if ascend:
                     trim_size = np.argmin(pixel_coords_overlap_diffs) / 2
-                    trim_size_rounded = int(np.ceil(trim_size))
+                    trim_size_rounded = int(
+                        np.floor(trim_size)
+                    )  # Always round down trim slide as stitching method can handle slight overlaps
                     return trim_size_rounded
 
                 else:
@@ -916,7 +918,11 @@ class DeepSensorModel(ProbabilisticModel):
                 return (x1_index, x2_index)
 
         def stitch_clipped_predictions(
-            patch_preds, patch_overlap, patches_per_row, x1_ascend=True, x2_ascend=True
+            patch_preds: list[Prediction],
+            patch_overlap: int,
+            patches_per_row: int,
+            x1_ascend: bool = True,
+            x2_ascend: bool = True,
         ) -> dict:
             """Stitch patchwise predictions to form prediction at original extent.
 
@@ -931,10 +937,10 @@ class DeepSensorModel(ProbabilisticModel):
             patches_per_row: int
                 Number of patchwise predictions in each row.
 
-            x1_ascend : str
+            x1_ascend : bool
                 Boolean defining whether the x1 coords ascend (increase) from top to bottom, default = True.
 
-            x2_ascend : str
+            x2_ascend : bool
                 Boolean defining whether the x2 coords ascend (increase) from left to right, default = True.
 
             Returns:
@@ -1011,9 +1017,8 @@ class DeepSensorModel(ProbabilisticModel):
                         """
                         if patch_x2_index[0] == data_x2_index[0]:
                             b_x2_min = 0
-                            # The +1 operations here and elsewhere in this block address the different shapes between the input and prediction
                             # TODO: Try to resolve this issue in data/loader.py by ensuring patches are perfectly square.
-                            b_x2_max = b_x2_max + 1
+                            b_x2_max = b_x2_max
                         elif patch_x2_index[1] == data_x2_index[1]:
                             b_x2_max = 0
                             patch_row_prev = preds[i - 1]
@@ -1034,14 +1039,14 @@ class DeepSensorModel(ProbabilisticModel):
                                     patch_x2_index[0] - prev_patch_x2_min
                                 ) - patch_overlap[1]
                         else:
-                            b_x2_max = b_x2_max + 1
+                            b_x2_max = b_x2_max
 
                         if patch_x1_index[0] == data_x1_index[0]:
                             b_x1_min = 0
                         # TODO: ensure this elif statement is robust to multiple patch sizes.
                         elif abs(patch_x1_index[1] - data_x1_index[1]) < 2:
                             b_x1_max = 0
-                            b_x1_max = b_x1_max + 1
+                            b_x1_max = b_x1_max
                             patch_prev = preds[i - patches_per_row]
                             if x1_ascend:
                                 prev_patch_x1_max = get_index(
@@ -1061,7 +1066,7 @@ class DeepSensorModel(ProbabilisticModel):
                                     prev_patch_x1_min - patch_x1_index[0]
                                 ) - patch_overlap[0]
                         else:
-                            b_x1_max = b_x1_max + 1
+                            b_x1_max = b_x1_max
 
                         patch_clip_x1_min = int(b_x1_min)
                         patch_clip_x1_max = int(
@@ -1085,12 +1090,50 @@ class DeepSensorModel(ProbabilisticModel):
 
                         patches_clipped[var_name].append(patch_clip)
 
-            combined = {
-                var_name: xr.combine_by_coords(patches, compat="no_conflicts")
-                for var_name, patches in patches_clipped.items()
-            }
+            # Create blank prediction
+            combined_dataset = copy.deepcopy(patches_clipped)
 
-            return combined
+            # Generate new blank DeepSensor.prediction object with same extent and coordinate system as X_t.
+            for var, data_array_list in combined_dataset.items():
+                first_patchwise_pred = data_array_list[0]
+
+                # Define coordinate extent and time
+                blank_pred = xr.Dataset(
+                    coords={
+                        orig_x1_name: X_t[orig_x1_name],
+                        orig_x2_name: X_t[orig_x2_name],
+                        "time": first_patchwise_pred["time"],
+                    }
+                )
+
+                # Set variable names to those in patched predictions, set values to Nan.
+                for param in first_patchwise_pred.data_vars:
+                    blank_pred[param] = first_patchwise_pred[param]
+                    blank_pred[param][:] = np.nan
+                combined_dataset[var] = blank_pred
+
+            # Merge patchwise predictions to create final combined dataset.
+            # Iterate over each variable (key) in the prediction dictionary
+            for var_name, patches in patches_clipped.items():
+                # Retrieve the blank dataset for the current variable
+                combined_array = combined_dataset[var_name]
+
+                # Merge each patch into the combined dataset
+                for patch in patches:
+                    for var in patch.data_vars:
+                        # Reindex the patch to catch any slight rounding errors and misalignment with the combined dataset
+                        reindexed_patch = patch[var].reindex_like(
+                            combined_array[var], method="nearest", tolerance=1e-6
+                        )
+
+                        # Combine data, prioritizing non-NaN values from patches
+                        combined_array[var] = combined_array[var].where(
+                            np.isnan(reindexed_patch), reindexed_patch
+                        )
+
+                # Update the dictionary with the merged dataset
+                combined_dataset[var_name] = combined_array
+            return combined_dataset
 
         # load patch_size and stride from task
         patch_size = tasks[0]["patch_size"]
