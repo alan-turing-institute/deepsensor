@@ -192,6 +192,15 @@
         "test",
         "maintenance"
       ]
+    },
+    {
+      "login": "vinayakrana",
+      "name": "vinayakrana",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95575600?v=4",
+      "profile": "https://github.com/vinayakrana",
+      "contributions": [
+        "doc"
+      ]
     }
   ]
 }
