@@ -1,0 +1,760 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>deepsensor.model.nps &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/deepsensor/model/nps';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2F_modules/deepsensor/model/nps.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for deepsensor.model.nps</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">backend</span>
+<span class="kn">import</span> <span class="nn">lab</span> <span class="k">as</span> <span class="nn">B</span>
+
+<span class="kn">from</span> <span class="nn">deepsensor.data.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span>
+
+
+<div class="viewcode-block" id="convert_task_to_nps_args"><a class="viewcode-back" href="../../../reference/model/nps.html#deepsensor.model.nps.convert_task_to_nps_args">[docs]</a><span class="k">def</span> <span class="nf">convert_task_to_nps_args</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Infer &amp; build model call signature from ``task`` dict.</span>
+
+<span class="sd">    ..</span>
+<span class="sd">        TODO move to ConvNP class?</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            Task object containing context and target sets.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[list[tuple[numpy.ndarray, numpy.ndarray]], numpy.ndarray, numpy.ndarray, dict]:</span>
+<span class="sd">            ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">],</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Running `neuralprocesses` model with no target locations (got </span><span class="si">{</span><span class="n">task</span><span class="p">[</span><span class="s1">&#39;X_t&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">). &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Have you not provided a `target_sampling` argument to `TaskLoader`?&quot;</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">xt</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">yt</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Multiple target sets, different target locations</span>
+        <span class="n">xt</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">AggregateInput</span><span class="p">(</span><span class="o">*</span><span class="p">[(</span><span class="n">xt</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">xt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">])])</span>
+        <span class="n">yt</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Single target set</span>
+        <span class="n">xt</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">yt</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Multiple target sets, different target locations</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">])</span>
+        <span class="n">xts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">yts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">target_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">yt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">yt</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]]</span>
+        <span class="c1"># Map from ND target sets to 1D target sets</span>
+        <span class="n">dim_counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">yt</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">],</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">])):</span>
+            <span class="c1"># Repeat target locations for each target dimension in target set</span>
+            <span class="n">xts</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="n">xt</span><span class="p">,</span> <span class="n">dim_counter</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">target_dims</span><span class="p">[</span><span class="n">i</span><span class="p">])])</span>
+            <span class="n">yts</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">yt</span><span class="p">[:,</span> <span class="n">j</span> <span class="p">:</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">target_dims</span><span class="p">[</span><span class="n">i</span><span class="p">])])</span>
+            <span class="n">dim_counter</span> <span class="o">+=</span> <span class="n">target_dims</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">xt</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">AggregateInput</span><span class="p">(</span><span class="o">*</span><span class="n">xts</span><span class="p">)</span>
+        <span class="n">yt</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">Aggregate</span><span class="p">(</span><span class="o">*</span><span class="n">yts</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Multiple target sets, same target locations; `Y_t`s along feature dim</span>
+        <span class="n">xt</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">yt</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Incorrect target locations and target observations (got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s1">&#39;X_t&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s1">&#39;Y_t&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">model_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="s2">&quot;Y_t_aux&quot;</span> <span class="ow">in</span> <span class="n">task</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">model_kwargs</span><span class="p">[</span><span class="s2">&quot;aux_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t_aux&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">context_data</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">yt</span><span class="p">,</span> <span class="n">model_kwargs</span></div>
+
+
+<div class="viewcode-block" id="run_nps_model"><a class="viewcode-back" href="../../../reference/model/nps.html#deepsensor.model.nps.run_nps_model">[docs]</a><span class="k">def</span> <span class="nf">run_nps_model</span><span class="p">(</span>
+    <span class="n">neural_process</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+    <span class="n">n_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run ``neuralprocesses`` model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        neural_process (neuralprocesses.Model):</span>
+<span class="sd">            Neural process model.</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            Task object containing context and target sets.</span>
+<span class="sd">        n_samples (int, optional):</span>
+<span class="sd">            Number of samples to draw from the model. Defaults to ``None``</span>
+<span class="sd">            (single sample).</span>
+<span class="sd">        requires_grad (bool, optional):</span>
+<span class="sd">            Whether to require gradients. Defaults to ``False``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        neuralprocesses.distributions.Distribution:</span>
+<span class="sd">            Distribution object containing the model&#39;s predictions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context_data</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">model_kwargs</span> <span class="o">=</span> <span class="n">convert_task_to_nps_args</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">backend</span><span class="o">.</span><span class="n">str</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">requires_grad</span><span class="p">:</span>
+        <span class="c1"># turn off grad</span>
+        <span class="kn">import</span> <span class="nn">torch</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">neural_process</span><span class="p">(</span>
+                <span class="n">context_data</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="o">**</span><span class="n">model_kwargs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">n_samples</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">neural_process</span><span class="p">(</span><span class="n">context_data</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="o">**</span><span class="n">model_kwargs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dist</span></div>
+
+
+<div class="viewcode-block" id="run_nps_model_ar"><a class="viewcode-back" href="../../../reference/model/nps.html#deepsensor.model.nps.run_nps_model_ar">[docs]</a><span class="k">def</span> <span class="nf">run_nps_model_ar</span><span class="p">(</span><span class="n">neural_process</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run ``neural_process`` in AR mode.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        neural_process (neuralprocesses.Model):</span>
+<span class="sd">            Neural process model.</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            Task object containing context and target sets.</span>
+<span class="sd">        num_samples (int, optional):</span>
+<span class="sd">            Number of samples to draw from the model. Defaults to 1.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]:</span>
+<span class="sd">            Tuple of mean, variance, noiseless samples, and noisy samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context_data</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">convert_task_to_nps_args</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+    <span class="c1"># NOTE can&#39;t use `model_kwargs` in AR mode (ie can&#39;t use auxiliary MLP at targets)</span>
+    <span class="n">mean</span><span class="p">,</span> <span class="n">variance</span><span class="p">,</span> <span class="n">noiseless_samples</span><span class="p">,</span> <span class="n">noisy_samples</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">ar_predict</span><span class="p">(</span>
+        <span class="n">neural_process</span><span class="p">,</span>
+        <span class="n">context_data</span><span class="p">,</span>
+        <span class="n">xt</span><span class="p">,</span>
+        <span class="n">num_samples</span><span class="o">=</span><span class="n">num_samples</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">variance</span><span class="p">,</span> <span class="n">noiseless_samples</span><span class="p">,</span> <span class="n">noisy_samples</span></div>
+
+
+<div class="viewcode-block" id="construct_neural_process"><a class="viewcode-back" href="../../../reference/model/nps.html#deepsensor.model.nps.construct_neural_process">[docs]</a><span class="k">def</span> <span class="nf">construct_neural_process</span><span class="p">(</span>
+    <span class="n">dim_x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">dim_yc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">dim_yt</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">dim_aux_t</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dim_lv</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">conv_arch</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unet&quot;</span><span class="p">,</span>
+    <span class="n">unet_channels</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+    <span class="n">unet_resize_convs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">unet_resize_conv_interp_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;bilinear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bilinear&quot;</span><span class="p">,</span>
+    <span class="n">aux_t_mlp_layers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">likelihood</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;cnp&quot;</span><span class="p">,</span> <span class="s2">&quot;gnp&quot;</span><span class="p">,</span> <span class="s2">&quot;cnp-spikes-beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;cnp&quot;</span><span class="p">,</span>
+    <span class="n">unet_kernels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">internal_density</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">encoder_scales</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">encoder_scales_learnable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">decoder_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">decoder_scale_learnable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">num_basis_functions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a ``neuralprocesses`` ConvNP model.</span>
+
+<span class="sd">    See: https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py</span>
+
+<span class="sd">    Docstring below modified from ``neuralprocesses``. If more kwargs are</span>
+<span class="sd">    needed, they must be explicitly passed to ``neuralprocesses`` constructor</span>
+<span class="sd">    (not currently safe to use `**kwargs` here).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dim_x (int, optional):</span>
+<span class="sd">            Dimensionality of the inputs. Defaults to 1.</span>
+<span class="sd">        dim_y (int, optional):</span>
+<span class="sd">            Dimensionality of the outputs. Defaults to 1.</span>
+<span class="sd">        dim_yc (int or tuple[int], optional):</span>
+<span class="sd">            Dimensionality of the outputs of the context set. You should set</span>
+<span class="sd">            this if the dimensionality of the outputs of the context set is not</span>
+<span class="sd">            equal to the dimensionality of the outputs of the target set. You</span>
+<span class="sd">            should also set this if you want to use multiple context sets. In</span>
+<span class="sd">            that case, set this equal to a tuple of integers indicating the</span>
+<span class="sd">            respective output dimensionalities.</span>
+<span class="sd">        dim_yt (int, optional):</span>
+<span class="sd">            Dimensionality of the outputs of the target set. You should set</span>
+<span class="sd">            this if the dimensionality of the outputs of the target set is not</span>
+<span class="sd">            equal to the dimensionality of the outputs of the context set.</span>
+<span class="sd">        dim_aux_t (int, optional):</span>
+<span class="sd">            Dimensionality of target-specific auxiliary variables.</span>
+<span class="sd">        internal_density (int, optional):</span>
+<span class="sd">            Density of the ConvNP&#39;s internal grid (in terms of number of points</span>
+<span class="sd">            per 1x1 unit square). Defaults to 100.</span>
+<span class="sd">        likelihood (str, optional):</span>
+<span class="sd">            Likelihood. Must be one of ``&quot;cnp&quot;`` (equivalently ``&quot;het&quot;``),</span>
+<span class="sd">            ``&quot;gnp&quot;`` (equivalently ``&quot;lowrank&quot;``), or ``&quot;cnp-spikes-beta&quot;``</span>
+<span class="sd">            (equivalently ``&quot;spikes-beta&quot;``). Defaults to ``&quot;cnp&quot;``.</span>
+<span class="sd">        conv_arch (str, optional):</span>
+<span class="sd">            Convolutional architecture to use. Must be one of</span>
+<span class="sd">            ``&quot;unet[-res][-sep]&quot;`` or ``&quot;conv[-res][-sep]&quot;``. Defaults to</span>
+<span class="sd">            ``&quot;unet&quot;``.</span>
+<span class="sd">        unet_channels (tuple[int], optional):</span>
+<span class="sd">            Channels of every layer of the UNet. Defaults to six layers each</span>
+<span class="sd">            with 64 channels.</span>
+<span class="sd">        unet_kernels (int or tuple[int], optional):</span>
+<span class="sd">            Sizes of the kernels in the UNet. Defaults to 5.</span>
+<span class="sd">        unet_resize_convs (bool, optional):</span>
+<span class="sd">            Use resize convolutions rather than transposed convolutions in the</span>
+<span class="sd">            UNet. Defaults to ``False``.</span>
+<span class="sd">        unet_resize_conv_interp_method (str, optional):</span>
+<span class="sd">            Interpolation method for the resize convolutions in the UNet. Can</span>
+<span class="sd">            be set to ``&quot;bilinear&quot;``. Defaults to &quot;bilinear&quot;.</span>
+<span class="sd">        num_basis_functions (int, optional):</span>
+<span class="sd">            Number of basis functions for the low-rank likelihood. Defaults to</span>
+<span class="sd">            64.</span>
+<span class="sd">        dim_lv (int, optional):</span>
+<span class="sd">            Dimensionality of the latent variable. Setting to &gt;0 constructs a</span>
+<span class="sd">            latent neural process. Defaults to 0.</span>
+<span class="sd">        encoder_scales (float or tuple[float], optional):</span>
+<span class="sd">            Initial value for the length scales of the set convolutions for the</span>
+<span class="sd">            context sets embeddings. Set to a tuple equal to the number of</span>
+<span class="sd">            context sets to use different values for each set. Set to a single</span>
+<span class="sd">            value to use the same value for all context sets. Defaults to</span>
+<span class="sd">            ``1 / internal_density``.</span>
+<span class="sd">        encoder_scales_learnable (bool, optional):</span>
+<span class="sd">            Whether the encoder SetConv length scale(s) are learnable.</span>
+<span class="sd">            Defaults to ``False``.</span>
+<span class="sd">        decoder_scale (float, optional):</span>
+<span class="sd">            Initial value for the length scale of the set convolution in the</span>
+<span class="sd">            decoder. Defaults to ``1 / internal_density``.</span>
+<span class="sd">        decoder_scale_learnable (bool, optional):</span>
+<span class="sd">            Whether the decoder SetConv length scale(s) are learnable. Defaults</span>
+<span class="sd">            to ``False``.</span>
+<span class="sd">        aux_t_mlp_layers (tuple[int], optional):</span>
+<span class="sd">            Widths of the layers of the MLP for the target-specific auxiliary</span>
+<span class="sd">            variable. Defaults to three layers of width 128.</span>
+<span class="sd">        epsilon (float, optional):</span>
+<span class="sd">            Epsilon added by the set convolutions before dividing by the</span>
+<span class="sd">            density channel. Defaults to ``1e-2``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`.model.Model`:</span>
+<span class="sd">            ConvNP model.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            If specified backend has no default dtype.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">likelihood</span> <span class="o">==</span> <span class="s2">&quot;cnp&quot;</span><span class="p">:</span>
+        <span class="n">likelihood</span> <span class="o">=</span> <span class="s2">&quot;het&quot;</span>
+    <span class="k">elif</span> <span class="n">likelihood</span> <span class="o">==</span> <span class="s2">&quot;gnp&quot;</span><span class="p">:</span>
+        <span class="n">likelihood</span> <span class="o">=</span> <span class="s2">&quot;lowrank&quot;</span>
+    <span class="k">elif</span> <span class="n">likelihood</span> <span class="o">==</span> <span class="s2">&quot;cnp-spikes-beta&quot;</span><span class="p">:</span>
+        <span class="n">likelihood</span> <span class="o">=</span> <span class="s2">&quot;spikes-beta&quot;</span>
+    <span class="k">elif</span> <span class="n">likelihood</span> <span class="o">==</span> <span class="s2">&quot;cnp-bernoulli-gamma&quot;</span><span class="p">:</span>
+        <span class="n">likelihood</span> <span class="o">=</span> <span class="s2">&quot;bernoulli-gamma&quot;</span>
+
+    <span class="c1"># Log the call signature for `construct_convgnp`</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">backend</span><span class="o">.</span><span class="n">str</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">torch</span>
+
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+    <span class="k">elif</span> <span class="n">backend</span><span class="o">.</span><span class="n">str</span> <span class="o">==</span> <span class="s2">&quot;tf&quot;</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Backend </span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">str</span><span class="si">}</span><span class="s2"> has no default dtype.&quot;</span><span class="p">)</span>
+
+    <span class="n">neural_process</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">construct_convgnp</span><span class="p">(</span>
+        <span class="n">dim_x</span><span class="o">=</span><span class="n">dim_x</span><span class="p">,</span>
+        <span class="n">dim_yc</span><span class="o">=</span><span class="n">dim_yc</span><span class="p">,</span>
+        <span class="n">dim_yt</span><span class="o">=</span><span class="n">dim_yt</span><span class="p">,</span>
+        <span class="n">dim_aux_t</span><span class="o">=</span><span class="n">dim_aux_t</span><span class="p">,</span>
+        <span class="n">dim_lv</span><span class="o">=</span><span class="n">dim_lv</span><span class="p">,</span>
+        <span class="n">likelihood</span><span class="o">=</span><span class="n">likelihood</span><span class="p">,</span>
+        <span class="n">conv_arch</span><span class="o">=</span><span class="n">conv_arch</span><span class="p">,</span>
+        <span class="n">unet_channels</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">unet_channels</span><span class="p">),</span>
+        <span class="n">unet_resize_convs</span><span class="o">=</span><span class="n">unet_resize_convs</span><span class="p">,</span>
+        <span class="n">unet_resize_conv_interp_method</span><span class="o">=</span><span class="n">unet_resize_conv_interp_method</span><span class="p">,</span>
+        <span class="n">aux_t_mlp_layers</span><span class="o">=</span><span class="n">aux_t_mlp_layers</span><span class="p">,</span>
+        <span class="n">unet_kernels</span><span class="o">=</span><span class="n">unet_kernels</span><span class="p">,</span>
+        <span class="c1"># Use a stride of 1 for the first layer and 2 for all other layers</span>
+        <span class="n">unet_strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unet_channels</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span>
+        <span class="n">points_per_unit</span><span class="o">=</span><span class="n">internal_density</span><span class="p">,</span>
+        <span class="n">encoder_scales</span><span class="o">=</span><span class="n">encoder_scales</span><span class="p">,</span>
+        <span class="n">encoder_scales_learnable</span><span class="o">=</span><span class="n">encoder_scales_learnable</span><span class="p">,</span>
+        <span class="n">decoder_scale</span><span class="o">=</span><span class="n">decoder_scale</span><span class="p">,</span>
+        <span class="n">decoder_scale_learnable</span><span class="o">=</span><span class="n">decoder_scale_learnable</span><span class="p">,</span>
+        <span class="n">num_basis_functions</span><span class="o">=</span><span class="n">num_basis_functions</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">neural_process</span><span class="p">,</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="compute_encoding_tensor"><a class="viewcode-back" href="../../../reference/model/nps.html#deepsensor.model.nps.compute_encoding_tensor">[docs]</a><span class="k">def</span> <span class="nf">compute_encoding_tensor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the encoding tensor for a given task.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (...):</span>
+<span class="sd">            Model object.</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            Task object containing context and target sets.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        encoding : :class:`numpy:numpy.ndarray`</span>
+<span class="sd">            Encoding tensor? #TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">neural_process_encoder</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">encoder</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">modify_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+    <span class="n">encoding</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">run_nps_model</span><span class="p">(</span><span class="n">neural_process_encoder</span><span class="p">,</span> <span class="n">task</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">encoding</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

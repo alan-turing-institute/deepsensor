@@ -1,0 +1,1200 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>deepsensor.data.processor &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/deepsensor/data/processor';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2F_modules/deepsensor/data/processor.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for deepsensor.data.processor</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">pprint</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">plum</span> <span class="kn">import</span> <span class="n">dispatch</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+
+
+<div class="viewcode-block" id="DataProcessor"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor">[docs]</a><span class="k">class</span> <span class="nc">DataProcessor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalise xarray and pandas data for use in deepsensor models.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder (str, optional):</span>
+<span class="sd">            Folder to load normalisation params from. Defaults to None.</span>
+<span class="sd">        x1_name (str, optional):</span>
+<span class="sd">            Name of first spatial coord (e.g. &quot;lat&quot;). Defaults to &quot;x1&quot;.</span>
+<span class="sd">        x2_name (str, optional):</span>
+<span class="sd">            Name of second spatial coord (e.g. &quot;lon&quot;). Defaults to &quot;x2&quot;.</span>
+<span class="sd">        x1_map (tuple, optional):</span>
+<span class="sd">            2-tuple of raw x1 coords to linearly map to (0, 1),</span>
+<span class="sd">            respectively. Defaults to (0, 1) (i.e. no normalisation).</span>
+<span class="sd">        x2_map (tuple, optional):</span>
+<span class="sd">            2-tuple of raw x2 coords to linearly map to (0, 1),</span>
+<span class="sd">            respectively. Defaults to (0, 1) (i.e. no normalisation).</span>
+<span class="sd">        deepcopy (bool, optional):</span>
+<span class="sd">            Whether to make a deepcopy of raw data to ensure it is not</span>
+<span class="sd">            changed by reference when normalising. Defaults to True.</span>
+<span class="sd">        verbose (bool, optional):</span>
+<span class="sd">            Whether to print verbose output. Defaults to False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">config_fname</span> <span class="o">=</span> <span class="s2">&quot;data_processor_config.json&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">folder</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">time_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+        <span class="n">x1_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span>
+        <span class="n">x2_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;x2&quot;</span><span class="p">,</span>
+        <span class="n">x1_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">x2_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">deepcopy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">folder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_fname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fpath</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Could not find DataProcessor config file </span><span class="si">{</span><span class="n">fpath</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">x1_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x2_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x1_name</span> <span class="o">=</span> <span class="n">x1_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x2_name</span> <span class="o">=</span> <span class="n">x2_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span> <span class="o">=</span> <span class="n">x1_map</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span> <span class="o">=</span> <span class="n">x2_map</span>
+
+            <span class="c1"># rewrite below more concisely</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide both x1_map and x2_map, or neither.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide both x1_map and x2_map, or neither.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">x1_map</span><span class="p">,</span> <span class="n">x2_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_coord_mappings</span><span class="p">(</span><span class="n">x1_map</span><span class="p">,</span> <span class="n">x2_map</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s2">&quot;coords&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+                <span class="c1"># Add coordinate normalisation info to config</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_coord_params</span><span class="p">(</span><span class="n">time_name</span><span class="p">,</span> <span class="n">x1_name</span><span class="p">,</span> <span class="n">x1_map</span><span class="p">,</span> <span class="n">x2_name</span><span class="p">,</span> <span class="n">x2_map</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_spatial_coord_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="n">coord</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">deepcopy</span> <span class="o">=</span> <span class="n">deepcopy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+        <span class="c1"># List of valid normalisation method names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mean_std&quot;</span><span class="p">,</span> <span class="s2">&quot;min_max&quot;</span><span class="p">,</span> <span class="s2">&quot;positive_semidefinite&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="DataProcessor.save"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save DataProcessor config to JSON in `folder`.&quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_fname</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_validate_coord_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1_map</span><span class="p">,</span> <span class="n">x2_map</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensure the maps are valid and of appropriate types.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x1_map</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x1_map</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">x1_map</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">x2_map</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x2_map</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">x2_map</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Provided coordinate mappings can&#39;t be cast to 2D Tuple[float]&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Check that map is not two of the same number</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x1_map</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;x1_map must be a 2-tuple of different numbers, not </span><span class="si">{</span><span class="n">x1_map</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x2_map</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;x2_map must be a 2-tuple of different numbers, not </span><span class="si">{</span><span class="n">x2_map</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x1_map</span><span class="p">)</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x2_map</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;x1_map=</span><span class="si">{</span><span class="n">x1_map</span><span class="si">}</span><span class="s2"> and x2_map=</span><span class="si">{</span><span class="n">x2_map</span><span class="si">}</span><span class="s2"> have different ranges (</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x1_map</span><span class="p">))</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;and </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x2_map</span><span class="p">))</span><span class="si">}</span><span class="s2">, respectively). &quot;</span>
+                <span class="s2">&quot;This can lead to stretching/squashing of data, which may &quot;</span>
+                <span class="s2">&quot;impact model performance.&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x1_map</span><span class="p">,</span> <span class="n">x2_map</span>
+
+    <span class="k">def</span> <span class="nf">_validate_xr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">]):</span>
+        <span class="k">def</span> <span class="nf">_validate_da</span><span class="p">(</span><span class="n">da</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
+            <span class="n">coord_names</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="n">coord</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="n">coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">da</span><span class="o">.</span><span class="n">dims</span><span class="p">:</span>
+                <span class="c1"># We don&#39;t have a time dimension.</span>
+                <span class="n">coord_names</span> <span class="o">=</span> <span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span> <span class="o">!=</span> <span class="n">coord_names</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Dimensions of </span><span class="si">{</span><span class="n">da</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> need to be </span><span class="si">{</span><span class="n">coord_names</span><span class="si">}</span><span class="s2"> but are </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
+            <span class="n">_validate_da</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">var_ID</span><span class="p">,</span> <span class="n">da</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">data_vars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">_validate_da</span><span class="p">(</span><span class="n">da</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_validate_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]):</span>
+        <span class="n">coord_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="n">coord</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="c1"># We don&#39;t have a time dimension.</span>
+            <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Indexes need to start with </span><span class="si">{</span><span class="n">coord_names</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2"> but are </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># We have a time dimension.</span>
+            <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">!=</span> <span class="n">coord_names</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Indexes need to start with </span><span class="si">{</span><span class="n">coord_names</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2"> but are </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;DataProcessor with normalisation params:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<div class="viewcode-block" id="DataProcessor.load_dask"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.load_dask">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">load_dask</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load dask data into memory.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (:class:`xarray.DataArray` | :class:`xarray.Dataset`):</span>
+<span class="sd">                Description of the parameter.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type and description of the returned value(s) needed.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="DataProcessor.set_coord_params"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.set_coord_params">[docs]</a>    <span class="k">def</span> <span class="nf">set_coord_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_name</span><span class="p">,</span> <span class="n">x1_name</span><span class="p">,</span> <span class="n">x1_map</span><span class="p">,</span> <span class="n">x2_name</span><span class="p">,</span> <span class="n">x2_map</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set coordinate normalisation params.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            time_name:</span>
+<span class="sd">                [Type] Description needed.</span>
+<span class="sd">            x1_name:</span>
+<span class="sd">                [Type] Description needed.</span>
+<span class="sd">            x1_map:</span>
+<span class="sd">                [Type] Description needed.</span>
+<span class="sd">            x2_name:</span>
+<span class="sd">                [Type] Description needed.</span>
+<span class="sd">            x2_map:</span>
+<span class="sd">                [Type] Description needed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">time_name</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x1_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x1_map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2_map</span></div>
+
+<div class="viewcode-block" id="DataProcessor.check_params_computed"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.check_params_computed">[docs]</a>    <span class="k">def</span> <span class="nf">check_params_computed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_ID</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if normalisation params computed for a given variable.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            var_ID:</span>
+<span class="sd">                [Type] Description needed.</span>
+<span class="sd">            method:</span>
+<span class="sd">                [Type] Description needed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool:</span>
+<span class="sd">                Whether normalisation params are computed for a given variable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">var_ID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">var_ID</span><span class="p">][</span><span class="s2">&quot;method&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">method</span>
+            <span class="ow">and</span> <span class="s2">&quot;params&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DataProcessor.add_to_config"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.add_to_config">[docs]</a>    <span class="k">def</span> <span class="nf">add_to_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_ID</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add `kwargs` to `config` dict for variable `var_ID`.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span></div>
+
+<div class="viewcode-block" id="DataProcessor.get_config"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.get_config">[docs]</a>    <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_ID</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get pre-computed normalisation params or compute them for variable</span>
+<span class="sd">        ``var_ID``.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            TODO do we need to pass var_ID? Can we just use the name of data?</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            var_ID:</span>
+<span class="sd">                [Type] Description needed.</span>
+<span class="sd">            data:</span>
+<span class="sd">                [Type] Description needed.</span>
+<span class="sd">            method (optional):</span>
+<span class="sd">                [Type] Description needed. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type]:</span>
+<span class="sd">                Description of the returned value(s) needed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_methods</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> not recognised. Must be one of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_methods</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_params_computed</span><span class="p">(</span><span class="n">var_ID</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+            <span class="c1"># Already have &quot;params&quot; in config with `&quot;method&quot;: method` - load them</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">var_ID</span><span class="p">][</span><span class="s2">&quot;params&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Params not computed - compute them now</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Normalisation params for </span><span class="si">{</span><span class="n">var_ID</span><span class="si">}</span><span class="s2"> not computed. Computing now... &quot;</span><span class="p">,</span>
+                    <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                    <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">DataProcessor</span><span class="o">.</span><span class="n">load_dask</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;mean_std&quot;</span><span class="p">:</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">std</span><span class="p">())}</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;min_max&quot;</span><span class="p">:</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">())}</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;positive_semidefinite&quot;</span><span class="p">:</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">std</span><span class="p">())}</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Done. </span><span class="si">{</span><span class="n">var_ID</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> params=</span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_to_config</span><span class="p">(</span>
+                <span class="n">var_ID</span><span class="p">,</span>
+                <span class="o">**</span><span class="p">{</span><span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span> <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">params</span><span class="p">},</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">params</span></div>
+
+<div class="viewcode-block" id="DataProcessor.map_coord_array"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.map_coord_array">[docs]</a>    <span class="k">def</span> <span class="nf">map_coord_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coord_array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">unnorm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalise or unnormalise a coordinate array.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            coord_array (:class:`numpy:numpy.ndarray`):</span>
+<span class="sd">                Array of shape ``(2, N)`` containing coords.</span>
+<span class="sd">            unnorm (bool, optional):</span>
+<span class="sd">                Whether to unnormalise. Defaults to ``False``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type]:</span>
+<span class="sd">                Description of the returned value(s) needed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_x1_and_x2</span><span class="p">(</span><span class="n">coord_array</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">coord_array</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">unnorm</span><span class="o">=</span><span class="n">unnorm</span><span class="p">)</span>
+        <span class="n">new_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_coords</span></div>
+
+<div class="viewcode-block" id="DataProcessor.map_x1_and_x2"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.map_x1_and_x2">[docs]</a>    <span class="k">def</span> <span class="nf">map_x1_and_x2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">unnorm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalise or unnormalise spatial coords in an array.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x1 (:class:`numpy:numpy.ndarray`):</span>
+<span class="sd">                Array of shape ``(N_x1,)`` containing spatial coords of x1.</span>
+<span class="sd">            x2 (:class:`numpy:numpy.ndarray`):</span>
+<span class="sd">                Array of shape ``(N_x2,)`` containing spatial coords of x2.</span>
+<span class="sd">            unnorm (bool, optional):</span>
+<span class="sd">                Whether to unnormalise. Defaults to ``False``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]:</span>
+<span class="sd">                Normalised or unnormalised spatial coords of x1 and x2.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x11</span><span class="p">,</span> <span class="n">x12</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span>
+        <span class="n">x21</span><span class="p">,</span> <span class="n">x22</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unnorm</span><span class="p">:</span>
+            <span class="n">new_coords_x1</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x11</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x12</span> <span class="o">-</span> <span class="n">x11</span><span class="p">)</span>
+            <span class="n">new_coords_x2</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x21</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x22</span> <span class="o">-</span> <span class="n">x21</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_coords_x1</span> <span class="o">=</span> <span class="n">x1</span> <span class="o">*</span> <span class="p">(</span><span class="n">x12</span> <span class="o">-</span> <span class="n">x11</span><span class="p">)</span> <span class="o">+</span> <span class="n">x11</span>
+            <span class="n">new_coords_x2</span> <span class="o">=</span> <span class="n">x2</span> <span class="o">*</span> <span class="p">(</span><span class="n">x22</span> <span class="o">-</span> <span class="n">x21</span><span class="p">)</span> <span class="o">+</span> <span class="n">x21</span>
+
+        <span class="k">return</span> <span class="n">new_coords_x1</span><span class="p">,</span> <span class="n">new_coords_x2</span></div>
+
+<div class="viewcode-block" id="DataProcessor.map_coords"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.map_coords">[docs]</a>    <span class="k">def</span> <span class="nf">map_coords</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span>
+        <span class="n">unnorm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalise spatial coords in a pandas or xarray object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (:class:`xarray.DataArray`, :class:`xarray.Dataset`, :class:`pandas.DataFrame`, or :class:`pandas.Series`):</span>
+<span class="sd">                [Description Needed]</span>
+<span class="sd">            unnorm (bool, optional):</span>
+<span class="sd">                [Description Needed]. Defaults to [Default Value].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type]:</span>
+<span class="sd">                [Description Needed]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)):</span>
+            <span class="c1"># Reset index to get coords as columns</span>
+            <span class="n">indexes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">unnorm</span><span class="p">:</span>
+            <span class="n">new_coord_IDs</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="n">coord_ID</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">coord_ID</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="n">old_coord_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_coord_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">]</span>
+            <span class="n">old_coord_IDs</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="n">coord_ID</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">coord_ID</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">]</span>
+            <span class="p">]</span>
+
+        <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">old_coord_IDs</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">old_coord_IDs</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Infer x1 and x2 mappings from min/max of data coords if not provided by user</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Ensure scalings are the same for x1 and x2</span>
+            <span class="n">x1_range</span> <span class="o">=</span> <span class="n">x1</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">x1</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="n">x2_range</span> <span class="o">=</span> <span class="n">x2</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">x2</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="nb">range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">x1_range</span><span class="p">,</span> <span class="n">x2_range</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x1</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="nb">range</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x2</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="nb">range</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_coord_mappings</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Inferring x1_map=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">x1_map</span><span class="si">}</span><span class="s2"> and x2_map=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">x2_map</span><span class="si">}</span><span class="s2"> from data min/max&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">new_x1</span><span class="p">,</span> <span class="n">new_x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_x1_and_x2</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="n">unnorm</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)):</span>
+            <span class="c1"># Drop old spatial coord columns *before* adding new ones, in case</span>
+            <span class="c1"># the old name is already x1.</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">old_coord_IDs</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="c1"># Add coords to dataframe</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">new_coord_IDs</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">new_x1</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">new_coord_IDs</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">new_x2</span>
+
+            <span class="k">if</span> <span class="n">old_coord_IDs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="c1"># Rename time dimension.</span>
+                <span class="n">rename</span> <span class="o">=</span> <span class="p">{</span><span class="n">old_coord_IDs</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">new_coord_IDs</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">rename</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># We don&#39;t have a time dimension.</span>
+                <span class="n">old_coord_IDs</span> <span class="o">=</span> <span class="n">old_coord_IDs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">new_coord_IDs</span> <span class="o">=</span> <span class="n">new_coord_IDs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">)):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span>
+                <span class="p">{</span><span class="n">old_coord_IDs</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">new_x1</span><span class="p">,</span> <span class="n">old_coord_IDs</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">new_x2</span><span class="p">}</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">old_coord_IDs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">dims</span><span class="p">:</span>
+                <span class="c1"># We don&#39;t have a time dimension.</span>
+                <span class="n">old_coord_IDs</span> <span class="o">=</span> <span class="n">old_coord_IDs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">new_coord_IDs</span> <span class="o">=</span> <span class="n">new_coord_IDs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+            <span class="c1"># Rename all dimensions.</span>
+            <span class="n">rename</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">old</span><span class="p">:</span> <span class="n">new</span> <span class="k">for</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">old_coord_IDs</span><span class="p">,</span> <span class="n">new_coord_IDs</span><span class="p">)</span> <span class="k">if</span> <span class="n">old</span> <span class="o">!=</span> <span class="n">new</span>
+            <span class="p">}</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">rename</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)):</span>
+            <span class="c1"># Set index back to original</span>
+            <span class="p">[</span><span class="n">indexes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">old_coord_ID</span><span class="p">)</span> <span class="k">for</span> <span class="n">old_coord_ID</span> <span class="ow">in</span> <span class="n">old_coord_IDs</span><span class="p">]</span>
+            <span class="n">indexes</span> <span class="o">=</span> <span class="n">new_coord_IDs</span> <span class="o">+</span> <span class="n">indexes</span>  <span class="c1"># Put dims first</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="DataProcessor.map_array"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.map_array">[docs]</a>    <span class="k">def</span> <span class="nf">map_array</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">var_ID</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">unnorm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">add_offset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalise or unnormalise the data values in an xarray, pandas, or</span>
+<span class="sd">        numpy object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (:class:`xarray.DataArray`, :class:`xarray.Dataset`, :class:`pandas.DataFrame`, :class:`pandas.Series`, or :class:`numpy:numpy.ndarray`):</span>
+<span class="sd">                [Description Needed]</span>
+<span class="sd">            var_ID (str):</span>
+<span class="sd">                [Description Needed]</span>
+<span class="sd">            method (str, optional):</span>
+<span class="sd">                [Description Needed]. Defaults to None.</span>
+<span class="sd">            unnorm (bool, optional):</span>
+<span class="sd">                [Description Needed]. Defaults to False.</span>
+<span class="sd">            add_offset (bool, optional):</span>
+<span class="sd">                [Description Needed]. Defaults to True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type]:</span>
+<span class="sd">                [Description Needed]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unnorm</span> <span class="ow">and</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide `method` if normalising data.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">unnorm</span> <span class="ow">and</span> <span class="n">method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">var_ID</span><span class="p">][</span><span class="s2">&quot;method&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">method</span><span class="p">:</span>
+            <span class="c1"># User has provided a different method to the one used for normalising</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Variable &#39;</span><span class="si">{</span><span class="n">var_ID</span><span class="si">}</span><span class="s2">&#39; has been normalised with method &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">var_ID</span><span class="p">][</span><span class="s1">&#39;method&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;cannot unnormalise with method &#39;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&#39;. Pass `method=None` or&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;`method=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">var_ID</span><span class="p">][</span><span class="s1">&#39;method&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;`&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">unnorm</span><span class="p">:</span>
+            <span class="c1"># Determine normalisation method from config for unnormalising</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">var_ID</span><span class="p">][</span><span class="s2">&quot;method&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_methods</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> not recognised. Use one of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_methods</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config</span><span class="p">(</span><span class="n">var_ID</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+
+        <span class="c1"># Linear transformation:</span>
+        <span class="c1"># - Inverse normalisation: y_unnorm = m * y_norm + c</span>
+        <span class="c1"># - Inverse normalisation: y_norm = (1/m) * y_unnorm - c/m</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;mean_std&quot;</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;min_max&quot;</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;positive_semidefinite&quot;</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unnorm</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span> <span class="n">m</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">m</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">*</span> <span class="n">m</span>
+        <span class="k">if</span> <span class="n">add_offset</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">+</span> <span class="n">c</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="DataProcessor.map"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.map">[docs]</a>    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">add_offset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">unnorm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">assert_computed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalise or unnormalise the data values and coords in an xarray or</span>
+<span class="sd">        pandas object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (:class:`xarray.DataArray`, :class:`xarray.Dataset`, :class:`pandas.DataFrame`, or :class:`pandas.Series`):</span>
+<span class="sd">                [Description Needed]</span>
+<span class="sd">            method (str, optional):</span>
+<span class="sd">                [Description Needed]. Defaults to None.</span>
+<span class="sd">            add_offset (bool, optional):</span>
+<span class="sd">                [Description Needed]. Defaults to True.</span>
+<span class="sd">            unnorm (bool, optional):</span>
+<span class="sd">                [Description Needed]. Defaults to False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type]:</span>
+<span class="sd">                [Description Needed]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">unnorm</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_xr</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">unnorm</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_pandas</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)):</span>
+            <span class="c1"># Single var</span>
+            <span class="n">var_ID</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">if</span> <span class="n">assert_computed</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_params_computed</span><span class="p">(</span>
+                    <span class="n">var_ID</span><span class="p">,</span> <span class="n">method</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> normalisation params for </span><span class="si">{</span><span class="n">var_ID</span><span class="si">}</span><span class="s2"> not computed.&quot;</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">var_ID</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">unnorm</span><span class="p">,</span> <span class="n">add_offset</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
+            <span class="c1"># Multiple vars</span>
+            <span class="k">for</span> <span class="n">var_ID</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">assert_computed</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_params_computed</span><span class="p">(</span>
+                        <span class="n">var_ID</span><span class="p">,</span> <span class="n">method</span>
+                    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> normalisation params for </span><span class="si">{</span><span class="n">var_ID</span><span class="si">}</span><span class="s2"> not computed.&quot;</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_array</span><span class="p">(</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">var_ID</span><span class="p">],</span> <span class="n">var_ID</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">unnorm</span><span class="p">,</span> <span class="n">add_offset</span>
+                <span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_coords</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="n">unnorm</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="DataProcessor.__call__"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span>
+            <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span>
+        <span class="p">],</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean_std&quot;</span><span class="p">,</span>
+        <span class="n">assert_computed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span>
+        <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span>
+    <span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalise data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]):</span>
+<span class="sd">                Data to be normalised. Can be an xarray DataArray, xarray</span>
+<span class="sd">                Dataset, pandas DataFrame, or a list containing objects of</span>
+<span class="sd">                these types.</span>
+<span class="sd">            method (str, optional): Normalisation method. Options include:</span>
+<span class="sd">                - &quot;mean_std&quot;: Normalise to mean=0 and std=1 (default)</span>
+<span class="sd">                - &quot;min_max&quot;: Normalise to min=-1 and max=1</span>
+<span class="sd">                - &quot;positive_semidefinite&quot;: Normalise to min=0 and std=1</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]:</span>
+<span class="sd">                Normalised data. Type or structure depends on the input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">assert_computed</span><span class="o">=</span><span class="n">assert_computed</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">assert_computed</span><span class="o">=</span><span class="n">assert_computed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataProcessor.unnormalise"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.DataProcessor.unnormalise">[docs]</a>    <span class="k">def</span> <span class="nf">unnormalise</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span>
+            <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span>
+        <span class="p">],</span>
+        <span class="n">add_offset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span>
+        <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span>
+    <span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unnormalise data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]):</span>
+<span class="sd">                Data to unnormalise.</span>
+<span class="sd">            add_offset (bool, optional):</span>
+<span class="sd">                Whether to add the offset to the data when unnormalising. Set</span>
+<span class="sd">                to False to unnormalise uncertainty values (e.g. std dev).</span>
+<span class="sd">                Defaults to True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]:</span>
+<span class="sd">                Unnormalised data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">add_offset</span><span class="o">=</span><span class="n">add_offset</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">add_offset</span><span class="o">=</span><span class="n">add_offset</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="xarray_to_coord_array_normalised"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.xarray_to_coord_array_normalised">[docs]</a><span class="k">def</span> <span class="nf">xarray_to_coord_array_normalised</span><span class="p">(</span><span class="n">da</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert xarray to normalised coordinate array.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        da (:class:`xarray.Dataset` | :class:`xarray.DataArray`)</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`numpy:numpy.ndarray`</span>
+<span class="sd">            A normalised coordinate array of shape ``(2, N)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">da</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">da</span><span class="p">[</span><span class="s2">&quot;x2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">X1</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">X2</span><span class="o">.</span><span class="n">ravel</span><span class="p">()],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="process_X_mask_for_X"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.process_X_mask_for_X">[docs]</a><span class="k">def</span> <span class="nf">process_X_mask_for_X</span><span class="p">(</span><span class="n">X_mask</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process X_mask by interpolating to X and converting to boolean.</span>
+
+<span class="sd">    Both X_mask and X are xarray DataArrays with the same spatial coords.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        X_mask (:class:`xarray.DataArray`):</span>
+<span class="sd">            ...</span>
+<span class="sd">        X (:class:`xarray.DataArray`):</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`xarray.DataArray`</span>
+<span class="sd">            ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X_mask</span> <span class="o">=</span> <span class="n">X_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">interp_like</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fill_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">X_mask</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">X_mask</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">X_mask</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">X_mask</span></div>
+
+
+<div class="viewcode-block" id="mask_coord_array_normalised"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.mask_coord_array_normalised">[docs]</a><span class="k">def</span> <span class="nf">mask_coord_array_normalised</span><span class="p">(</span>
+    <span class="n">coord_arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mask_da</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove points from (2, N) numpy array that are outside gridded xarray</span>
+<span class="sd">    boolean mask.</span>
+
+<span class="sd">    If `coord_arr` is shape `(2, N)`, then `mask_da` is a shape `(N,)` boolean</span>
+<span class="sd">    array (True if point is inside mask, False if outside).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        coord_arr (:class:`numpy:numpy.ndarray`):</span>
+<span class="sd">            ...</span>
+<span class="sd">        mask_da (:class:`xarray.Dataset` | :class:`xarray.DataArray`):</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`numpy:numpy.ndarray`</span>
+<span class="sd">            ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mask_da</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">coord_arr</span>
+    <span class="n">mask_da</span> <span class="o">=</span> <span class="n">mask_da</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">coord_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">coord_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">mask_da</span> <span class="o">=</span> <span class="n">mask_da</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="n">x2</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">coord_arr</span><span class="p">[:,</span> <span class="n">mask_da</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="da1_da2_same_grid"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.da1_da2_same_grid">[docs]</a><span class="k">def</span> <span class="nf">da1_da2_same_grid</span><span class="p">(</span><span class="n">da1</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">da2</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if ``da1`` and ``da2`` are on the same grid.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        ``da1`` and ``da2`` are assumed normalised by ``DataProcessor``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        da1 (:class:`xarray.DataArray`):</span>
+<span class="sd">            ...</span>
+<span class="sd">        da2 (:class:`xarray.DataArray`):</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool</span>
+<span class="sd">            Whether ``da1`` and ``da2`` are on the same grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x1equal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">da1</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">da2</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">x2equal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">da1</span><span class="p">[</span><span class="s2">&quot;x2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">da2</span><span class="p">[</span><span class="s2">&quot;x2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x1equal</span> <span class="ow">and</span> <span class="n">x2equal</span></div>
+
+
+<div class="viewcode-block" id="interp_da1_to_da2"><a class="viewcode-back" href="../../../reference/data/processor.html#deepsensor.data.processor.interp_da1_to_da2">[docs]</a><span class="k">def</span> <span class="nf">interp_da1_to_da2</span><span class="p">(</span><span class="n">da1</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">da2</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolate ``da1`` to ``da2``.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        ``da1`` and ``da2`` are assumed normalised by ``DataProcessor``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        da1 (:class:`xarray.DataArray`):</span>
+<span class="sd">            ...</span>
+<span class="sd">        da2 (:class:`xarray.DataArray`):</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`xarray.DataArray`</span>
+<span class="sd">            Interpolated xarray.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">da1</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="n">da2</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">],</span> <span class="n">x2</span><span class="o">=</span><span class="n">da2</span><span class="p">[</span><span class="s2">&quot;x2&quot;</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

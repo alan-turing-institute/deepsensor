@@ -1,0 +1,1062 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>deepsensor.data.sources &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/deepsensor/data/sources';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2F_modules/deepsensor/data/sources.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for deepsensor.data.sources</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">deepsensor.plot</span> <span class="kn">import</span> <span class="n">extent_str_to_tuple</span>
+
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Memory</span>
+
+
+<div class="viewcode-block" id="get_ghcnd_station_data"><a class="viewcode-back" href="../../../reference/data/sources.html#deepsensor.data.sources.get_ghcnd_station_data">[docs]</a><span class="k">def</span> <span class="nf">get_ghcnd_station_data</span><span class="p">(</span>
+    <span class="n">var_IDs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+    <span class="n">date_range</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">subsample_frac</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">num_processes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.datacache&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download Global Historical Climatology Network Daily (GHCND) station data from NOAA</span>
+<span class="sd">    into a pandas DataFrame.</span>
+<span class="sd">    Source: https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Requires the `scotthosking/get-station-data` repository to be installed</span>
+<span class="sd">        manually in your Python environment with:</span>
+<span class="sd">        ``pip install git+https://github.com/scott-hosking/get-station-data.git``</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Example key variable IDs:</span>
+<span class="sd">        - ``&quot;TAVG&quot;``: Average temperature (degrees Celsius)</span>
+<span class="sd">        - ``&quot;TMAX&quot;``: Maximum temperature (degrees Celsius)</span>
+<span class="sd">        - ``&quot;TMIN&quot;``: Minimum temperature (degrees Celsius)</span>
+<span class="sd">        - ``&quot;PRCP&quot;``: Precipitation (mm)</span>
+<span class="sd">        - ``&quot;SNOW&quot;``: Snowfall</span>
+<span class="sd">        - ``&quot;AWND&quot;``: Average wind speed (m/s)</span>
+<span class="sd">        - ``&quot;AWDR&quot;``: Average wind direction (degrees)</span>
+
+<span class="sd">        The full list of variable IDs can be found here:</span>
+<span class="sd">        https://www.ncei.noaa.gov/pub/data/ghcn/daily/readme.txt</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        If this function is updated, the cache will be invalidated and the data will need</span>
+<span class="sd">        to be re-downloaded. To avoid this risk, set ``cache=False`` and save the data to disk</span>
+<span class="sd">        manually.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        var_IDs: list</span>
+<span class="sd">            List of variable IDs to download. If None, all variables are downloaded.</span>
+<span class="sd">            See the list of available variable IDs above.</span>
+<span class="sd">        extent: tuple[float, float, float, float] | str</span>
+<span class="sd">            Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.</span>
+<span class="sd">            Options are: &quot;global&quot;, &quot;north_america&quot;, &quot;uk&quot;, &quot;europe&quot;.</span>
+<span class="sd">        date_range: tuple[str, str]</span>
+<span class="sd">            Tuple of (start_date, end_date) in format &quot;YYYY-MM-DD&quot;.</span>
+<span class="sd">        subsample_frac: float</span>
+<span class="sd">            Fraction of available stations to download (useful for reducing download size).</span>
+<span class="sd">            Default is 1.0 (download all stations).</span>
+<span class="sd">        num_processes: int, optional</span>
+<span class="sd">            Number of CPUs to use for downloading station data in parallel. If not specified, will</span>
+<span class="sd">            use 75% of all available CPUs.</span>
+<span class="sd">        verbose: bool</span>
+<span class="sd">            Whether to print status messages. Default is ``False``.</span>
+<span class="sd">        cache: bool</span>
+<span class="sd">            Whether to cache the station metadata and data locally. If ``True``, calling the</span>
+<span class="sd">            function again with the same arguments will load the data from the cache instead</span>
+<span class="sd">            of downloading it again. Default is ``False``.</span>
+<span class="sd">        cache_dir: str</span>
+<span class="sd">            Directory to store the cached data. Default is ``&quot;.datacache&quot;``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`pandas.DataFrame`</span>
+<span class="sd">            Station data with indexes ``time``, ``lat``, ``lon``, ``station`` and columns</span>
+<span class="sd">            ``var1``, ``var2``, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">get_station_data</span> <span class="kn">import</span> <span class="n">ghcnd</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;Must manually pip-install get-station-data with: `pip install git+https://github.com/scott-hosking/get-station-data.git`&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cache</span><span class="p">:</span>
+        <span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@memory</span><span class="o">.</span><span class="n">cache</span>
+    <span class="k">def</span> <span class="nf">_get_ghcnd_station_data_cached</span><span class="p">(</span>
+        <span class="n">var_IDs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">extent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+        <span class="n">date_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">subsample_frac</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Downloading GHCND station data from NOAA...&quot;</span><span class="p">,</span>
+                <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+                <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">stn_md</span> <span class="o">=</span> <span class="n">ghcnd</span><span class="o">.</span><span class="n">get_stn_metadata</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Already caching</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="n">extent_str_to_tuple</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">extent</span><span class="p">])</span>
+        <span class="n">lon_min</span><span class="p">,</span> <span class="n">lon_max</span><span class="p">,</span> <span class="n">lat_min</span><span class="p">,</span> <span class="n">lat_max</span> <span class="o">=</span> <span class="n">extent</span>
+
+        <span class="n">stn_md</span> <span class="o">=</span> <span class="n">stn_md</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">lat_min</span> <span class="o">&lt;=</span> <span class="n">stn_md</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">stn_md</span><span class="o">.</span><span class="n">lat</span> <span class="o">&lt;=</span> <span class="n">lat_max</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">lon_min</span> <span class="o">&lt;=</span> <span class="n">stn_md</span><span class="o">.</span><span class="n">lon</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">stn_md</span><span class="o">.</span><span class="n">lon</span> <span class="o">&lt;=</span> <span class="n">lon_max</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">stn_md</span> <span class="o">=</span> <span class="n">stn_md</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="n">subsample_frac</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">43</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">date_range</span><span class="p">:</span>
+            <span class="c1"># Filter out stations with no data in the date range</span>
+            <span class="n">start_year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">date_range</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">4</span><span class="p">])</span>
+            <span class="n">end_year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">date_range</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="mi">4</span><span class="p">])</span>
+            <span class="n">stn_md</span> <span class="o">=</span> <span class="n">stn_md</span><span class="p">[</span><span class="n">stn_md</span><span class="o">.</span><span class="n">end_year</span> <span class="o">&gt;=</span> <span class="n">start_year</span><span class="p">]</span>
+            <span class="n">stn_md</span> <span class="o">=</span> <span class="n">stn_md</span><span class="p">[</span><span class="n">stn_md</span><span class="o">.</span><span class="n">start_year</span> <span class="o">&lt;=</span> <span class="n">end_year</span><span class="p">]</span>
+        <span class="n">station_df</span> <span class="o">=</span> <span class="n">ghcnd</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span>
+            <span class="n">stn_md</span><span class="p">,</span>
+            <span class="n">include_flags</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">date_range</span><span class="o">=</span><span class="n">date_range</span><span class="p">,</span>
+            <span class="n">element_types</span><span class="o">=</span><span class="n">var_IDs</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Already caching</span>
+        <span class="p">)</span>
+        <span class="n">station_df</span> <span class="o">=</span> <span class="n">station_df</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">station_df</span> <span class="o">=</span> <span class="n">station_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="s2">&quot;station&quot;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s2">&quot;value&quot;</span>
+        <span class="p">)</span>
+        <span class="n">station_df</span> <span class="o">=</span> <span class="n">station_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+        <span class="n">station_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">station_df</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MB downloaded in </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tic</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> s&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">station_df</span>
+
+    <span class="k">return</span> <span class="n">_get_ghcnd_station_data_cached</span><span class="p">(</span>
+        <span class="n">var_IDs</span><span class="o">=</span><span class="n">var_IDs</span><span class="p">,</span>
+        <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span>
+        <span class="n">date_range</span><span class="o">=</span><span class="n">date_range</span><span class="p">,</span>
+        <span class="n">subsample_frac</span><span class="o">=</span><span class="n">subsample_frac</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_era5_reanalysis_data"><a class="viewcode-back" href="../../../reference/data/sources.html#deepsensor.data.sources.get_era5_reanalysis_data">[docs]</a><span class="k">def</span> <span class="nf">get_era5_reanalysis_data</span><span class="p">(</span>
+    <span class="n">var_IDs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+    <span class="n">date_range</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">freq</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+    <span class="n">num_processes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.datacache&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download ERA5 reanalysis data from Google Cloud Storage into an xarray Dataset.</span>
+<span class="sd">    Source: https://cloud.google.com/storage/docs/public-datasets/era5.</span>
+
+<span class="sd">    Supports parallelising downloads into monthly chunks across multiple CPUs.</span>
+<span class="sd">    Supports caching the downloaded data locally to avoid re-downloading when calling</span>
+<span class="sd">    the function again with the same arguments.</span>
+<span class="sd">    The data is cached on a per-month basis, so if you call the function again with</span>
+<span class="sd">    a different date range, data will only be downloaded if the new date range includes</span>
+<span class="sd">    months that have not already been downloaded.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        See the list of available variable IDs here: https://console.cloud.google.com/storage/browser/gcp-public-data-arco-era5/ar/1959-2022-full_37-1h-0p25deg-chunk-1.zarr-v2?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&amp;prefix=&amp;forceOnObjectsSortingFiltering=false</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        The aggregation method for when freq = &quot;D&quot; is &quot;mean&quot; (which may not be</span>
+<span class="sd">        appropriate for accumulated variables like precipitation).</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        If this function is updated, the cache will be invalidated and the data will need</span>
+<span class="sd">        to be re-downloaded. To avoid this risk, set ``cache=False`` and save the data to disk</span>
+<span class="sd">        manually.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        var_IDs: list</span>
+<span class="sd">            List of variable IDs to download. If None, all variables are downloaded.</span>
+<span class="sd">            See the list of available variable IDs above.</span>
+<span class="sd">        extent: tuple[float, float, float, float] | str</span>
+<span class="sd">            Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.</span>
+<span class="sd">            Options are: &quot;global&quot;, &quot;north_america&quot;, &quot;uk&quot;, &quot;europe&quot;.</span>
+<span class="sd">        date_range: tuple</span>
+<span class="sd">            Tuple of (start_date, end_date) in format &quot;YYYY-MM-DD&quot;.</span>
+<span class="sd">        freq: str</span>
+<span class="sd">            Frequency of data to download. Options are: &quot;D&quot; (daily) or &quot;H&quot; (hourly).</span>
+<span class="sd">            If &quot;D&quot;, the data is downloaded from the 1-hourly dataset and then resampled</span>
+<span class="sd">            to daily averages. If &quot;H&quot;, the 1-hourly data is returned as-is.</span>
+<span class="sd">        num_processes Optional[int]:</span>
+<span class="sd">            Number of CPUs to use for downloading years of ERA5 data in parallel.</span>
+<span class="sd">            Defaults to 1 (i.e. no parallelisation). 75% of all available CPUs or 8 CPUs, whichever is smaller.</span>
+<span class="sd">        verbose: bool</span>
+<span class="sd">            Whether to print status messages. Default is ``False``.</span>
+<span class="sd">        cache: bool</span>
+<span class="sd">            Whether to cache the station metadata and data locally. If ``True``, calling the</span>
+<span class="sd">            function again with the same arguments will load the data from the cache instead</span>
+<span class="sd">            of downloading it again. Default is ``False``.</span>
+<span class="sd">        cache_dir: str</span>
+<span class="sd">            Directory to store the cached data. Default is ``&quot;.datacache&quot;``.</span>
+
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`xarray.Dataset`</span>
+<span class="sd">            ERA5 reanalysis data with dimensions ``time``, ``lat``, ``lon`` and variables</span>
+<span class="sd">            ``var1``, ``var2``, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Downloading ERA5 data from Google Cloud Storage...&quot;</span><span class="p">,</span>
+            <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+            <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">date_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">date_range</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;1959-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2021-01-01&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Derive monthly chunks to download in parallel</span>
+    <span class="c1">#   Uses calendar month boundaries to ensure repeat calls with different but overlapping</span>
+    <span class="c1">#   date ranges use as many cached months as possible</span>
+    <span class="n">date_range</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">date_range</span><span class="p">)</span>
+    <span class="n">start_date</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># End of month at 1 minute before midnight</span>
+    <span class="n">end_date</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">start_date</span>
+        <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthBegin</span><span class="p">()</span>
+        <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">date_ranges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">end_date</span> <span class="o">&gt;</span> <span class="n">date_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">end_date</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">23</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">59</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">59</span><span class="p">)</span>
+            <span class="n">stop</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stop</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">date_ranges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">))</span>
+        <span class="c1"># Start of next month</span>
+        <span class="n">start_date</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthBegin</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>
+        <span class="n">end_date</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">start_date</span>
+            <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">()</span>
+            <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthBegin</span><span class="p">()</span>
+            <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">stop</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="n">max_num_processes</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="k">if</span> <span class="n">num_processes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># If user hasn&#39;t specified num CPUs, use 75% of available CPUs</span>
+        <span class="n">num_processes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.75</span> <span class="o">*</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()))</span>
+        <span class="n">num_processes</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">num_processes</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">date_ranges</span><span class="p">))</span>
+        <span class="n">num_processes</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">num_processes</span><span class="p">,</span> <span class="n">max_num_processes</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">num_processes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Just download in one go</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Downloading ERA5 data without parallelisation... &quot;</span><span class="p">)</span>
+        <span class="n">era5_da</span> <span class="o">=</span> <span class="n">_get_era5_reanalysis_data_parallel</span><span class="p">(</span>
+            <span class="n">date_range</span><span class="o">=</span><span class="n">date_range</span><span class="p">,</span>
+            <span class="n">var_IDs</span><span class="o">=</span><span class="n">var_IDs</span><span class="p">,</span>
+            <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+            <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span>
+            <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+            <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">num_processes</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="n">num_processes</span><span class="si">}</span><span class="s2"> CPUs out of </span><span class="si">{</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span><span class="si">}</span><span class="s2">... &quot;</span>
+            <span class="p">)</span>
+        <span class="k">with</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_processes</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+            <span class="n">partial_era5</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+                <span class="n">_get_era5_reanalysis_data_parallel</span><span class="p">,</span>
+                <span class="n">var_IDs</span><span class="o">=</span><span class="n">var_IDs</span><span class="p">,</span>
+                <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span>
+                <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+                <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">era5_das</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">partial_era5</span><span class="p">,</span> <span class="n">date_ranges</span><span class="p">),</span>
+                    <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">date_ranges</span><span class="p">),</span>
+                    <span class="n">smoothing</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">era5_da</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">era5_das</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">era5_da</span><span class="o">.</span><span class="n">nbytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GB loaded in </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tic</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">era5_da</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_era5_reanalysis_data_parallel</span><span class="p">(</span>
+    <span class="n">date_range</span><span class="p">,</span>
+    <span class="n">var_IDs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span>
+    <span class="n">extent</span><span class="o">=</span><span class="s2">&quot;global&quot;</span><span class="p">,</span>
+    <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache_dir</span><span class="o">=</span><span class="s2">&quot;.datacache&quot;</span><span class="p">,</span>
+<span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function for downloading ERA5 data in parallel with caching.</span>
+
+<span class="sd">    For documentation, see get_era5_reanalysis_data()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cache</span><span class="p">:</span>
+        <span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@memory</span><span class="o">.</span><span class="n">cache</span>
+    <span class="k">def</span> <span class="nf">_get_era5_reanalysis_data_parallel_cached</span><span class="p">(</span>
+        <span class="n">date_range</span><span class="p">,</span> <span class="n">var_IDs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="s2">&quot;global&quot;</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="n">extent_str_to_tuple</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">extent</span><span class="p">])</span>
+        <span class="n">lon_min</span><span class="p">,</span> <span class="n">lon_max</span><span class="p">,</span> <span class="n">lat_min</span><span class="p">,</span> <span class="n">lat_max</span> <span class="o">=</span> <span class="n">extent</span>
+
+        <span class="k">if</span> <span class="n">freq</span> <span class="o">==</span> <span class="s2">&quot;D&quot;</span><span class="p">:</span>
+            <span class="c1"># Need to download hourly data and then resample to daily</span>
+            <span class="c1">#   See https://github.com/google-research/arco-era5/issues/62</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3/&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">freq</span> <span class="o">==</span> <span class="s2">&quot;H&quot;</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3/&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid freq: </span><span class="si">{</span><span class="n">freq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">era5_zarr</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">consolidated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">48</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">var_IDs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">era5_zarr</span> <span class="o">=</span> <span class="n">era5_zarr</span><span class="p">[</span><span class="n">var_IDs</span><span class="p">]</span>
+        <span class="n">era5_da</span> <span class="o">=</span> <span class="n">era5_zarr</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">*</span><span class="n">date_range</span><span class="p">))</span>
+        <span class="c1"># Replace longitude 0 to 360 with -180 to 180</span>
+        <span class="n">era5_da</span> <span class="o">=</span> <span class="n">era5_da</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span>
+            <span class="n">longitude</span><span class="o">=</span><span class="p">(</span><span class="n">era5_da</span><span class="o">.</span><span class="n">longitude</span> <span class="o">+</span> <span class="mi">180</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span> <span class="o">-</span> <span class="mi">180</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sortby</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span>
+        <span class="n">era5_da</span> <span class="o">=</span> <span class="n">era5_da</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
+            <span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">lat_max</span><span class="p">,</span> <span class="n">lat_min</span><span class="p">),</span> <span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">lon_min</span><span class="p">,</span> <span class="n">lon_max</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">freq</span> <span class="o">==</span> <span class="s2">&quot;D&quot;</span><span class="p">:</span>
+            <span class="n">era5_da</span> <span class="o">=</span> <span class="n">era5_da</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;1D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">era5_da</span> <span class="o">=</span> <span class="n">era5_da</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="n">era5_da</span> <span class="o">=</span> <span class="n">era5_da</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="s2">&quot;lon&quot;</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">era5_da</span>
+
+    <span class="k">return</span> <span class="n">_get_era5_reanalysis_data_parallel_cached</span><span class="p">(</span><span class="n">date_range</span><span class="p">,</span> <span class="n">var_IDs</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">extent</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_gldas_land_mask"><a class="viewcode-back" href="../../../reference/data/sources.html#deepsensor.data.sources.get_gldas_land_mask">[docs]</a><span class="k">def</span> <span class="nf">get_gldas_land_mask</span><span class="p">(</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.datacache&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get GLDAS land mask at 0.25 degree resolution.</span>
+<span class="sd">    Source: https://ldas.gsfc.nasa.gov/gldas/vegetation-class-mask.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        If this function is updated, the cache will be invalidated and the data will need</span>
+<span class="sd">        to be re-downloaded. To avoid this risk, set ``cache=False`` and save the data to disk</span>
+<span class="sd">        manually.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        extent: tuple[float, float, float, float] | str</span>
+<span class="sd">            Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.</span>
+<span class="sd">            Options are: &quot;global&quot;, &quot;north_america&quot;, &quot;uk&quot;, &quot;europe&quot;.</span>
+<span class="sd">        verbose: bool</span>
+<span class="sd">            Whether to print status messages. Default is ``False``.</span>
+<span class="sd">        cache: bool</span>
+<span class="sd">            Whether to cache the station metadata and data locally. If ``True``, calling the</span>
+<span class="sd">            function again with the same arguments will load the data from the cache instead</span>
+<span class="sd">            of downloading it again. Default is ``False``.</span>
+<span class="sd">        cache_dir: str</span>
+<span class="sd">            Directory to store the cached data. Default is ``&quot;.datacache&quot;``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`xarray.DataArray`</span>
+<span class="sd">            Land mask (1 = land, 0 = water) with dimensions ``lat``, ``lon``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cache</span><span class="p">:</span>
+        <span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@memory</span><span class="o">.</span><span class="n">cache</span>
+    <span class="k">def</span> <span class="nf">_get_gldas_land_mask_cached</span><span class="p">(</span>
+        <span class="n">extent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Downloading GLDAS land mask from NASA...&quot;</span><span class="p">,</span>
+                <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+                <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">fname</span> <span class="o">=</span> <span class="s2">&quot;GLDASp5_landmask_025d.nc4&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ldas.gsfc.nasa.gov/sites/default/files/ldas/gldas/VEG/&quot;</span> <span class="o">+</span> <span class="n">fname</span>
+        <span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0&quot;</span><span class="p">})</span>
+        <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">da</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">)[</span><span class="s2">&quot;GLDAS_mask&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="n">extent_str_to_tuple</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">extent</span><span class="p">])</span>
+        <span class="n">lon_min</span><span class="p">,</span> <span class="n">lon_max</span><span class="p">,</span> <span class="n">lat_min</span><span class="p">,</span> <span class="n">lat_max</span> <span class="o">=</span> <span class="n">extent</span>
+
+        <span class="c1"># Reverse latitude to match ERA5</span>
+        <span class="n">da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="n">da</span><span class="o">.</span><span class="n">lat</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">lat_max</span><span class="p">,</span> <span class="n">lat_min</span><span class="p">),</span> <span class="n">lon</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">lon_min</span><span class="p">,</span> <span class="n">lon_max</span><span class="p">))</span>
+        <span class="n">da</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">da</span><span class="o">.</span><span class="n">nbytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MB loaded in </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tic</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">da</span>
+
+    <span class="k">return</span> <span class="n">_get_gldas_land_mask_cached</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_earthenv_auxiliary_data"><a class="viewcode-back" href="../../../reference/data/sources.html#deepsensor.data.sources.get_earthenv_auxiliary_data">[docs]</a><span class="k">def</span> <span class="nf">get_earthenv_auxiliary_data</span><span class="p">(</span>
+    <span class="n">var_IDs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;elevation&quot;</span><span class="p">,</span> <span class="s2">&quot;tpi&quot;</span><span class="p">),</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;1KM&quot;</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.datacache&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download global static auxiliary data from EarthEnv into an xarray DataArray.</span>
+<span class="sd">    See: https://www.earthenv.org/topography.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Requires the `rioxarray` package to be installed. e.g. via ``pip install rioxarray``.</span>
+<span class="sd">        See the ``rioxarray`` pages for more installation options:</span>
+<span class="sd">        https://corteva.github.io/rioxarray/stable/installation.html</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This method downloads the data from EarthEnv to disk, then reads it into memory,</span>
+<span class="sd">        and then deletes the file from disk. This is because EarthEnv does not support</span>
+<span class="sd">        OpenDAP, so we cannot read the data directly into memory.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        At 1KM resolution, the global data is ~3 GB per variable.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Topographic Position Index (TPI) is a measure of the local topographic position of a cell</span>
+<span class="sd">        relative to its surrounding landscape. It is calculated as the difference between the</span>
+<span class="sd">        elevation of a cell and the mean elevation of its surrounding landscape. This highlights</span>
+<span class="sd">        topographic features such as mountains (positive TPI) and valleys (negative TPI).</span>
+
+<span class="sd">    .. todo::</span>
+<span class="sd">        support land cover data: https://www.earthenv.org/landcover</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        If this function is updated, the cache will be invalidated and the data will need</span>
+<span class="sd">        to be re-downloaded. To avoid this risk, set ``cache=False`` and save the data to disk</span>
+<span class="sd">        manually.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        var_IDs: tuple</span>
+<span class="sd">            List of variable IDs. Options are: &quot;elevation&quot;, &quot;tpi&quot;.</span>
+<span class="sd">        extent: tuple[float, float, float, float] | str</span>
+<span class="sd">            Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.</span>
+<span class="sd">            Options are: &quot;global&quot;, &quot;north_america&quot;, &quot;uk&quot;, &quot;europe&quot;.</span>
+<span class="sd">        resolution: str</span>
+<span class="sd">            Resolution of data. Options are: &quot;1KM&quot;, &quot;5KM&quot;, &quot;10KM&quot;, &quot;50KM&quot;, &quot;100KM&quot;.</span>
+<span class="sd">        verbose: bool</span>
+<span class="sd">            Whether to print status messages. Default is ``False``.</span>
+<span class="sd">        cache: bool</span>
+<span class="sd">            Whether to cache the station metadata and data locally. If ``True``, calling the</span>
+<span class="sd">            function again with the same arguments will load the data from the cache instead</span>
+<span class="sd">            of downloading it again. Default is ``False``.</span>
+<span class="sd">        cache_dir: str</span>
+<span class="sd">            Directory to store the cached data. Default is ``&quot;.datacache&quot;``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`xarray.DataArray`</span>
+<span class="sd">            Auxiliary data with dimensions ``lat``, ``lon`` and variable ``var_ID``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cache</span><span class="p">:</span>
+        <span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Check for rioxarray and raise error if not present</span>
+    <span class="kn">import</span> <span class="nn">importlib.util</span>
+
+    <span class="k">if</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="s2">&quot;rioxarray&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The rioxarray is required to run this function, it was not found. Install with `pip install rioxarray`.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="nd">@memory</span><span class="o">.</span><span class="n">cache</span>
+    <span class="k">def</span> <span class="nf">_get_auxiliary_data_cached</span><span class="p">(</span>
+        <span class="n">var_IDs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">extent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+        <span class="n">resolution</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;1KM&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Downloading EarthEnv data...&quot;</span><span class="p">,</span>
+                <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+                <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">valid_var_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;elevation&quot;</span><span class="p">,</span> <span class="s2">&quot;tpi&quot;</span><span class="p">]</span>
+        <span class="n">valid_resolutions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1KM&quot;</span><span class="p">,</span> <span class="s2">&quot;5KM&quot;</span><span class="p">,</span> <span class="s2">&quot;10KM&quot;</span><span class="p">,</span> <span class="s2">&quot;50KM&quot;</span><span class="p">,</span> <span class="s2">&quot;100KM&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">var_ID</span> <span class="ow">in</span> <span class="n">var_IDs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var_ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_var_IDs</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid var_ID: </span><span class="si">{</span><span class="n">var_ID</span><span class="si">}</span><span class="s2">. Options are: </span><span class="si">{</span><span class="n">valid_var_IDs</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">resolution</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_resolutions</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid resolution: </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">. Options are: </span><span class="si">{</span><span class="n">valid_resolutions</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="n">extent_str_to_tuple</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">extent</span><span class="p">])</span>
+        <span class="n">lon_min</span><span class="p">,</span> <span class="n">lon_max</span><span class="p">,</span> <span class="n">lat_min</span><span class="p">,</span> <span class="n">lat_max</span> <span class="o">=</span> <span class="n">extent</span>
+
+        <span class="n">da_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">var_ID</span> <span class="ow">in</span> <span class="n">var_IDs</span><span class="p">:</span>
+            <span class="c1"># Download data</span>
+            <span class="k">if</span> <span class="n">var_ID</span> <span class="o">==</span> <span class="s2">&quot;elevation&quot;</span><span class="p">:</span>
+                <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;mn&quot;</span>
+            <span class="k">elif</span> <span class="n">var_ID</span> <span class="o">==</span> <span class="s2">&quot;tpi&quot;</span><span class="p">:</span>
+                <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;md&quot;</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var_ID</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">mn_GMTED</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.tif&quot;</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://data.earthenv.org/topography/&quot;</span> <span class="o">+</span> <span class="n">fname</span>
+            <span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0&quot;</span><span class="p">})</span>
+            <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+            <span class="c1"># Read data</span>
+            <span class="n">da</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">to_array</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="n">da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;lon&quot;</span><span class="p">})</span>
+            <span class="n">da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">([</span><span class="s2">&quot;band&quot;</span><span class="p">,</span> <span class="s2">&quot;spatial_ref&quot;</span><span class="p">,</span> <span class="s2">&quot;variable&quot;</span><span class="p">])</span>
+            <span class="n">da</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">var_ID</span>
+            <span class="n">da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">lat_max</span><span class="p">,</span> <span class="n">lat_min</span><span class="p">),</span> <span class="n">lon</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">lon_min</span><span class="p">,</span> <span class="n">lon_max</span><span class="p">))</span>
+            <span class="n">da_dict</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">da</span>
+
+            <span class="c1"># Remove file</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">da_dict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ds</span><span class="o">.</span><span class="n">nbytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GB loaded in </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tic</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ds</span>
+
+    <span class="k">return</span> <span class="n">_get_auxiliary_data_cached</span><span class="p">(</span><span class="n">var_IDs</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="c1"># Using the same settings allows use to use pre-downloaded cached data</span>
+    <span class="n">data_range</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;2015-06-25&quot;</span><span class="p">,</span> <span class="s2">&quot;2015-06-30&quot;</span><span class="p">)</span>
+    <span class="n">extent</span> <span class="o">=</span> <span class="s2">&quot;europe&quot;</span>
+    <span class="n">era5_var_IDs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;2m_temperature&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10m_u_component_of_wind&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10m_v_component_of_wind&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">cache_dir</span> <span class="o">=</span> <span class="s2">&quot;tmp/&quot;</span>
+
+    <span class="n">era5_raw_ds</span> <span class="o">=</span> <span class="n">get_era5_reanalysis_data</span><span class="p">(</span>
+        <span class="n">era5_var_IDs</span><span class="p">,</span>
+        <span class="n">extent</span><span class="p">,</span>
+        <span class="n">date_range</span><span class="o">=</span><span class="n">data_range</span><span class="p">,</span>
+        <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,914 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>deepsensor.active_learning.acquisition_fns &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/deepsensor/active_learning/acquisition_fns';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2F_modules/deepsensor/active_learning/acquisition_fns.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for deepsensor.active_learning.acquisition_fns</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
+
+<span class="kn">from</span> <span class="nn">deepsensor.model.model</span> <span class="kn">import</span> <span class="n">ProbabilisticModel</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.task</span> <span class="kn">import</span> <span class="n">Task</span>
+
+
+<div class="viewcode-block" id="AcquisitionFunction"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.AcquisitionFunction">[docs]</a><span class="k">class</span> <span class="nc">AcquisitionFunction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parent class for acquisition functions.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Class attribute to indicate whether the acquisition function should be</span>
+    <span class="c1">#   minimised or maximised</span>
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ProbabilisticModel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">context_set_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">target_set_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Args:</span>
+<span class="sd">        model (:class:`~.model.model.ProbabilisticModel`):</span>
+<span class="sd">            [Description of the model parameter.]</span>
+<span class="sd">        context_set_idx (int):</span>
+<span class="sd">            Index of context set to add new observations to when computing</span>
+<span class="sd">            the acquisition function.</span>
+<span class="sd">        target_set_idx (int):</span>
+<span class="sd">            Index of target set to compute acquisition function for.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_set_idx</span> <span class="o">=</span> <span class="n">context_set_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span> <span class="o">=</span> <span class="n">target_set_idx</span>
+
+<div class="viewcode-block" id="AcquisitionFunction.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.AcquisitionFunction.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task object containing context and target sets.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray`:</span>
+<span class="sd">                Acquisition function value/s. Shape ().</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError:</span>
+<span class="sd">                Because this is an abstract method, it must be implemented by</span>
+<span class="sd">                the subclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="AcquisitionFunctionOracle"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.AcquisitionFunctionOracle">[docs]</a><span class="k">class</span> <span class="nc">AcquisitionFunctionOracle</span><span class="p">(</span><span class="n">AcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Signifies that the acquisition function is computed using the true</span>
+<span class="sd">    target values.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="AcquisitionFunctionParallel"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.AcquisitionFunctionParallel">[docs]</a><span class="k">class</span> <span class="nc">AcquisitionFunctionParallel</span><span class="p">(</span><span class="n">AcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parent class for acquisition functions that are computed across all search</span>
+<span class="sd">    points in parallel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AcquisitionFunctionParallel.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.AcquisitionFunctionParallel.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">X_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :param **kwargs:</span>
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task object containing context and target sets.</span>
+<span class="sd">            X_s (:class:`numpy:numpy.ndarray`):</span>
+<span class="sd">                Search points. Shape (2, N_search).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray`:</span>
+<span class="sd">                Should return acquisition function value/s. Shape (N_search,).</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError:</span>
+<span class="sd">                Because this is an abstract method, it must be implemented by</span>
+<span class="sd">                the subclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="MeanStddev"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.MeanStddev">[docs]</a><span class="k">class</span> <span class="nc">MeanStddev</span><span class="p">(</span><span class="n">AcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean of the marginal variances.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
+
+<div class="viewcode-block" id="MeanStddev.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.MeanStddev.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                [Description of the task parameter.]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">task</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="MeanVariance"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.MeanVariance">[docs]</a><span class="k">class</span> <span class="nc">MeanVariance</span><span class="p">(</span><span class="n">AcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean of the marginal variances.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
+
+<div class="viewcode-block" id="MeanVariance.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.MeanVariance.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                [Description of the task parameter.]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">variance</span><span class="p">(</span><span class="n">task</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="pNormStddev"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.pNormStddev">[docs]</a><span class="k">class</span> <span class="nc">pNormStddev</span><span class="p">(</span><span class="n">AcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;p-norm of the vector of marginal standard deviations.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            p (int, optional):</span>
+<span class="sd">                [Description of the parameter p.], default is 1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
+
+<div class="viewcode-block" id="pNormStddev.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.pNormStddev.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                [Description of the task parameter.]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">task</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="nb">ord</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="MeanMarginalEntropy"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.MeanMarginalEntropy">[docs]</a><span class="k">class</span> <span class="nc">MeanMarginalEntropy</span><span class="p">(</span><span class="n">AcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean of the entropies of the marginal predictive distributions.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
+
+<div class="viewcode-block" id="MeanMarginalEntropy.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.MeanMarginalEntropy.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task object containing context and target sets.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">marginal_entropy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mean_marginal_entropy</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">marginal_entropy</span></div></div>
+
+
+<div class="viewcode-block" id="JointEntropy"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.JointEntropy">[docs]</a><span class="k">class</span> <span class="nc">JointEntropy</span><span class="p">(</span><span class="n">AcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Joint entropy of the predictive distribution.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
+
+<div class="viewcode-block" id="JointEntropy.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.JointEntropy.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task object containing context and target sets.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">joint_entropy</span><span class="p">(</span><span class="n">task</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="OracleMAE"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.OracleMAE">[docs]</a><span class="k">class</span> <span class="nc">OracleMAE</span><span class="p">(</span><span class="n">AcquisitionFunctionOracle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Oracle mean absolute error.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
+
+<div class="viewcode-block" id="OracleMAE.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.OracleMAE.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task object containing context and target sets.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">]</span>
+        <span class="n">true</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pred</span> <span class="o">-</span> <span class="n">true</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="OracleRMSE"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.OracleRMSE">[docs]</a><span class="k">class</span> <span class="nc">OracleRMSE</span><span class="p">(</span><span class="n">AcquisitionFunctionOracle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Oracle root mean squared error.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
+
+<div class="viewcode-block" id="OracleRMSE.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.OracleRMSE.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task object containing context and target sets.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">]</span>
+        <span class="n">true</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">pred</span> <span class="o">-</span> <span class="n">true</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="OracleMarginalNLL"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.OracleMarginalNLL">[docs]</a><span class="k">class</span> <span class="nc">OracleMarginalNLL</span><span class="p">(</span><span class="n">AcquisitionFunctionOracle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Oracle marginal negative log-likelihood.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
+
+<div class="viewcode-block" id="OracleMarginalNLL.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.OracleMarginalNLL.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task object containing context and target sets.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">]</span>
+        <span class="n">true</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">task</span><span class="p">)))</span></div></div>
+
+
+<div class="viewcode-block" id="OracleJointNLL"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.OracleJointNLL">[docs]</a><span class="k">class</span> <span class="nc">OracleJointNLL</span><span class="p">(</span><span class="n">AcquisitionFunctionOracle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Oracle joint negative log-likelihood.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
+
+<div class="viewcode-block" id="OracleJointNLL.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.OracleJointNLL.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task object containing context and target sets.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">task</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Random"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.Random">[docs]</a><span class="k">class</span> <span class="nc">Random</span><span class="p">(</span><span class="n">AcquisitionFunctionParallel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Random acquisition function.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seed (int, optional):</span>
+<span class="sd">                Random seed, defaults to 42.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Random.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.Random.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">X_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :param **kwargs:</span>
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                [Description of the task parameter.]</span>
+<span class="sd">            X_s (:class:`numpy:numpy.ndarray`):</span>
+<span class="sd">                [Description of the X_s parameter.]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float:</span>
+<span class="sd">                A random acquisition function value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">X_s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="ContextDist"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.ContextDist">[docs]</a><span class="k">class</span> <span class="nc">ContextDist</span><span class="p">(</span><span class="n">AcquisitionFunctionParallel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Distance to closest context point.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span>
+
+<div class="viewcode-block" id="ContextDist.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.ContextDist.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">X_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :param **kwargs:</span>
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                [Description of the task parameter.]</span>
+<span class="sd">            X_s (:class:`numpy:numpy.ndarray`):</span>
+<span class="sd">                [Description of the X_s parameter.]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X_c</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">context_set_idx</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">X_c</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># No sensors placed yet, so arbitrarily choose first query point by setting its</span>
+            <span class="c1">#    acquisition fn to non-zero and all others to zero</span>
+            <span class="n">dist_to_closest_sensor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X_s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">dist_to_closest_sensor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use broadcasting to get matrix of distances from each possible</span>
+            <span class="c1">#   new sensor location to each existing sensor location</span>
+            <span class="n">dists_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+                <span class="n">X_s</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">-</span> <span class="n">X_c</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:],</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>  <span class="c1"># Shape (n_possible_locs, n_context + n_placed_sensors)</span>
+
+            <span class="c1"># Compute distance to nearest sensor</span>
+            <span class="n">dist_to_closest_sensor</span> <span class="o">=</span> <span class="n">dists_all</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dist_to_closest_sensor</span></div></div>
+
+
+<div class="viewcode-block" id="Stddev"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.Stddev">[docs]</a><span class="k">class</span> <span class="nc">Stddev</span><span class="p">(</span><span class="n">AcquisitionFunctionParallel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Model standard deviation.&quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span>
+
+<div class="viewcode-block" id="Stddev.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.Stddev.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">X_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        :param **kwargs:</span>
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                [Description of the task parameter.]</span>
+<span class="sd">            X_s (:class:`numpy:numpy.ndarray`):</span>
+<span class="sd">                [Description of the X_s parameter.]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [Type of the return value]:</span>
+<span class="sd">                [Description of the return value.]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set the target points to the search points</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_s</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">task</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="ExpectedImprovement"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.ExpectedImprovement">[docs]</a><span class="k">class</span> <span class="nc">ExpectedImprovement</span><span class="p">(</span><span class="n">AcquisitionFunctionParallel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expected improvement acquisition function.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        The current implementation of this acquisition function is only valid</span>
+<span class="sd">        for maximisation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">min_or_max</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span>
+
+<div class="viewcode-block" id="ExpectedImprovement.__call__"><a class="viewcode-back" href="../../../reference/active_learning/acquisition_fns.html#deepsensor.active_learning.acquisition_fns.ExpectedImprovement.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">X_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;:param **kwargs:</span>
+<span class="sd">        :no-index:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task object containing context and target sets.</span>
+<span class="sd">            X_s (:class:`numpy:numpy.ndarray`):</span>
+<span class="sd">                Search points. Shape (2, N_search).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray`:</span>
+<span class="sd">                Acquisition function value/s. Shape (N_search,).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set the target points to the search points</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_s</span>
+
+        <span class="c1"># Compute the predictive mean and variance of the target set</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">task</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">context_set_idx</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># No previous context points, so heuristically use the predictive mean as the</span>
+            <span class="c1"># acquisition function. This will at least select the most positive predicted mean.</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">task</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Determine the best target value seen so far</span>
+            <span class="n">best_target_value</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">context_set_idx</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="c1"># Compute the standard deviation of the context set</span>
+        <span class="n">stddev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">task</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">context_set_idx</span><span class="p">]</span>
+
+        <span class="c1"># Compute the expected improvement</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean</span> <span class="o">-</span> <span class="n">best_target_value</span><span class="p">)</span> <span class="o">/</span> <span class="n">stddev</span>
+        <span class="n">ei</span> <span class="o">=</span> <span class="n">stddev</span> <span class="o">*</span> <span class="p">(</span><span class="n">mean</span> <span class="o">-</span> <span class="n">best_target_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">+</span> <span class="n">stddev</span> <span class="o">*</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ei</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

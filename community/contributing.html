@@ -1,0 +1,857 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Contributing to DeepSensor &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'community/contributing';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Code of Conduct" href="code_of_conduct.html" />
+    <link rel="prev" title="Community" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Community</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2Fcommunity/contributing.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/community/contributing.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Contributing to DeepSensor</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#important-resources">Important Resources</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-in-touch">Get in touch</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-contribute">How to Contribute</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-submit-changes">How to Submit Changes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#fork-the-repository">1. Fork the Repository</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#make-changes">2. Make Changes</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#commit-and-push">3. Commit and Push</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#open-a-pull-request">4. Open a Pull Request</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor-s-documentation">DeepSensor’s documentation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing-to-documentation">Contributing to documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-timers-corner">First-timers’ Corner</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reporting-bugs">Reporting Bugs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recognising-contributions">Recognising Contributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#need-help">Need Help?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inclusivity">Inclusivity</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="contributing-to-deepsensor">
+<h1>Contributing to DeepSensor<a class="headerlink" href="#contributing-to-deepsensor" title="Permalink to this heading">#</a></h1>
+<p>🌍💫 We’re excited that you’re here and want to contribute. 💫🌍</p>
+<p>By joining our efforts, you will be helping to push the frontiers of environmental sciences.</p>
+<p>We want to ensure that every user and contributor feels welcome, included and supported to
+participate in DeepSensor community. Whether you’re a seasoned developer, a machine learning
+researcher, an environmental scientist, or just someone eager to learn and contribute, <strong>you are
+welcome here</strong>. We value every contribution, be it big or small, and we appreciate the unique
+perspectives you bring to the project.</p>
+<p>We hope that the information provided in this document will make it as easy as possible for you to
+get involved. If you find that you have questions that are not discussed below, please let us know
+through one of the many ways to <span class="xref myst">get in touch</span>.</p>
+<section id="important-resources">
+<h2>Important Resources<a class="headerlink" href="#important-resources" title="Permalink to this heading">#</a></h2>
+<p>If you’d like to find out more about DeepSensor, make sure to check out:</p>
+<ol class="arabic simple">
+<li><p><strong>README</strong>: For a high-level overview of the project, please refer to our README.</p></li>
+<li><p><strong>Documentation</strong>: For more detailed information about the project, please refer to
+our <a class="reference external" href="https://alan-turing-institute.github.io/deepsensor">documentation</a>.</p></li>
+<li><p><strong>Project Roadmap</strong>: Familiarize yourself with our direction and goals by checking
+out <a class="reference external" href="https://alan-turing-institute.github.io/deepsensor/community/roadmap.html">the project’s roadmap</a>.</p></li>
+</ol>
+</section>
+<section id="get-in-touch">
+<h2>Get in touch<a class="headerlink" href="#get-in-touch" title="Permalink to this heading">#</a></h2>
+<p>The easiest way to get involved with the active development of DeepSensor is to join our regular
+community calls. The community calls are currently on a hiatus but if you are interested in
+participating in the forthcoming community calls, which will start in 2024, you should join our
+Slack workspace, where conversation about when to hold the community calls in the future will take
+place.</p>
+<p><strong>Slack Workspace</strong>: Join
+our DeepSensor Slack channel for
+discussions, queries, and community interactions. In order to join, <a class="reference external" href="https://forms.office.com/pages/responsepage.aspx?id=p_SVQ1XklU-Knx-672OE-ZmEJNLHTHVFkqQ97AaCfn9UMTZKT1IwTVhJRE82UjUzMVE2MThSOU5RMC4u">sign up for the Turing Environment &amp; Sustainability stakeholder community</a>. The form includes a question on signing up for the Slack team, where you can find DeepSensor’s channel.</p>
+<p><strong>Email</strong>: If you prefer a more formal communication method or have specific concerns, please reach
+us at <a class="reference external" href="mailto:tomandersson3&#37;&#52;&#48;gmail&#46;com">tomandersson3<span>&#64;</span>gmail<span>&#46;</span>com</a>.</p>
+</section>
+<section id="how-to-contribute">
+<h2>How to Contribute<a class="headerlink" href="#how-to-contribute" title="Permalink to this heading">#</a></h2>
+<p>We welcome contributions of all kinds, be it code, documentation, raising issues, or community engagement. We
+encourage you to read through the following sections to learn more about how you can contribute to</p>
+<section id="how-to-submit-changes">
+<h3>How to Submit Changes<a class="headerlink" href="#how-to-submit-changes" title="Permalink to this heading">#</a></h3>
+<p>We follow the same instructions for submitting changes to the project as those developed
+by <a class="reference external" href="https://github.com/the-turing-way/the-turing-way/blob/main/CONTRIBUTING.md#making-a-change-with-a-pull-request">The Turing Way</a>.
+In short, there are five steps to adding changes to this repository:</p>
+<ol class="arabic simple">
+<li><p><strong>Fork the Repository</strong>: Start
+by <a class="reference external" href="https://github.com/alan-turing-institute/deepsensor/fork">forking the DeepSensor repository</a>.</p></li>
+<li><p><strong>Make Changes</strong>: Ensure your code adheres to the style guidelines and passes all tests.</p></li>
+<li><p><strong>Commit and Push</strong>: Use clear commit messages.</p></li>
+<li><p><strong>Open a Pull Request</strong>: Ensure you describe the changes made and any additional details.</p></li>
+</ol>
+<section id="fork-the-repository">
+<h4>1. Fork the Repository<a class="headerlink" href="#fork-the-repository" title="Permalink to this heading">#</a></h4>
+<p>Once you have <a class="reference external" href="https://github.com/alan-turing-institute/deepsensor/fork">created a fork of the repository</a>,
+you now have your own unique local copy of DeepSensor. Changes here won’t affect anyone else’s work,
+so it’s a safe space to explore edits to the code!</p>
+<p>Make sure to <a class="reference external" href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork">keep your fork up to date</a> with the main repository, otherwise, you
+can end up with lots of dreaded <a class="reference external" href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/about-merge-conflicts">merge conflicts</a>.</p>
+<p>If you prefer working with GitHub in the
+browser, <a class="reference external" href="https://github.com/KirstieJane/STEMMRoleModels/wiki/Syncing-your-fork-to-the-original-repository-via-the-browser">these instructions</a>
+describe how to sync your fork to the original repository.</p>
+</section>
+<section id="make-changes">
+<h4>2. Make Changes<a class="headerlink" href="#make-changes" title="Permalink to this heading">#</a></h4>
+<p>Try to keep the changes focused.
+If you submit a large amount of work all in one go it will be much more work for whoever is
+reviewing your pull request.
+Help them help you! :wink:</p>
+<p>Are you new to Git and GitHub or just want a detailed guide on getting started with version control?
+Check out
+our <a class="reference external" href="https://the-turing-way.netlify.com/version_control/version_control.html">Version Control chapter</a>
+in <em>The Turing Way</em> Book!</p>
+</section>
+<section id="commit-and-push">
+<h4>3. Commit and Push<a class="headerlink" href="#commit-and-push" title="Permalink to this heading">#</a></h4>
+<p>While making your changes, commit often and write good, detailed commit messages.
+<a class="reference external" href="https://chris.beams.io/posts/git-commit/">This blog</a> explains how to write a good Git commit
+message and why it matters.
+It is also perfectly fine to have a lot of commits - including ones that break code.
+A good rule of thumb is to push up to GitHub when you <em>do</em> have passing tests then the continuous
+integration (CI) has a good chance of passing everything. 😸</p>
+<p>Please do not re-write history!
+That is, please do not use the <a class="reference external" href="https://help.github.com/en/articles/about-git-rebase">rebase</a>
+command to edit previous commit messages, combine multiple commits into one, or delete or revert
+commits that are no longer necessary.</p>
+<p>Make sure you’re using the developer dependencies.
+If you’re working locally on the source code, <em>before</em> commiting, please run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements/requirements.dev.txt</span></code> to install some useful dependencies just for development.
+This includes <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> and <code class="docutils literal notranslate"><span class="pre">ruff</span></code> which are used to check and format your code style when you run <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code>, so that you don’t have to.</p>
+<p>Using pre-commit:</p>
+<ul class="simple">
+<li><p>To make this work, just run <code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code> and when you commit, <code class="docutils literal notranslate"><span class="pre">ruff</span></code> will be run to check the style of the files that you’ve changed.</p></li>
+<li><p>Note, you may find that if <code class="docutils literal notranslate"><span class="pre">ruff</span></code> needs to edit your files, you’ll have to run <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">...</span></code> and <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">..</span></code> again as the pre-commit hook will stop the commit until the changes pass its tests, <code class="docutils literal notranslate"><span class="pre">ruff</span></code> will also have slightly edited the files you added, so you’ll need to stage and commit again.</p></li>
+</ul>
+<p>Without pre-commit:</p>
+<ul class="simple">
+<li><p>Alternatively, you can run <code class="docutils literal notranslate"><span class="pre">ruff</span></code> yourself (without) <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> by installing <code class="docutils literal notranslate"><span class="pre">ruff</span></code> as above and just running <code class="docutils literal notranslate"><span class="pre">ruff</span> <span class="pre">format</span></code>.</p></li>
+</ul>
+<p>You should also run <code class="docutils literal notranslate"><span class="pre">pytest</span></code> and check that your changes don’t break any of the existing tests.
+If you’ve made changes to the source code, you may need to add some tests to make sure that they don’t get broken in the future.</p>
+</section>
+<section id="open-a-pull-request">
+<h4>4. Open a Pull Request<a class="headerlink" href="#open-a-pull-request" title="Permalink to this heading">#</a></h4>
+<p>We encourage you to open a pull request as early in your contributing process as possible.
+This allows everyone to see what is currently being worked on.
+It also provides you, the contributor, feedback in real-time from both the community and the
+continuous integration as you make commits (which will help prevent stuff from breaking).</p>
+<p>GitHub has a <a class="reference external" href="https://guides.github.com/introduction/flow">nice introduction</a> to the pull request
+workflow, but please <span class="xref myst">get in touch</span> if you have any questions :balloon:.</p>
+</section>
+</section>
+<section id="deepsensor-s-documentation">
+<h3>DeepSensor’s documentation<a class="headerlink" href="#deepsensor-s-documentation" title="Permalink to this heading">#</a></h3>
+<p>You don’t have to write code to contribute to DeepSensor.
+Another highly valuable way of contributing is helping with DeepSensor’s <a class="reference external" href="https://alan-turing-institute.github.io/deepsensor">documentation</a>.
+See below for information on how to do this.</p>
+<section id="background">
+<h4>Background<a class="headerlink" href="#background" title="Permalink to this heading">#</a></h4>
+<p>We use the Jupyter Book framework to build our documentation in the <code class="docutils literal notranslate"><span class="pre">docs/</span></code> folder.
+The documentation is written in
+Markdown and Jupyter Notebooks. The documentation is hosted on GitHub Pages and is automatically
+built and deployed using GitHub Actions after every commit to the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch.</p>
+<p>DeepSensor requires slightly unique documentation, because demonstrating the package requires
+both data and trained models.
+This makes it compute- and data-hungry to run some of the notebooks, and they cannot
+run on GitHub Actions.
+Therefore, all the notebooks are run locally - the code cell outputs are saved in the .ipynb files
+and are rendered when the documentation is built.
+If DeepSensor is updated, some of the notebooks may become out of date and will need to be re-run.</p>
+<p>Some relevant links for Juptyer Book and MyST:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://jupyterbook.org/en/stable/intro.html">https://jupyterbook.org/en/stable/intro.html</a></p></li>
+<li><p><a class="reference external" href="https://jupyterbook.org/en/stable/content/myst.html">https://jupyterbook.org/en/stable/content/myst.html</a></p></li>
+<li><p><a class="reference external" href="https://jupyterbook.org/en/stable/reference/cheatsheet.html">https://jupyterbook.org/en/stable/reference/cheatsheet.html</a></p></li>
+</ul>
+</section>
+<section id="contributing-to-documentation">
+<h4>Contributing to documentation<a class="headerlink" href="#contributing-to-documentation" title="Permalink to this heading">#</a></h4>
+<p>One easy way to contribute to the documentation is to provide feedback in <a class="reference external" href="https://github.com/alan-turing-institute/deepsensor/issues/87">this issue</a> and/or in the DeepSensor Slack channel.</p>
+<p>Another way to contribute is to directly edit or add to the documentation and open a PR:</p>
+<ul class="simple">
+<li><p>Follow all the forking instructions above</p></li>
+<li><p>Install the documentation requirements: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements/requirements.docs.txt</span></code></p></li>
+<li><p>Option A: Editing a markdown file</p>
+<ul>
+<li><p>Simply make your edits!</p></li>
+</ul>
+</li>
+<li><p>Option B: Editing a jupyter notebook file</p>
+<ul>
+<li><p>This can be more involved… Firstly, reach out on the Slack channel to ask if anyone else is working on the same notebook file locally. Working one-at-a-time can save Jupyter JSON merge conflict headaches later!</p></li>
+<li><p>If you are only editing markdown cells, just re-run those cells specifically to compile them</p></li>
+<li><p>If you are editing code cells:</p>
+<ul>
+<li><p>Install <code class="docutils literal notranslate"><span class="pre">cartopy</span></code> using <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">conda-forge</span> <span class="pre">cartopy</span></code></p></li>
+<li><p>Run the all the code cells that the current cell depends on and any subsequent code cells that depend on the current cell (you may need to rerun the whole notebook)</p></li>
+<li><p>Note: Some notebooks require a GPU and some assume that previous notebooks have been run</p></li>
+</ul>
+</li>
+<li><p>Please be careful about not clearing any code cell outputs that you don’t intend to!</p></li>
+</ul>
+</li>
+<li><p>Once your changes have been made, regenerate the docs locally with <code class="docutils literal notranslate"><span class="pre">jupyter-book</span> <span class="pre">build</span> <span class="pre">docs</span> <span class="pre">--all</span></code> and check your changes have applied as expected</p></li>
+<li><p>Push your changes and open a PR (see above)</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="first-timers-corner">
+<h2>First-timers’ Corner<a class="headerlink" href="#first-timers-corner" title="Permalink to this heading">#</a></h2>
+<p>If you’re new to the project, we recommend starting with issues labeled
+as <a class="reference external" href="https://github.com/alan-turing-institute/deepsensor/issues?q=is:issue+is:open+label:%22good+first+issue%22">“good first issue”</a>.
+These are typically simpler tasks that offer a great starting point. Browse these here.</p>
+<p>There’s also the
+label <a class="reference external" href="https://github.com/alan-turing-institute/deepsensor/issues?q=is:issue+is:open+label:%22thoughts+welcome%22">“thoughts welcome”</a>,
+which allows for you to contribute with discussion points in the issues, even if you don’t want to
+or cannot contribute to the codebase.</p>
+<p>If you feel ready for it, you can also open a new issue. Before you open a new issue, please check
+if any of <a class="reference external" href="https://github.com/alan-turing-institute/deepsensor/issues">our open issues</a> cover your idea
+already. If you open a new issue, please follow our basic guidelines laid out in our issue
+templates, which you should be able to see if
+you <a class="reference external" href="https://github.com/alan-turing-institute/deepsensor/issues/new/choose">open a new issue</a>.</p>
+</section>
+<section id="reporting-bugs">
+<h2>Reporting Bugs<a class="headerlink" href="#reporting-bugs" title="Permalink to this heading">#</a></h2>
+<p>Found a bug? Please open an issue here on GitHub to report it. We have a template for opening
+issues, so make sure you follow the correct format and ensure you include:</p>
+<ul class="simple">
+<li><p>A clear title.</p></li>
+<li><p>A detailed description of the bug.</p></li>
+<li><p>Steps to reproduce it.</p></li>
+<li><p>Expected versus actual behavior.</p></li>
+</ul>
+</section>
+<section id="recognising-contributions">
+<h2>Recognising Contributions<a class="headerlink" href="#recognising-contributions" title="Permalink to this heading">#</a></h2>
+<p>We value and recognize every contribution. All contributors will be acknowledged in the
+<a class="reference external" href="https://github.com/alan-turing-institute/deepsensor/tree/main#contributors">contributors</a> section of the
+README.
+Notable contributions will also be highlighted in our fortnightly community meetings.</p>
+<p>DeepSensor follows the <a class="reference external" href="https://github.com/kentcdodds/all-contributors#emoji-key">all-contributors</a>
+specifications. The all-contributors bot usage is
+described <a class="reference external" href="https://allcontributors.org/docs/en/bot/usage">here</a>. You can see a list of current
+contributors here.</p>
+<p>To add yourself or someone else as a contributor, comment on the relevant Issue or Pull Request with
+the following:</p>
+<blockquote>
+<div><p>&#64;all-contributors please add username for contribution1, contribution2</p>
+</div></blockquote>
+<p>You can see
+the <a class="reference external" href="https://allcontributors.org/docs/en/emoji-key">Emoji Key (Contribution Types Reference)</a> for a
+list of valid <contribution> types and examples of how this command can be run
+in <a class="reference external" href="https://github.com/alan-turing-institute/deepsensor/issues/58">this issue</a>. The bot will then create a
+Pull Request to add the contributor and reply with the pull request details.</p>
+<p><strong>PLEASE NOTE: Only one contributor can be added with the bot at a time!</strong> Add each contributor in
+turn, merge the pull request and delete the branch (<code class="docutils literal notranslate"><span class="pre">all-contributors/add-&lt;username&gt;</span></code>) before adding
+another one. Otherwise, you can end up with
+dreaded <a class="reference external" href="https://help.github.com/articles/about-merge-conflicts">merge conflicts</a>. Therefore, please
+check the open pull requests first to make sure there aren’t
+any <a class="reference external" href="https://github.com/alan-turing-institute/deepsensor/pulls/app%2Fallcontributors">open requests from the bot</a>
+before adding another.</p>
+<p>What happens if you accidentally run the bot before the previous run was merged and you got those
+pesky merge conflicts? (Don’t feel bad, we have all done it! 🙈) Simply close the pull request and
+delete the branch (<code class="docutils literal notranslate"><span class="pre">all-contributors/add-&lt;username&gt;</span></code>). If you are unable to do this for any reason,
+please let us know on Slack <link to Slack> or by opening an issue, and one of our core team members
+will be very happy to help!</p>
+</section>
+<section id="need-help">
+<h2>Need Help?<a class="headerlink" href="#need-help" title="Permalink to this heading">#</a></h2>
+<p>If you’re stuck or need assistance:</p>
+<ul class="simple">
+<li><p>Check our <a class="reference external" href="https://alan-turing-institute.github.io/deepsensor/community/faq.html">FAQ</a> section first.</p></li>
+<li><p>Reach out on Slack or via email for personalized assistance. (See <span class="xref myst">“Get in touch”</span>
+above for links.)</p></li>
+<li><p>Consider pairing up with a another contributor for guidance. You can always find us in the Slack
+channel and we’re happy to chat!</p></li>
+</ul>
+<p><strong>Once again, thank you for considering contributing to DeepSensor! We hope you enjoy your
+contributing experience.</strong></p>
+</section>
+<section id="inclusivity">
+<h2>Inclusivity<a class="headerlink" href="#inclusivity" title="Permalink to this heading">#</a></h2>
+<p>We aim to make DeepSensor a collaboratively developed project. We, therefore, require that all our
+members and their contributions <strong>adhere to our <span class="xref myst">Code of Conduct</span></strong>. Please
+familiarize yourself with our Code of Conduct that lists the expected behaviours.</p>
+<p>Every contributor is expected to adhere to our Code of Conduct. It outlines our expectations and
+ensures a safe, respectful environment for everyone.</p>
+<hr class="docutils" />
+<p>These Contributing Guidelines have been adapted from
+the <a class="reference external" href="https://github.com/the-turing-way/the-turing-way/blob/main/CONTRIBUTING.md#recognising-contributions">Contributing Guidelines</a>
+of <a class="reference external" href="https://github.com/the-turing-way/the-turing-way">The Turing Way</a>! (License: CC-BY)</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./community"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Community</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="code_of_conduct.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Code of Conduct</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#important-resources">Important Resources</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-in-touch">Get in touch</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-contribute">How to Contribute</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-submit-changes">How to Submit Changes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#fork-the-repository">1. Fork the Repository</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#make-changes">2. Make Changes</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#commit-and-push">3. Commit and Push</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#open-a-pull-request">4. Open a Pull Request</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor-s-documentation">DeepSensor’s documentation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing-to-documentation">Contributing to documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-timers-corner">First-timers’ Corner</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reporting-bugs">Reporting Bugs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recognising-contributions">Recognising Contributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#need-help">Need Help?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inclusivity">Inclusivity</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

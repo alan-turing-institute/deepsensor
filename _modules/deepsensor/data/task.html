@@ -1,0 +1,1025 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>deepsensor.data.task &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/deepsensor/data/task';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2F_modules/deepsensor/data/task.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for deepsensor.data.task</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">deepsensor</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">lab</span> <span class="k">as</span> <span class="nn">B</span>
+<span class="kn">import</span> <span class="nn">plum</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">..errors</span> <span class="kn">import</span> <span class="n">TaskSetIndexError</span><span class="p">,</span> <span class="n">GriddedDataError</span>
+
+
+<div class="viewcode-block" id="Task"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task">[docs]</a><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Task dictionary class.</span>
+
+<span class="sd">    Inherits from ``dict`` and adds methods for printing and modifying the</span>
+<span class="sd">    data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        task_dict (dict):</span>
+<span class="sd">            Dictionary containing the task.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">task_dict</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;ops&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="c1"># List of operations (str) to indicate how the task has been modified</span>
+            <span class="c1">#   (reshaping, casting, etc)</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Task.summarise_str"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.summarise_str">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">summarise_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return string summaries for the _str__ method.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">plum</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">Numeric</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">elif</span> <span class="n">plum</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">vi</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">vi</span> <span class="ow">in</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">plum</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">summarise_str</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">vi</span><span class="p">)</span> <span class="k">for</span> <span class="n">vi</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">v</span></div>
+
+<div class="viewcode-block" id="Task.summarise_repr"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.summarise_repr">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">summarise_repr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Summarise the task in a representation that can be printed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cls (:class:`deepsensor.data.task.Task`:):</span>
+<span class="sd">                Task class.</span>
+<span class="sd">            k (str):</span>
+<span class="sd">                Key of the task dictionary.</span>
+<span class="sd">            v (object):</span>
+<span class="sd">                Value of the task dictionary.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: String representation of the task.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;None&quot;</span>
+        <span class="k">elif</span> <span class="n">plum</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">Numeric</span><span class="p">):</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">plum</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">Masked</span><span class="p">):</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">/(y=</span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">)/(mask=</span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">elif</span> <span class="n">plum</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="c1"># return tuple(vi.shape for vi in v)</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="bp">cls</span><span class="o">.</span><span class="n">summarise_repr</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">vi</span><span class="p">)</span> <span class="k">for</span> <span class="n">vi</span> <span class="ow">in</span> <span class="n">v</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">plum</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">summarise_repr</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">vi</span><span class="p">)</span> <span class="k">for</span> <span class="n">vi</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print a convenient summary of the task dictionary.</span>
+
+<span class="sd">        For array entries, print their shape, otherwise print the value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">Task</span><span class="o">.</span><span class="n">summarise_str</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print a convenient summary of the task dictionary.</span>
+
+<span class="sd">        Print the type of each entry and if it is an array, print its shape,</span>
+<span class="sd">        otherwise print the value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">Task</span><span class="o">.</span><span class="n">summarise_repr</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<div class="viewcode-block" id="Task.op"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.op">[docs]</a>    <span class="k">def</span> <span class="nf">op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">op_flag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function f to the array elements of a task dictionary.</span>
+
+<span class="sd">        Useful for recasting to a different dtype or reshaping (e.g. adding a</span>
+<span class="sd">        batch dimension).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            f (callable):</span>
+<span class="sd">                Function to apply to the array elements of the task.</span>
+<span class="sd">            op_flag (str):</span>
+<span class="sd">                Flag to set in the task dictionary&#39;s `ops` key.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`deepsensor.data.task.Task`:</span>
+<span class="sd">                Task with f applied to the array elements and op_flag set in</span>
+<span class="sd">                the ``ops`` key.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">recurse</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">recurse</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">vi</span><span class="p">)</span> <span class="k">for</span> <span class="n">vi</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span><span class="n">recurse</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">recurse</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">v</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">,</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">Masked</span><span class="p">),</span>
+            <span class="p">):</span>
+                <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">v</span>  <span class="c1"># covers metadata entries</span>
+
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># don&#39;t modify the original</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">recurse</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_flag</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span>  <span class="c1"># altered by reference, but return anyway</span></div>
+
+<div class="viewcode-block" id="Task.add_batch_dim"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.add_batch_dim">[docs]</a>    <span class="k">def</span> <span class="nf">add_batch_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a batch dimension to the arrays in the task dictionary.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`deepsensor.data.task.Task`:</span>
+<span class="sd">                Task with batch dimension added to the array elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">op_flag</span><span class="o">=</span><span class="s2">&quot;batch_dim&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Task.cast_to_float32"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.cast_to_float32">[docs]</a>    <span class="k">def</span> <span class="nf">cast_to_float32</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cast the arrays in the task dictionary to float32.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`deepsensor.data.task.Task`:</span>
+<span class="sd">                Task with arrays cast to float32.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">op_flag</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Task.flatten_gridded_data"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.flatten_gridded_data">[docs]</a>    <span class="k">def</span> <span class="nf">flatten_gridded_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert any gridded data in ``Task`` to flattened arrays.</span>
+
+<span class="sd">        Necessary for AR sampling, which doesn&#39;t yet permit gridded context sets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task : :class:`~.data.task.Task`</span>
+<span class="sd">                ...</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`deepsensor.data.task.Task`:</span>
+<span class="sd">                ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flatten_X</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flatten_Y</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span> <span class="k">for</span> <span class="n">Y</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flatten_X</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flatten_Y</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span> <span class="k">for</span> <span class="n">Y</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;gridded_data_flattened&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Task.remove_context_nans"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.remove_context_nans">[docs]</a>    <span class="k">def</span> <span class="nf">remove_context_nans</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;If NaNs are present in task[&quot;Y_c&quot;], remove them (and corresponding task[&quot;X_c&quot;]).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`deepsensor.data.task.Task`:</span>
+<span class="sd">                ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;batch_dim&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot remove NaNs from task if a batch dim has been added.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># First check whether there are any NaNs that we need to remove</span>
+        <span class="n">nans_present</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">Y_c</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">B</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Y_c</span><span class="p">)):</span>
+                <span class="n">nans_present</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nans_present</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="c1"># NaNs present in self - remove NaNs</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">])):</span>
+            <span class="n">Y_c_nans</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">B</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Y_c_nans</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="c1"># Gridded data - need to flatten to remove NaNs</span>
+                    <span class="n">X</span> <span class="o">=</span> <span class="n">flatten_X</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                    <span class="n">Y</span> <span class="o">=</span> <span class="n">flatten_Y</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+                    <span class="n">Y_c_nans</span> <span class="o">=</span> <span class="n">flatten_Y</span><span class="p">(</span><span class="n">Y_c_nans</span><span class="p">)</span>
+                <span class="n">Y_c_nans</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Y_c_nans</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># shape (n_cargets,)</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="o">~</span><span class="n">Y_c_nans</span><span class="p">]</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[:,</span> <span class="o">~</span><span class="n">Y_c_nans</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;context_nans_removed&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Task.remove_target_nans"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.remove_target_nans">[docs]</a>    <span class="k">def</span> <span class="nf">remove_target_nans</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;If NaNs are present in task[&quot;Y_t&quot;], remove them (and corresponding task[&quot;X_t&quot;]).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`deepsensor.data.task.Task`:</span>
+<span class="sd">                ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;batch_dim&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot remove NaNs from task if a batch dim has been added.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># First check whether there are any NaNs that we need to remove</span>
+        <span class="n">nans_present</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">Y_t</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">B</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Y_t</span><span class="p">)):</span>
+                <span class="n">nans_present</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nans_present</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="c1"># NaNs present in self - remove NaNs</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">])):</span>
+            <span class="n">Y_t_nans</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;Y_t_aux&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_t_aux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flatten_Y</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_t_aux&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">B</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Y_t_nans</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="c1"># Gridded data - need to flatten to remove NaNs</span>
+                    <span class="n">X</span> <span class="o">=</span> <span class="n">flatten_X</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                    <span class="n">Y</span> <span class="o">=</span> <span class="n">flatten_Y</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+                    <span class="n">Y_t_nans</span> <span class="o">=</span> <span class="n">flatten_Y</span><span class="p">(</span><span class="n">Y_t_nans</span><span class="p">)</span>
+                <span class="n">Y_t_nans</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Y_t_nans</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># shape (n_targets,)</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="o">~</span><span class="n">Y_t_nans</span><span class="p">]</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[:,</span> <span class="o">~</span><span class="n">Y_t_nans</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s2">&quot;Y_t_aux&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_t_aux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Y_t_aux&quot;</span><span class="p">][:,</span> <span class="o">~</span><span class="n">Y_t_nans</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;target_nans_removed&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Task.mask_nans_numpy"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.mask_nans_numpy">[docs]</a>    <span class="k">def</span> <span class="nf">mask_nans_numpy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace NaNs with zeroes and set a mask to indicate where the NaNs</span>
+<span class="sd">        were.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`deepsensor.data.task.Task`:</span>
+<span class="sd">                Task with NaNs set to zeros and a mask indicating where the</span>
+<span class="sd">                missing values are.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;batch_dim&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must call `add_batch_dim` before `mask_nans_numpy`&quot;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">Masked</span><span class="p">):</span>
+                <span class="n">nps_mask</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span>
+                <span class="n">nan_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">nps_mask</span><span class="p">,</span> <span class="n">nan_mask</span><span class="p">)</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">y</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">nan_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">Masked</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+                    <span class="c1"># arr = np.ma.MaskedArray(arr, mask=mask, fill_value=0.0)</span>
+                    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">fix_invalid</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">arr</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">op_flag</span><span class="o">=</span><span class="s2">&quot;numpy_mask&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Task.mask_nans_nps"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.mask_nans_nps">[docs]</a>    <span class="k">def</span> <span class="nf">mask_nans_nps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`deepsensor.data.task.Task`:</span>
+<span class="sd">                ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;batch_dim&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must call `add_batch_dim` before `mask_nans_nps`&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;numpy_mask&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must call `mask_nans_numpy` before `mask_nans_nps`&quot;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
+                <span class="c1"># Mask array (True for observed, False for missing). Keep size 1 variable dim.</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">B</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="n">mask</span><span class="p">)</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">Masked</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">arr</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">op_flag</span><span class="o">=</span><span class="s2">&quot;nps_mask&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Task.convert_to_tensor"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.Task.convert_to_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">convert_to_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to tensor object based on deep learning backend.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`deepsensor.data.task.Task`:</span>
+<span class="sd">                Task with arrays converted to deep learning tensor objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">Masked</span><span class="p">):</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">Masked</span><span class="p">(</span>
+                    <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
+                    <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">mask</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">arr</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">op_flag</span><span class="o">=</span><span class="s2">&quot;tensor&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="append_obs_to_task"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.append_obs_to_task">[docs]</a><span class="k">def</span> <span class="nf">append_obs_to_task</span><span class="p">(</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+    <span class="n">X_new</span><span class="p">:</span> <span class="n">B</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+    <span class="n">Y_new</span><span class="p">:</span> <span class="n">B</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span>
+    <span class="n">context_set_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append a single observation to a context set in ``task``.</span>
+
+<span class="sd">    Makes a deep copy of the data structure to avoid affecting the original</span>
+<span class="sd">    object.</span>
+
+<span class="sd">    ..</span>
+<span class="sd">        TODO: for speed during active learning algs, consider a shallow copy</span>
+<span class="sd">        option plus ability to remove observations.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        task (:class:`deepsensor.data.task.Task`:): The task to modify.</span>
+<span class="sd">        X_new (array-like): New observation coordinates.</span>
+<span class="sd">        Y_new (array-like): New observation values.</span>
+<span class="sd">        context_set_idx (int): Index of the context set to append to.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`deepsensor.data.task.Task`:</span>
+<span class="sd">            Task with new observation appended to the context set.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">context_set_idx</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">TaskSetIndexError</span><span class="p">(</span><span class="n">context_set_idx</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">]),</span> <span class="s2">&quot;context&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">][</span><span class="n">context_set_idx</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GriddedDataError</span><span class="p">(</span><span class="s2">&quot;Cannot append to gridded data&quot;</span><span class="p">)</span>
+
+    <span class="n">task_with_new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Y_new</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Add size-1 observation and data dimension</span>
+        <span class="n">Y_new</span> <span class="o">=</span> <span class="n">Y_new</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+    <span class="c1"># Add size-1 observation dimension</span>
+    <span class="k">if</span> <span class="n">X_new</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">X_new</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">Y_new</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">Y_new</span> <span class="o">=</span> <span class="n">Y_new</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+    <span class="c1"># Context set with proposed latent sensors</span>
+    <span class="n">task_with_new</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">][</span><span class="n">context_set_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">][</span><span class="n">context_set_idx</span><span class="p">],</span> <span class="n">X_new</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Append proxy observations</span>
+    <span class="n">task_with_new</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">][</span><span class="n">context_set_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">][</span><span class="n">context_set_idx</span><span class="p">],</span> <span class="n">Y_new</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">task_with_new</span></div>
+
+
+<div class="viewcode-block" id="flatten_X"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.flatten_X">[docs]</a><span class="k">def</span> <span class="nf">flatten_X</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert tuple of gridded coords to (2, N) array if necessary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        X (:class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]):</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`numpy:numpy.ndarray`</span>
+<span class="sd">            ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">X1</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">X2</span><span class="o">.</span><span class="n">ravel</span><span class="p">()],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">X</span></div>
+
+
+<div class="viewcode-block" id="flatten_Y"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.flatten_Y">[docs]</a><span class="k">def</span> <span class="nf">flatten_Y</span><span class="p">(</span><span class="n">Y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert gridded data of shape (N_dim, N_x1, N_x2) to (N_dim, N_x1 * N_x2)</span>
+<span class="sd">    array if necessary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Y (:class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]):</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`numpy:numpy.ndarray`</span>
+<span class="sd">            ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Y</span></div>
+
+
+<div class="viewcode-block" id="concat_tasks"><a class="viewcode-back" href="../../../reference/data/task.html#deepsensor.data.task.concat_tasks">[docs]</a><span class="k">def</span> <span class="nf">concat_tasks</span><span class="p">(</span><span class="n">tasks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Task</span><span class="p">],</span> <span class="n">multiple</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Concatenate a list of tasks into a single task containing multiple batches.</span>
+
+<span class="sd">    ..</span>
+
+<span class="sd">    Todo:</span>
+<span class="sd">        - Consider moving to ``nps.py`` as this leverages ``neuralprocesses``</span>
+<span class="sd">          functionality.</span>
+<span class="sd">        - Raise error if ``aux_t`` values passed (not supported I don&#39;t think)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tasks (List[:class:`deepsensor.data.task.Task`:]):</span>
+<span class="sd">            List of tasks to concatenate into a single task.</span>
+<span class="sd">        multiple (int, optional):</span>
+<span class="sd">            Contexts are padded to the smallest multiple of this number that is</span>
+<span class="sd">            greater than the number of contexts in each task. Defaults to 1</span>
+<span class="sd">            (padded to the largest number of contexts in the tasks). Setting</span>
+<span class="sd">            to a larger number will increase the amount of padding but decrease</span>
+<span class="sd">            the range of tensor shapes presented to the model, which simplifies</span>
+<span class="sd">            the computational graph in graph mode.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`~.data.task.Task`: Task containing multiple batches.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError:</span>
+<span class="sd">            If the tasks have different numbers of target sets.</span>
+<span class="sd">        ValueError:</span>
+<span class="sd">            If the tasks have different numbers of targets.</span>
+<span class="sd">        ValueError:</span>
+<span class="sd">            If the tasks have different types of target sets (gridded/</span>
+<span class="sd">            non-gridded).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;numpy_mask&quot;</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;nps_mask&quot;</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot concatenate tasks that have had NaNs masked. &quot;</span>
+                <span class="s2">&quot;Masking will be applied automatically after concatenation.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;target_nans_removed&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">remove_target_nans</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;batch_dim&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">add_batch_dim</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;float32&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">cast_to_float32</span><span class="p">()</span>
+        <span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">task</span>
+
+    <span class="c1"># Assert number of target sets equal</span>
+    <span class="n">n_target_sets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">n</span> <span class="o">==</span> <span class="n">n_target_sets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">n_target_sets</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;All tasks must have the same number of target sets to concatenate: got </span><span class="si">{</span><span class="n">n_target_sets</span><span class="si">}</span><span class="s2">. &quot;</span>
+        <span class="p">)</span>
+    <span class="n">n_target_sets</span> <span class="o">=</span> <span class="n">n_target_sets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">target_set_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_target_sets</span><span class="p">):</span>
+        <span class="c1"># Raise error if target sets have different numbers of targets across tasks</span>
+        <span class="n">n_target_obs</span> <span class="o">=</span> <span class="p">[</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">][</span><span class="n">target_set_i</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">n</span> <span class="o">==</span> <span class="n">n_target_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">n_target_obs</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;All tasks must have the same number of targets to concatenate: got </span><span class="si">{</span><span class="n">n_target_obs</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;To train with Task batches containing differing numbers of targets, &quot;</span>
+                <span class="s2">&quot;run the model individually over each task and average the losses.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Raise error if target sets are different types (gridded/non-gridded) across tasks</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="n">target_set_i</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="n">target_set_i</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;All tasks must have the same type of target set (gridded or non-gridded) &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;to concatenate. For target set </span><span class="si">{</span><span class="n">target_set_i</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s1">&#39;X_t&#39;</span><span class="p">][</span><span class="n">target_set_i</span><span class="p">])</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="p">)</span>
+
+    <span class="c1"># For each task, store list of tuples of (x_c, y_c) (one tuple per context set)</span>
+    <span class="n">contexts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+        <span class="n">contexts_i</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">],</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">]))</span>
+        <span class="n">contexts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contexts_i</span><span class="p">)</span>
+
+    <span class="c1"># List of tuples of merged (x_c, y_c) along batch dim with padding</span>
+    <span class="c1"># (up to the smallest multiple of `multiple` greater than the number of contexts in each task)</span>
+    <span class="n">merged_context</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">merge_contexts</span><span class="p">(</span>
+            <span class="o">*</span><span class="p">[</span><span class="n">context_set</span> <span class="k">for</span> <span class="n">context_set</span> <span class="ow">in</span> <span class="n">contexts_i</span><span class="p">],</span> <span class="n">multiple</span><span class="o">=</span><span class="n">multiple</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">contexts_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">contexts</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">merged_task</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Convert list of tuples of (x_c, y_c) to list of x_c and list of y_c</span>
+    <span class="n">merged_task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">merged_context</span><span class="p">]</span>
+    <span class="n">merged_task</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">merged_context</span><span class="p">]</span>
+
+    <span class="c1"># This assumes that all tasks have the same number of targets</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_target_sets</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="c1"># Target set is gridded with tuple of coords for `X_t`</span>
+            <span class="n">merged_task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">B</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                <span class="n">B</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Target set is off-the-grid with tensor for `X_t`</span>
+            <span class="n">merged_task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">merged_task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">merged_task</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">]</span>
+
+    <span class="n">merged_task</span> <span class="o">=</span> <span class="n">Task</span><span class="p">(</span><span class="n">merged_task</span><span class="p">)</span>
+
+    <span class="c1"># Apply masking</span>
+    <span class="n">merged_task</span> <span class="o">=</span> <span class="n">merged_task</span><span class="o">.</span><span class="n">mask_nans_numpy</span><span class="p">()</span>
+    <span class="n">merged_task</span> <span class="o">=</span> <span class="n">merged_task</span><span class="o">.</span><span class="n">mask_nans_nps</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">merged_task</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="c1"># print working directory</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()))</span>
+
+    <span class="kn">import</span> <span class="nn">deepsensor.tensorflow</span> <span class="k">as</span> <span class="nn">deepsensor</span>
+    <span class="kn">from</span> <span class="nn">deepsensor.data.processor</span> <span class="kn">import</span> <span class="n">DataProcessor</span>
+    <span class="kn">from</span> <span class="nn">deepsensor.data.loader</span> <span class="kn">import</span> <span class="n">TaskLoader</span>
+    <span class="kn">from</span> <span class="nn">deepsensor.model.convnp</span> <span class="kn">import</span> <span class="n">ConvNP</span>
+    <span class="kn">from</span> <span class="nn">deepsensor.data.task</span> <span class="kn">import</span> <span class="n">concat_tasks</span>
+
+    <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="n">da_raw</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">tutorial</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;air_temperature&quot;</span><span class="p">)</span>
+    <span class="n">data_processor</span> <span class="o">=</span> <span class="n">DataProcessor</span><span class="p">(</span><span class="n">x1_name</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">x2_name</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">)</span>
+    <span class="n">da</span> <span class="o">=</span> <span class="n">data_processor</span><span class="p">(</span><span class="n">da_raw</span><span class="p">)</span>
+
+    <span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">da</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">da</span><span class="p">)</span>
+
+    <span class="n">task1</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2014-01-01&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="n">task1</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">task2</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span><span class="s2">&quot;2014-01-01&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+    <span class="c1"># task1 = task1.add_batch_dim().mask_nans_numpy().mask_nans_nps()</span>
+    <span class="c1"># task2 = task2.add_batch_dim().mask_nans_numpy().mask_nans_nps()</span>
+
+    <span class="n">merged_task</span> <span class="o">=</span> <span class="n">concat_tasks</span><span class="p">([</span><span class="n">task1</span><span class="p">,</span> <span class="n">task2</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">merged_task</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got here&quot;</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
