@@ -918,7 +918,11 @@ class DeepSensorModel(ProbabilisticModel):
                 return (x1_index, x2_index)
 
         def stitch_clipped_predictions(
-            patch_preds, patch_overlap, patches_per_row, x1_ascend=True, x2_ascend=True
+            patch_preds: list[Prediction],
+            patch_overlap: int,
+            patches_per_row: int,
+            x1_ascend: bool = True,
+            x2_ascend: bool = True,
         ) -> dict:
             """Stitch patchwise predictions to form prediction at original extent.
 
@@ -933,10 +937,10 @@ class DeepSensorModel(ProbabilisticModel):
             patches_per_row: int
                 Number of patchwise predictions in each row.
 
-            x1_ascend : str
+            x1_ascend : bool
                 Boolean defining whether the x1 coords ascend (increase) from top to bottom, default = True.
 
-            x2_ascend : str
+            x2_ascend : bool
                 Boolean defining whether the x2 coords ascend (increase) from left to right, default = True.
 
             Returns:
@@ -1086,15 +1090,15 @@ class DeepSensorModel(ProbabilisticModel):
 
                         patches_clipped[var_name].append(patch_clip)
 
-            # Create blank prediction dataframe.
-            patchwise_pred_copy = copy.deepcopy(patches_clipped)
+            # Create blank prediction
+            combined_dataset = copy.deepcopy(patches_clipped)
 
             # Generate new blank DeepSensor.prediction object with same extent and coordinate system as X_t.
-            for var_name_copy, data_array_list in patchwise_pred_copy.items():
+            for var, data_array_list in combined_dataset.items():
                 first_patchwise_pred = data_array_list[0]
 
                 # Define coordinate extent and time
-                blank_pred_copy = xr.Dataset(
+                blank_pred = xr.Dataset(
                     coords={
                         orig_x1_name: X_t[orig_x1_name],
                         orig_x2_name: X_t[orig_x2_name],
@@ -1103,16 +1107,12 @@ class DeepSensorModel(ProbabilisticModel):
                 )
 
                 # Set variable names to those in patched predictions, set values to Nan.
-                for var_name_i in first_patchwise_pred.data_vars:
-                    blank_pred_copy[var_name_i] = first_patchwise_pred[var_name_i]
-                    blank_pred_copy[var_name_i][:] = np.nan
-                patchwise_pred_copy[var_name_copy] = blank_pred_copy
+                for param in first_patchwise_pred.data_vars:
+                    blank_pred[param] = first_patchwise_pred[param]
+                    blank_pred[param][:] = np.nan
+                combined_dataset[var] = blank_pred
 
             # Merge patchwise predictions to create final combined dataset.
-            combined_dataset = (
-                patchwise_pred_copy  # Use the previously initialized dictionary
-            )
-
             # Iterate over each variable (key) in the prediction dictionary
             for var_name, patches in patches_clipped.items():
                 # Retrieve the blank dataset for the current variable
