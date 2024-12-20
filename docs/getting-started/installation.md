@@ -37,6 +37,14 @@ This method will create a `DeepSensor` directory on your machine which will cont
   ```bash
   pip install -v -e .
   ```
+
+```{note}
+If you intend on contributing to the source code of DeepSensor, install DeepSensor with its development dependencies using
+````{bash}
+pip install -v -e .[dev]
+````
+```
+
 ## Install PyTorch or TensorFlow
 
 The next step, if you intend to use any of DeepSensor's deep learning modelling functionality,
@@ -59,4 +67,12 @@ To install `pytorch` via pip:
 
 ```bash
 pip install torch
+```
+
+To install DeepSensor as well as a deep learning library at the same time use:
+
+```bash
+pip install deepsensor[tf]    # for tensorflow and tensorflow_probability
+# or
+pip install deepsensor[torch] # for pytorch
 ```
