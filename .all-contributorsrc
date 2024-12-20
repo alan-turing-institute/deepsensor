@@ -201,6 +201,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "DaniJonesOcean",
+      "name": "Dani Jones",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11757453?v=4",
+      "profile": "https://github.com/DaniJonesOcean",
+      "contributions": [
+        "bug"
+      ]
     }
   ]
 }
