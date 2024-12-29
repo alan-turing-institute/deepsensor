@@ -190,7 +190,8 @@
       "contributions": [
         "doc",
         "test",
-        "maintenance"
+        "maintenance",
+        "bug"
       ]
     },
     {
