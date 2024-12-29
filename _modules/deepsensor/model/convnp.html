@@ -1,0 +1,1523 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>deepsensor.model.convnp &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/deepsensor/model/convnp';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2F_modules/deepsensor/model/convnp.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for deepsensor.model.convnp</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ruff: noqa: D102</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">lab</span> <span class="k">as</span> <span class="nn">B</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">matrix</span> <span class="kn">import</span> <span class="n">Diagonal</span>
+<span class="kn">from</span> <span class="nn">plum</span> <span class="kn">import</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">dispatch</span>
+
+<span class="kn">from</span> <span class="nn">deepsensor</span> <span class="kn">import</span> <span class="n">backend</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.loader</span> <span class="kn">import</span> <span class="n">TaskLoader</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.processor</span> <span class="kn">import</span> <span class="n">DataProcessor</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">deepsensor.model.defaults</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_greatest_data_density</span><span class="p">,</span>
+    <span class="n">gen_encoder_scales</span><span class="p">,</span>
+    <span class="n">gen_decoder_scale</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">deepsensor.model.model</span> <span class="kn">import</span> <span class="n">DeepSensorModel</span>
+<span class="kn">from</span> <span class="nn">deepsensor.model.nps</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">construct_neural_process</span><span class="p">,</span>
+    <span class="n">convert_task_to_nps_args</span><span class="p">,</span>
+    <span class="n">run_nps_model</span><span class="p">,</span>
+    <span class="n">run_nps_model_ar</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">neuralprocesses.dist</span> <span class="kn">import</span> <span class="n">AbstractMultiOutputDistribution</span>
+
+
+<span class="n">TFModel</span> <span class="o">=</span> <span class="n">ModuleType</span><span class="p">(</span><span class="s2">&quot;tensorflow.keras&quot;</span><span class="p">,</span> <span class="s2">&quot;Model&quot;</span><span class="p">)</span>
+<span class="n">TorchModel</span> <span class="o">=</span> <span class="n">ModuleType</span><span class="p">(</span><span class="s2">&quot;torch.nn&quot;</span><span class="p">,</span> <span class="s2">&quot;Module&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ConvNP"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP">[docs]</a><span class="k">class</span> <span class="nc">ConvNP</span><span class="p">(</span><span class="n">DeepSensorModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Convolutional Neural Process (ConvNP) regression probabilistic model (by default a ConvCNP).</span>
+
+<span class="sd">    Wraps around the ``neuralprocesses`` package to construct a ConvNP model.</span>
+<span class="sd">    See: https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py.</span>
+<span class="sd">    Init kwargs passed to the `ConvNP` are passed to the `neuralprocesses.construct_convgnp` function</span>
+<span class="sd">    and can be used to specify hyperparameters (see parameter list below). In particular, the</span>
+<span class="sd">    `likelihood` parameter can be used to specify the likelihood of the model, which dictates</span>
+<span class="sd">    whether the model outputs marginal distributions at each target point (a ConvCNP) or a</span>
+<span class="sd">    joint Gaussian distribution over all target points (a ConvGNP). By default a ConvCNP</span>
+<span class="sd">    with Gaussian likelihoods is constructed.</span>
+
+<span class="sd">    Additionally, the ``ConvNP`` can optionally be instantiated with:</span>
+<span class="sd">        - a ``DataProcessor`` object to auto-unnormalise the data at inference time with the ``.predict`` method.</span>
+<span class="sd">        - a ``TaskLoader`` object to infer sensible default model parameters from the data.</span>
+
+<span class="sd">    Multiple dispatch is implemented using ``plum`` to allow for re-using the</span>
+<span class="sd">    model&#39;s forward prediction object when computing the logpdf, entropy, etc.</span>
+<span class="sd">    Alternatively, the model can be run forwards with a ``Task`` object of data</span>
+<span class="sd">    from the ``TaskLoader``.</span>
+
+<span class="sd">    Many of the ``ConvNP`` class methods utilise multiple dispatch so that they</span>
+<span class="sd">    can either be run with a ``Task`` object or a ``neuralprocesses`` distribution</span>
+<span class="sd">    object. This allows for re-using the model&#39;s forward prediction object.</span>
+
+<span class="sd">    Dimension shapes are expressed in method docstrings in terms of:</span>
+<span class="sd">        - ``N_features``: number of features/dimensions in the target set.</span>
+<span class="sd">        - ``N_targets``: number of target points (1D for off-grid targets, 2D for gridded targets).</span>
+<span class="sd">        - ``N_components``: number of mixture components in the likelihood (for mixture likelihoods only).</span>
+<span class="sd">        - ``N_samples``: number of samples drawn from the distribution.</span>
+
+<span class="sd">    If the model has multiple target sets and the ``Task`` object</span>
+<span class="sd">    has different target locations for each set, a list of arrays is returned</span>
+<span class="sd">    for each target set. Otherwise, a single array is returned.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Instantiate a ``ConvNP`` with all hyperparameters set to their default values:</span>
+<span class="sd">            &gt;&gt;&gt; ConvNP(data_processor, task_loader)</span>
+<span class="sd">        Instantiate a ``ConvNP`` and override some hyperparameters:</span>
+<span class="sd">            &gt;&gt;&gt; ConvNP(data_processor, task_loader, internal_density=250, unet_channels=(128,) * 6)</span>
+<span class="sd">        Instantiate a ``ConvNP`` with a pre-trained model saved in the folder ``my_trained_model``:</span>
+<span class="sd">            &gt;&gt;&gt; ConvNP(data_processor, task_loader, model_ID=&quot;my_trained_model&quot;)</span>
+<span class="sd">        Instantiate a ``ConvNP`` with an existing ``neuralprocesses`` model object:</span>
+<span class="sd">            &gt;&gt;&gt; ConvNP(data_processor, task_loader, neural_process=my_neural_process_model)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_processor (:class:`~.data.processor.DataProcessor`, optional):</span>
+<span class="sd">            Used for unnormalising model predictions in</span>
+<span class="sd">            ``.predict`` method.</span>
+<span class="sd">        task_loader (:class:`~.data.loader.TaskLoader`, optional):</span>
+<span class="sd">            Used for inferring sensible defaults for hyperparameters</span>
+<span class="sd">            that are not set by the user.</span>
+<span class="sd">        model_ID (str, optional):</span>
+<span class="sd">            Folder to load the model config and weights from. This argument can only</span>
+<span class="sd">            be used alongside the ``data_processor`` and ``task_loader`` arguments.</span>
+<span class="sd">        neural_process (TFModel | TorchModel, optional):</span>
+<span class="sd">            Pre-defined neural process PyTorch/TensorFlow model object. This argument can</span>
+<span class="sd">            only be used alongside the ``data_processor`` and ``task_loader`` arguments.</span>
+<span class="sd">        internal_density (int, optional):</span>
+<span class="sd">            Density of the ConvNP&#39;s internal grid (in terms of number of points</span>
+<span class="sd">            per 1x1 unit square). Defaults to 100.</span>
+<span class="sd">        likelihood (str, optional):</span>
+<span class="sd">            Likelihood. Must be one of ``&quot;cnp&quot;`` (equivalently ``&quot;het&quot;``),</span>
+<span class="sd">            ``&quot;gnp&quot;`` (equivalently ``&quot;lowrank&quot;``), ``&quot;cnp-spikes-beta&quot;``,</span>
+<span class="sd">            (equivalently ``&quot;spikes-beta&quot;``) or &quot;bernoulli-gamma&quot;.</span>
+<span class="sd">            Defaults to ``&quot;cnp&quot;``.</span>
+<span class="sd">        dim_x (int, optional):</span>
+<span class="sd">            Dimensionality of the inputs. Defaults to 1.</span>
+<span class="sd">        dim_y (int, optional):</span>
+<span class="sd">            Dimensionality of the outputs. Defaults to 1.</span>
+<span class="sd">        dim_yc (int or tuple[int], optional):</span>
+<span class="sd">            Dimensionality of the outputs of the context set. You should set this</span>
+<span class="sd">            if the dimensionality of the outputs of the context set is not equal</span>
+<span class="sd">            to the dimensionality of the outputs of the target set. You should</span>
+<span class="sd">            also set this if you want to use multiple context sets. In that case,</span>
+<span class="sd">            set this equal to a tuple of integers indicating the respective output</span>
+<span class="sd">            dimensionalities.</span>
+<span class="sd">        dim_yt (int, optional):</span>
+<span class="sd">            Dimensionality of the outputs of the target set. You should set this</span>
+<span class="sd">            if the dimensionality of the outputs of the target set is not equal to</span>
+<span class="sd">            the dimensionality of the outputs of the context set.</span>
+<span class="sd">        dim_aux_t (int, optional):</span>
+<span class="sd">            Dimensionality of target-specific auxiliary variables.</span>
+<span class="sd">        conv_arch (str, optional):</span>
+<span class="sd">            Convolutional architecture to use. Must be one of</span>
+<span class="sd">            ``&quot;unet[-res][-sep]&quot;`` or ``&quot;conv[-res][-sep]&quot;``. Defaults to</span>
+<span class="sd">            ``&quot;unet&quot;``.</span>
+<span class="sd">        unet_channels (tuple[int], optional):</span>
+<span class="sd">            Number of channels in the downsampling path of the UNet (including the bottleneck).</span>
+<span class="sd">            Defaults to four downsampling layers, each with 64 channels. I.e. (64, 64, 64, 64).</span>
+<span class="sd">            Note: The downsampling path is followed by an upsampling path with the same number of</span>
+<span class="sd">            channels in the reverse order (plus extra channels for the skip connections).</span>
+<span class="sd">        unet_kernels (int or tuple[int], optional):</span>
+<span class="sd">            Sizes of the kernels in the UNet. Defaults to 5.</span>
+<span class="sd">        unet_resize_convs (bool, optional):</span>
+<span class="sd">            Use resize convolutions rather than transposed convolutions in the</span>
+<span class="sd">            UNet. Defaults to ``False``.</span>
+<span class="sd">        unet_resize_conv_interp_method (str, optional):</span>
+<span class="sd">            Interpolation method for the resize convolutions in the UNet. Can be</span>
+<span class="sd">            set to ``&quot;bilinear&quot;``. Defaults to &quot;bilinear&quot;.</span>
+<span class="sd">        num_basis_functions (int, optional):</span>
+<span class="sd">            Number of basis functions for the low-rank likelihood. Defaults to</span>
+<span class="sd">            64.</span>
+<span class="sd">        dim_lv (int, optional):</span>
+<span class="sd">            Dimensionality of the latent variable. Setting to &gt;0 constructs a</span>
+<span class="sd">            latent neural process. Defaults to 0.</span>
+<span class="sd">        encoder_scales (float or tuple[float], optional):</span>
+<span class="sd">            Initial value for the length scales of the set convolutions for the</span>
+<span class="sd">            context sets embeddings. Set to a tuple equal to the number of context</span>
+<span class="sd">            sets to use different values for each set. Set to a single value to use</span>
+<span class="sd">            the same value for all context sets. Defaults to</span>
+<span class="sd">            ``1 / internal_density``.</span>
+<span class="sd">        encoder_scales_learnable (bool, optional):</span>
+<span class="sd">            Whether the encoder SetConv length scale(s) are learnable. Defaults to</span>
+<span class="sd">            ``False``.</span>
+<span class="sd">        decoder_scale (float, optional):</span>
+<span class="sd">            Initial value for the length scale of the set convolution in the</span>
+<span class="sd">            decoder. Defaults to ``1 / internal_density``.</span>
+<span class="sd">        decoder_scale_learnable (bool, optional):</span>
+<span class="sd">            Whether the decoder SetConv length scale(s) are learnable. Defaults to</span>
+<span class="sd">            ``False``.</span>
+<span class="sd">        aux_t_mlp_layers (tuple[int], optional):</span>
+<span class="sd">            Widths of the layers of the MLP for the target-specific auxiliary</span>
+<span class="sd">            variable. Defaults to three layers of width 128.</span>
+<span class="sd">        epsilon (float, optional):</span>
+<span class="sd">            Epsilon added by the set convolutions before dividing by the density</span>
+<span class="sd">            channel. Defaults to ``1e-2``.</span>
+<span class="sd">        dtype (dtype, optional):</span>
+<span class="sd">            Data type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a new model using ``construct_neural_process`` with default or</span>
+<span class="sd">        specified parameters.</span>
+
+<span class="sd">        This method does not take a ``TaskLoader`` or ``DataProcessor`` object,</span>
+<span class="sd">        so the model will not auto-unnormalise predictions at inference time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">construct_neural_process</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data_processor</span><span class="p">:</span> <span class="n">DataProcessor</span><span class="p">,</span>
+        <span class="n">task_loader</span><span class="p">:</span> <span class="n">TaskLoader</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instantiate model from TaskLoader, using data to infer model parameters</span>
+<span class="sd">        (unless overridden).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_processor (:class:`~.data.processor.DataProcessor`):</span>
+<span class="sd">                DataProcessor object. Used for unnormalising model predictions in</span>
+<span class="sd">                ``.predict`` method.</span>
+<span class="sd">            task_loader (:class:`~.data.loader.TaskLoader`):</span>
+<span class="sd">                TaskLoader object. Used for inferring sensible defaults for hyperparameters</span>
+<span class="sd">                that are not set by the user.</span>
+<span class="sd">            verbose (bool, optional):</span>
+<span class="sd">                Whether to print inferred model parameters, by default True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_processor</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;dim_yc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">dim_yc</span> <span class="o">=</span> <span class="n">task_loader</span><span class="o">.</span><span class="n">context_dims</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dim_yc inferred from TaskLoader: </span><span class="si">{</span><span class="n">dim_yc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;dim_yc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim_yc</span>
+        <span class="k">if</span> <span class="s2">&quot;dim_yt&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">dim_yt</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">task_loader</span><span class="o">.</span><span class="n">target_dims</span><span class="p">)</span>  <span class="c1"># Must be an int</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dim_yt inferred from TaskLoader: </span><span class="si">{</span><span class="n">dim_yt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;dim_yt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim_yt</span>
+        <span class="k">if</span> <span class="s2">&quot;dim_aux_t&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">dim_aux_t</span> <span class="o">=</span> <span class="n">task_loader</span><span class="o">.</span><span class="n">aux_at_target_dims</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dim_aux_t inferred from TaskLoader: </span><span class="si">{</span><span class="n">dim_aux_t</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;dim_aux_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim_aux_t</span>
+        <span class="k">if</span> <span class="s2">&quot;aux_t_mlp_layers&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;dim_aux_t&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;aux_t_mlp_layers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">64</span><span class="p">,)</span> <span class="o">*</span> <span class="mi">3</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting aux_t_mlp_layers: </span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;aux_t_mlp_layers&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;internal_density&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">internal_density</span> <span class="o">=</span> <span class="n">compute_greatest_data_density</span><span class="p">(</span><span class="n">task_loader</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;internal_density inferred from TaskLoader: </span><span class="si">{</span><span class="n">internal_density</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;internal_density&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">internal_density</span>
+        <span class="k">if</span> <span class="s2">&quot;encoder_scales&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">encoder_scales</span> <span class="o">=</span> <span class="n">gen_encoder_scales</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;internal_density&quot;</span><span class="p">],</span> <span class="n">task_loader</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;encoder_scales inferred from TaskLoader: </span><span class="si">{</span><span class="n">encoder_scales</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;encoder_scales&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder_scales</span>
+        <span class="k">if</span> <span class="s2">&quot;decoder_scale&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">decoder_scale</span> <span class="o">=</span> <span class="n">gen_decoder_scale</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;internal_density&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;decoder_scale inferred from TaskLoader: </span><span class="si">{</span><span class="n">decoder_scale</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;decoder_scale&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">decoder_scale</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">construct_neural_process</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_num_mixture_components</span><span class="p">()</span>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data_processor</span><span class="p">:</span> <span class="n">DataProcessor</span><span class="p">,</span>
+        <span class="n">task_loader</span><span class="p">:</span> <span class="n">TaskLoader</span><span class="p">,</span>
+        <span class="n">neural_process</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TFModel</span><span class="p">,</span> <span class="n">TorchModel</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instantiate with a pre-defined neural process model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_processor (:class:`~.data.processor.DataProcessor`):</span>
+<span class="sd">                DataProcessor object. Used for unnormalising model predictions in</span>
+<span class="sd">                ``.predict`` method.</span>
+<span class="sd">            task_loader (:class:`~.data.loader.TaskLoader`):</span>
+<span class="sd">                TaskLoader object. Used for inferring sensible defaults for hyperparameters</span>
+<span class="sd">                that are not set by the user.</span>
+<span class="sd">            neural_process (TFModel | TorchModel):</span>
+<span class="sd">                Pre-defined neural process PyTorch/TensorFlow model object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_processor</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">neural_process</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_ID</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instantiate a model from a folder containing model weights and config.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_ID</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_num_mixture_components</span><span class="p">()</span>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data_processor</span><span class="p">:</span> <span class="n">DataProcessor</span><span class="p">,</span>
+        <span class="n">task_loader</span><span class="p">:</span> <span class="n">TaskLoader</span><span class="p">,</span>
+        <span class="n">model_ID</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instantiate a model from a folder containing model weights and config.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_processor (:class:`~.data.processor.DataProcessor`):</span>
+<span class="sd">                dataprocessor object. used for unnormalising model predictions in</span>
+<span class="sd">                ``.predict`` method.</span>
+<span class="sd">            task_loader (:class:`~.data.loader.TaskLoader`):</span>
+<span class="sd">                taskloader object. used for inferring sensible defaults for hyperparameters</span>
+<span class="sd">                that are not set by the user.</span>
+<span class="sd">            model_ID (str):</span>
+<span class="sd">                folder to load the model config and weights from.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_processor</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_ID</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_num_mixture_components</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_set_num_mixture_components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the number of mixture components for the model based on the likelihood.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;likelihood&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;spikes-beta&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">N_mixture_components</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;likelihood&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bernoulli-gamma&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">N_mixture_components</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">N_mixture_components</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="ConvNP.save"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_ID</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the model weights and config to a folder.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_ID (str):</span>
+<span class="sd">                Folder to save the model to.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">model_ID</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">backend</span><span class="o">.</span><span class="n">str</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">torch</span>
+
+            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_ID</span><span class="p">,</span> <span class="s2">&quot;model.pt&quot;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">backend</span><span class="o">.</span><span class="n">str</span> <span class="o">==</span> <span class="s2">&quot;tf&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">save_weights</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_ID</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Backend </span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">str</span><span class="si">}</span><span class="s2"> not supported.&quot;</span><span class="p">)</span>
+
+        <span class="n">config_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_ID</span><span class="p">,</span> <span class="s2">&quot;model_config.json&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_fpath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConvNP.load"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_ID</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load a model from a folder containing model weights and config.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_ID (str):</span>
+<span class="sd">                Folder to load the model from.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_ID</span><span class="p">,</span> <span class="s2">&quot;model_config.json&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_fpath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">construct_neural_process</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">backend</span><span class="o">.</span><span class="n">str</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">torch</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_ID</span><span class="p">,</span> <span class="s2">&quot;model.pt&quot;</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="n">backend</span><span class="o">.</span><span class="n">str</span> <span class="o">==</span> <span class="s2">&quot;tf&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_weights</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_ID</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Backend </span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">str</span><span class="si">}</span><span class="s2"> not supported.&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;ConvNP with config:&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ConvNP.modify_task"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.modify_task">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">modify_task</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cast numpy arrays to TensorFlow or PyTorch tensors, add batch dim, and</span>
+<span class="sd">        mask NaNs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                ...</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ...: ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;batch_dim&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">add_batch_dim</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;float32&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">cast_to_float32</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;numpy_mask&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">mask_nans_numpy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;nps_mask&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">mask_nans_nps</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;tensor&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;ops&quot;</span><span class="p">]:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">task</span></div>
+
+<div class="viewcode-block" id="ConvNP.__call__"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute ConvNP distribution.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                ...</span>
+<span class="sd">            n_samples (int, optional):</span>
+<span class="sd">                Number of samples to draw from the distribution, by default 10.</span>
+<span class="sd">            requires_grad (bool, optional):</span>
+<span class="sd">                Whether to compute gradients, by default False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ...: The ConvNP distribution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">ConvNP</span><span class="o">.</span><span class="n">modify_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">run_nps_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dist</span></div>
+
+    <span class="k">def</span> <span class="nf">_cast_numpy_and_squeeze</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">B</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="o">.</span><span class="n">Numeric</span><span class="p">]],</span>
+        <span class="n">squeeze_axes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TODO docstring.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">Aggregate</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">xi</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="n">squeeze_axes</span><span class="p">)</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="n">squeeze_axes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_maybe_concat_multi_targets</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+        <span class="n">concat_axis</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Concatenate multiple target sets into a single tensor along feature dimension</span>
+<span class="sd">        and remove size-1 dimensions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (:class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]):</span>
+<span class="sd">                List of target sets.</span>
+<span class="sd">            squeeze_axes (List[int], optional):</span>
+<span class="sd">                Axes to squeeze out of the concatenated target sets. Defaults to (0, 1).</span>
+<span class="sd">            concat_axis (int, optional):</span>
+<span class="sd">                Axis to concatenate along (*after* squeezing arrays) when</span>
+<span class="sd">                merging multiple target sets. Defaults to 0.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (:class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]):</span>
+<span class="sd">                Concatenated target sets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">target_dims</span><span class="p">:</span>
+                <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">pos</span> <span class="p">:</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">dim</span><span class="p">])</span>
+                <span class="n">pos</span> <span class="o">+=</span> <span class="n">dim</span>
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="n">B</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">xi</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">sub_list</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">concat_axis</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">sub_list</span> <span class="ow">in</span> <span class="n">new_list</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span><span class="p">):</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">mean</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cast_numpy_and_squeeze</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_concat_multi_targets</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvNP.mean"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.mean">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mean values of model&#39;s distribution at target locations in task.</span>
+
+<span class="sd">        Returned numpy arrays have shape ``(N_features, *N_targets)``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task containing the context and target data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:</span>
+<span class="sd">                Mean values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span><span class="p">):</span>
+        <span class="n">variance</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">var</span>
+        <span class="n">variance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cast_numpy_and_squeeze</span><span class="p">(</span><span class="n">variance</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_concat_multi_targets</span><span class="p">(</span><span class="n">variance</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvNP.variance"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.variance">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Variance values of model&#39;s distribution at target locations in task.</span>
+
+<span class="sd">        Returned numpy arrays have shape ``(N_features, *N_targets)``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task containing the context and target data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:</span>
+<span class="sd">                Variance values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span><span class="p">):</span>
+        <span class="n">variance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variance</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variance</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvNP.std"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.std">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Standard deviation values of model&#39;s distribution at target locations in task.</span>
+
+<span class="sd">        Returned numpy arrays have shape ``(N_features, *N_targets)``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task containing the context and target data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:</span>
+<span class="sd">                Standard deviation values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;likelihood&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;spikes-beta&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;ConvNP.alpha method not supported for likelihood </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;likelihood&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Valid likelihoods: &#39;spikes-beta&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">alpha</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cast_numpy_and_squeeze</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_concat_multi_targets</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvNP.alpha"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.alpha">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Alpha parameter values of model&#39;s distribution at target locations in task.</span>
+
+<span class="sd">        Returned numpy arrays have shape ``(N_features, *N_targets)``.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This method only works for models that return a distribution with</span>
+<span class="sd">            a ``dist.slab.alpha`` attribute, e.g. models with a Beta or</span>
+<span class="sd">            Bernoulli-Gamma likelihood, where it returns the alpha values of</span>
+<span class="sd">            the slab component of the mixture model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task containing the context and target data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:</span>
+<span class="sd">                Alpha values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">beta</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;likelihood&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;spikes-beta&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;ConvNP.beta method not supported for likelihood </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;likelihood&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Valid likelihoods: &#39;spikes-beta&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">beta</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cast_numpy_and_squeeze</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_concat_multi_targets</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvNP.beta"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.beta">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">beta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Beta values of model&#39;s distribution at target locations in task.</span>
+
+<span class="sd">        Returned numpy arrays have shape ``(N_features, *N_targets)``.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This method only works for models that return a distribution with</span>
+<span class="sd">            a ``dist.slab.beta`` attribute, e.g. models with a Beta or</span>
+<span class="sd">            Bernoulli-Gamma likelihood.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task containing the context and target data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:</span>
+<span class="sd">                Beta values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">k</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;likelihood&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bernoulli-gamma&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;ConvNP.k method not supported for likelihood </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;likelihood&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Valid likelihoods: &#39;bernoulli-gamma&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">k</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cast_numpy_and_squeeze</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_concat_multi_targets</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvNP.k"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.k">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;K parameter values of model&#39;s distribution at target locations in task.</span>
+
+<span class="sd">        Returned numpy arrays have shape ``(N_features, *N_targets)``.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This method only works for models that return a distribution with</span>
+<span class="sd">            a ``dist.slab.k`` attribute, e.g. models with a Beta or</span>
+<span class="sd">            Bernoulli-Gamma likelihood, where it returns the k values of</span>
+<span class="sd">            the slab component of the mixture model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task containing the context and target data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:</span>
+<span class="sd">                k values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;likelihood&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bernoulli-gamma&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;ConvNP.scale method not supported for likelihood </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;likelihood&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Valid likelihoods: &#39;bernoulli-gamma&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">scale</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cast_numpy_and_squeeze</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_concat_multi_targets</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvNP.scale"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.scale">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scale parameter values of model&#39;s distribution at target locations in task.</span>
+
+<span class="sd">        Returned numpy arrays have shape ``(N_features, *N_targets)``.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This method only works for models that return a distribution with</span>
+<span class="sd">            a ``dist.slab.scale`` attribute, e.g. models with a Beta or</span>
+<span class="sd">            Bernoulli-Gamma likelihood, where it returns the scale values of</span>
+<span class="sd">            the slab component of the mixture model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task containing the context and target data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:</span>
+<span class="sd">                Scale values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">mixture_probs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_mixture_components</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;mixture_probs not supported if model attribute N_mixture_components == 1. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Try changing the likelihood to a mixture model, e.g. &#39;spikes-beta&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">mixture_probs</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">logprobs</span>
+        <span class="n">mixture_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cast_numpy_and_squeeze</span><span class="p">(</span><span class="n">mixture_probs</span><span class="p">)</span>
+        <span class="n">mixture_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_concat_multi_targets</span><span class="p">(</span><span class="n">mixture_probs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mixture_probs</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mixture_probs</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">mixture_probs</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvNP.mixture_probs"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.mixture_probs">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">mixture_probs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mixture probabilities of model&#39;s distribution at target locations in task.</span>
+
+<span class="sd">        Returned numpy arrays have shape ``(N_components, N_features, *N_targets)``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task containing the context and target data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:</span>
+<span class="sd">                Mixture probabilities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mixture_probs</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">vectorised_normal</span><span class="o">.</span><span class="n">var</span><span class="p">))[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ConvNP.covariance"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.covariance">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                ...</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ...: ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span><span class="p">,</span>
+        <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;likelihood&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gnp&quot;</span><span class="p">,</span> <span class="s2">&quot;lowrank&quot;</span><span class="p">]:</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">noiseless</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span>
+        <span class="c1"># Be careful to keep sample dimension in position 0</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cast_numpy_and_squeeze</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">squeeze_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_concat_multi_targets</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">concat_axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvNP.sample"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.sample">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create samples from a ConvNP distribution.</span>
+
+<span class="sd">        Returned numpy arrays have shape ``(N_samples, N_features, *N_targets)``,</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):</span>
+<span class="sd">                The distribution to sample from.</span>
+<span class="sd">            n_samples (int, optional):</span>
+<span class="sd">                The number of samples to draw from the distribution, by</span>
+<span class="sd">                default 1.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:</span>
+<span class="sd">                The samples as an array or list of arrays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">slice_diag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice out the ConvCNP part of the ConvNP distribution.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task to slice.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ...: ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;likelihood&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;spikes-beta&quot;</span><span class="p">]:</span>
+            <span class="n">dist_diag</span> <span class="o">=</span> <span class="n">dist</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dist_diag</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">MultiOutputNormal</span><span class="p">(</span>
+                <span class="n">dist</span><span class="o">.</span><span class="n">_mean</span><span class="p">,</span>
+                <span class="n">B</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">_var</span><span class="p">),</span>
+                <span class="n">Diagonal</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">_noise</span> <span class="o">+</span> <span class="n">dist</span><span class="o">.</span><span class="n">_var</span><span class="p">)),</span>
+                <span class="n">dist</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">dist_diag</span>
+
+<div class="viewcode-block" id="ConvNP.slice_diag"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.slice_diag">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">slice_diag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice out the ConvCNP part of the ConvNP distribution.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):</span>
+<span class="sd">                The distribution to slice.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ...: ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;likelihood&quot;</span><span class="p">]:</span>
+            <span class="n">dist_diag</span> <span class="o">=</span> <span class="n">dist</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dist_diag</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">MultiOutputNormal</span><span class="p">(</span>
+                <span class="n">dist</span><span class="o">.</span><span class="n">_mean</span><span class="p">,</span>
+                <span class="n">B</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">_var</span><span class="p">),</span>
+                <span class="n">Diagonal</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">_noise</span> <span class="o">+</span> <span class="n">dist</span><span class="o">.</span><span class="n">_var</span><span class="p">)),</span>
+                <span class="n">dist</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">dist_diag</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">mean_marginal_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mean marginal entropy over target points given context points.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):</span>
+<span class="sd">                The distribution to compute the entropy of.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The mean marginal entropy.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist_diag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice_diag</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">B</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dist_diag</span><span class="o">.</span><span class="n">entropy</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+<div class="viewcode-block" id="ConvNP.mean_marginal_entropy"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.mean_marginal_entropy">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">mean_marginal_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mean marginal entropy over target points given context points.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task to compute the entropy of.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The mean marginal entropy.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist_diag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice_diag</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">B</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dist_diag</span><span class="o">.</span><span class="n">entropy</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">joint_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model entropy over target points given context points.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):</span>
+<span class="sd">                The distribution to compute the entropy of.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The model entropy.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">entropy</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ConvNP.joint_entropy"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.joint_entropy">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">joint_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model entropy over target points given context points.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task to compute the entropy of.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The model entropy.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span><span class="o">.</span><span class="n">entropy</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span></div>
+
+    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">:</span> <span class="n">AbstractMultiOutputDistribution</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Joint logpdf over all target sets.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            If the model has multiple target sets, the returned logpdf is the</span>
+<span class="sd">            mean logpdf over all target sets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dist (neuralprocesses.dist.AbstractMultiOutputDistribution):</span>
+<span class="sd">                The distribution to compute the logpdf of.</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task to compute the logpdf of.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The logpdf.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Need to ensure `Y_t` is a tensor and, if multiple target sets,</span>
+        <span class="c1">#   an nps.Aggregate object</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">ConvNP</span><span class="o">.</span><span class="n">modify_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">Y_t</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">convert_task_to_nps_args</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">Y_t</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ConvNP.logpdf"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.logpdf">[docs]</a>    <span class="nd">@dispatch</span>
+    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Joint logpdf over all target sets.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            If the model has multiple target sets, the returned logpdf is the</span>
+<span class="sd">            mean logpdf over all target sets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task to compute the logpdf of.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The logpdf.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConvNP.loss_fn"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.loss_fn">[docs]</a>    <span class="k">def</span> <span class="nf">loss_fn</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+        <span class="n">fix_noise</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_lv_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="n">normalise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the loss of a task.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task to compute the loss of.</span>
+<span class="sd">            fix_noise (...):</span>
+<span class="sd">                Whether to fix the noise to the value specified in the model</span>
+<span class="sd">                config.</span>
+<span class="sd">            num_lv_samples (int, optional):</span>
+<span class="sd">                If latent variable model, number of lv samples for evaluating</span>
+<span class="sd">                the loss, by default 8.</span>
+<span class="sd">            normalise (bool, optional):</span>
+<span class="sd">                Whether to normalise the loss by the number of target points,</span>
+<span class="sd">                by default False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">ConvNP</span><span class="o">.</span><span class="n">modify_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+        <span class="n">context_data</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">yt</span><span class="p">,</span> <span class="n">model_kwargs</span> <span class="o">=</span> <span class="n">convert_task_to_nps_args</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+        <span class="n">logpdfs</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">nps</span><span class="o">.</span><span class="n">loglik</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">context_data</span><span class="p">,</span>
+            <span class="n">xt</span><span class="p">,</span>
+            <span class="n">yt</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">model_kwargs</span><span class="p">,</span>
+            <span class="n">fix_noise</span><span class="o">=</span><span class="n">fix_noise</span><span class="p">,</span>
+            <span class="n">num_samples</span><span class="o">=</span><span class="n">num_lv_samples</span><span class="p">,</span>
+            <span class="n">normalise</span><span class="o">=</span><span class="n">normalise</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">B</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logpdfs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">loss</span></div>
+
+<div class="viewcode-block" id="ConvNP.ar_sample"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.ConvNP.ar_sample">[docs]</a>    <span class="k">def</span> <span class="nf">ar_sample</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+        <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">X_target_AR</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ar_subsample_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">fill_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Autoregressive sampling from the model.</span>
+
+<span class="sd">        AR sampling with optional functionality to only draw AR samples over a</span>
+<span class="sd">        subset of the target set and then infill the rest of the sample with</span>
+<span class="sd">        the model mean or joint sample conditioned on the AR samples.</span>
+
+<span class="sd">        Returned numpy arrays have shape ``(N_samples, N_features, *N_targets)``,</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            AR sampling only works for 0th context/target set, and only for models with</span>
+<span class="sd">            a single target set.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                The task to sample from.</span>
+<span class="sd">            n_samples (int, optional):</span>
+<span class="sd">                The number of samples to draw from the distribution, by</span>
+<span class="sd">                default 1.</span>
+<span class="sd">            X_target_AR (:class:`numpy:numpy.ndarray`, optional):</span>
+<span class="sd">                Locations to draw AR samples over. If None, AR samples will be</span>
+<span class="sd">                drawn over the target locations in the task. Defaults to None.</span>
+<span class="sd">            ar_subsample_factor (int, optional):</span>
+<span class="sd">                Subsample target locations to draw AR samples over. Defaults</span>
+<span class="sd">                to 1.</span>
+<span class="sd">            fill_type (Literal[&quot;mean&quot;, &quot;sample&quot;], optional):</span>
+<span class="sd">                How to infill the rest of the sample. Must be one of &quot;mean&quot; or</span>
+<span class="sd">                &quot;sample&quot;. Defaults to &quot;mean&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray`</span>
+<span class="sd">                The samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;AR sampling with multiple target sets is not supported.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># AR sampling requires gridded data to be flattened, not coordinate tuples</span>
+        <span class="n">task_arsample</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">X_target_AR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># User has specified a set of locations to draw AR samples over</span>
+            <span class="n">task_arsample</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_target_AR</span>
+        <span class="k">elif</span> <span class="n">ar_subsample_factor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Subsample target locations to draw AR samples over</span>
+            <span class="n">xt</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="c1"># Targets on a grid: subsample targets for AR along spatial dimension</span>
+                <span class="n">xt</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">xt</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">...</span><span class="p">,</span> <span class="p">::</span><span class="n">ar_subsample_factor</span><span class="p">],</span>
+                    <span class="n">xt</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">...</span><span class="p">,</span> <span class="p">::</span><span class="n">ar_subsample_factor</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xt</span> <span class="o">=</span> <span class="n">xt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">::</span><span class="n">ar_subsample_factor</span><span class="p">]</span>
+            <span class="n">task_arsample</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">xt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">task_arsample</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+        <span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">flatten_gridded_data</span><span class="p">()</span>
+        <span class="n">task_arsample</span> <span class="o">=</span> <span class="n">task_arsample</span><span class="o">.</span><span class="n">flatten_gridded_data</span><span class="p">()</span>
+
+        <span class="n">task_arsample</span> <span class="o">=</span> <span class="n">ConvNP</span><span class="o">.</span><span class="n">modify_task</span><span class="p">(</span><span class="n">task_arsample</span><span class="p">)</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">ConvNP</span><span class="o">.</span><span class="n">modify_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">backend</span><span class="o">.</span><span class="n">str</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">torch</span>
+
+            <span class="c1"># Run AR sampling with torch.no_grad() to avoid prohibitive backprop computation for AR</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="p">(</span>
+                    <span class="n">mean</span><span class="p">,</span>
+                    <span class="n">variance</span><span class="p">,</span>
+                    <span class="n">noiseless_samples</span><span class="p">,</span>
+                    <span class="n">noisy_samples</span><span class="p">,</span>
+                <span class="p">)</span> <span class="o">=</span> <span class="n">run_nps_model_ar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">task_arsample</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="p">(</span>
+                <span class="n">mean</span><span class="p">,</span>
+                <span class="n">variance</span><span class="p">,</span>
+                <span class="n">noiseless_samples</span><span class="p">,</span>
+                <span class="n">noisy_samples</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">run_nps_model_ar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">task_arsample</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+
+        <span class="c1"># Slice out first (and assumed only) target entry in nps.Aggregate object</span>
+        <span class="n">noiseless_samples</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">noiseless_samples</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ar_subsample_factor</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">X_target_AR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># AR sample locations not equal to target locations - infill the rest of the</span>
+            <span class="c1"># sample with the model mean conditioned on the AR samples</span>
+            <span class="n">full_samples</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">noiseless_samples</span><span class="p">:</span>
+                <span class="n">task_with_sample</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+                <span class="n">task_with_sample</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">task_arsample</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span>
+                <span class="p">)</span>
+                <span class="n">task_with_sample</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">sample</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">fill_type</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+                    <span class="c1"># Compute the mean conditioned on the AR samples</span>
+                    <span class="c1"># Should this be a `.sample` call?</span>
+                    <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">task_with_sample</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">fill_type</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+                    <span class="c1"># Sample from joint distribution over all target locations</span>
+                    <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">task_with_sample</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">full_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+            <span class="n">full_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">full_samples</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">full_samples</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">noiseless_samples</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Slice out batch dim</span></div></div>
+
+
+<div class="viewcode-block" id="concat_tasks"><a class="viewcode-back" href="../../../reference/model/convnp.html#deepsensor.model.convnp.concat_tasks">[docs]</a><span class="k">def</span> <span class="nf">concat_tasks</span><span class="p">(</span><span class="n">tasks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Task</span><span class="p">],</span> <span class="n">multiple</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Concatenate a list of tasks into a single task containing multiple batches.</span>
+
+<span class="sd">    ```{warning}</span>
+<span class="sd">    `concat_tasks` has been moved to deepsensor.data.task and will be removed from &quot;</span>
+<span class="sd">        &quot;deepsensor.model.convnp in a future release.</span>
+<span class="sd">    ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;concat_tasks has been moved to deepsensor.data.task and will be removed from &quot;</span>
+        <span class="s2">&quot;deepsensor.model.convnp in a future release.&quot;</span><span class="p">,</span>
+        <span class="ne">FutureWarning</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">concat_tasks</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">multiple</span><span class="p">)</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1046 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>deepsensor.active_learning.algorithms &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/deepsensor/active_learning/algorithms';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2F_modules/deepsensor/active_learning/algorithms.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for deepsensor.active_learning.algorithms</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">deepsensor.data.loader</span> <span class="kn">import</span> <span class="n">TaskLoader</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.processor</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">xarray_to_coord_array_normalised</span><span class="p">,</span>
+    <span class="n">mask_coord_array_normalised</span><span class="p">,</span>
+    <span class="n">da1_da2_same_grid</span><span class="p">,</span>
+    <span class="n">interp_da1_to_da2</span><span class="p">,</span>
+    <span class="n">process_X_mask_for_X</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">deepsensor.model.model</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DeepSensorModel</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">deepsensor.model.pred</span> <span class="kn">import</span> <span class="n">create_empty_spatiotemporal_xarray</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.task</span> <span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">append_obs_to_task</span>
+<span class="kn">from</span> <span class="nn">deepsensor.active_learning.acquisition_fns</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AcquisitionFunction</span><span class="p">,</span>
+    <span class="n">AcquisitionFunctionParallel</span><span class="p">,</span>
+    <span class="n">AcquisitionFunctionOracle</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="GreedyAlgorithm"><a class="viewcode-back" href="../../../reference/active_learning/algorithms.html#deepsensor.active_learning.algorithms.GreedyAlgorithm">[docs]</a><span class="k">class</span> <span class="nc">GreedyAlgorithm</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Greedy active learning sensor placement algorithm.</span>
+
+<span class="sd">    Given a set of :class:`~.data.task.Task` objects containing existing context data, the algorithm</span>
+<span class="sd">    iteratively (i.e. &#39;greedily&#39;) proposes $N$ locations for new context points</span>
+<span class="sd">    from a search grid, using active learning with a DeepSensorModel.</span>
+
+<span class="sd">    Within each greedy iteration, the algorithm evaluates an acquisition function</span>
+<span class="sd">    over the search grid. The acquisition function value at a given query location</span>
+<span class="sd">    relates to the merit of a new observation at that point, and is averaged over</span>
+<span class="sd">    all :class:`~.data.task.Task` objects. The algorithm then</span>
+<span class="sd">    selects the context location with the &#39;best&#39; (max or min) acquisition function value.</span>
+<span class="sd">    A new context observation is added to each :class:`~.data.task.Task` at that location.</span>
+<span class="sd">    This process is repeated until $N$ new context locations have been proposed.</span>
+
+<span class="sd">    The algorithm either computes the acquisition function values</span>
+<span class="sd">    in parallel over all query locations, or sequentially. This is dictated by the</span>
+<span class="sd">    type of acquisition function passed to the algorithm:</span>
+
+<span class="sd">        1. :class:`~.active_learning.acquisition_fns.AcquisitionFunction`:</span>
+<span class="sd">        Returns a scalar acquisition function for</span>
+<span class="sd">        a given query location. For example, the model&#39;s mean standard deviation</span>
+<span class="sd">        over target locations (``MeanStddev``). For a given :class:`~.data.task.Task`</span>
+<span class="sd">        this requires running the model *once for every query location* with a new</span>
+<span class="sd">        context point at that location, so these acquisition functions can be slow.</span>
+
+<span class="sd">        2. :class:`~.active_learning.acquisition_fns.AcquisitionFunctionParallel`:</span>
+<span class="sd">        Returns all acquisition function values in parallel.</span>
+<span class="sd">        For example, the model&#39;s standard deviation at query locations given</span>
+<span class="sd">        the existing context data, which only requires running the model once for a</span>
+<span class="sd">        given :class:`~.data.task.Task`. These acquisition functions are faster than</span>
+<span class="sd">        their sequential counterparts but are likely less informative.</span>
+
+<span class="sd">    Acquisition functions that inherit from</span>
+<span class="sd">    :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`</span>
+<span class="sd">    require ground truth target values at target locations. In this case, the algorithm</span>
+<span class="sd">    must be provided with a :class:`~.data.loader.TaskLoader` object to sample these values.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        The algorithm is described in more detail in &#39;Environmental Sensor Placement with</span>
+<span class="sd">        Convolutional Gaussian Neural Processes&#39; (2023), https://doi.org/10.1017/eds.2023.22.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (:class:`~.model.model.DeepSensorModel`):</span>
+<span class="sd">            Model to use for proposing new context points.</span>
+<span class="sd">        X_s (:class:`xarray.Dataset` | :class:`xarray.DataArray`):</span>
+<span class="sd">            Xarray object containing the spatial coordinates that define the search grid.</span>
+<span class="sd">        X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | pd.DataFrame):</span>
+<span class="sd">            Target spatial coordinates. Can either be an xarray object containing the spatial</span>
+<span class="sd">            coordinates of the target grid, or a pandas DataFrame containing a set of off-grid</span>
+<span class="sd">            target locations.</span>
+<span class="sd">        X_s_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):</span>
+<span class="sd">            Optional 2D mask for gridded search coordinates to ignore. If provided, the acquisition</span>
+<span class="sd">            function will only be computed at locations where the mask is True. Defaults to None.</span>
+<span class="sd">        X_t_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):</span>
+<span class="sd">            Optional 2D mask (for gridded target coordinates) to ignore.</span>
+<span class="sd">            Useful e.g. if you only care about improving the model&#39;s predictions over a certain</span>
+<span class="sd">            area. Defaults to None.</span>
+<span class="sd">        N_new_context (int, optional):</span>
+<span class="sd">            Number of new context points to propose (i.e. number of greedy iterations), defaults to 1.</span>
+<span class="sd">        X_normalised (bool, optional):</span>
+<span class="sd">            Whether the coordinates of the X_* arguments above have been normalised</span>
+<span class="sd">            by a :class:`~.data.processor.DataProcessor`. Defaults to False.</span>
+<span class="sd">        model_infill_method (str, optional):</span>
+<span class="sd">            Method for generating pseudo observations from the model at search points,</span>
+<span class="sd">            which are appended to Tasks when computing acquisition functions or at the</span>
+<span class="sd">            end of a greedy iteration (unless overridden by ``query_infill`` or ``proposed_infill`` below).</span>
+<span class="sd">            Currently, only &quot;mean&quot; infilling is supported. Defaults to &quot;mean&quot;.</span>
+<span class="sd">        query_infill (:class:`xarray.DataArray`, optional):</span>
+<span class="sd">            Gridded xarray object containing observations to use when querying candidate context</span>
+<span class="sd">            points. Must have all the same time points as the :class:`~.data.task.Task` objects</span>
+<span class="sd">            the algorithm is called with. If not on the same grid as ``X_s``, it will be linearly</span>
+<span class="sd">            interpolated to the same grid. Useful for providing the model with true observations</span>
+<span class="sd">            rather than its own predictions. Defaults to None.</span>
+<span class="sd">        proposed_infill (:class:`xarray.DataArray`, optional):</span>
+<span class="sd">            Similar to ``query_infill``, but used when infilling pseudo observations at the end</span>
+<span class="sd">            of a greedy iteration (rather than using model predictions). Useful e.g. to</span>
+<span class="sd">            simulate the case where the model can obtain ground truth after requesting</span>
+<span class="sd">            a sensor placement. Defaults to None.</span>
+<span class="sd">        context_set_idx (int, optional):</span>
+<span class="sd">            Context set index to run the sensor placement algorithm on. E.g. if a model</span>
+<span class="sd">            ingest two context sets [&quot;aux_data&quot;, &quot;sensor_data&quot;], this should be set to 1</span>
+<span class="sd">            (corresponding to the sensor context set). Defaults to 0.</span>
+<span class="sd">        target_set_idx (int, optional):</span>
+<span class="sd">            Target set index corresponding to predictions of the context set that the</span>
+<span class="sd">            algorithm is run on. Defaults to 0.</span>
+<span class="sd">        progress_bar (bool, optional):</span>
+<span class="sd">            Whether to display a progress bar when running the algorithm. Defaults to False.</span>
+<span class="sd">        task_loader (:class:`~.data.loader.TaskLoader`, optional):</span>
+<span class="sd">            If using an :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`,</span>
+<span class="sd">            a TaskLoader object is required to sample ground truth target values at target</span>
+<span class="sd">            locations. Defaults to None.</span>
+<span class="sd">        verbose (bool, optional):</span>
+<span class="sd">            Whether to print some status messages. Defaults to False.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError:</span>
+<span class="sd">            If the ``model`` passed does not inherit from</span>
+<span class="sd">            :class:`~.model.model.DeepSensorModel`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">DeepSensorModel</span><span class="p">,</span>
+        <span class="n">X_s</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">],</span>
+        <span class="n">X_t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+        <span class="n">X_s_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_t_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">N_new_context</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">X_normalised</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">model_infill_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+        <span class="n">query_infill</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">proposed_infill</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">context_set_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">target_set_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">progress_bar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">task_loader</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">TaskLoader</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># OPTIONAL for oracle acquisition functions only</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">DeepSensorModel</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;`model` must inherit from DeepSensorModel, but parent &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;classes are </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__bases__</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_n_new_context</span><span class="p">(</span><span class="n">X_s</span><span class="p">,</span> <span class="n">N_new_context</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N_new_context</span> <span class="o">=</span> <span class="n">N_new_context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span> <span class="o">=</span> <span class="n">progress_bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_infill_method</span> <span class="o">=</span> <span class="n">model_infill_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_set_idx</span> <span class="o">=</span> <span class="n">context_set_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span> <span class="o">=</span> <span class="n">target_set_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">task_loader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x1_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x2_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Normalised search and target coordinates</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">X_normalised</span><span class="p">:</span>
+            <span class="n">X_t</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">map_coords</span><span class="p">(</span><span class="n">X_t</span><span class="p">)</span>
+            <span class="n">X_s</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">map_coords</span><span class="p">(</span><span class="n">X_s</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">X_s_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">X_s_mask</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">map_coords</span><span class="p">(</span><span class="n">X_s_mask</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">X_t_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">X_t_mask</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">map_coords</span><span class="p">(</span><span class="n">X_t_mask</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_s</span> <span class="o">=</span> <span class="n">X_s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_t</span> <span class="o">=</span> <span class="n">X_t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_s_mask</span> <span class="o">=</span> <span class="n">X_s_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_t_mask</span> <span class="o">=</span> <span class="n">X_t_mask</span>
+
+        <span class="c1"># Interpolate masks onto search and target coords</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_s_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_s_mask</span> <span class="o">=</span> <span class="n">process_X_mask_for_X</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_s_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_t_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_t_mask</span> <span class="o">=</span> <span class="n">process_X_mask_for_X</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_t_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_t</span><span class="p">)</span>
+
+        <span class="c1"># Interpolate overridden infill datasets at search points if necessary</span>
+        <span class="k">if</span> <span class="n">query_infill</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">da1_da2_same_grid</span><span class="p">(</span><span class="n">query_infill</span><span class="p">,</span> <span class="n">X_s</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;query_infill not on search grid, interpolating.&quot;</span><span class="p">)</span>
+            <span class="n">query_infill</span> <span class="o">=</span> <span class="n">interp_da1_to_da2</span><span class="p">(</span><span class="n">query_infill</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">proposed_infill</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">da1_da2_same_grid</span><span class="p">(</span><span class="n">proposed_infill</span><span class="p">,</span> <span class="n">X_s</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;proposed_infill not on search grid, interpolating.&quot;</span><span class="p">)</span>
+            <span class="n">proposed_infill</span> <span class="o">=</span> <span class="n">interp_da1_to_da2</span><span class="p">(</span><span class="n">proposed_infill</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_s</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_infill</span> <span class="o">=</span> <span class="n">query_infill</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proposed_infill</span> <span class="o">=</span> <span class="n">proposed_infill</span>
+
+        <span class="c1"># Convert target coords to numpy arrays and assign to tasks</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_t</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">)):</span>
+            <span class="c1"># Targets on grid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_t_arr</span> <span class="o">=</span> <span class="n">xarray_to_coord_array_normalised</span><span class="p">(</span><span class="n">X_t</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_t_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Remove points that lie outside the mask</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">X_t_arr</span> <span class="o">=</span> <span class="n">mask_coord_array_normalised</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_t_arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_t_mask</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_t</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">)):</span>
+            <span class="c1"># Targets off-grid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_t_arr</span> <span class="o">=</span> <span class="n">X_t</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()[[</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type for X_t: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">X_t</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Construct search array</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_s</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">)):</span>
+            <span class="n">X_s_arr</span> <span class="o">=</span> <span class="n">xarray_to_coord_array_normalised</span><span class="p">(</span><span class="n">X_s</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">X_s_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">X_s_arr</span> <span class="o">=</span> <span class="n">mask_coord_array_normalised</span><span class="p">(</span><span class="n">X_s_arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_s_mask</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_s_arr</span> <span class="o">=</span> <span class="n">X_s_arr</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_new</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of new proposed context locations</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_validate_n_new_context</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">X_s</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">],</span> <span class="n">N_new_context</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_s</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_s</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+                <span class="n">X_s</span> <span class="o">=</span> <span class="n">X_s</span><span class="o">.</span><span class="n">to_array</span><span class="p">()</span>
+            <span class="n">N_s</span> <span class="o">=</span> <span class="n">X_s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">X_s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_s</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">)):</span>
+            <span class="n">N_s</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_s</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">N_new_context</span> <span class="o">&lt;</span> <span class="n">N_s</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Number of new context (</span><span class="si">{</span><span class="n">N_new_context</span><span class="si">}</span><span class="s2">) must be greater &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;than zero and less than the number of search points (</span><span class="si">{</span><span class="n">N_s</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_times_from_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get times from tasks.&quot;&quot;&quot;</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">]</span>
+        <span class="c1"># Check for any repeats</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">times</span><span class="p">)):</span>
+            <span class="c1"># TODO unit test this</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span><span class="si">}</span><span class="s2"> tasks have duplicate times (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">times</span><span class="p">))</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;unique times)&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">times</span>
+
+    <span class="k">def</span> <span class="nf">_model_infill_at_search_points</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">X_s</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes and model infill y-values over whole search grid.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_infill_method</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">,</span>
+                <span class="n">X_s</span><span class="p">,</span>
+                <span class="n">X_t_is_normalised</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">unnormalise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">infill_ds</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_set_idx</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_infill_method</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+            <span class="c1"># pred = self.model.predict(</span>
+            <span class="c1">#     self.tasks, X_s, X_t_normalised=True, unnormalise=False,</span>
+            <span class="c1">#     n_samples=self.model_infill_samples,</span>
+            <span class="c1"># )</span>
+            <span class="c1"># infill_ds = pred[self.target_set_idx][&quot;samples&quot;]</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;TODO&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_infill_method</span> <span class="o">==</span> <span class="s2">&quot;zeros&quot;</span><span class="p">:</span>
+            <span class="c1"># TODO generate empty prediction xarray</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;TODO&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported model_infill_method: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_infill_method</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">infill_ds</span>
+
+    <span class="k">def</span> <span class="nf">_sample_y_infill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infill_ds</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample infill values at a single location.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infill_ds</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">infill_ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="n">x2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">to_array</span><span class="p">()</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">if</span> <span class="s2">&quot;sample&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">infill_ds</span><span class="o">.</span><span class="n">dims</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>  <span class="c1"># 1 observation with N_target_dims</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># TODO confirm or force that dim ordering is (N_samples, N_target_dims)</span>
+            <span class="k">return</span> <span class="n">y</span>
+
+    <span class="k">def</span> <span class="nf">_build_acquisition_fn_ds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_s</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise xr.DataArray for storing acquisition function values on</span>
+<span class="sd">        search grid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prepend_dims</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;iteration&quot;</span><span class="p">]</span>  <span class="c1"># , &quot;sample&quot;]  # MC sample TODO</span>
+        <span class="n">prepend_coords</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;iteration&quot;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N_new_context</span><span class="p">),</span>
+            <span class="c1"># &quot;sample&quot;: range(self.n_samples_or_1),  # MC sample TODO</span>
+        <span class="p">}</span>
+        <span class="n">acquisition_fn_ds</span> <span class="o">=</span> <span class="n">create_empty_spatiotemporal_xarray</span><span class="p">(</span>
+            <span class="n">X</span><span class="o">=</span><span class="n">X_s</span><span class="p">,</span>
+            <span class="n">dates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_times_from_tasks</span><span class="p">(),</span>
+            <span class="n">coord_names</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1_name</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2_name</span><span class="p">},</span>
+            <span class="n">data_vars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acquisition_fn&quot;</span><span class="p">],</span>
+            <span class="n">prepend_dims</span><span class="o">=</span><span class="n">prepend_dims</span><span class="p">,</span>
+            <span class="n">prepend_coords</span><span class="o">=</span><span class="n">prepend_coords</span><span class="p">,</span>
+        <span class="p">)[</span><span class="s2">&quot;acquisition_fn&quot;</span><span class="p">]</span>
+        <span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">data</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="k">return</span> <span class="n">acquisition_fn_ds</span>
+
+    <span class="k">def</span> <span class="nf">_init_acquisition_fn_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_s</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instantiate acquisition function object.&quot;&quot;&quot;</span>
+        <span class="c1"># Unnormalise before instantiating</span>
+        <span class="n">X_s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">map_coords</span><span class="p">(</span><span class="n">X_s</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_s</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">)):</span>
+            <span class="c1"># xr.Dataset storing acquisition function values</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">acquisition_fn_ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_acquisition_fn_ds</span><span class="p">(</span><span class="n">X_s</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_s</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Pandas support for active learning search points X_s not yet &quot;</span>
+                <span class="s2">&quot;implemented.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type for X_s: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">X_s</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">acquisition_fn</span><span class="p">:</span> <span class="n">AcquisitionFunction</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run one greedy pass by looping over each point in ``X_s`` and</span>
+<span class="sd">        computing the acquisition function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">importances_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">:</span>
+            <span class="c1"># Parallel computation</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">acquisition_fn</span><span class="p">,</span> <span class="n">AcquisitionFunctionParallel</span><span class="p">):</span>
+                <span class="n">importances</span> <span class="o">=</span> <span class="n">acquisition_fn</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_s_arr</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Sequential computation</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">acquisition_fn</span><span class="p">,</span> <span class="n">AcquisitionFunction</span><span class="p">):</span>
+                <span class="n">importances</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diff</span><span class="p">:</span>
+                    <span class="n">importance_bef</span> <span class="o">=</span> <span class="n">acquisition_fn</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+                <span class="c1"># Add size-1 dim after row dim to preserve row dim for passing to</span>
+                <span class="c1">#   acquisition_fn. Also roll final axis to first axis for looping over search points.</span>
+                <span class="k">for</span> <span class="n">x_query</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_s_arr</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="mi">2</span><span class="p">):</span>
+                    <span class="n">y_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_y_infill</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">query_infill</span><span class="p">,</span>
+                        <span class="n">time</span><span class="o">=</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span>
+                        <span class="n">x1</span><span class="o">=</span><span class="n">x_query</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">x2</span><span class="o">=</span><span class="n">x_query</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">task_with_new</span> <span class="o">=</span> <span class="n">append_obs_to_task</span><span class="p">(</span>
+                        <span class="n">task</span><span class="p">,</span> <span class="n">x_query</span><span class="p">,</span> <span class="n">y_query</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_set_idx</span>
+                    <span class="p">)</span>
+                    <span class="c1"># TODO this is a hack to add the auxiliary variable to the context set</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                        <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">aux_at_contexts</span>
+                    <span class="p">):</span>
+                        <span class="c1"># Add auxiliary variable sampled at context set as a new context variable</span>
+                        <span class="n">X_c</span> <span class="o">=</span> <span class="n">task_with_new</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">aux_at_contexts</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                        <span class="n">Y_c_aux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">sample_offgrid_aux</span><span class="p">(</span>
+                            <span class="n">X_c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">aux_at_contexts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="p">)</span>
+                        <span class="n">task_with_new</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_c</span>
+                        <span class="n">task_with_new</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y_c_aux</span>
+
+                    <span class="n">importance</span> <span class="o">=</span> <span class="n">acquisition_fn</span><span class="p">(</span><span class="n">task_with_new</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diff</span><span class="p">:</span>
+                        <span class="n">importance</span> <span class="o">=</span> <span class="n">importance</span> <span class="o">-</span> <span class="n">importance_bef</span>
+
+                    <span class="n">importances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">importance</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">allowed_classes</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">AcquisitionFunction</span><span class="p">,</span>
+                    <span class="n">AcquisitionFunctionParallel</span><span class="p">,</span>
+                    <span class="n">AcquisitionFunctionOracle</span><span class="p">,</span>
+                <span class="p">]</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Acquisition function needs to inherit from one of </span><span class="si">{</span><span class="n">allowed_classes</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">importances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">importances</span><span class="p">)</span>
+            <span class="n">importances_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">importances</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_s_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">X_s_mask</span><span class="o">.</span><span class="n">data</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">importances</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">importances</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">importances_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_select_best</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">importances</span><span class="p">,</span> <span class="n">X_s_arr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select context location corresponding to the best importance value.</span>
+
+<span class="sd">        Appends the chosen search index to a list of chosen search indexes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_or_max</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span>
+            <span class="n">best_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">importances</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_or_max</span> <span class="o">==</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span>
+            <span class="n">best_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">importances</span><span class="p">)</span>
+
+        <span class="n">best_x_query</span> <span class="o">=</span> <span class="n">X_s_arr</span><span class="p">[:,</span> <span class="n">best_idx</span> <span class="p">:</span> <span class="n">best_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Index into original search space of chosen context location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_idxs_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">X_s_arr</span> <span class="o">==</span> <span class="n">best_x_query</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">best_x_query</span>
+
+    <span class="k">def</span> <span class="nf">_single_greedy_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">acquisition_fn</span><span class="p">:</span> <span class="n">AcquisitionFunction</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run a single greedy grid search iteration and append the optimal</span>
+<span class="sd">        context location to self.X_new.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">importances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">acquisition_fn</span><span class="p">)</span>
+        <span class="n">best_x_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_best</span><span class="p">(</span><span class="n">importances</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_s_arr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_x_query</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">best_x_query</span>
+
+<div class="viewcode-block" id="GreedyAlgorithm.__call__"><a class="viewcode-back" href="../../../reference/active_learning/algorithms.html#deepsensor.active_learning.algorithms.GreedyAlgorithm.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">acquisition_fn</span><span class="p">:</span> <span class="n">AcquisitionFunction</span><span class="p">,</span>
+        <span class="n">tasks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Task</span><span class="p">],</span> <span class="n">Task</span><span class="p">],</span>
+        <span class="n">diff</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iteratively propose new context points using the greedy sensor placement algorithm.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            acquisition_fn (:class:`~.active_learning.acquisition_fns.AcquisitionFunction`):</span>
+<span class="sd">                The acquisition function to optimise.</span>
+<span class="sd">            tasks (List[:class:`~.data.task.Task`] | :class:`~.data.task.Task`):</span>
+<span class="sd">                Tasks containing existing context data. If a list of Tasks, the acquisition</span>
+<span class="sd">                function will be averaged over Tasks.</span>
+<span class="sd">            diff (bool, optional):</span>
+<span class="sd">                For sequential acquisition functions only: Whether to compute the *change* in</span>
+<span class="sd">                acquisition function value after adding the new context point, i.e.</span>
+<span class="sd">                ``acquisition_fn(task_with_new) - acquisition_fn(task)``. Can be useful</span>
+<span class="sd">                for making the acquisition function values more interpretable, or for</span>
+<span class="sd">                comparing with the change in metric that the acquisition function targets</span>
+<span class="sd">                (see https://doi.org/10.1017/eds.2023.22). Defaults to False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[:class:`pandas.DataFrame`, :class:`xarray.DataArray`]:</span>
+<span class="sd">                A tuple containing two objects:</span>
+
+<span class="sd">                - **X_new_df** (:class:`pandas.DataFrame`):</span>
+<span class="sd">                Proposed sensor placements. Columns are the x1 and x2 coordinates of the</span>
+<span class="sd">                sensor placements, and the index is the index of the greedy iteration</span>
+<span class="sd">                at which the sensor placement was proposed (which can be interpreted as</span>
+<span class="sd">                a priority order, with iteration 0 being the highest priority).</span>
+
+<span class="sd">                - **acquisition_fn_ds** (:class:`xarray.DataArray`):</span>
+<span class="sd">                Gridded acquisition function values at each search point. Dimensions</span>
+<span class="sd">                are ``iteration``, ``time`` (inferred from the input ``tasks``), followed</span>
+<span class="sd">                by the x1 and x2 coordinates of the spatial grid.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError:</span>
+<span class="sd">                If ``acquisition_fn`` is an</span>
+<span class="sd">                :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`</span>
+<span class="sd">                and ``task_loader`` is None.</span>
+<span class="sd">            ValueError:</span>
+<span class="sd">                If ``min_or_max`` is not ``&quot;min&quot;`` or ``&quot;max&quot;``.</span>
+<span class="sd">            ValueError:</span>
+<span class="sd">                If ``Y_t_aux`` is in ``tasks`` but ``task_loader`` is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">acquisition_fn</span><span class="p">,</span> <span class="n">AcquisitionFunctionOracle</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;AcquisitionFunctionOracle requires a task_loader function to &quot;</span>
+                <span class="s2">&quot;be passed to the GreedyOptimal constructor.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_or_max</span> <span class="o">=</span> <span class="n">acquisition_fn</span><span class="o">.</span><span class="n">min_or_max</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_or_max</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;min_or_max must be either &#39;min&#39; or &#39;max&#39;, got &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_or_max</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">diff</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">acquisition_fn</span><span class="p">,</span> <span class="n">AcquisitionFunctionParallel</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;diff=True is not valid for parallel acquisition functions.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diff</span> <span class="o">=</span> <span class="n">diff</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">Task</span><span class="p">):</span>
+            <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">tasks</span><span class="p">]</span>
+
+        <span class="c1"># Make deepcopys so that original tasks are not modified</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
+
+        <span class="c1"># Add target set to tasks</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+            <span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;X_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X_t_arr</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">acquisition_fn</span><span class="p">,</span> <span class="n">AcquisitionFunctionOracle</span><span class="p">):</span>
+                <span class="c1"># Sample ground truth y-values at target points `self.X_t_arr` using `self.task_loader`</span>
+                <span class="n">date</span> <span class="o">=</span> <span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+                <span class="n">task_with_Y_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="p">(</span>
+                    <span class="n">date</span><span class="p">,</span> <span class="n">context_sampling</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">target_sampling</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X_t_arr</span>
+                <span class="p">)</span>
+                <span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">task_with_Y_t</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="s2">&quot;Y_t_aux&quot;</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Model expects Y_t_aux data but a TaskLoader isn&#39;t &quot;</span>
+                    <span class="s2">&quot;provided to GreedyAlgorithm.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">aux_at_target_dims</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;Y_t_aux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">sample_offgrid_aux</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">X_t_arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">aux_at_targets</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span> <span class="o">=</span> <span class="n">tasks</span>
+
+        <span class="c1"># Generate infill values at search points if not overridden</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_infill</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">proposed_infill</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_infill</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_infill_at_search_points</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_s</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_infill</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">query_infill</span> <span class="o">=</span> <span class="n">model_infill</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">proposed_infill</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">proposed_infill</span> <span class="o">=</span> <span class="n">model_infill</span>
+
+        <span class="c1"># Instantiate empty acquisition function object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_acquisition_fn_object</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_s</span><span class="p">)</span>
+
+        <span class="c1"># Dataframe for storing proposed context locations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x1_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2_name</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_new_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;iteration&quot;</span>
+
+        <span class="c1"># List to track indexes into original search grid of chosen sensor locations</span>
+        <span class="c1">#   as optimisation progresses. Used for filling y-values at chosen</span>
+        <span class="c1">#   sensor locations, `self.X_new`</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_idxs_all</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Total iterations are number of new context points * number of tasks * number of search</span>
+        <span class="c1">#   points (if not parallel) * number of Monte Carlo samples (if using MC)</span>
+        <span class="n">total_iterations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_new_context</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">acquisition_fn</span><span class="p">,</span> <span class="n">AcquisitionFunctionParallel</span><span class="p">):</span>
+            <span class="n">total_iterations</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_s_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># TODO make class attribute for list of sample-based infill methods</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_infill_method</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;ar_sample&quot;</span><span class="p">]:</span>
+            <span class="n">total_iterations</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span>
+
+        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">total_iterations</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress_bar</span><span class="p">)</span> <span class="k">as</span> <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N_new_context</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">=</span> <span class="n">iteration</span>
+                <span class="n">x_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_greedy_iteration</span><span class="p">(</span><span class="n">acquisition_fn</span><span class="p">)</span>
+
+                <span class="c1"># Append new proposed context points to each task</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">):</span>
+                    <span class="n">y_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_y_infill</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">proposed_infill</span><span class="p">,</span>
+                        <span class="n">time</span><span class="o">=</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span>
+                        <span class="n">x1</span><span class="o">=</span><span class="n">x_new</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">x2</span><span class="o">=</span><span class="n">x_new</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">append_obs_to_task</span><span class="p">(</span>
+                        <span class="n">task</span><span class="p">,</span> <span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_set_idx</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># Append new proposed context points to dataframe</span>
+                <span class="n">x_new_unnorm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">map_coord_array</span><span class="p">(</span>
+                    <span class="n">x_new</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">X_new_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_new_unnorm</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_new_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">acquisition_fn_ds</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

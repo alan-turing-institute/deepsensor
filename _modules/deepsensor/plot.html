@@ -1,0 +1,1510 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>deepsensor.plot &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/deepsensor/plot';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2F_modules/deepsensor/plot.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for deepsensor.plot</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">make_axes_locatable</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
+
+<span class="kn">import</span> <span class="nn">lab</span> <span class="k">as</span> <span class="nn">B</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">deepsensor.data.task</span> <span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">flatten_X</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.loader</span> <span class="kn">import</span> <span class="n">TaskLoader</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.processor</span> <span class="kn">import</span> <span class="n">DataProcessor</span>
+<span class="kn">from</span> <span class="nn">deepsensor.model.pred</span> <span class="kn">import</span> <span class="n">Prediction</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">Colormap</span>
+<span class="kn">from</span> <span class="nn">matplotlib.axes</span> <span class="kn">import</span> <span class="n">Axes</span>
+
+
+<div class="viewcode-block" id="task"><a class="viewcode-back" href="../../reference/plot.html#deepsensor.plot.task">[docs]</a><span class="k">def</span> <span class="nf">task</span><span class="p">(</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+    <span class="n">task_loader</span><span class="p">:</span> <span class="n">TaskLoader</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">markersize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">equal_aspect</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">plot_ticks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">extent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the context and target sets of a task.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            Task to plot.</span>
+<span class="sd">        task_loader (:class:`~.data.loader.TaskLoader`):</span>
+<span class="sd">            Task loader used to load ``task``, containing variable IDs used for</span>
+<span class="sd">            plotting.</span>
+<span class="sd">        figsize (int, optional):</span>
+<span class="sd">            Figure size in inches, by default 3.</span>
+<span class="sd">        markersize (int, optional):</span>
+<span class="sd">            Marker size (in units of points squared), by default None. If None,</span>
+<span class="sd">            the marker size is set to ``(2**2) * figsize / 3``.</span>
+<span class="sd">        equal_aspect (bool, optional):</span>
+<span class="sd">            Whether to set the aspect ratio of the plots to be equal, by</span>
+<span class="sd">            default False.</span>
+<span class="sd">        plot_ticks (bool, optional):</span>
+<span class="sd">            Whether to plot the coordinate ticks on the axes, by default False.</span>
+<span class="sd">        extent (Tuple[int, int, int, int], optional):</span>
+<span class="sd">            Extent of the plot in format (x2_min, x2_max, x1_min, x1_max).</span>
+<span class="sd">            Defaults to None (uses the smallest extent that contains all data points</span>
+<span class="sd">            across all context and target sets).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`matplotlib:matplotlib.figure.Figure`:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">markersize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">markersize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">figsize</span> <span class="o">/</span> <span class="mi">3</span>
+
+    <span class="c1"># Scale font size with figure size</span>
+    <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">figsize</span> <span class="o">/</span> <span class="mi">3</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;axes.labelsize&quot;</span><span class="p">:</span> <span class="n">fontsize</span><span class="p">,</span>
+        <span class="s2">&quot;axes.titlesize&quot;</span><span class="p">:</span> <span class="n">fontsize</span><span class="p">,</span>
+        <span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="n">fontsize</span><span class="p">,</span>
+        <span class="s2">&quot;figure.titlesize&quot;</span><span class="p">:</span> <span class="n">fontsize</span><span class="p">,</span>
+        <span class="s2">&quot;legend.fontsize&quot;</span><span class="p">:</span> <span class="n">fontsize</span><span class="p">,</span>
+        <span class="s2">&quot;xtick.labelsize&quot;</span><span class="p">:</span> <span class="n">fontsize</span><span class="p">,</span>
+        <span class="s2">&quot;ytick.labelsize&quot;</span><span class="p">:</span> <span class="n">fontsize</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">var_IDs</span> <span class="o">=</span> <span class="n">task_loader</span><span class="o">.</span><span class="n">context_var_IDs</span> <span class="o">+</span> <span class="n">task_loader</span><span class="o">.</span><span class="n">target_var_IDs</span>
+    <span class="n">Y_c</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">]</span>
+    <span class="n">X_c</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">Y_t</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t&quot;</span><span class="p">]</span>
+        <span class="n">X_t</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Y_t</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">X_t</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">n_context</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y_c</span><span class="p">)</span>
+    <span class="n">n_target</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y_t</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;Y_t_aux&quot;</span> <span class="ow">in</span> <span class="n">task</span> <span class="ow">and</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t_aux&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Assumes only 1 target set</span>
+        <span class="n">X_t</span> <span class="o">=</span> <span class="n">X_t</span> <span class="o">+</span> <span class="p">[</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">Y_t</span> <span class="o">=</span> <span class="n">Y_t</span> <span class="o">+</span> <span class="p">[</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t_aux&quot;</span><span class="p">]]</span>
+        <span class="n">var_IDs</span> <span class="o">=</span> <span class="n">var_IDs</span> <span class="o">+</span> <span class="p">(</span><span class="n">task_loader</span><span class="o">.</span><span class="n">aux_at_target_var_IDs</span><span class="p">,)</span>
+        <span class="n">ncols</span> <span class="o">=</span> <span class="n">n_context</span> <span class="o">+</span> <span class="n">n_target</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ncols</span> <span class="o">=</span> <span class="n">n_context</span> <span class="o">+</span> <span class="n">n_target</span>
+    <span class="n">nrows</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">Y</span> <span class="ow">in</span> <span class="n">Y_c</span> <span class="o">+</span> <span class="n">Y_t</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">extent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x1_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">X_c</span> <span class="o">+</span> <span class="n">X_t</span><span class="p">])</span>
+        <span class="n">x1_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">X_c</span> <span class="o">+</span> <span class="n">X_t</span><span class="p">])</span>
+        <span class="n">x2_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">X_c</span> <span class="o">+</span> <span class="n">X_t</span><span class="p">])</span>
+        <span class="n">x2_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">X_c</span> <span class="o">+</span> <span class="n">X_t</span><span class="p">])</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2_min</span><span class="p">,</span> <span class="n">x2_max</span><span class="p">,</span> <span class="n">x1_min</span><span class="p">,</span> <span class="n">x1_max</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">rc_context</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+            <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">,</span>
+            <span class="n">ncols</span><span class="o">=</span><span class="n">ncols</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">ncols</span> <span class="o">*</span> <span class="n">figsize</span><span class="p">,</span> <span class="n">nrows</span> <span class="o">*</span> <span class="n">figsize</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">nrows</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ncols</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="c1"># j = loop index over columns/context sets</span>
+        <span class="c1"># i = loop index over rows/variables within context sets</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">X_c</span> <span class="o">+</span> <span class="n">X_t</span><span class="p">,</span> <span class="n">Y_c</span> <span class="o">+</span> <span class="n">Y_t</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n_context</span><span class="p">:</span>
+                        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Context set </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n_context</span> <span class="o">+</span> <span class="n">n_target</span><span class="p">:</span>
+                        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target set </span><span class="si">{</span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">n_context</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Auxiliary at targets&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="n">X</span> <span class="o">=</span> <span class="n">flatten_X</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                    <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">c</span><span class="o">=</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="n">markersize</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">equal_aspect</span><span class="p">:</span>
+                    <span class="c1"># Don&#39;t warp aspect ratio</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">plot_ticks</span><span class="p">:</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">var_IDs</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">extent</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">extent</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+                <span class="c1"># Add colorbar with same height as axis</span>
+                <span class="n">divider</span> <span class="o">=</span> <span class="n">make_axes_locatable</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                <span class="n">box</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span>
+                <span class="n">ratio</span> <span class="o">=</span> <span class="mf">0.3</span>
+                <span class="n">pad</span> <span class="o">=</span> <span class="mf">0.1</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="n">box</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">ratio</span>
+                <span class="n">cax</span> <span class="o">=</span> <span class="n">divider</span><span class="o">.</span><span class="n">append_axes</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="n">pad</span><span class="p">)</span>
+                <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">collections</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nrows</span><span class="p">):</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="context_encoding"><a class="viewcode-back" href="../../reference/plot.html#deepsensor.plot.context_encoding">[docs]</a><span class="k">def</span> <span class="nf">context_encoding</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+    <span class="n">task_loader</span><span class="p">:</span> <span class="n">TaskLoader</span><span class="p">,</span>
+    <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">context_set_idxs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">land_idx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">clim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Colormap</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;viridis&quot;</span><span class="p">,</span>
+    <span class="n">verbose_titles</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">titles</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">return_axes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the ``ConvNP`` SetConv encoding of a context set in a task.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (:class:`~.model.convnp.ConvNP`):</span>
+<span class="sd">            ConvNP model.</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            Task containing context set to plot encoding of ...</span>
+<span class="sd">        task_loader (:class:`~.data.loader.TaskLoader`):</span>
+<span class="sd">            DataLoader used to load the data, containing context set metadata</span>
+<span class="sd">            used for plotting.</span>
+<span class="sd">        batch_idx (int, optional):</span>
+<span class="sd">            Batch index in encoding to plot, by default 0.</span>
+<span class="sd">        context_set_idxs (List[int] | int, optional):</span>
+<span class="sd">            Indices of context sets to plot, by default None (plots all context</span>
+<span class="sd">            sets).</span>
+<span class="sd">        land_idx (int, optional):</span>
+<span class="sd">            Index of the land mask in the encoding (used to overlay land</span>
+<span class="sd">            contour on plots), by default None.</span>
+<span class="sd">        cbar (bool, optional):</span>
+<span class="sd">            Whether to add a colorbar to the plots, by default True.</span>
+<span class="sd">        clim (tuple, optional):</span>
+<span class="sd">            Colorbar limits, by default None.</span>
+<span class="sd">        cmap (str | matplotlib.colors.Colormap, optional):</span>
+<span class="sd">            Color map to use for the plots, by default &quot;viridis&quot;.</span>
+<span class="sd">        verbose_titles (bool, optional):</span>
+<span class="sd">            Whether to include verbose titles for the variable IDs in the</span>
+<span class="sd">            context set (including the time index), by default True.</span>
+<span class="sd">        titles (dict, optional):</span>
+<span class="sd">            Dict of titles to override for each subplot, by default None. If</span>
+<span class="sd">            None, titles are generated from context set metadata.</span>
+<span class="sd">        size (int, optional):</span>
+<span class="sd">            Size of the figure in inches, by default 3.</span>
+<span class="sd">        return_axes (bool, optional):</span>
+<span class="sd">            Whether to return the axes of the figure, by default False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`matplotlib.figure.Figure` | Tuple[:obj:`matplotlib.figure.Figure`, :obj:`matplotlib.pyplot.Axes`]:</span>
+<span class="sd">            Either a figure containing the context set encoding plots, or a</span>
+<span class="sd">            tuple containing the :obj:`figure &lt;matplotlib.figure.Figure&gt;` and</span>
+<span class="sd">            the :obj:`axes &lt;matplotlib.axes.Axes&gt;` of the figure (if</span>
+<span class="sd">            ``return_axes`` was set to ``True``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.model.nps</span> <span class="kn">import</span> <span class="n">compute_encoding_tensor</span>
+
+    <span class="n">encoding_tensor</span> <span class="o">=</span> <span class="n">compute_encoding_tensor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+    <span class="n">encoding_tensor</span> <span class="o">=</span> <span class="n">encoding_tensor</span><span class="p">[</span><span class="n">batch_idx</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context_set_idxs</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">context_set_idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">context_set_idxs</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">context_set_idxs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">context_set_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">task_loader</span><span class="o">.</span><span class="n">context_dims</span><span class="p">)))</span>
+
+    <span class="n">context_var_ID_set_sizes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ndim</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">ndim</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">task_loader</span><span class="o">.</span><span class="n">context_dims</span><span class="p">)[</span><span class="n">context_set_idxs</span><span class="p">]</span>
+    <span class="p">]</span>  <span class="c1"># Add density channel to each set size</span>
+    <span class="n">max_context_set_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">context_var_ID_set_sizes</span><span class="p">)</span>
+    <span class="n">ncols</span> <span class="o">=</span> <span class="n">max_context_set_size</span>
+    <span class="n">nrows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">context_set_idxs</span><span class="p">)</span>
+
+    <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="n">ncols</span> <span class="o">*</span> <span class="n">size</span><span class="p">,</span> <span class="n">nrows</span> <span class="o">*</span> <span class="n">size</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="n">ncols</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nrows</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+    <span class="n">ctx_channel_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">task_loader</span><span class="o">.</span><span class="n">context_dims</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">row_i</span><span class="p">,</span> <span class="n">ctx_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">context_set_idxs</span><span class="p">):</span>
+        <span class="n">channel_i</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">ctx_channel_idxs</span><span class="p">[</span><span class="n">ctx_i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">ctx_i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="p">)</span>  <span class="c1"># Starting channel index</span>
+        <span class="k">if</span> <span class="n">verbose_titles</span><span class="p">:</span>
+            <span class="n">var_IDs</span> <span class="o">=</span> <span class="n">task_loader</span><span class="o">.</span><span class="n">context_var_IDs_and_delta_t</span><span class="p">[</span><span class="n">ctx_i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">var_IDs</span> <span class="o">=</span> <span class="n">task_loader</span><span class="o">.</span><span class="n">context_var_IDs</span><span class="p">[</span><span class="n">ctx_i</span><span class="p">]</span>
+
+        <span class="n">ncols_row_i</span> <span class="o">=</span> <span class="n">task_loader</span><span class="o">.</span><span class="n">context_dims</span><span class="p">[</span><span class="n">ctx_i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Add density channel</span>
+        <span class="k">for</span> <span class="n">col_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncols_row_i</span><span class="p">):</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">row_i</span><span class="p">,</span> <span class="n">col_i</span><span class="p">]</span>
+            <span class="c1"># Need `origin=&quot;lower&quot;` because encoding has `x1` increasing from top to bottom,</span>
+            <span class="c1"># whereas in visualisations we want `x1` increasing from bottom to top.</span>
+
+            <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+                <span class="n">encoding_tensor</span><span class="p">[</span><span class="n">channel_i</span><span class="p">],</span>
+                <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+                <span class="n">clim</span><span class="o">=</span><span class="n">clim</span><span class="p">,</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">titles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">titles</span><span class="p">[</span><span class="n">channel_i</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">col_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Density </span><span class="si">{</span><span class="n">ctx_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">col_i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var_IDs</span><span class="p">[</span><span class="n">col_i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">col_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Context set </span><span class="si">{</span><span class="n">ctx_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cbar</span><span class="p">:</span>
+                <span class="n">divider</span> <span class="o">=</span> <span class="n">make_axes_locatable</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+                <span class="n">cax</span> <span class="o">=</span> <span class="n">divider</span><span class="o">.</span><span class="n">append_axes</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s2">&quot;5%&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">cax</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">(</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">land_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span>
+                    <span class="n">encoding_tensor</span><span class="p">[</span><span class="n">land_idx</span><span class="p">],</span>
+                    <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                    <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">],</span>
+                    <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
+                <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span>
+                <span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">labelleft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">channel_i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">col_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncols_row_i</span><span class="p">,</span> <span class="n">ncols</span><span class="p">):</span>
+            <span class="c1"># Hide unused axes</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">ctx_i</span><span class="p">,</span> <span class="n">col_i</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">return_axes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fig</span>
+    <span class="k">elif</span> <span class="n">return_axes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span></div>
+
+
+<div class="viewcode-block" id="offgrid_context"><a class="viewcode-back" href="../../reference/plot.html#deepsensor.plot.offgrid_context">[docs]</a><span class="k">def</span> <span class="nf">offgrid_context</span><span class="p">(</span>
+    <span class="n">axes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">]],</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+    <span class="n">data_processor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataProcessor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">task_loader</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskLoader</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">plot_target</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">add_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">context_set_idxs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">markers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">colors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">scatter_kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the off-grid context points on ``axes``.</span>
+
+<span class="sd">    Uses a provided :class:`~.data.processor.DataProcessor` to unnormalise the</span>
+<span class="sd">    context coordinates if provided.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]):</span>
+<span class="sd">            Axes to plot on.</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            Task containing the context set to plot.</span>
+<span class="sd">        data_processor (:class:`~.data.processor.DataProcessor`, optional):</span>
+<span class="sd">            Data processor used to unnormalise the context set, by default</span>
+<span class="sd">            None.</span>
+<span class="sd">        task_loader (:class:`~.data.loader.TaskLoader`, optional):</span>
+<span class="sd">            Task loader used to load the data, containing context set metadata</span>
+<span class="sd">            used for plotting, by default None.</span>
+<span class="sd">        plot_target (bool, optional):</span>
+<span class="sd">            Whether to plot the target set, by default False.</span>
+<span class="sd">        add_legend (bool, optional):</span>
+<span class="sd">            Whether to add a legend to the plot, by default True.</span>
+<span class="sd">        context_set_idxs (List[int] | int, optional):</span>
+<span class="sd">            Indices of context sets to plot, by default None (plots all context</span>
+<span class="sd">            sets).</span>
+<span class="sd">        markers (str, optional):</span>
+<span class="sd">            Marker styles to use for each context set, by default None.</span>
+<span class="sd">        colors (str, optional):</span>
+<span class="sd">            Colors to use for each context set, by default None.</span>
+<span class="sd">        scatter_kwargs:</span>
+<span class="sd">            Additional keyword arguments to pass to the scatter plot.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">markers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># all matplotlib markers</span>
+        <span class="n">markers</span> <span class="o">=</span> <span class="s2">&quot;ovs^Dxv&lt;&gt;1234spP*hHd|_&quot;</span>
+    <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># all one-letter matplotlib colors</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="s2">&quot;kbrgy&quot;</span> <span class="o">*</span> <span class="mi">10</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context_set_idxs</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">context_set_idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">context_set_idxs</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">plot_target</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">],</span> <span class="o">*</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">set_i</span><span class="p">,</span> <span class="n">X</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">context_set_idxs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">set_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_set_idxs</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">continue</span>  <span class="c1"># Don&#39;t plot gridded context data locations</span>
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># select first batch</span>
+
+        <span class="k">if</span> <span class="n">data_processor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">data_processor</span><span class="o">.</span><span class="n">map_x1_and_x2</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">unnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># flip 2D coords for Cartesian fmt</span>
+
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">plot_target</span> <span class="ow">and</span> <span class="n">set_i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">]):</span>
+            <span class="n">label</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Context set </span><span class="si">{</span><span class="n">set_i</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="k">if</span> <span class="n">task_loader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">task_loader</span><span class="o">.</span><span class="n">context_var_IDs</span><span class="p">[</span><span class="n">set_i</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">elif</span> <span class="n">plot_target</span> <span class="ow">and</span> <span class="n">set_i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">]):</span>
+            <span class="n">label</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Target set </span><span class="si">{</span><span class="n">set_i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s1">&#39;X_c&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="k">if</span> <span class="n">task_loader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">task_loader</span><span class="o">.</span><span class="n">target_var_IDs</span><span class="p">[</span><span class="n">set_i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s1">&#39;X_c&#39;</span><span class="p">])]</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+                <span class="o">*</span><span class="n">X</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="n">markers</span><span class="p">[</span><span class="n">set_i</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">set_i</span><span class="p">],</span>
+                <span class="o">**</span><span class="n">scatter_kwargs</span><span class="p">,</span>
+                <span class="n">facecolors</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">markers</span><span class="p">[</span><span class="n">set_i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span> <span class="k">else</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">add_legend</span><span class="p">:</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="offgrid_context_observations"><a class="viewcode-back" href="../../reference/plot.html#deepsensor.plot.offgrid_context_observations">[docs]</a><span class="k">def</span> <span class="nf">offgrid_context_observations</span><span class="p">(</span>
+    <span class="n">axes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">]],</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+    <span class="n">data_processor</span><span class="p">:</span> <span class="n">DataProcessor</span><span class="p">,</span>
+    <span class="n">task_loader</span><span class="p">:</span> <span class="n">TaskLoader</span><span class="p">,</span>
+    <span class="n">context_set_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">format_str</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot unnormalised context observation values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]):</span>
+<span class="sd">            Axes to plot on.</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            Task containing the context set to plot.</span>
+<span class="sd">        data_processor (:class:`~.data.processor.DataProcessor`):</span>
+<span class="sd">            Data processor used to unnormalise the context set.</span>
+<span class="sd">        task_loader (:class:`~.data.loader.TaskLoader`):</span>
+<span class="sd">            Task loader used to load the data, containing context set metadata</span>
+<span class="sd">            used for plotting.</span>
+<span class="sd">        context_set_idx (int):</span>
+<span class="sd">            Index of the context set to plot.</span>
+<span class="sd">        format_str (str, optional):</span>
+<span class="sd">            Format string for the context observation values. By default</span>
+<span class="sd">            ``&quot;{:.2f}&quot;``.</span>
+<span class="sd">        extent (Tuple[int, int, int, int], optional):</span>
+<span class="sd">            Extent of the plot, by default None.</span>
+<span class="sd">        color (str, optional):</span>
+<span class="sd">            Color of the text, by default &quot;black&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError:</span>
+<span class="sd">            If the context set is gridded.</span>
+<span class="sd">        AssertionError:</span>
+<span class="sd">            If the context set is not 1D.</span>
+<span class="sd">        AssertionError:</span>
+<span class="sd">            If the task&#39;s &quot;Y_c&quot; value for the context set ID is not 2D.</span>
+<span class="sd">        AssertionError:</span>
+<span class="sd">            If the task&#39;s &quot;Y_c&quot; value for the context set ID does not have</span>
+<span class="sd">            exactly one variable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">format_str</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">format_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span>
+
+    <span class="n">var_ID</span> <span class="o">=</span> <span class="n">task_loader</span><span class="o">.</span><span class="n">context_var_IDs</span><span class="p">[</span>
+        <span class="n">context_set_idx</span>
+    <span class="p">]</span>  <span class="c1"># Tuple of variable IDs for the context set</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">var_ID</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="p">),</span> <span class="s2">&quot;Plotting context observations only supported for single-variable (1D) context sets&quot;</span>
+    <span class="n">var_ID</span> <span class="o">=</span> <span class="n">var_ID</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">X_c</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_c&quot;</span><span class="p">][</span><span class="n">context_set_idx</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">X_c</span><span class="p">,</span> <span class="nb">tuple</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The context set must not be gridded but is of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">X_c</span><span class="p">)</span><span class="si">}</span><span class="s2"> for context set at index </span><span class="si">{</span><span class="n">context_set_idx</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">X_c</span> <span class="o">=</span> <span class="n">data_processor</span><span class="o">.</span><span class="n">map_coord_array</span><span class="p">(</span><span class="n">X_c</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">Y_c</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_c&quot;</span><span class="p">][</span><span class="n">context_set_idx</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">Y_c</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">Y_c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">Y_c</span> <span class="o">=</span> <span class="n">data_processor</span><span class="o">.</span><span class="n">map_array</span><span class="p">(</span><span class="n">Y_c</span><span class="p">,</span> <span class="n">var_ID</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">x_c</span><span class="p">,</span> <span class="n">y_c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X_c</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">Y_c</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">extent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                <span class="n">extent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">x_c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">extent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">extent</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">x_c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">extent</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="p">):</span>
+                <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">*</span><span class="n">x_c</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">format_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">y_c</span><span class="p">)),</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="receptive_field"><a class="viewcode-back" href="../../reference/plot.html#deepsensor.plot.receptive_field">[docs]</a><span class="k">def</span> <span class="nf">receptive_field</span><span class="p">(</span>
+    <span class="n">receptive_field</span><span class="p">,</span>
+    <span class="n">data_processor</span><span class="p">:</span> <span class="n">DataProcessor</span><span class="p">,</span>
+    <span class="n">crs</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        receptive_field (...):</span>
+<span class="sd">            Receptive field to plot.</span>
+<span class="sd">        data_processor (:class:`~.data.processor.DataProcessor`):</span>
+<span class="sd">            Data processor used to unnormalise the context set.</span>
+<span class="sd">        crs (cartopy CRS):</span>
+<span class="sd">            Coordinate reference system for the plots.</span>
+<span class="sd">        extent (str | Tuple[float, float, float, float], optional):</span>
+<span class="sd">            Extent of the plot, in format (x2_min, x2_max, x1_min, x1_max), e.g. in</span>
+<span class="sd">            lat-lon format (lon_min, lon_max, lat_min, lat_max). By default &quot;global&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">subplot_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">crs</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="n">extent_str_to_tuple</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">extent</span><span class="p">])</span>
+    <span class="n">x2_min</span><span class="p">,</span> <span class="n">x2_max</span><span class="p">,</span> <span class="n">x1_min</span><span class="p">,</span> <span class="n">x1_max</span> <span class="o">=</span> <span class="n">extent</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">)</span>
+
+    <span class="n">x11</span><span class="p">,</span> <span class="n">x12</span> <span class="o">=</span> <span class="n">data_processor</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span>
+    <span class="n">x21</span><span class="p">,</span> <span class="n">x22</span> <span class="o">=</span> <span class="n">data_processor</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;map&quot;</span><span class="p">]</span>
+
+    <span class="n">x1_rf_raw</span> <span class="o">=</span> <span class="n">receptive_field</span> <span class="o">*</span> <span class="p">(</span><span class="n">x12</span> <span class="o">-</span> <span class="n">x11</span><span class="p">)</span>
+    <span class="n">x2_rf_raw</span> <span class="o">=</span> <span class="n">receptive_field</span> <span class="o">*</span> <span class="p">(</span><span class="n">x22</span> <span class="o">-</span> <span class="n">x21</span><span class="p">)</span>
+
+    <span class="n">x1_midpoint_raw</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1_max</span> <span class="o">+</span> <span class="n">x1_min</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">x2_midpoint_raw</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2_max</span> <span class="o">+</span> <span class="n">x2_min</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="c1"># Compute bottom left corner of receptive field</span>
+    <span class="n">x1_corner</span> <span class="o">=</span> <span class="n">x1_midpoint_raw</span> <span class="o">-</span> <span class="n">x1_rf_raw</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">x2_corner</span> <span class="o">=</span> <span class="n">x2_midpoint_raw</span> <span class="o">-</span> <span class="n">x2_rf_raw</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span>
+        <span class="n">mpatches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+            <span class="n">xy</span><span class="o">=</span><span class="p">[</span><span class="n">x2_corner</span><span class="p">,</span> <span class="n">x1_corner</span><span class="p">],</span>  <span class="c1"># Cartesian fmt: x2, x1</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">x2_rf_raw</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">x1_rf_raw</span><span class="p">,</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">crs</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">gridlines</span><span class="p">(</span><span class="n">draw_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+    <span class="n">x1_name</span> <span class="o">=</span> <span class="n">data_processor</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x1&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">x2_name</span> <span class="o">=</span> <span class="n">data_processor</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">][</span><span class="s2">&quot;x2&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Receptive field in raw coords: </span><span class="si">{</span><span class="n">x1_name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">x1_rf_raw</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x2_name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">x2_rf_raw</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="feature_maps"><a class="viewcode-back" href="../../reference/plot.html#deepsensor.plot.feature_maps">[docs]</a><span class="k">def</span> <span class="nf">feature_maps</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+    <span class="n">n_features_per_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">add_colorbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Colormap</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Greys&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the feature maps of a ``ConvNP`` model&#39;s decoder layers after a</span>
+<span class="sd">    forward pass with a ``Task``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (:class:`~.model.model.convnp.ConvNP`):</span>
+<span class="sd">            ...</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            ...</span>
+<span class="sd">        n_features_per_layer (int, optional):</span>
+<span class="sd">            ..., by default 1.</span>
+<span class="sd">        seed (int, optional):</span>
+<span class="sd">            ..., by default None.</span>
+<span class="sd">        figsize (int, optional):</span>
+<span class="sd">            ..., by default 3.</span>
+<span class="sd">        add_colorbar (bool, optional):</span>
+<span class="sd">            ..., by default False.</span>
+<span class="sd">        cmap (str | matplotlib.colors.Colormap, optional):</span>
+<span class="sd">            ..., by default &quot;Greys&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.figure.Figure:</span>
+<span class="sd">            A figure containing the feature maps.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError:</span>
+<span class="sd">            If the backend is not recognised.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.model.nps</span> <span class="kn">import</span> <span class="n">compute_encoding_tensor</span>
+
+    <span class="kn">import</span> <span class="nn">deepsensor</span>
+
+    <span class="c1"># Hacky way to load the correct __init__.py to get `convert_to_tensor` method</span>
+    <span class="k">if</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">str</span> <span class="o">==</span> <span class="s2">&quot;tf&quot;</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">deepsensor.tensorflow</span> <span class="k">as</span> <span class="nn">deepsensor</span>
+    <span class="k">elif</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">str</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">deepsensor.torch</span> <span class="k">as</span> <span class="nn">deepsensor</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown backend: </span><span class="si">{</span><span class="n">deepsensor</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">unet</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">decoder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Produce encoding</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">deepsensor</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">compute_encoding_tensor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">task</span><span class="p">))</span>
+
+    <span class="c1"># Manually construct the U-Net forward pass from</span>
+    <span class="c1"># `neuralprocesses.construct_convgnp` to get the feature maps</span>
+    <span class="k">def</span> <span class="nf">unet_forward</span><span class="p">(</span><span class="n">unet</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">feature_maps</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="n">unet</span><span class="o">.</span><span class="n">activations</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">unet</span><span class="o">.</span><span class="n">before_turn_layers</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">hs</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span><span class="p">]</span>
+        <span class="n">feature_map</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">feature_maps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature_map</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">layer</span><span class="p">,</span> <span class="n">activation</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">unet</span><span class="o">.</span><span class="n">before_turn_layers</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+            <span class="n">unet</span><span class="o">.</span><span class="n">activations</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+        <span class="p">):</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">activation</span><span class="p">(</span><span class="n">layer</span><span class="p">(</span><span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">hs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">feature_map</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">feature_maps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature_map</span><span class="p">)</span>
+
+        <span class="c1"># Now make the turn!</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="n">unet</span><span class="o">.</span><span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">](</span><span class="n">unet</span><span class="o">.</span><span class="n">after_turn_layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">](</span><span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">feature_map</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">feature_maps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature_map</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">h_prev</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">activation</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="nb">reversed</span><span class="p">(</span><span class="n">hs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="nb">reversed</span><span class="p">(</span><span class="n">unet</span><span class="o">.</span><span class="n">after_turn_layers</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="nb">reversed</span><span class="p">(</span><span class="n">unet</span><span class="o">.</span><span class="n">activations</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="p">):</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">activation</span><span class="p">(</span><span class="n">layer</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">h_prev</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">feature_map</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">feature_maps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature_map</span><span class="p">)</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="n">unet</span><span class="o">.</span><span class="n">final_linear</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">feature_map</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">feature_maps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature_map</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">feature_maps</span>
+
+    <span class="n">feature_maps</span> <span class="o">=</span> <span class="n">unet_forward</span><span class="p">(</span><span class="n">unet</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="n">figs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">layer_i</span><span class="p">,</span> <span class="n">feature_map</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">feature_maps</span><span class="p">):</span>
+        <span class="n">n_features</span> <span class="o">=</span> <span class="n">feature_map</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">n_features_to_plot</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_features_per_layer</span><span class="p">,</span> <span class="n">n_features</span><span class="p">)</span>
+        <span class="n">feature_idxs</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="n">n_features_to_plot</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+            <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">ncols</span><span class="o">=</span><span class="n">n_features_to_plot</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">figsize</span> <span class="o">*</span> <span class="n">n_features_to_plot</span><span class="p">,</span> <span class="n">figsize</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_features_to_plot</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">f_i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">feature_idxs</span><span class="p">,</span> <span class="n">axes</span><span class="p">):</span>
+            <span class="n">fm</span> <span class="o">=</span> <span class="n">feature_map</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f_i</span><span class="p">]</span>
+            <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">fm</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Feature </span><span class="si">{</span><span class="n">f_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">figsize</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
+                <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span>
+                <span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">labelleft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">add_colorbar</span><span class="p">:</span>
+                <span class="n">cbar</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Layer </span><span class="si">{</span><span class="n">layer_i</span><span class="si">}</span><span class="s2"> feature map. Shape: </span><span class="si">{</span><span class="n">feature_map</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">. Min=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">feature_map</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, Max=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">feature_map</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="n">figsize</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+        <span class="n">figs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figs</span></div>
+
+
+<div class="viewcode-block" id="placements"><a class="viewcode-back" href="../../reference/plot.html#deepsensor.plot.placements">[docs]</a><span class="k">def</span> <span class="nf">placements</span><span class="p">(</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+    <span class="n">X_new_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">data_processor</span><span class="p">:</span> <span class="n">DataProcessor</span><span class="p">,</span>
+    <span class="n">crs</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">scatter_kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;...</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            Task containing the context set used to compute the acquisition</span>
+<span class="sd">            function.</span>
+<span class="sd">        X_new_df (:class:`pandas.DataFrame`):</span>
+<span class="sd">            Dataframe containing the placement locations.</span>
+<span class="sd">        data_processor (:class:`~.data.processor.DataProcessor`):</span>
+<span class="sd">            Data processor used to unnormalise the context set and placement</span>
+<span class="sd">            locations.</span>
+<span class="sd">        crs (cartopy CRS):</span>
+<span class="sd">            Coordinate reference system for the plots.</span>
+<span class="sd">        extent (Tuple[int, int, int, int] | str, optional):</span>
+<span class="sd">            Extent of the plots, by default None.</span>
+<span class="sd">        figsize (int, optional):</span>
+<span class="sd">            Figure size in inches, by default 3.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`matplotlib:matplotlib.figure.Figure`</span>
+<span class="sd">            A figure containing the placement plots.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;projection&quot;</span><span class="p">:</span> <span class="n">crs</span><span class="p">},</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">figsize</span><span class="p">,</span> <span class="n">figsize</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">*</span><span class="n">X_new_df</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">**</span><span class="n">scatter_kwargs</span><span class="p">)</span>
+    <span class="n">offgrid_context</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">data_processor</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">**</span><span class="n">scatter_kwargs</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">extent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">elif</span> <span class="n">extent</span> <span class="o">==</span> <span class="s2">&quot;global&quot;</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_global</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="acquisition_fn"><a class="viewcode-back" href="../../reference/plot.html#deepsensor.plot.acquisition_fn">[docs]</a><span class="k">def</span> <span class="nf">acquisition_fn</span><span class="p">(</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+    <span class="n">acquisition_fn_ds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">X_new_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">data_processor</span><span class="p">:</span> <span class="n">DataProcessor</span><span class="p">,</span>
+    <span class="n">crs</span><span class="p">,</span>
+    <span class="n">col_dim</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;iteration&quot;</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Colormap</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Greys_r&quot;</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">add_colorbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">max_ncol</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Args:</span>
+<span class="sd">        task (:class:`~.data.task.Task`):</span>
+<span class="sd">            Task containing the context set used to compute the acquisition</span>
+<span class="sd">            function.</span>
+<span class="sd">        acquisition_fn_ds (:class:`numpy:numpy.ndarray`):</span>
+<span class="sd">            Acquisition function dataset.</span>
+<span class="sd">        X_new_df (:class:`pandas.DataFrame`):</span>
+<span class="sd">            Dataframe containing the placement locations.</span>
+<span class="sd">        data_processor (:class:`~.data.processor.DataProcessor`):</span>
+<span class="sd">            Data processor used to unnormalise the context set and placement</span>
+<span class="sd">            locations.</span>
+<span class="sd">        crs (cartopy CRS):</span>
+<span class="sd">            Coordinate reference system for the plots.</span>
+<span class="sd">        col_dim (str, optional):</span>
+<span class="sd">            Column dimension to plot over, by default &quot;iteration&quot;.</span>
+<span class="sd">        cmap (str | matplotlib.colors.Colormap, optional):</span>
+<span class="sd">            Color map to use for the plots, by default &quot;Greys_r&quot;.</span>
+<span class="sd">        figsize (int, optional):</span>
+<span class="sd">            Figure size in inches, by default 3.</span>
+<span class="sd">        add_colorbar (bool, optional):</span>
+<span class="sd">            Whether to add a colorbar to the plots, by default True.</span>
+<span class="sd">        max_ncol (int, optional):</span>
+<span class="sd">            Maximum number of columns to use for the plots, by default 5.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.pyplot.Figure</span>
+<span class="sd">            A figure containing the acquisition function plots.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError:</span>
+<span class="sd">            If a column dimension is encountered that is not one of</span>
+<span class="sd">            ``[&quot;time&quot;, &quot;sample&quot;]``.</span>
+<span class="sd">        AssertionError:</span>
+<span class="sd">            If the number of columns in the acquisition function dataset is</span>
+<span class="sd">            greater than ``max_ncol``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Remove spatial dims using data_processor.raw_spatial_coords_names</span>
+    <span class="n">plot_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">col_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">data_processor</span><span class="o">.</span><span class="n">raw_spatial_coord_names</span><span class="p">]</span>
+    <span class="n">non_plot_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">dim</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">dims</span> <span class="k">if</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">plot_dims</span><span class="p">]</span>
+    <span class="n">valid_avg_dims</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">non_plot_dims</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_avg_dims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot average over dim </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> for plotting. Must be one of &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">valid_avg_dims</span><span class="si">}</span><span class="s2">. Select a single value for </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> using &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;`acquisition_fn_ds.sel(</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">=...)`.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_plot_dims</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Average over non-plot dims</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Averaging acquisition function over dims for plotting: &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">non_plot_dims</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">acquisition_fn_ds</span> <span class="o">=</span> <span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">non_plot_dims</span><span class="p">)</span>
+
+    <span class="n">col_vals</span> <span class="o">=</span> <span class="n">acquisition_fn_ds</span><span class="p">[</span><span class="n">col_dim</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">if</span> <span class="n">col_vals</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">n_col_vals</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n_col_vals</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_vals</span><span class="p">)</span>
+    <span class="n">ncols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">max_ncol</span><span class="p">,</span> <span class="n">n_col_vals</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">n_col_vals</span> <span class="o">&gt;</span> <span class="n">ncols</span><span class="p">:</span>
+        <span class="n">nrows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_col_vals</span> <span class="o">/</span> <span class="n">ncols</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nrows</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;projection&quot;</span><span class="p">:</span> <span class="n">crs</span><span class="p">},</span>
+        <span class="n">ncols</span><span class="o">=</span><span class="n">ncols</span><span class="p">,</span>
+        <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">figsize</span> <span class="o">*</span> <span class="n">ncols</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">*</span> <span class="n">nrows</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">nrows</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">ncols</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">add_colorbar</span><span class="p">:</span>
+        <span class="nb">min</span><span class="p">,</span> <span class="nb">max</span> <span class="o">=</span> <span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use different colour scales for each plot</span>
+        <span class="nb">min</span><span class="p">,</span> <span class="nb">max</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">col_vals</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_vals</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">final_axis</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">final_axis</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">col_dim</span><span class="p">:</span> <span class="n">col_val</span><span class="p">})</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="nb">min</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">max</span><span class="p">,</span> <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">add_colorbar</span> <span class="ow">and</span> <span class="n">final_axis</span><span class="p">:</span>
+            <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">cax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">([</span><span class="mf">0.93</span><span class="p">,</span> <span class="mf">0.035</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.91</span><span class="p">])</span>  <span class="c1"># add a small custom axis</span>
+            <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
+                <span class="n">im</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span>
+            <span class="p">)</span>  <span class="c1"># specify axis for colorbar to occupy with cax</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col_dim</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">col_val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">col_dim</span> <span class="o">==</span> <span class="s2">&quot;iteration&quot;</span><span class="p">:</span>
+            <span class="n">X_new_df_plot</span> <span class="o">=</span> <span class="n">X_new_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">col_val</span><span class="p">)]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Assumed plotting single iteration</span>
+            <span class="nb">iter</span> <span class="o">=</span> <span class="n">acquisition_fn_ds</span><span class="o">.</span><span class="n">iteration</span><span class="o">.</span><span class="n">values</span>
+            <span class="k">assert</span> <span class="nb">iter</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Expected single iteration&quot;</span>
+            <span class="n">X_new_df_plot</span> <span class="o">=</span> <span class="n">X_new_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">iter</span><span class="o">.</span><span class="n">item</span><span class="p">())]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">X_new_df_plot</span><span class="p">,</span>
+            <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">offgrid_context</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">data_processor</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="c1"># Remove any unused axes</span>
+    <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">col_vals</span><span class="p">)</span> <span class="p">:]:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="prediction"><a class="viewcode-back" href="../../reference/plot.html#deepsensor.plot.prediction">[docs]</a><span class="k">def</span> <span class="nf">prediction</span><span class="p">(</span>
+    <span class="n">pred</span><span class="p">:</span> <span class="n">Prediction</span><span class="p">,</span>
+    <span class="n">date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">data_processor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataProcessor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">task_loader</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskLoader</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Task</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prediction_parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+    <span class="n">crs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">colorbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;viridis&quot;</span><span class="p">,</span>
+    <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the mean and standard deviation of a prediction.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pred (:class:`~.model.prediction.Prediction`):</span>
+<span class="sd">            Prediction to plot.</span>
+<span class="sd">        date (str | :class:`pandas:pandas.Timestamp`):</span>
+<span class="sd">            Date of the prediction.</span>
+<span class="sd">        data_processor (:class:`~.data.processor.DataProcessor`):</span>
+<span class="sd">            Data processor used to unnormalise the context set.</span>
+<span class="sd">        task_loader (:class:`~.data.loader.TaskLoader`):</span>
+<span class="sd">            Task loader used to load the data, containing context set metadata</span>
+<span class="sd">            used for plotting.</span>
+<span class="sd">        task (:class:`~.data.task.Task`, optional):</span>
+<span class="sd">            Task containing the context data to overlay.</span>
+<span class="sd">        prediction_parameters (List[str] | str, optional):</span>
+<span class="sd">            Prediction parameters to plot, by default &quot;all&quot;.</span>
+<span class="sd">        crs (cartopy CRS, optional):</span>
+<span class="sd">            Coordinate reference system for the plots, by default None.</span>
+<span class="sd">        colorbar (bool, optional):</span>
+<span class="sd">            Whether to add a colorbar to the plots, by default True.</span>
+<span class="sd">        cmap (str):</span>
+<span class="sd">            Colormap to use for the plots. By default &quot;viridis&quot;.</span>
+<span class="sd">        size (int, optional):</span>
+<span class="sd">            Size of the figure in inches per axis, by default 5.</span>
+<span class="sd">        extent: (tuple | str, optional):</span>
+<span class="sd">            Tuple of (lon_min, lon_max, lat_min, lat_max) or string of region name.</span>
+<span class="sd">            Options are: &quot;global&quot;, &quot;usa&quot;, &quot;uk&quot;, &quot;europe&quot;. Defaults to None (no</span>
+<span class="sd">            setting of extent).</span>
+<span class="sd">        c</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pred</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;off-grid&quot;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Cannot pass a `date` for off-grid predictions&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">data_processor</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Cannot pass a `data_processor` for off-grid predictions&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">task_loader</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Cannot pass a `task_loader` for off-grid predictions&quot;</span>
+        <span class="k">assert</span> <span class="n">task</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Cannot pass a `task` for off-grid predictions&quot;</span>
+        <span class="k">assert</span> <span class="n">crs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Cannot pass a `crs` for off-grid predictions&quot;</span>
+
+    <span class="n">x1_name</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">x1_name</span>
+    <span class="n">x2_name</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">x2_name</span>
+
+    <span class="k">if</span> <span class="n">prediction_parameters</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="n">prediction_parameters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">var_ID</span><span class="p">:</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]]</span> <span class="k">for</span> <span class="n">var_ID</span> <span class="ow">in</span> <span class="n">pred</span>
+        <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">prediction_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="n">var_ID</span><span class="p">:</span> <span class="n">prediction_parameters</span> <span class="k">for</span> <span class="n">var_ID</span> <span class="ow">in</span> <span class="n">pred</span><span class="p">}</span>
+
+    <span class="n">n_vars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">target_var_IDs</span><span class="p">)</span>
+    <span class="n">n_params</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">prediction_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="n">extent_str_to_tuple</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">extent</span><span class="p">])</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="n">n_vars</span><span class="p">,</span>
+        <span class="n">n_params</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">size</span> <span class="o">*</span> <span class="n">n_params</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="n">n_vars</span><span class="p">),</span>
+        <span class="n">subplot_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">crs</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_vars</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_params</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row_i</span><span class="p">,</span> <span class="n">var_ID</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">target_var_IDs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">col_i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">prediction_parameters</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]):</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">row_i</span><span class="p">,</span> <span class="n">col_i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">pred</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;on-grid&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;init_time&quot;</span> <span class="ow">in</span> <span class="n">pred</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">indexes</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Plotting forecasts not currently supported.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">param</span> <span class="o">==</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span>
+                    <span class="n">vmin</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">vmin</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">][</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                    <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                    <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span>
+                    <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">center</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># ax.set_aspect(&quot;auto&quot;)</span>
+                <span class="k">if</span> <span class="n">colorbar</span><span class="p">:</span>
+                    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="c1"># add axis to right</span>
+                    <span class="n">cax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="n">ax</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span><span class="o">.</span><span class="n">x1</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">,</span>
+                            <span class="n">ax</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span>
+                            <span class="mf">0.02</span><span class="p">,</span>
+                            <span class="n">ax</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+                        <span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
+                        <span class="n">im</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cax</span>
+                    <span class="p">)</span>  <span class="c1"># specify axis for colorbar to occupy with cax</span>
+                <span class="k">if</span> <span class="n">task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">offgrid_context</span><span class="p">(</span>
+                        <span class="n">ax</span><span class="p">,</span>
+                        <span class="n">task</span><span class="p">,</span>
+                        <span class="n">data_processor</span><span class="p">,</span>
+                        <span class="n">task_loader</span><span class="p">,</span>
+                        <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                        <span class="n">add_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">crs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">da</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">][</span><span class="n">param</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">()</span>
+                    <span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+
+                    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">BORDERS</span><span class="p">)</span>
+                    <span class="c1"># ax.set_extent(</span>
+                    <span class="c1">#     [da[&quot;lon&quot;].min(), da[&quot;lon&quot;].max(), da[&quot;lat&quot;].min(), da[&quot;lat&quot;].max()]</span>
+                    <span class="c1"># )</span>
+
+            <span class="k">elif</span> <span class="n">pred</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;off-grid&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;init_time&quot;</span> <span class="ow">in</span> <span class="n">pred</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Plotting forecasts not currently supported.&quot;</span><span class="p">)</span>
+                <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+                <span class="n">hue</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span>
+                    <span class="o">.</span><span class="n">reset_index</span><span class="p">()[[</span><span class="n">x1_name</span><span class="p">,</span> <span class="n">x2_name</span><span class="p">]]</span>
+                    <span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">x1_name</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">x2_name</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">hue</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x1_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">x2_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">],</span>
+                    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                    <span class="n">y</span><span class="o">=</span><span class="n">param</span><span class="p">,</span>
+                    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                    <span class="n">hue</span><span class="o">=</span><span class="n">hue</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># set legend title</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">hue</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+
+                <span class="c1"># rotate date times</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span>
+                    <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>
+                    <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var_ID</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">extent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="extent_str_to_tuple"><a class="viewcode-back" href="../../reference/plot.html#deepsensor.plot.extent_str_to_tuple">[docs]</a><span class="k">def</span> <span class="nf">extent_str_to_tuple</span><span class="p">(</span><span class="n">extent</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert extent string to (lon_min, lon_max, lat_min, lat_max) tuple.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        extent: str</span>
+<span class="sd">            String of region name. Options are: &quot;global&quot;, &quot;usa&quot;, &quot;uk&quot;, &quot;europe&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple of (lon_min, lon_max, lat_min, lat_max).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">extent</span> <span class="o">==</span> <span class="s2">&quot;global&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">extent</span> <span class="o">==</span> <span class="s2">&quot;north_america&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">160</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">extent</span> <span class="o">==</span> <span class="s2">&quot;uk&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">extent</span> <span class="o">==</span> <span class="s2">&quot;europe&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">70</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">extent</span> <span class="o">==</span> <span class="s2">&quot;germany&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">55</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Region </span><span class="si">{</span><span class="n">extent</span><span class="si">}</span><span class="s2"> not in supported list of regions with default bounds. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Options are: &#39;global&#39;, &#39;north_america&#39;, &#39;uk&#39;, &#39;europe&#39;.&quot;</span>
+        <span class="p">)</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

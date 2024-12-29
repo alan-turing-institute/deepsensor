@@ -1,0 +1,1180 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>deepsensor.model.model &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/deepsensor/model/model';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/model/index.html">deepsensor.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/convnp.html">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/model/nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2F_modules/deepsensor/model/model.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for deepsensor.model.model</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">deepsensor.data.loader</span> <span class="kn">import</span> <span class="n">TaskLoader</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.processor</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DataProcessor</span><span class="p">,</span>
+    <span class="n">process_X_mask_for_X</span><span class="p">,</span>
+    <span class="n">xarray_to_coord_array_normalised</span><span class="p">,</span>
+    <span class="n">mask_coord_array_normalised</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">deepsensor.model.pred</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Prediction</span><span class="p">,</span>
+    <span class="n">increase_spatial_resolution</span><span class="p">,</span>
+    <span class="n">infer_prediction_modality_from_X_t</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">deepsensor.data.task</span> <span class="kn">import</span> <span class="n">Task</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">lab</span> <span class="k">as</span> <span class="nn">B</span>
+
+<span class="c1"># For dispatching with TF and PyTorch model types when they have not yet been loaded.</span>
+<span class="c1"># See https://beartype.github.io/plum/types.html#moduletype</span>
+
+
+<div class="viewcode-block" id="ProbabilisticModel"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel">[docs]</a><span class="k">class</span> <span class="nc">ProbabilisticModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for probabilistic model used for DeepSensor.</span>
+<span class="sd">    Ensures a set of methods required for DeepSensor</span>
+<span class="sd">    are implemented by specific model classes that inherit from it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ProbabilisticModel.mean"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the model mean prediction over target points based on given context</span>
+<span class="sd">        data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task containing context data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray`: Mean prediction over target points.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">                If not implemented by child class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProbabilisticModel.variance"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel.variance">[docs]</a>    <span class="k">def</span> <span class="nf">variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model marginal variance over target points given context points.</span>
+<span class="sd">        Shape (N,).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task containing context data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray`: Marginal variance over target points.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">                If not implemented by child class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProbabilisticModel.std"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel.std">[docs]</a>    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model marginal standard deviation over target points given context</span>
+<span class="sd">        points. Shape (N,).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task containing context data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray`: Marginal standard deviation over target points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">var</span><span class="o">**</span><span class="mf">0.5</span></div>
+
+<div class="viewcode-block" id="ProbabilisticModel.stddev"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel.stddev">[docs]</a>    <span class="k">def</span> <span class="nf">stddev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># noqa</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProbabilisticModel.covariance"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel.covariance">[docs]</a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the model covariance matrix over target points based on given</span>
+<span class="sd">        context data. Shape (N, N).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task containing context data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`numpy:numpy.ndarray`: Covariance matrix over target points.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">                If not implemented by child class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProbabilisticModel.mean_marginal_entropy"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel.mean_marginal_entropy">[docs]</a>    <span class="k">def</span> <span class="nf">mean_marginal_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the mean marginal entropy over target points based on given</span>
+<span class="sd">        context data.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Note: Getting a vector of marginal entropies would be useful too.</span>
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task containing context data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Mean marginal entropy over target points.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">                If not implemented by child class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProbabilisticModel.joint_entropy"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel.joint_entropy">[docs]</a>    <span class="k">def</span> <span class="nf">joint_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the model joint entropy over target points based on given</span>
+<span class="sd">        context data.</span>
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task containing context data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Joint entropy over target points.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">                If not implemented by child class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProbabilisticModel.logpdf"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel.logpdf">[docs]</a>    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the joint model logpdf over target points based on given</span>
+<span class="sd">        context data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task containing context data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Joint logpdf over target points.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">                If not implemented by child class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProbabilisticModel.loss"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel.loss">[docs]</a>    <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the model loss over target points based on given context data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task containing context data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Loss over target points.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">                If not implemented by child class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProbabilisticModel.sample"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.ProbabilisticModel.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draws ``n_samples`` joint samples over target points based on given</span>
+<span class="sd">        context data. Returned shape is ``(n_samples, n_target)``.</span>
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            task (:class:`~.data.task.Task`):</span>
+<span class="sd">                Task containing context data.</span>
+<span class="sd">            n_samples (int, optional):</span>
+<span class="sd">                Number of samples to draw. Defaults to 1.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[:class:`numpy:numpy.ndarray`]: Joint samples over target points.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">                If not implemented by child class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="DeepSensorModel"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.DeepSensorModel">[docs]</a><span class="k">class</span> <span class="nc">DeepSensorModel</span><span class="p">(</span><span class="n">ProbabilisticModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements DeepSensor prediction functionality of a ProbabilisticModel.</span>
+<span class="sd">    Allows for outputting an xarray object containing on-grid predictions or a</span>
+<span class="sd">    pandas object containing off-grid predictions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_processor (:class:`~.data.processor.DataProcessor`):</span>
+<span class="sd">            DataProcessor object, used to unnormalise predictions.</span>
+<span class="sd">        task_loader (:class:`~.data.loader.TaskLoader`):</span>
+<span class="sd">            TaskLoader object, used to determine target variables for unnormalising.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">N_mixture_components</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Number of mixture components for mixture likelihoods</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data_processor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataProcessor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">task_loader</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskLoader</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span> <span class="o">=</span> <span class="n">task_loader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_processor</span> <span class="o">=</span> <span class="n">data_processor</span>
+
+<div class="viewcode-block" id="DeepSensorModel.predict"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.DeepSensorModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">tasks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Task</span><span class="p">],</span> <span class="n">Task</span><span class="p">],</span>
+        <span class="n">X_t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+            <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">X_t_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_t_is_normalised</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">aux_at_targets_override</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aux_at_targets_override_is_normalised</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">resolution_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">pred_params</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">ar_sample</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ar_subsample_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">unnormalise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">append_indexes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">progress_bar</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Prediction</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict on a regular grid or at off-grid locations.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tasks (List[Task] | Task):</span>
+<span class="sd">                List of tasks containing context data.</span>
+<span class="sd">            X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):</span>
+<span class="sd">                Target locations to predict at. Can be an xarray object</span>
+<span class="sd">                containingon-grid locations or a pandas object containing off-grid locations.</span>
+<span class="sd">            X_t_mask: :class:`xarray.Dataset` | :class:`xarray.DataArray`, optional</span>
+<span class="sd">                2D mask to apply to gridded ``X_t`` (zero/False will be NaNs). Will be interpolated</span>
+<span class="sd">                to the same grid as ``X_t``. Default None (no mask).</span>
+<span class="sd">            X_t_is_normalised (bool):</span>
+<span class="sd">                Whether the ``X_t`` coords are normalised. If False, will normalise</span>
+<span class="sd">                the coords before passing to model. Default ``False``.</span>
+<span class="sd">            aux_at_targets_override (:class:`xarray.Dataset` | :class:`xarray.DataArray`):</span>
+<span class="sd">                Optional auxiliary xarray data to override from the task_loader.</span>
+<span class="sd">            aux_at_targets_override_is_normalised (bool):</span>
+<span class="sd">                Whether the `aux_at_targets_override` coords are normalised.</span>
+<span class="sd">                If False, the DataProcessor will normalise the coords before passing to model.</span>
+<span class="sd">                Default False.</span>
+<span class="sd">            pred_params (Tuple[str]):</span>
+<span class="sd">                Tuple of prediction parameters to return. The strings refer to methods</span>
+<span class="sd">                of the model class which will be called and stored in the Prediction object.</span>
+<span class="sd">                Default (&quot;mean&quot;, &quot;std&quot;).</span>
+<span class="sd">            resolution_factor (float):</span>
+<span class="sd">                Optional factor to increase the resolution of the target grid</span>
+<span class="sd">                by. E.g. 2 will double the target resolution, 0.5 will halve</span>
+<span class="sd">                it.Applies to on-grid predictions only. Default 1.</span>
+<span class="sd">            n_samples (int):</span>
+<span class="sd">                Number of joint samples to draw from the model. If 0, will not</span>
+<span class="sd">                draw samples. Default 0.</span>
+<span class="sd">            ar_sample (bool):</span>
+<span class="sd">                Whether to use autoregressive sampling. Default ``False``.</span>
+<span class="sd">            unnormalise (bool):</span>
+<span class="sd">                Whether to unnormalise the predictions. Only works if ``self``</span>
+<span class="sd">                hasa ``data_processor`` and ``task_loader`` attribute. Default</span>
+<span class="sd">                ``True``.</span>
+<span class="sd">            seed (int):</span>
+<span class="sd">                Random seed for deterministic sampling. Default 0.</span>
+<span class="sd">            append_indexes (dict):</span>
+<span class="sd">                Dictionary of index metadata to append to pandas indexes in the</span>
+<span class="sd">                off-grid case. Default ``None``.</span>
+<span class="sd">            progress_bar (int):</span>
+<span class="sd">                Whether to display a progress bar over tasks. Default 0.</span>
+<span class="sd">            verbose (bool):</span>
+<span class="sd">                Whether to print time taken for prediction. Default ``False``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`~.model.pred.Prediction`):</span>
+<span class="sd">                A `dict`-like object mapping from target variable IDs to xarray or pandas objects</span>
+<span class="sd">                containing model predictions.</span>
+<span class="sd">                - If ``X_t`` is a pandas object, returns pandas objects</span>
+<span class="sd">                containing off-grid predictions.</span>
+<span class="sd">                - If ``X_t`` is an xarray object, returns xarray object</span>
+<span class="sd">                containing on-grid predictions.</span>
+<span class="sd">                - If ``n_samples`` == 0, returns only mean and std predictions.</span>
+<span class="sd">                - If ``n_samples`` &gt; 0, returns mean, std and samples</span>
+<span class="sd">                predictions.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError</span>
+<span class="sd">                If ``X_t`` is not an xarray object and</span>
+<span class="sd">                ``resolution_factor`` is not 1 or ``ar_subsample_factor`` is</span>
+<span class="sd">                not 1.</span>
+<span class="sd">            ValueError</span>
+<span class="sd">                If ``X_t`` is not a pandas object and ``append_indexes`` is not</span>
+<span class="sd">                ``None``.</span>
+<span class="sd">            ValueError</span>
+<span class="sd">                If ``X_t`` is not an xarray, pandas or numpy object.</span>
+<span class="sd">            ValueError</span>
+<span class="sd">                If ``append_indexes`` are not all the same length as ``X_t``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">infer_prediction_modality_from_X_t</span><span class="p">(</span><span class="n">X_t</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_t</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">resolution_factor</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;resolution_factor can only be used with on-grid predictions.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">ar_subsample_factor</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;ar_subsample_factor can only be used with on-grid predictions.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_t</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">append_indexes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;append_indexes can only be used with off-grid predictions.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;off-grid&quot;</span> <span class="ow">and</span> <span class="n">X_t_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO: Unit test this</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;X_t_mask can only be used with on-grid predictions.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ar_sample</span> <span class="ow">and</span> <span class="n">n_samples</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must pass `n_samples` &gt; 0 to use `ar_sample`.&quot;</span><span class="p">)</span>
+
+        <span class="n">target_delta_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">target_delta_t</span>
+        <span class="n">dts</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">target_delta_t</span><span class="p">]</span>
+        <span class="n">dts_all_zero</span> <span class="o">=</span> <span class="nb">all</span><span class="p">([</span><span class="n">dt</span> <span class="o">==</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">dts</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">target_delta_t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dts_all_zero</span><span class="p">:</span>
+            <span class="n">forecasting_mode</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">lead_times</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">target_delta_t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">dts_all_zero</span><span class="p">:</span>
+            <span class="n">target_var_IDs_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">target_var_IDs</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            Got more than one set of target variables in target sets,</span>
+<span class="s2">            but predictions can only be made with one set of target variables</span>
+<span class="s2">            to simplify implementation.</span>
+<span class="s2">            Got </span><span class="si">{</span><span class="n">target_var_IDs_set</span><span class="si">}</span><span class="s2">.</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_var_IDs_set</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">msg</span>
+            <span class="c1"># Repeat lead_tim for each variable in each target set</span>
+            <span class="n">lead_times</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">target_set_idx</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">target_delta_t</span><span class="p">):</span>
+                <span class="n">target_set_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">target_dims</span><span class="p">[</span><span class="n">target_set_idx</span><span class="p">]</span>
+                <span class="n">lead_times</span> <span class="o">+=</span> <span class="p">[</span>
+                    <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">time_freq</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">target_set_dim</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="n">forecasting_mode</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">forecasting_mode</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">lead_times</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Task</span><span class="p">:</span>
+            <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">tasks</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">B</span><span class="o">.</span><span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="n">init_dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">]</span>
+
+        <span class="c1"># Flatten tuple of tuples to single list</span>
+        <span class="n">target_var_IDs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">var_ID</span> <span class="k">for</span> <span class="nb">set</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">target_var_IDs</span> <span class="k">for</span> <span class="n">var_ID</span> <span class="ow">in</span> <span class="nb">set</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">lead_times</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lead_times</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_var_IDs</span><span class="p">)</span>
+
+        <span class="c1"># TODO consider removing this logic, can we just depend on the dim names in X_t?</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unnormalise</span><span class="p">:</span>
+            <span class="n">coord_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">:</span> <span class="s2">&quot;x2&quot;</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">unnormalise</span><span class="p">:</span>
+            <span class="n">coord_names</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">raw_spatial_coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s2">&quot;x2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">raw_spatial_coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">}</span>
+
+        <span class="c1">### Pre-process X_t if necessary (TODO consider moving this to Prediction class)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_t</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">):</span>
+            <span class="n">X_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">X_t</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_t</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="c1"># Convert to empty dataframe with normalised or unnormalised coord names</span>
+            <span class="k">if</span> <span class="n">X_t_is_normalised</span><span class="p">:</span>
+                <span class="n">index_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">index_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">raw_spatial_coord_names</span>
+            <span class="n">X_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X_t</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">index_names</span><span class="p">)</span>
+            <span class="n">X_t</span> <span class="o">=</span> <span class="n">X_t</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">index_names</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_t</span><span class="p">,</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">)):</span>
+            <span class="c1"># Remove time dimension if present</span>
+            <span class="k">if</span> <span class="s2">&quot;time&quot;</span> <span class="ow">in</span> <span class="n">X_t</span><span class="o">.</span><span class="n">coords</span><span class="p">:</span>
+                <span class="n">X_t</span> <span class="o">=</span> <span class="n">X_t</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;off-grid&quot;</span> <span class="ow">and</span> <span class="n">append_indexes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Check append_indexes are all same length as X_t</span>
+            <span class="k">if</span> <span class="n">append_indexes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">vals</span> <span class="ow">in</span> <span class="n">append_indexes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_t</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;append_indexes[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">] must be same length as X_t, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">X_t</span><span class="p">)</span><span class="si">}</span><span class="s2"> respectively.&quot;</span>
+                        <span class="p">)</span>
+            <span class="n">X_t</span> <span class="o">=</span> <span class="n">X_t</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="n">X_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X_t</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">append_indexes</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">X_t</span> <span class="o">=</span> <span class="n">X_t</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X_t</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">X_t_is_normalised</span><span class="p">:</span>
+            <span class="n">X_t_normalised</span> <span class="o">=</span> <span class="n">X_t</span>
+            <span class="c1"># Unnormalise coords to use for xarray/pandas objects for storing predictions</span>
+            <span class="n">X_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">map_coords</span><span class="p">(</span><span class="n">X_t</span><span class="p">,</span> <span class="n">unnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">X_t_is_normalised</span><span class="p">:</span>
+            <span class="c1"># Normalise coords to use for model</span>
+            <span class="n">X_t_normalised</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">map_coords</span><span class="p">(</span><span class="n">X_t</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;on-grid&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">resolution_factor</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">X_t_normalised</span> <span class="o">=</span> <span class="n">increase_spatial_resolution</span><span class="p">(</span>
+                    <span class="n">X_t_normalised</span><span class="p">,</span> <span class="n">resolution_factor</span>
+                <span class="p">)</span>
+                <span class="n">X_t</span> <span class="o">=</span> <span class="n">increase_spatial_resolution</span><span class="p">(</span>
+                    <span class="n">X_t</span><span class="p">,</span> <span class="n">resolution_factor</span><span class="p">,</span> <span class="n">coord_names</span><span class="o">=</span><span class="n">coord_names</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">X_t_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">X_t_mask</span> <span class="o">=</span> <span class="n">process_X_mask_for_X</span><span class="p">(</span><span class="n">X_t_mask</span><span class="p">,</span> <span class="n">X_t</span><span class="p">)</span>
+                <span class="n">X_t_mask_normalised</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">map_coords</span><span class="p">(</span><span class="n">X_t_mask</span><span class="p">)</span>
+                <span class="n">X_t_arr</span> <span class="o">=</span> <span class="n">xarray_to_coord_array_normalised</span><span class="p">(</span><span class="n">X_t_normalised</span><span class="p">)</span>
+                <span class="c1"># Remove points that lie outside the mask</span>
+                <span class="n">X_t_arr</span> <span class="o">=</span> <span class="n">mask_coord_array_normalised</span><span class="p">(</span><span class="n">X_t_arr</span><span class="p">,</span> <span class="n">X_t_mask_normalised</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">X_t_arr</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">X_t_normalised</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="n">X_t_normalised</span><span class="p">[</span><span class="s2">&quot;x2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;off-grid&quot;</span><span class="p">:</span>
+            <span class="n">X_t_arr</span> <span class="o">=</span> <span class="n">X_t_normalised</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()[[</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_t_arr</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">target_shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_t_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_t_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">target_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_t_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unnormalise</span><span class="p">:</span>
+            <span class="n">X_t</span> <span class="o">=</span> <span class="n">X_t_normalised</span>
+
+        <span class="k">if</span> <span class="s2">&quot;mixture_probs&quot;</span> <span class="ow">in</span> <span class="n">pred_params</span><span class="p">:</span>
+            <span class="c1"># Store each mixture component separately w/o overriding pred_params</span>
+            <span class="n">pred_params_to_store</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">pred_params</span><span class="p">)</span>
+            <span class="n">pred_params_to_store</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;mixture_probs&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">component_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N_mixture_components</span><span class="p">):</span>
+                <span class="n">pred_params_to_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mixture_probs_</span><span class="si">{</span><span class="n">component_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pred_params_to_store</span> <span class="o">=</span> <span class="n">pred_params</span>
+
+        <span class="c1"># Dict to store predictions for each target variable</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="n">Prediction</span><span class="p">(</span>
+            <span class="n">target_var_IDs</span><span class="p">,</span>
+            <span class="n">pred_params_to_store</span><span class="p">,</span>
+            <span class="n">init_dates</span><span class="p">,</span>
+            <span class="n">X_t</span><span class="p">,</span>
+            <span class="n">X_t_mask</span><span class="p">,</span>
+            <span class="n">coord_names</span><span class="p">,</span>
+            <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span>
+            <span class="n">forecasting_mode</span><span class="o">=</span><span class="n">forecasting_mode</span><span class="p">,</span>
+            <span class="n">lead_times</span><span class="o">=</span><span class="n">lead_times</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">unnormalise_pred_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Unnormalise an (N_dims, N_targets) array of predictions.&quot;&quot;&quot;</span>
+            <span class="n">var_IDs_flattened</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">var_ID</span>
+                <span class="k">for</span> <span class="n">var_IDs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">target_var_IDs</span>
+                <span class="k">for</span> <span class="n">var_ID</span> <span class="ow">in</span> <span class="n">var_IDs</span>
+            <span class="p">]</span>
+            <span class="k">assert</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">var_IDs_flattened</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">var_IDs_flattened</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var_ID</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">var_IDs_flattened</span><span class="p">):</span>
+                <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">map_array</span><span class="p">(</span>
+                    <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="n">var_ID</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_processor</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">var_ID</span><span class="p">][</span><span class="s2">&quot;method&quot;</span><span class="p">],</span>
+                    <span class="n">unnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">arr</span>
+
+        <span class="c1"># Don&#39;t change tasks by reference when overriding target locations</span>
+        <span class="c1"># TODO consider not copying tasks by default for efficiency</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">aux_at_targets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">aux_at_targets_override</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">aux_at_targets</span> <span class="o">=</span> <span class="n">aux_at_targets_override</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">aux_at_targets_override_is_normalised</span><span class="p">:</span>
+                    <span class="c1"># Assumes using default normalisation method</span>
+                    <span class="n">aux_at_targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_processor</span><span class="p">(</span>
+                        <span class="n">aux_at_targets</span><span class="p">,</span> <span class="n">assert_computed</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">aux_at_targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">aux_at_targets</span>
+
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="n">progress_bar</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">task</span><span class="p">[</span><span class="s2">&quot;X_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">X_t_arr</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">target_var_IDs</span><span class="p">))]</span>
+
+            <span class="c1"># If passing auxiliary data, need to sample it at target locations</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">aux_at_targets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">aux_at_targets_sliced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">time_slice_variable</span><span class="p">(</span>
+                    <span class="n">aux_at_targets</span><span class="p">,</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">task</span><span class="p">[</span><span class="s2">&quot;Y_t_aux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_loader</span><span class="o">.</span><span class="n">sample_offgrid_aux</span><span class="p">(</span>
+                    <span class="n">X_t_arr</span><span class="p">,</span> <span class="n">aux_at_targets_sliced</span>
+                <span class="p">)</span>
+
+            <span class="n">prediction_arrs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">prediction_methods</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">pred_params</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
+                    <span class="n">prediction_methods</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Prediction method </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> not found in model class.&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">B</span><span class="o">.</span><span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ar_sample</span><span class="p">:</span>
+                    <span class="n">sample_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;ar_sample&quot;</span><span class="p">)</span>
+                    <span class="n">sample_args</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="n">n_samples</span><span class="p">,</span>
+                        <span class="s2">&quot;ar_subsample_factor&quot;</span><span class="p">:</span> <span class="n">ar_subsample_factor</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sample_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">)</span>
+                    <span class="n">sample_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="n">n_samples</span><span class="p">}</span>
+
+            <span class="c1"># If `DeepSensor` model child has been sub-classed with a `__call__` method,</span>
+            <span class="c1"># we assume this is a distribution-like object that can be used to compute</span>
+            <span class="c1"># mean, std and samples. Otherwise, run the model with `Task` for each prediction type.</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__call__&quot;</span><span class="p">):</span>
+                <span class="c1"># Run model forwards once to generate output distribution, which we re-use</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">prediction_methods</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">prediction_arrs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ar_sample</span><span class="p">:</span>
+                    <span class="n">samples_arr</span> <span class="o">=</span> <span class="n">sample_method</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="o">**</span><span class="n">sample_args</span><span class="p">)</span>
+                    <span class="c1"># samples_arr = samples_arr.reshape((n_samples, len(target_var_IDs), *target_shape))</span>
+                    <span class="n">prediction_arrs</span><span class="p">[</span><span class="s2">&quot;samples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples_arr</span>
+                <span class="k">elif</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">ar_sample</span><span class="p">:</span>
+                    <span class="c1"># Can&#39;t draw AR samples from distribution object, need to re-run with task</span>
+                    <span class="n">samples_arr</span> <span class="o">=</span> <span class="n">sample_method</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="o">**</span><span class="n">sample_args</span><span class="p">)</span>
+                    <span class="n">samples_arr</span> <span class="o">=</span> <span class="n">samples_arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_var_IDs</span><span class="p">),</span> <span class="o">*</span><span class="n">target_shape</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">prediction_arrs</span><span class="p">[</span><span class="s2">&quot;samples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples_arr</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Re-run model for each prediction type</span>
+                <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">prediction_methods</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">prediction_arrs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">samples_arr</span> <span class="o">=</span> <span class="n">sample_method</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="o">**</span><span class="n">sample_args</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">ar_sample</span><span class="p">:</span>
+                        <span class="n">samples_arr</span> <span class="o">=</span> <span class="n">samples_arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_var_IDs</span><span class="p">),</span> <span class="o">*</span><span class="n">target_shape</span><span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="n">prediction_arrs</span><span class="p">[</span><span class="s2">&quot;samples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples_arr</span>
+
+            <span class="c1"># Concatenate multi-target predictions</span>
+            <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">prediction_arrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">param</span> <span class="o">!=</span> <span class="s2">&quot;samples&quot;</span><span class="p">:</span>
+                        <span class="n">concat_axis</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">elif</span> <span class="n">param</span> <span class="o">==</span> <span class="s2">&quot;samples&quot;</span><span class="p">:</span>
+                        <span class="c1"># Axis 0 is sample dim, axis 1 is variable dim</span>
+                        <span class="n">concat_axis</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">prediction_arrs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">concat_axis</span><span class="p">)</span>
+
+            <span class="c1"># Unnormalise predictions</span>
+            <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">prediction_arrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># TODO make class attributes?</span>
+                <span class="n">scale_and_offset_params</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+                <span class="n">scale_only_params</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span>
+                <span class="n">scale_squared_only_params</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;variance&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">unnormalise</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">param</span> <span class="o">==</span> <span class="s2">&quot;samples&quot;</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">sample_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
+                            <span class="n">prediction_arrs</span><span class="p">[</span><span class="s2">&quot;samples&quot;</span><span class="p">][</span><span class="n">sample_i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="n">unnormalise_pred_array</span><span class="p">(</span>
+                                    <span class="n">prediction_arrs</span><span class="p">[</span><span class="s2">&quot;samples&quot;</span><span class="p">][</span><span class="n">sample_i</span><span class="p">]</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">scale_and_offset_params</span><span class="p">:</span>
+                        <span class="n">prediction_arrs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">unnormalise_pred_array</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">scale_only_params</span><span class="p">:</span>
+                        <span class="n">prediction_arrs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">unnormalise_pred_array</span><span class="p">(</span>
+                            <span class="n">arr</span><span class="p">,</span> <span class="n">add_offset</span><span class="o">=</span><span class="kc">False</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">scale_squared_only_params</span><span class="p">:</span>
+                        <span class="c1"># This is a horrible hack to repeat the scaling operation of the linear</span>
+                        <span class="c1">#   transform twice s.t. new_var = scale ^ 2 * var</span>
+                        <span class="n">prediction_arrs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">unnormalise_pred_array</span><span class="p">(</span>
+                            <span class="n">arr</span><span class="p">,</span> <span class="n">add_offset</span><span class="o">=</span><span class="kc">False</span>
+                        <span class="p">)</span>
+                        <span class="n">prediction_arrs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">unnormalise_pred_array</span><span class="p">(</span>
+                            <span class="n">prediction_arrs</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="n">add_offset</span><span class="o">=</span><span class="kc">False</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Assume prediction parameters not captured above are dimensionless</span>
+                        <span class="c1">#   quantities like probabilities and should not be unnormalised</span>
+                        <span class="k">pass</span>
+
+            <span class="c1"># Assign predictions to Prediction object</span>
+            <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">prediction_arrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">param</span> <span class="o">!=</span> <span class="s2">&quot;mixture_probs&quot;</span><span class="p">:</span>
+                    <span class="n">pred</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span> <span class="n">arr</span><span class="p">,</span> <span class="n">lead_times</span><span class="o">=</span><span class="n">lead_times</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">param</span> <span class="o">==</span> <span class="s2">&quot;mixture_probs&quot;</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_mixture_components</span><span class="p">,</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of mixture components (</span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">) does not match &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;model attribute N_mixture_components (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N_mixture_components</span><span class="si">}</span><span class="s2">).&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">component_i</span><span class="p">,</span> <span class="n">probs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+                        <span class="n">pred</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">component_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">task</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span>
+                            <span class="n">probs</span><span class="p">,</span>
+                            <span class="n">lead_times</span><span class="o">=</span><span class="n">lead_times</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">forecasting_mode</span><span class="p">:</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">add_valid_time_coord_to_pred_and_move_time_dims</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">dur</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tic</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Done in </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">dur</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">)</span><span class="si">}</span><span class="s2">m:</span><span class="si">{</span><span class="n">dur</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">60</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pred</span></div></div>
+
+
+<div class="viewcode-block" id="add_valid_time_coord_to_pred_and_move_time_dims"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.add_valid_time_coord_to_pred_and_move_time_dims">[docs]</a><span class="k">def</span> <span class="nf">add_valid_time_coord_to_pred_and_move_time_dims</span><span class="p">(</span><span class="n">pred</span><span class="p">:</span> <span class="n">Prediction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Prediction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a valid time coordinate &quot;time&quot; to a Prediction object based on the</span>
+<span class="sd">    initialisation times &quot;init_time&quot; and lead times &quot;lead_time&quot;, and</span>
+<span class="sd">    reorder the time dims from (&quot;lead_time&quot;, &quot;init_time&quot;) to (&quot;init_time&quot;, &quot;lead_time&quot;).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pred (:class:`~.model.pred.Prediction`):</span>
+<span class="sd">            Prediction object to add valid time coordinate to.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`~.model.pred.Prediction`:</span>
+<span class="sd">            Prediction object with valid time coordinate added.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">var_ID</span> <span class="ow">in</span> <span class="n">pred</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;lead_time&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;init_time&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span><span class="o">.</span><span class="n">swaplevel</span><span class="p">(</span><span class="s2">&quot;init_time&quot;</span><span class="p">,</span> <span class="s2">&quot;lead_time&quot;</span><span class="p">)</span>
+            <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">],</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span>
+            <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;lead_time&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;init_time&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s2">&quot;init_time&quot;</span><span class="p">,</span> <span class="s2">&quot;lead_time&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported prediction type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">var_ID</span><span class="p">])</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pred</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../reference/model/model.html#deepsensor.model.model.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>  <span class="c1"># pragma: no cover # noqa: D103</span>
+    <span class="kn">import</span> <span class="nn">deepsensor.tensorflow</span>
+    <span class="kn">from</span> <span class="nn">deepsensor.data.loader</span> <span class="kn">import</span> <span class="n">TaskLoader</span>
+    <span class="kn">from</span> <span class="nn">deepsensor.data.processor</span> <span class="kn">import</span> <span class="n">DataProcessor</span>
+    <span class="kn">from</span> <span class="nn">deepsensor.model.convnp</span> <span class="kn">import</span> <span class="n">ConvNP</span>
+
+    <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="c1"># Load raw data</span>
+    <span class="n">ds_raw</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">tutorial</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;air_temperature&quot;</span><span class="p">)[</span><span class="s2">&quot;air&quot;</span><span class="p">]</span>
+    <span class="n">ds_raw2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ds_raw</span><span class="p">)</span>
+    <span class="n">ds_raw2</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;air2&quot;</span>
+
+    <span class="c1"># Normalise data</span>
+    <span class="n">data_processor</span> <span class="o">=</span> <span class="n">DataProcessor</span><span class="p">(</span><span class="n">x1_name</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">x2_name</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">)</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">data_processor</span><span class="p">(</span><span class="n">ds_raw</span><span class="p">)</span>
+    <span class="n">ds2</span> <span class="o">=</span> <span class="n">data_processor</span><span class="p">(</span><span class="n">ds_raw2</span><span class="p">)</span>
+
+    <span class="c1"># Set up task loader</span>
+    <span class="n">task_loader</span> <span class="o">=</span> <span class="n">TaskLoader</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">ds</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="p">[</span><span class="n">ds</span><span class="p">,</span> <span class="n">ds2</span><span class="p">])</span>
+
+    <span class="c1"># Set up model</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ConvNP</span><span class="p">(</span><span class="n">data_processor</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+
+    <span class="c1"># Predict on new task with 10% of context data and a dense grid of target points</span>
+    <span class="n">test_tasks</span> <span class="o">=</span> <span class="n">task_loader</span><span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2014-12-25&quot;</span><span class="p">,</span> <span class="s2">&quot;2014-12-31&quot;</span><span class="p">),</span> <span class="n">context_sampling</span><span class="o">=</span><span class="mi">40</span>
+    <span class="p">)</span>
+    <span class="c1"># print(repr(test_tasks))</span>
+
+    <span class="n">X_t</span> <span class="o">=</span> <span class="n">ds_raw</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_tasks</span><span class="p">,</span> <span class="n">X_t</span><span class="o">=</span><span class="n">X_t</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+
+    <span class="n">X_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_tasks</span><span class="p">,</span> <span class="n">X_t</span><span class="o">=</span><span class="n">X_t</span><span class="p">,</span> <span class="n">X_t_is_normalised</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span></div>
+
+    <span class="c1"># DEBUG</span>
+    <span class="c1"># task = task_loader(&quot;2014-12-31&quot;, context_sampling=40, target_sampling=&quot;all&quot;)</span>
+    <span class="c1"># samples = model.ar_sample(task, 5, ar_subsample_factor=20)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
