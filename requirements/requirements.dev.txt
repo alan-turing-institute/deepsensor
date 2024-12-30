@@ -7,3 +7,4 @@ pytest-cov
 ruff
 tox
 tox-gh-actions
+hypothesis
