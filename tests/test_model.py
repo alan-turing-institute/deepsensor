@@ -156,7 +156,7 @@ class TestModel(unittest.TestCase):
             ):
                 task = tl("2020-01-01", context_sampling, target_sampling)
 
-                n_targets = np.product(expected_obs_shape)
+                n_targets = np.prod(expected_obs_shape)
 
                 # Tensors
                 mean = model.mean(task)
@@ -192,7 +192,7 @@ class TestModel(unittest.TestCase):
                     )
 
                 if likelihood in ["cnp", "gnp"]:
-                    n_target_dims = np.product(tl.target_dims)
+                    n_target_dims = np.prod(tl.target_dims)
                     assert_shape(
                         model.covariance(task),
                         (
