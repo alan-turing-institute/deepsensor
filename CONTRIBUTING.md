@@ -96,7 +96,7 @@ command to edit previous commit messages, combine multiple commits into one, or 
 commits that are no longer necessary.
 
 Make sure you're using the developer dependencies.
-If you're working locally on the source code, *before* commiting, please run `pip install -r requirements/requirements.dev.txt` to install some useful dependencies just for development.
+If you're working locally on the source code, *before* commiting, please run `pip install .[dev]` to install some useful dependencies just for development.
 This includes `pre-commit` and `ruff` which are used to check and format your code style when you run `git commit`, so that you don't have to.
 
 Using pre-commit:
@@ -151,7 +151,7 @@ One easy way to contribute to the documentation is to provide feedback in [this 
 
 Another way to contribute is to directly edit or add to the documentation and open a PR:
 * Follow all the forking instructions above
-* Install the documentation requirements: `pip install -r requirements/requirements.docs.txt`
+* Install the documentation requirements: `pip install deepsensor[docs]`
 * Option A: Editing a markdown file
   * Simply make your edits!
 * Option B: Editing a jupyter notebook file
