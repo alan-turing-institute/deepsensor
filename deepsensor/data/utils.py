@@ -91,6 +91,8 @@ def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float
     """
     x1_res = np.abs(np.mean(np.diff(ds["x1"])))
     x2_res = np.abs(np.mean(np.diff(ds["x2"])))
+
+    # ensure float type, since numpy 2, np.mean returns a numpy float32
     data_resolution = float(np.min([x1_res, x2_res]))
     return data_resolution
 
