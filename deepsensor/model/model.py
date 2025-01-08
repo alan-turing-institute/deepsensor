@@ -940,26 +940,20 @@ class DeepSensorModel(ProbabilisticModel):
                         b_x1_min, b_x1_max = patch_overlap[0], patch_overlap[0]
                         b_x2_min, b_x2_max = patch_overlap[1], patch_overlap[1]
 
-                        """
-                        Do not remove border for the patches along top and left of dataset and change overlap size for last patch in each row and column.
-                        
-                        At end of row (when patch_x2_index = data_x2_index), to calculate the number of pixels to remove from left hand side of patch:
-                        If x2 is ascending, subtract previous patch x2 max value from current patch x2 min value to get bespoke overlap in column pixels.
-                        To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels 
-                        to get the number of pixels to remove from left hand side of patch.
-
-                        If x2 is descending. Subtract current patch max x2 value from previous patch min x2 value to get bespoke overlap in column pixels. 
-                        To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels 
-                        to get the number of pixels to remove from left hand side of patch.
-
-                        """
+                        # Do not remove border for the patches along top and left of dataset and change overlap size for last patch in each row and column.
                         if patch_x2_index[0] == data_x2_index[0]:
                             b_x2_min = 0
                             # TODO: Try to resolve this issue in data/loader.py by ensuring patches are perfectly square.
                             b_x2_max = b_x2_max
+
+                        # At end of row (when patch_x2_index = data_x2_index), to calculate the number of pixels to remove from left hand side of patch:
                         elif patch_x2_index[1] == data_x2_index[1]:
                             b_x2_max = 0
                             patch_row_prev = preds[i - 1]
+
+                            # If x2 is ascending, subtract previous patch x2 max value from current patch x2 min value to get bespoke overlap in column pixels.
+                            # To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels
+                            # to get the number of pixels to remove from left hand side of patch.
                             if x2_ascend:
                                 prev_patch_x2_max = get_index(
                                     patch_row_prev[var_name].coords[orig_x2_name].max(),
@@ -968,6 +962,10 @@ class DeepSensorModel(ProbabilisticModel):
                                 b_x2_min = (
                                     prev_patch_x2_max - patch_x2_index[0]
                                 ) - patch_overlap[1]
+
+                            # If x2 is descending. Subtract current patch max x2 value from previous patch min x2 value to get bespoke overlap in column pixels.
+                            # To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels
+                            # to get the number of pixels to remove from left hand side of patch.
                             else:
                                 prev_patch_x2_min = get_index(
                                     patch_row_prev[var_name].coords[orig_x2_name].min(),
