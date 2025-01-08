@@ -740,7 +740,6 @@ def test_patchwise_prediction():
 
     # gridded predictions
     assert [isinstance(ds, xr.Dataset) for ds in pred.values()]
-    # TODO come back to this, for artificial datasets here, shapes of predictions don't match inputs
     for var_ID in pred:
         assert_shape(
             pred[var_ID]["mean"],
