@@ -3,7 +3,6 @@ import itertools
 import tempfile
 
 from parameterized import parameterized
-from hypothesis import given, settings, strategies as st
 
 import os
 import xarray as xr

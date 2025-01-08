@@ -11,4 +11,3 @@ dist/*
 _build
 *.png
 deepsensor.egg-info/
-.hypothesis/
