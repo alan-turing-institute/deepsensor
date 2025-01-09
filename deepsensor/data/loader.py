@@ -191,7 +191,6 @@ class TaskLoader:
         ) = self.infer_context_and_target_var_IDs()
 
         self.coord_bounds = self._compute_global_coordinate_bounds()
-        self.coord_directions = self._compute_x1x2_direction()
 
     def _set_config(self):
         """Instantiate a config dictionary for the TaskLoader object."""
@@ -1449,6 +1448,7 @@ class TaskLoader:
         List[float]
             Sequence of patch spatial extent as [x1_min, x1_max, x2_min, x2_max].
         """
+        self.coord_directions = self._compute_x1x2_direction()
         # define patch size in x1/x2
         size = {}
         size["x1"], size["x2"] = patch_size
