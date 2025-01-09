@@ -910,7 +910,7 @@ class DeepSensorModel(ProbabilisticModel):
 
             data_x1_index, data_x2_index = get_index(data_x1, data_x2)
             patches_clipped = {var_name: [] for var_name in patch_preds[0].keys()}
-
+            print(patches_clipped)
             for i, patch_pred in enumerate(patch_preds):
                 for var_name, data_array in patch_pred.items():
                     if var_name in patch_pred:
@@ -943,10 +943,9 @@ class DeepSensorModel(ProbabilisticModel):
                         # Do not remove border for the patches along top and left of dataset and change overlap size for last patch in each row and column.
                         if patch_x2_index[0] == data_x2_index[0]:
                             b_x2_min = 0
-                            # TODO: Try to resolve this issue in data/loader.py by ensuring patches are perfectly square.
                             b_x2_max = b_x2_max
 
-                        # At end of row (when patch_x2_index = data_x2_index), to calculate the number of pixels to remove from left hand side of patch:
+                        # At end of row (when patch_x2_index = data_x2_index), calculate the number of pixels to remove from left hand side of patch.
                         elif patch_x2_index[1] == data_x2_index[1]:
                             b_x2_max = 0
                             patch_row_prev = preds[i - 1]
@@ -979,7 +978,7 @@ class DeepSensorModel(ProbabilisticModel):
 
                         if patch_x1_index[0] == data_x1_index[0]:
                             b_x1_min = 0
-                        # TODO: ensure this elif statement is robust to multiple patch sizes.
+                        
                         elif abs(patch_x1_index[1] - data_x1_index[1]) < 2:
                             b_x1_max = 0
                             b_x1_max = b_x1_max
@@ -1025,10 +1024,10 @@ class DeepSensorModel(ProbabilisticModel):
                         )
 
                         patches_clipped[var_name].append(patch_clip)
-
+            
             # Create blank prediction
             combined_dataset = copy.deepcopy(patches_clipped)
-
+            
             # Generate new blank DeepSensor.prediction object with same extent and coordinate system as X_t.
             for var, data_array_list in combined_dataset.items():
                 first_patchwise_pred = data_array_list[0]
@@ -1192,7 +1191,7 @@ class DeepSensorModel(ProbabilisticModel):
             prediction[var_name_copy] = stitched_preds
             prediction[var_name_copy] = stitched_prediction[var_name_copy]
 
-        return prediction
+        return prediction, stitched_prediction
 
 
 def add_valid_time_coord_to_pred_and_move_time_dims(pred: Prediction) -> Prediction:
