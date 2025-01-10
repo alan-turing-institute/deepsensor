@@ -810,25 +810,28 @@ class DeepSensorModel(ProbabilisticModel):
                 ),
             )
 
-        def get_coordinate_extent(ds, x1_ascend, x2_ascend) -> float:
+        def get_coordinate_extent(ds, x1_ascend, x2_ascend) -> tuple:
             """
             Get coordinate extent of dataset. This method is applied to either X_t or patchwise predictions. 
 
             Parameters
             ----------
-            ds (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
-                Data array to determine coordinate extent for
+            ds : Data object
+                The dataset or data array to determine coordinate extent for.
+                Refer to `X_t` in `predict_patchwise()` for supported types.
 
-            x1_ascend : str:
-                Boolean defining whether the x1 coords ascend (increase) from top to bottom, default = True.
+            x1_ascend : bool
+                Whether the x1 coordinates ascend (increase) from top to bottom.
 
-            x2_ascend : str:
-                Boolean defining whether the x2 coords ascend (increase) from left to right, default = True.
+            x2_ascend : bool
+                Whether the x2 coordinates ascend (increase) from left to right.
 
-            Returns:
+            Returns
             -------
-            
+            tuple of tuples:
+                Extents of x1 and x2 coordinates as ((min_x1, max_x1), (min_x2, max_x2)).
             """
+            
             if x1_ascend:
                 ds_x1_coords = (
                     ds.coords[orig_x1_name].min().values,
