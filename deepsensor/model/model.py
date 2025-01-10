@@ -933,6 +933,7 @@ class DeepSensorModel(ProbabilisticModel):
             data_x1_coords, data_x2_coords= get_coordinate_extent(X_t, x1_ascend, x2_ascend)
             data_x1_index, data_x2_index = get_index(data_x1_coords, data_x2_coords)
 
+            # Iterate through patchwise predictions and slice edges prior to stitchin.
             patches_clipped = {var_name: [] for var_name in patch_preds[0].keys()}
             for i, patch_pred in enumerate(patch_preds):
                 for var_name, data_array in patch_pred.items():
@@ -942,7 +943,8 @@ class DeepSensorModel(ProbabilisticModel):
                         patch_x1_coords, patch_x2_coords= get_coordinate_extent(data_array, x1_ascend, x2_ascend)
                         patch_x1_index, patch_x2_index = get_index(patch_x1_coords, patch_x2_coords)
 
-                        # Initially set the size of the border to slice off each patch to the size of the overlap. 
+                        # Calculate size of border to slice of each edge of patchwise predictions.
+                        # Initially set the size of all borders to the size of the overlap. 
                         b_x1_min, b_x1_max = patch_overlap[0], patch_overlap[0]
                         b_x2_min, b_x2_max = patch_overlap[1], patch_overlap[1]
 
@@ -958,7 +960,6 @@ class DeepSensorModel(ProbabilisticModel):
 
                             # If x2 is ascending, subtract previous patch x2 max value from current patch x2 min value to get bespoke overlap in column pixels.
                             # To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels
-                            # to get the number of pixels to remove from left hand side of patch.
                             if x2_ascend:
                                 prev_patch_x2_max = get_index(
                                     patch_row_prev[var_name].coords[orig_x2_name].max(),
@@ -968,9 +969,8 @@ class DeepSensorModel(ProbabilisticModel):
                                     prev_patch_x2_max - patch_x2_index[0]
                                 ) - patch_overlap[1]
 
-                            # If x2 is descending. Subtract current patch max x2 value from previous patch min x2 value to get bespoke overlap in column pixels.
+                            # If x2 is descending, subtract current patch max x2 value from previous patch min x2 value to get bespoke overlap in column pixels.
                             # To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels
-                            # to get the number of pixels to remove from left hand side of patch.
                             else:
                                 prev_patch_x2_min = get_index(
                                     patch_row_prev[var_name].coords[orig_x2_name].min(),
@@ -982,6 +982,7 @@ class DeepSensorModel(ProbabilisticModel):
                         else:
                             b_x2_max = b_x2_max
 
+                        # Repeat process as above for x1 coordinates. 
                         if patch_x1_index[0] == data_x1_index[0]:
                             b_x1_min = 0
                         
@@ -1018,6 +1019,7 @@ class DeepSensorModel(ProbabilisticModel):
                             data_array.sizes[orig_x2_name] - b_x2_max
                         )
 
+                        # Slice patchwise predictions
                         patch_clip = data_array.isel(
                             **{
                                 orig_x1_name: slice(
@@ -1031,9 +1033,10 @@ class DeepSensorModel(ProbabilisticModel):
 
                         patches_clipped[var_name].append(patch_clip)
             
-            # Create blank prediction
-            prediction = copy.deepcopy(patch_preds[0])
-            for var_name, data_array in prediction.items():
+            # Create blank prediction object to stitch prediction values onto.
+            stitched_prediction = copy.deepcopy(patch_preds[0])
+            # Set prediction object extent to the same as X_t.
+            for var_name, data_array in stitched_prediction.items():
                 blank_ds= xr.Dataset(
                     coords={
                         orig_x1_name: X_t[orig_x1_name],
@@ -1041,20 +1044,20 @@ class DeepSensorModel(ProbabilisticModel):
                     }
                 )
 
-                # Set time to same as patched prediction
+                # Set prediction object to same as the first patched prediction.
                 blank_ds["time"] = data_array["time"]
 
-                # set data variable names e.g. mean, std to those in patched prediction, make values blank
+                # Set data variable names e.g. mean, std to those in patched prediction. Make all values Nan.
                 for data_var in data_array.data_vars:
                     blank_ds[data_var] = data_array[data_var]
                     blank_ds[data_var][:] = np.nan
-                prediction[var_name] = blank_ds
+                stitched_prediction[var_name] = blank_ds
             
-            # Merge patchwise predictions to create final combined dataset.
+            # Merge patchwise predictions to create final stiched prediction.
             # Iterate over each variable (key) in the prediction dictionary
             for var_name, patches in patches_clipped.items():
                 # Retrieve the blank dataset for the current variable
-                prediction_array = prediction[var_name]
+                prediction_array = stitched_prediction[var_name]
 
                 # Merge each patch into the combined dataset
                 for patch in patches:
@@ -1070,8 +1073,8 @@ class DeepSensorModel(ProbabilisticModel):
                         )
 
                 # Update the dictionary with the merged dataset
-                prediction[var_name] = prediction_array
-            return prediction
+                stitched_prediction[var_name] = prediction_array
+            return stitched_prediction
 
         # load patch_size and stride from task
         patch_size = tasks[0]["patch_size"]
@@ -1166,11 +1169,11 @@ class DeepSensorModel(ProbabilisticModel):
         )
 
         patches_per_row = get_patches_per_row(preds)
-        stitched_prediction = stitch_clipped_predictions(
+        prediction = stitch_clipped_predictions(
             preds, patch_overlap_unnorm, patches_per_row, x1_ascending, x2_ascending
         )
 
-        return stitched_prediction
+        return prediction
 
 
 def add_valid_time_coord_to_pred_and_move_time_dims(pred: Prediction) -> Prediction:
