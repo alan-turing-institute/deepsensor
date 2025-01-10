@@ -1032,49 +1032,46 @@ class DeepSensorModel(ProbabilisticModel):
                         patches_clipped[var_name].append(patch_clip)
             
             # Create blank prediction
-            combined_dataset = copy.deepcopy(patches_clipped)
-            
-            # Generate new blank DeepSensor.prediction object with same extent and coordinate system as X_t.
-            for var, data_array_list in combined_dataset.items():
-                first_patchwise_pred = data_array_list[0]
-
-                # Define coordinate extent and time
-                blank_pred = xr.Dataset(
+            prediction = copy.deepcopy(patch_preds[0])
+            for var_name, data_array in prediction.items():
+                blank_ds= xr.Dataset(
                     coords={
                         orig_x1_name: X_t[orig_x1_name],
                         orig_x2_name: X_t[orig_x2_name],
-                        "time": first_patchwise_pred["time"],
                     }
                 )
 
-                # Set variable names to those in patched predictions, set values to Nan.
-                for param in first_patchwise_pred.data_vars:
-                    blank_pred[param] = first_patchwise_pred[param]
-                    blank_pred[param][:] = np.nan
-                combined_dataset[var] = blank_pred
+                # Set time to same as patched prediction
+                blank_ds["time"] = data_array["time"]
 
+                # set data variable names e.g. mean, std to those in patched prediction, make values blank
+                for data_var in data_array.data_vars:
+                    blank_ds[data_var] = data_array[data_var]
+                    blank_ds[data_var][:] = np.nan
+                prediction[var_name] = blank_ds
+            
             # Merge patchwise predictions to create final combined dataset.
             # Iterate over each variable (key) in the prediction dictionary
             for var_name, patches in patches_clipped.items():
                 # Retrieve the blank dataset for the current variable
-                combined_array = combined_dataset[var_name]
+                prediction_array = prediction[var_name]
 
                 # Merge each patch into the combined dataset
                 for patch in patches:
                     for var in patch.data_vars:
                         # Reindex the patch to catch any slight rounding errors and misalignment with the combined dataset
                         reindexed_patch = patch[var].reindex_like(
-                            combined_array[var], method="nearest", tolerance=1e-6
+                            prediction_array[var], method="nearest", tolerance=1e-6
                         )
 
                         # Combine data, prioritizing non-NaN values from patches
-                        combined_array[var] = combined_array[var].where(
+                        prediction_array[var] = prediction_array[var].where(
                             np.isnan(reindexed_patch), reindexed_patch
                         )
 
                 # Update the dictionary with the merged dataset
-                combined_dataset[var_name] = combined_array
-            return combined_dataset
+                prediction[var_name] = prediction_array
+            return prediction
 
         # load patch_size and stride from task
         patch_size = tasks[0]["patch_size"]
@@ -1173,31 +1170,7 @@ class DeepSensorModel(ProbabilisticModel):
             preds, patch_overlap_unnorm, patches_per_row, x1_ascending, x2_ascending
         )
 
-        ## Cast prediction into DeepSensor.Prediction object.
-        # TODO make this into seperate method.
-        prediction = copy.deepcopy(preds[0])
-
-        # Generate new blank DeepSensor.prediction object in original coordinate system.
-        for var_name_copy, data_array_copy in prediction.items():
-            # set x and y coords
-            stitched_preds = xr.Dataset(
-                coords={
-                    orig_x1_name: X_t[orig_x1_name],
-                    orig_x2_name: X_t[orig_x2_name],
-                }
-            )
-
-            # Set time to same as patched prediction
-            stitched_preds["time"] = data_array_copy["time"]
-
-            # set variable names to those in patched prediction, make values blank
-            for var_name_i in data_array_copy.data_vars:
-                stitched_preds[var_name_i] = data_array_copy[var_name_i]
-                stitched_preds[var_name_i][:] = np.nan
-            prediction[var_name_copy] = stitched_preds
-            prediction[var_name_copy] = stitched_prediction[var_name_copy]
-
-        return prediction, stitched_prediction
+        return stitched_prediction
 
 
 def add_valid_time_coord_to_pred_and_move_time_dims(pred: Prediction) -> Prediction:
