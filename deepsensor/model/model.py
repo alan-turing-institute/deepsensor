@@ -1044,11 +1044,9 @@ class DeepSensorModel(ProbabilisticModel):
                     coords={
                         orig_x1_name: X_t[orig_x1_name],
                         orig_x2_name: X_t[orig_x2_name],
+                        "time": stitched_prediction[0]["time"],
                     }
                 )
-
-                # Set prediction object to same as the first patched prediction.
-                blank_ds["time"] = data_array["time"]
 
                 # Set data variable names e.g. mean, std to those in patched prediction. Make all values Nan.
                 for data_var in data_array.data_vars:
