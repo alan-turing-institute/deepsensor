@@ -810,6 +810,48 @@ class DeepSensorModel(ProbabilisticModel):
                 ),
             )
 
+        def get_coordinate_extent(ds, x1_ascend, x2_ascend) -> float:
+            """
+            Get coordinate extent of dataset. This method is applied to either X_t or patchwise predictions. 
+
+            Parameters
+            ----------
+            ds (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
+                Data array to determine coordinate extent for
+
+            x1_ascend : str:
+                Boolean defining whether the x1 coords ascend (increase) from top to bottom, default = True.
+
+            x2_ascend : str:
+                Boolean defining whether the x2 coords ascend (increase) from left to right, default = True.
+
+            Returns:
+            -------
+            
+            """
+            if x1_ascend:
+                ds_x1_coords = (
+                    ds.coords[orig_x1_name].min().values,
+                    ds.coords[orig_x1_name].max().values,
+                )
+            else:
+                ds_x1_coords = (
+                    ds.coords[orig_x1_name].max().values,
+                    ds.coords[orig_x1_name].min().values,
+                )
+            if x2_ascend:
+                ds_x2_coords = (
+                    ds.coords[orig_x2_name].min().values,
+                    ds.coords[orig_x2_name].max().values,
+                )
+            else:
+                ds_x2_coords = (
+                    ds.coords[orig_x2_name].max().values,
+                    ds.coords[orig_x2_name].min().values,
+                )
+            return ds_x1_coords, ds_x2_coords
+
+        
         def get_index(*args, x1=True) -> Union[int, Tuple[List[int], List[int]]]:
             """Convert coordinates into pixel row/column (index).
 
@@ -886,57 +928,21 @@ class DeepSensorModel(ProbabilisticModel):
             combined: dict
                 Dictionary object containing the stitched model predictions.
             """
-            # Get row/col index values of X_t. Order depends on whether coordinate is ascending or descending.
-            if x1_ascend:
-                data_x1 = (
-                    X_t.coords[orig_x1_name].min().values,
-                    X_t.coords[orig_x1_name].max().values,
-                )
-            else:
-                data_x1 = (
-                    X_t.coords[orig_x1_name].max().values,
-                    X_t.coords[orig_x1_name].min().values,
-                )
-            if x2_ascend:
-                data_x2 = (
-                    X_t.coords[orig_x2_name].min().values,
-                    X_t.coords[orig_x2_name].max().values,
-                )
-            else:
-                data_x2 = (
-                    X_t.coords[orig_x2_name].max().values,
-                    X_t.coords[orig_x2_name].min().values,
-                )
 
-            data_x1_index, data_x2_index = get_index(data_x1, data_x2)
+            # Get row/col index values of X_t.            
+            data_x1_coords, data_x2_coords= get_coordinate_extent(X_t, x1_ascend, x2_ascend)
+            data_x1_index, data_x2_index = get_index(data_x1_coords, data_x2_coords)
+
             patches_clipped = {var_name: [] for var_name in patch_preds[0].keys()}
-            print(patches_clipped)
             for i, patch_pred in enumerate(patch_preds):
                 for var_name, data_array in patch_pred.items():
                     if var_name in patch_pred:
-                        # Get row/col index values of each patch. Order depends on whether coordinate is ascending or descending.
-                        if x1_ascend:
-                            patch_x1 = (
-                                data_array.coords[orig_x1_name].min().values,
-                                data_array.coords[orig_x1_name].max().values,
-                            )
-                        else:
-                            patch_x1 = (
-                                data_array.coords[orig_x1_name].max().values,
-                                data_array.coords[orig_x1_name].min().values,
-                            )
-                        if x2_ascend:
-                            patch_x2 = (
-                                data_array.coords[orig_x2_name].min().values,
-                                data_array.coords[orig_x2_name].max().values,
-                            )
-                        else:
-                            patch_x2 = (
-                                data_array.coords[orig_x2_name].max().values,
-                                data_array.coords[orig_x2_name].min().values,
-                            )
-                        patch_x1_index, patch_x2_index = get_index(patch_x1, patch_x2)
+                        
+                        # Get row/col index values of each patch.
+                        patch_x1_coords, patch_x2_coords= get_coordinate_extent(data_array, x1_ascend, x2_ascend)
+                        patch_x1_index, patch_x2_index = get_index(patch_x1_coords, patch_x2_coords)
 
+                        # Initially set the size of the border to slice off each patch to the size of the overlap. 
                         b_x1_min, b_x1_max = patch_overlap[0], patch_overlap[0]
                         b_x2_min, b_x2_max = patch_overlap[1], patch_overlap[1]
 
