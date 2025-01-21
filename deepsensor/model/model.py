@@ -810,7 +810,7 @@ class DeepSensorModel(ProbabilisticModel):
                 ),
             )
 
-        def get_coordinate_extent(ds, x1_ascend, x2_ascend) -> tuple:
+        def get_coordinate_extent(ds: Union[xr.DataArray, xr.Dataset], x1_ascend: bool, x2_ascend: bool) -> tuple:
             """
             Get coordinate extent of dataset. This method is applied to either X_t or patchwise predictions. 
 
