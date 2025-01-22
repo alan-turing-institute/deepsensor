@@ -938,7 +938,8 @@ class DeepSensorModel(ProbabilisticModel):
             # Iterate through patchwise predictions and slice edges prior to stitchin.
             patches_clipped = []
             for i, patch_pred in enumerate(patch_preds):
-                first_key, first_value = next(iter(patch_pred.items()))   
+                # get one variable name to use for coordinates and extent
+                first_key = list(patch_pred.keys())[0]   
                 # Get row/col index values of each patch.
                 patch_x1_coords, patch_x2_coords= get_coordinate_extent(patch_pred[first_key], x1_ascend, x2_ascend)
                 patch_x1_index, patch_x2_index = get_index(patch_x1_coords, patch_x2_coords)
