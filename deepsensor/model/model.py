@@ -818,7 +818,6 @@ class DeepSensorModel(ProbabilisticModel):
             ----------
             ds : Data object
                 The dataset or data array to determine coordinate extent for.
-                Refer to `X_t` in `predict_patchwise()` for supported types.
 
             x1_ascend : bool
                 Whether the x1 coordinates ascend (increase) from top to bottom.
@@ -937,104 +936,103 @@ class DeepSensorModel(ProbabilisticModel):
             data_x1_index, data_x2_index = get_index(data_x1_coords, data_x2_coords)
 
             # Iterate through patchwise predictions and slice edges prior to stitchin.
-            patches_clipped = {var_name: [] for var_name in patch_preds[0].keys()}
+            patches_clipped = []
             for i, patch_pred in enumerate(patch_preds):
-                for var_name, data_array in patch_pred.items():
-                    if var_name in patch_pred:
-                        
-                        # Get row/col index values of each patch.
-                        patch_x1_coords, patch_x2_coords= get_coordinate_extent(data_array, x1_ascend, x2_ascend)
-                        patch_x1_index, patch_x2_index = get_index(patch_x1_coords, patch_x2_coords)
+                # get one variable name to use for coordinates and extent
+                first_key = list(patch_pred.keys())[0]   
+                # Get row/col index values of each patch.
+                patch_x1_coords, patch_x2_coords= get_coordinate_extent(patch_pred[first_key], x1_ascend, x2_ascend)
+                patch_x1_index, patch_x2_index = get_index(patch_x1_coords, patch_x2_coords)
 
-                        # Calculate size of border to slice of each edge of patchwise predictions.
-                        # Initially set the size of all borders to the size of the overlap. 
-                        b_x1_min, b_x1_max = patch_overlap[0], patch_overlap[0]
-                        b_x2_min, b_x2_max = patch_overlap[1], patch_overlap[1]
+                # Calculate size of border to slice of each edge of patchwise predictions.
+                # Initially set the size of all borders to the size of the overlap. 
+                b_x1_min, b_x1_max = patch_overlap[0], patch_overlap[0]
+                b_x2_min, b_x2_max = patch_overlap[1], patch_overlap[1]
 
-                        # Do not remove border for the patches along top and left of dataset and change overlap size for last patch in each row and column.
-                        if patch_x2_index[0] == data_x2_index[0]:
-                            b_x2_min = 0
-                            b_x2_max = b_x2_max
+                # Do not remove border for the patches along top and left of dataset and change overlap size for last patch in each row and column.
+                if patch_x2_index[0] == data_x2_index[0]:
+                    b_x2_min = 0
+                    b_x2_max = b_x2_max
 
-                        # At end of row (when patch_x2_index = data_x2_index), calculate the number of pixels to remove from left hand side of patch.
-                        elif patch_x2_index[1] == data_x2_index[1]:
-                            b_x2_max = 0
-                            patch_row_prev = preds[i - 1]
+                # At end of row (when patch_x2_index = data_x2_index), calculate the number of pixels to remove from left hand side of patch.
+                elif patch_x2_index[1] == data_x2_index[1]:
+                    b_x2_max = 0
+                    patch_row_prev = patch_preds[i - 1]
 
-                            # If x2 is ascending, subtract previous patch x2 max value from current patch x2 min value to get bespoke overlap in column pixels.
-                            # To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels
-                            if x2_ascend:
-                                prev_patch_x2_max = get_index(
-                                    patch_row_prev[var_name].coords[orig_x2_name].max(),
-                                    x1=False,
-                                )
-                                b_x2_min = (
-                                    prev_patch_x2_max - patch_x2_index[0]
-                                ) - patch_overlap[1]
-
-                            # If x2 is descending, subtract current patch max x2 value from previous patch min x2 value to get bespoke overlap in column pixels.
-                            # To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels
-                            else:
-                                prev_patch_x2_min = get_index(
-                                    patch_row_prev[var_name].coords[orig_x2_name].min(),
-                                    x1=False,
-                                )
-                                b_x2_min = (
-                                    patch_x2_index[0] - prev_patch_x2_min
-                                ) - patch_overlap[1]
-                        else:
-                            b_x2_max = b_x2_max
-
-                        # Repeat process as above for x1 coordinates. 
-                        if patch_x1_index[0] == data_x1_index[0]:
-                            b_x1_min = 0
-                        
-                        elif abs(patch_x1_index[1] - data_x1_index[1]) < 2:
-                            b_x1_max = 0
-                            b_x1_max = b_x1_max
-                            patch_prev = preds[i - patches_per_row]
-                            if x1_ascend:
-                                prev_patch_x1_max = get_index(
-                                    patch_prev[var_name].coords[orig_x1_name].max(),
-                                    x1=True,
-                                )
-                                b_x1_min = (
-                                    prev_patch_x1_max - patch_x1_index[0]
-                                ) - patch_overlap[0]
-                            else:
-                                prev_patch_x1_min = get_index(
-                                    patch_prev[var_name].coords[orig_x1_name].min(),
-                                    x1=True,
-                                )
-
-                                b_x1_min = (
-                                    prev_patch_x1_min - patch_x1_index[0]
-                                ) - patch_overlap[0]
-                        else:
-                            b_x1_max = b_x1_max
-
-                        patch_clip_x1_min = int(b_x1_min)
-                        patch_clip_x1_max = int(
-                            data_array.sizes[orig_x1_name] - b_x1_max
+                    # If x2 is ascending, subtract previous patch x2 max value from current patch x2 min value to get bespoke overlap in column pixels.
+                    # To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels
+                    if x2_ascend:
+                        prev_patch_x2_max = get_index(
+                            patch_row_prev[first_key].coords[orig_x2_name].max(),
+                            x1=False,
                         )
-                        patch_clip_x2_min = int(b_x2_min)
-                        patch_clip_x2_max = int(
-                            data_array.sizes[orig_x2_name] - b_x2_max
+                        b_x2_min = (
+                            prev_patch_x2_max - patch_x2_index[0]
+                        ) - patch_overlap[1]
+
+                    # If x2 is descending, subtract current patch max x2 value from previous patch min x2 value to get bespoke overlap in column pixels.
+                    # To account for the clipping done to the previous patch, then subtract patch_overlap value in pixels
+                    else:
+                        prev_patch_x2_min = get_index(
+                            patch_row_prev[first_key].coords[orig_x2_name].min(),
+                            x1=False,
+                        )
+                        b_x2_min = (
+                            patch_x2_index[0] - prev_patch_x2_min
+                        ) - patch_overlap[1]
+                else:
+                    b_x2_max = b_x2_max
+
+                # Repeat process as above for x1 coordinates. 
+                if patch_x1_index[0] == data_x1_index[0]:
+                    b_x1_min = 0
+                
+                elif abs(patch_x1_index[1] - data_x1_index[1]) < 2:
+                    b_x1_max = 0
+                    b_x1_max = b_x1_max
+                    patch_prev = patch_preds[i - patches_per_row]
+                    if x1_ascend:
+                        prev_patch_x1_max = get_index(
+                            patch_prev[first_key].coords[orig_x1_name].max(),
+                            x1=True,
+                        )
+                        b_x1_min = (
+                            prev_patch_x1_max - patch_x1_index[0]
+                        ) - patch_overlap[0]
+                    else:
+                        prev_patch_x1_min = get_index(
+                            patch_prev[first_key].coords[orig_x1_name].min(),
+                            x1=True,
                         )
 
-                        # Slice patchwise predictions
-                        patch_clip = data_array.isel(
-                            **{
-                                orig_x1_name: slice(
-                                    patch_clip_x1_min, patch_clip_x1_max
-                                ),
-                                orig_x2_name: slice(
-                                    patch_clip_x2_min, patch_clip_x2_max
-                                ),
-                            }
-                        )
+                        b_x1_min = (
+                            prev_patch_x1_min - patch_x1_index[0]
+                        ) - patch_overlap[0]
+                else:
+                    b_x1_max = b_x1_max
 
-                        patches_clipped[var_name].append(patch_clip)
+                patch_clip_x1_min = int(b_x1_min)
+                patch_clip_x1_max = int(
+                    patch_pred[first_key].sizes[orig_x1_name] - b_x1_max
+                )
+                patch_clip_x2_min = int(b_x2_min)
+                patch_clip_x2_max = int(
+                    patch_pred[first_key].sizes[orig_x2_name] - b_x2_max
+                )
+
+                # Define slicing parameters
+                slicing_params = {
+                    orig_x1_name: slice(patch_clip_x1_min, patch_clip_x1_max),
+                    orig_x2_name: slice(patch_clip_x2_min, patch_clip_x2_max),
+                }
+
+                # Slice patchwise predictions
+                patch_clip = {
+                    key: dataset.isel(**slicing_params)
+                    for key, dataset in patch_pred.items()
+                }
+
+                patches_clipped.append(patch_clip)
             
             # Create blank prediction object to stitch prediction values onto.
             stitched_prediction = copy.deepcopy(patch_preds[0])
@@ -1054,9 +1052,12 @@ class DeepSensorModel(ProbabilisticModel):
                     blank_ds[data_var][:] = np.nan
                 stitched_prediction[var_name] = blank_ds
             
+            # Restructure prediction objects for merging
+            restructured_patches = {key: [item[key] for item in patches_clipped] for key in patches_clipped[0].keys()}
+
             # Merge patchwise predictions to create final stiched prediction.
             # Iterate over each variable (key) in the prediction dictionary
-            for var_name, patches in patches_clipped.items():
+            for var_name, patches in restructured_patches.items():
                 # Retrieve the blank dataset for the current variable
                 prediction_array = stitched_prediction[var_name]
 
