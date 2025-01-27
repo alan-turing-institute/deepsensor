@@ -904,7 +904,7 @@ class DeepSensorModel(ProbabilisticModel):
             patches_per_row: int,
             x1_ascend: bool = True,
             x2_ascend: bool = True,
-        ) -> dict:
+        ) -> Prediction:
             """Stitch patchwise predictions to form prediction at original extent.
 
             Parameters
