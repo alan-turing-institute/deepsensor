@@ -899,7 +899,7 @@ class DeepSensorModel(ProbabilisticModel):
                 return (x1_index, x2_index)
 
         def stitch_clipped_predictions(
-            patch_preds: list[Prediction],
+            patch_preds: List[Prediction],
             patch_overlap: int,
             patches_per_row: int,
             x1_ascend: bool = True,
