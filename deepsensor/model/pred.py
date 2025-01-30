@@ -374,7 +374,8 @@ def _get_coordinate_extent(
     x1_ascend: bool,
     x2_ascend: bool,
 ) -> Tuple:
-    """Get coordinate extent of dataset. This method is applied to either X_t or patchwise predictions.
+    """Get coordinate extent of dataset. 
+    Coordinate extent is defined as maximum and minimum value of x1 and x2.
 
     Parameters
     ----------
@@ -495,7 +496,7 @@ def stitch_clipped_predictions(
     x1_ascend: bool = True,
     x2_ascend: bool = True,
 ) -> Prediction:
-    """Stitch patchwise predictions to form prediction at original extent.
+    """Stitch patchwise predictions to form prediction at original extent of X_t.
 
     Parameters
     ----------
@@ -548,7 +549,7 @@ def stitch_clipped_predictions(
     # Iterate through patchwise predictions and slice edges prior to stitchin.
     patches_clipped = []
     for i, patch_pred in enumerate(patch_preds):
-        # get one variable name to use for coordinates and extent
+        # Get one variable name to use for coordinates and extent
         first_key = list(patch_pred.keys())[0]
         # Get row/col index values of each patch.
         patch_x1_coords, patch_x2_coords = _get_coordinate_extent(
@@ -566,7 +567,7 @@ def stitch_clipped_predictions(
             orig_x2_name=orig_x2_name,
         )
 
-        # Calculate size of border to slice of each edge of patchwise predictions.
+        # Calculate size of border to slice off each edge of patchwise predictions.
         # Initially set the size of all borders to the size of the overlap.
         b_x1_min, b_x1_max = patch_overlap[0], patch_overlap[0]
         b_x2_min, b_x2_max = patch_overlap[1], patch_overlap[1]
