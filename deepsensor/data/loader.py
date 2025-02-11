@@ -1,5 +1,3 @@
-from deepsensor.data.task import Task, flatten_X
-
 import os
 import json
 import copy
@@ -10,7 +8,8 @@ import pandas as pd
 
 from typing import List, Tuple, Union, Optional
 
-from deepsensor.errors import InvalidSamplingStrategyError
+from deepsensor.data.task import Task
+from deepsensor.errors import InvalidSamplingStrategyError, SamplingTooManyPointsError
 
 
 class TaskLoader:
@@ -696,7 +695,9 @@ class TaskLoader:
         if isinstance(sampling_strat, (int, np.integer)):
             N = sampling_strat
             rng = np.random.default_rng(seed)
-            idx = rng.choice(df.index, N)
+            if N > df.index.size:
+                raise SamplingTooManyPointsError(requested=N, available=df.index.size)
+            idx = rng.choice(df.index, N, replace=False)
             X_c = df.loc[idx].reset_index()[["x1", "x2"]].values.T.astype(self.dtype)
             Y_c = df.loc[idx].values.T
         elif isinstance(sampling_strat, str) and sampling_strat in [
