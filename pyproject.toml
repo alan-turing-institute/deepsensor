@@ -55,6 +55,7 @@ docs = [
     "jupyter-book",
     "matplotlib",
     "numpy",
+    "sphinx",
 ]
 testing = [
     "mypy",
