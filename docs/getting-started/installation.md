@@ -40,7 +40,7 @@ This method will create a `DeepSensor` directory on your machine which will cont
 
 ```{note}
 If you intend on contributing to the source code of DeepSensor, install DeepSensor with its development dependencies using
-````{bash}
+````bash
 pip install -v -e .[dev]
 ````
 ```
