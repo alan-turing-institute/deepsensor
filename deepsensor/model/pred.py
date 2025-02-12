@@ -374,7 +374,7 @@ def _get_coordinate_extent(
     x1_ascend: bool,
     x2_ascend: bool,
 ) -> Tuple:
-    """Get coordinate extent of dataset. 
+    """Get coordinate extent of dataset.
     Coordinate extent is defined as maximum and minimum value of x1 and x2.
 
     Parameters
