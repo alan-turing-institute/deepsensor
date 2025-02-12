@@ -18,3 +18,12 @@ class InvalidSamplingStrategyError(Exception):
     """Raised when TaskLoader sampling strategy is invalid."""
 
     pass
+
+
+class SamplingTooManyPointsError(ValueError):
+    """Raised when the number of points to sample is greater than the number of points in the dataset."""
+
+    def __init__(self, requested: int, available: int):
+        super().__init__(
+            f"Requested {requested} points to sample, but only {available} are available."
+        )
