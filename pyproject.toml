@@ -17,7 +17,7 @@ classifiers = [
 ]
 requires-python = ">=3.8"
 dependencies = [
-    "backends",
+    "backends>=1.7.0",
     "backends-matrix",
     "dask",
     "distributed",
