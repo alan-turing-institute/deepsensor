@@ -15,7 +15,7 @@ import lab as B
 import deepsensor.torch as deepsensor
 
 from deepsensor.data.processor import DataProcessor
-from deepsensor.data.loader import TaskLoader
+from deepsensor.data.loader import TaskLoader, PatchwiseTaskLoader
 from deepsensor.model.convnp import ConvNP
 from deepsensor.train.train import Trainer
 from deepsensor.eval.metrics import compute_errors
@@ -720,7 +720,7 @@ def test_patchwise_prediction():
     dp = DataProcessor()
     ds = dp(da)  # Compute normalisation parameters
 
-    tl = TaskLoader(context=da, target=da)
+    tl = PatchwiseTaskLoader(context=da, target=da)
 
     tasks = tl(
         "2020-01-01",

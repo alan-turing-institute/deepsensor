@@ -11,7 +11,7 @@ import deepsensor.torch
 
 from deepsensor.train.train import Trainer
 from deepsensor.data.processor import DataProcessor
-from deepsensor.data.loader import TaskLoader
+from deepsensor.data.loader import TaskLoader, PatchwiseTaskLoader
 from deepsensor.model.convnp import ConvNP
 from deepsensor.data.task import concat_tasks
 
@@ -120,7 +120,7 @@ class TestTraining(unittest.TestCase):
         """
         Test model training with patchwise tasks.
         """
-        tl = TaskLoader(context=self.da, target=self.da)
+        tl = PatchwiseTaskLoader(context=self.da, target=self.da)
         model = ConvNP(self.data_processor, tl, unet_channels=(5, 5, 5), verbose=False)
 
         # generate training tasks
@@ -154,7 +154,7 @@ class TestTraining(unittest.TestCase):
         """
         Test model training with sliding window tasks.
         """
-        tl = TaskLoader(context=self.da, target=self.da)
+        tl = PatchwiseTaskLoader(context=self.da, target=self.da)
         model = ConvNP(self.data_processor, tl, unet_channels=(5, 5, 5), verbose=False)
 
         # generate training tasks

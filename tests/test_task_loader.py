@@ -15,7 +15,7 @@ import xarray as xr
 from _pytest.fixtures import SubRequest
 from parameterized import parameterized
 
-from deepsensor.data.loader import TaskLoader
+from deepsensor.data.loader import TaskLoader, PatchwiseTaskLoader
 from deepsensor.errors import InvalidSamplingStrategyError
 from tests.utils import (
     assert_allclose_pd,
@@ -314,7 +314,7 @@ class TestTaskLoader(unittest.TestCase):
         )
 
         context = [da_data_0_1, da_data_smaller, da_data_larger]
-        tl = TaskLoader(
+        tl = PatchwiseTaskLoader(
             context=context,  # gridded xarray and off-grid pandas contexts
             target=self.df,  # off-grid pandas targets
         )
@@ -370,7 +370,7 @@ class TestTaskLoader(unittest.TestCase):
         )
 
         context = [da_data_0_1, da_data_smaller, da_data_larger]
-        tl = TaskLoader(
+        tl = PatchwiseTaskLoader(
             context=context,  # gridded xarray and off-grid pandas contexts
             target=self.df,   # off-grid pandas targets
         )
@@ -405,7 +405,7 @@ class TestTaskLoader(unittest.TestCase):
     def test_patchwise_task_loader_parameter_handling(self, patch_strategy, patch_size, stride, raised):
         """Test that correct errors and warnings are raised"""
 
-        tl = TaskLoader(context=self.da, target=self.da)
+        tl = PatchwiseTaskLoader(context=self.da, target=self.da)
 
         with self.assertRaises(raised):
             tl(
