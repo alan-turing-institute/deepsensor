@@ -341,7 +341,7 @@ class TestTaskLoader(unittest.TestCase):
             target_sampling="all",
             patch_size=patch_size,
             patch_strategy="random",
-            num_samples_per_date=2,
+            num_patch_tasks=2,
         )
 
     @parameterized.expand([[0.5, 0.45], [(0.3, 0.4), (0.3, 0.35)]])

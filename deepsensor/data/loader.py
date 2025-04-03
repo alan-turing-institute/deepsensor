@@ -1653,7 +1653,7 @@ class PatchwiseTaskLoader(TaskLoader):
         patch_size: Union[float, Tuple[float]] = None,
         patch_strategy: Optional[str] = None,
         stride: Union[float, Tuple[float]] = None,
-        num_samples_per_date: int = 1,
+        num_patch_tasks: int = 1,
         datewise_deterministic: bool = False,
         seed_override: Optional[int] = None,
     ) -> Union[Task, List[Task]]:
@@ -1709,6 +1709,8 @@ class PatchwiseTaskLoader(TaskLoader):
             stride: Union[float, tuple[float]], optional
                 Step size between each sliding window patch along x1 and x2 axis. Default is None.
                 If passed a single float, will use value for both x1 & x2.
+            num_patch_tasks: int
+                The number of patches to generate per date when using the "random" patching strategy.
             datewise_deterministic (bool, optional):
                 Whether random sampling is datewise deterministic based on the
                 date. Default is ``False``.
@@ -1762,7 +1764,7 @@ class PatchwiseTaskLoader(TaskLoader):
                 for d in date:
                     bboxes = [
                         self.sample_random_window(patch_size)
-                        for _ in range(num_samples_per_date)
+                        for _ in range(num_patch_tasks)
                     ]
                     tasks = [
                         self.task_generation(
@@ -1780,7 +1782,7 @@ class PatchwiseTaskLoader(TaskLoader):
             else:
                 bboxes = [
                     self.sample_random_window(patch_size)
-                    for _ in range(num_samples_per_date)
+                    for _ in range(num_patch_tasks)
                 ]
                 tasks = [
                     self.task_generation(
