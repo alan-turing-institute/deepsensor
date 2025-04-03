@@ -1735,27 +1735,14 @@ class PatchwiseTaskLoader(TaskLoader):
             stride = (stride, stride)
 
         if patch_strategy is None:
-            if isinstance(date, (list, tuple, pd.core.indexes.datetimes.DatetimeIndex)):
-                tasks = [
-                    self.task_generation(
-                        date=d,
-                        context_sampling=context_sampling,
-                        target_sampling=target_sampling,
-                        split_frac=split_frac,
-                        datewise_deterministic=datewise_deterministic,
-                        seed_override=seed_override,
-                    )
-                    for d in date
-                ]
-            else:
-                tasks = self.task_generation(
-                    date=date,
-                    context_sampling=context_sampling,
-                    target_sampling=target_sampling,
-                    split_frac=split_frac,
-                    datewise_deterministic=datewise_deterministic,
-                    seed_override=seed_override,
-                )
+            return super().__call__(
+                date=date,
+                context_sampling=context_sampling,
+                target_sampling=target_sampling,
+                split_frac=split_frac,
+                datewise_deterministic=datewise_deterministic,
+                seed_override=seed_override,
+            )
 
         elif patch_strategy == "random":
             if patch_size is None:
