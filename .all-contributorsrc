@@ -190,7 +190,35 @@
       "contributions": [
         "doc",
         "test",
-        "maintenance"
+        "maintenance",
+        "bug"
+      ]
+    },
+    {
+      "login": "vinayakrana",
+      "name": "vinayakrana",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95575600?v=4",
+      "profile": "https://github.com/vinayakrana",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "DaniJonesOcean",
+      "name": "Dani Jones",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11757453?v=4",
+      "profile": "https://github.com/DaniJonesOcean",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "holzwolf",
+      "name": "holzwolf",
+      "avatar_url": "https://avatars.githubusercontent.com/u/135216528?v=4",
+      "profile": "https://github.com/holzwolf",
+      "contributions": [
+        "bug"
       ]
     }
   ]
