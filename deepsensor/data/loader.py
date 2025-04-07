@@ -1865,4 +1865,9 @@ class PatchwiseTaskLoader(TaskLoader):
                 f"Must be one of: {valid_patching_strategies}."
             )
 
+        # add patch strategy as a key in task
+        tasks = [
+            Task(dict({"patch_strategy": patch_strategy}, **task)) for task in tasks
+        ]
+
         return tasks
