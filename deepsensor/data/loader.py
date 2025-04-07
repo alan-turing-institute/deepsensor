@@ -1726,10 +1726,11 @@ class PatchwiseTaskLoader(TaskLoader):
                 Task object or list of task objects for each date containing
                 the context and target data.
         """
-        if patch_strategy not in [None, "random", "sliding"]:
+        valid_patching_strategies = [None, "random", "sliding"]
+        if patch_strategy not in valid_patching_strategies:
             raise ValueError(
-                f"Invalid patch strategy {patch_strategy}. "
-                f"Must be one of [None, 'random', 'sliding']."
+                f"Invalid patch strategy: {patch_strategy}. "
+                f"Must be one of: {valid_patching_strategies}."
             )
 
         if isinstance(patch_size, float) and patch_size is not None:
@@ -1860,8 +1861,8 @@ class PatchwiseTaskLoader(TaskLoader):
                 ]
         else:
             raise ValueError(
-                f"Invalid patch strategy {patch_strategy}. "
-                f"Must be one of [None, 'random', 'sliding']."
+                f"Invalid patch strategy: {patch_strategy}. "
+                f"Must be one of: {valid_patching_strategies}."
             )
 
         return tasks
