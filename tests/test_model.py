@@ -705,7 +705,7 @@ class TestModel(unittest.TestCase):
 
 
 def test_patchwise_prediction():
-    """Test that ``.predict_patchwise`` runs correctly."""
+    """Test that ``.predict_patchwise`` returns gridded predictions of expected shape."""
 
     patch_size = 0.5
     stride = 0.15
