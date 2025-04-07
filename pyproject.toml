@@ -1,3 +1,76 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deepsensor"
+version = "0.4.2"
+authors = [
+    {name = "Tom R. Andersson", email="tomandersson3@gmail.com"},
+]
+description = "A Python package for modelling xarray and pandas data with neural processes."
+readme = "README.md"
+license = {text="MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
+requires-python = ">=3.8"
+dependencies = [
+    "backends>=1.7.0",
+    "backends-matrix",
+    "dask",
+    "distributed",
+    "gcsfs",
+    "matplotlib",
+    "neuralprocesses>=0.2.7",
+    "numpy",
+    "pandas",
+    "pooch",
+    "pyshp",
+    "seaborn",
+    "tqdm",
+    "xarray",
+    "zarr"
+]
+
+[tool.setuptools]
+packages = ["deepsensor"]
+
+[project.urls]
+Source = "https://github.com/alan-turing-institute/deepsensor"
+Bug_Tracker = "https://github.com/alan-turing-institute/deepsensor/issues"
+
+[project.optional-dependencies]
+torch = ["torch>=2"]
+tf = ["tensorflow", "tensorflow_probability[tf]"]
+dev = [
+    "coveralls",
+    "parameterized",
+    "pre-commit",
+    "pytest",
+    "ruff",
+]
+docs = [
+    "jupyter-book",
+    "matplotlib",
+    "numpy",
+    "sphinx",
+]
+testing = [
+    "mypy",
+    "parameterized",
+    "pytest",
+    "pytest-cov",
+    "tox",
+]
+rioxarray = [
+    "rioxarray"
+]
+
+[tool.setuptools.package-data]
+deepsensor = ["py.typed"]
+
 [tool.pytest.ini_options]
 addopts = "--cov=deepsensor"
 testpaths = [

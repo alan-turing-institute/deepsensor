@@ -1,9 +1,0 @@
-# Additional requirements for development
-coveralls
-parameterized
-pre-commit
-pytest
-pytest-cov
-ruff
-tox
-tox-gh-actions

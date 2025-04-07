@@ -10,13 +10,16 @@ from typing import Sequence
 import dask.array
 import numpy as np
 import pandas as pd
+
 import pytest
 import xarray as xr
 from _pytest.fixtures import SubRequest
 from parameterized import parameterized
 
 from deepsensor.data.loader import TaskLoader
-from deepsensor.errors import InvalidSamplingStrategyError
+from deepsensor.errors import InvalidSamplingStrategyError, SamplingTooManyPointsError
+
+
 from tests.utils import (
     assert_allclose_pd,
     assert_allclose_xr,
@@ -60,6 +63,8 @@ class TestTaskLoader(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        # Set fixed random seed for deterministic tests
+        np.random.seed(42)
         # It's safe to share data between tests because the TaskLoader does not modify data
         cls.da = _gen_data_xr()
         cls.aux_da = cls.da.isel(time=0)
@@ -157,6 +162,33 @@ class TestTaskLoader(unittest.TestCase):
             target_sampling,
         ) in self._gen_task_loader_call_args(len(context), 1):
             task = tl("2020-01-01", context_sampling, target_sampling)
+    
+    def test_int_sampling_strat_pandas(self):
+        """Test integer sampling strategy in ``TaskLoader.__call__``."""
+        DUMMY_TARGET_SAMPLING = 10
+
+        tl = TaskLoader(
+            context=self.df,
+            target=self.df,
+        )
+
+        num_unique_coords = len(self.df.xs("2020-01-01", level="time").index)
+
+        task = tl("2020-01-01", num_unique_coords, DUMMY_TARGET_SAMPLING)
+        x1 = task["X_c"][0][0]
+        x2 = task["X_c"][0][1]
+        coords = list(zip(x1, x2))
+
+        # Ensure that there are no duplicates when sampling with an integer
+        # sampling strategy
+        self.assertEqual(len(coords), len(set(coords)))
+
+        def sample_too_many_points():
+            tl("2020-01-01", num_unique_coords + 1, DUMMY_TARGET_SAMPLING)
+
+        # If we're sampling more coordinates than exist in the dataset, we should throw.
+        self.assertRaises(SamplingTooManyPointsError, sample_too_many_points)
+
 
     def test_invalid_sampling_strat(self):
         """Test invalid sampling strategy in ``TaskLoader.__call__``."""
@@ -216,7 +248,7 @@ class TestTaskLoader(unittest.TestCase):
             tl = TaskLoader(context=self.df, target=self.df, links=[(0, 1)])
 
     def test_links_gapfill_da(self) -> None:
-        """TODO"""
+        """Test gapfill sampling with NaN values in data."""
         da_with_nans = copy.deepcopy(self.da)
         # Convert 10% of data to NaNs
         nan_idxs = np.random.randint(

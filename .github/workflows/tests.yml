@@ -1,8 +1,11 @@
 name: Tests
 
 on:
-  - push
-  - pull_request
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "5 0 * * 2" # run weekly tests
 
 jobs:
   test:
@@ -25,8 +28,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements/requirements.txt
-        pip install -r requirements/requirements.dev.txt
+        pip install .[dev,testing]
+        pip install tox-gh-actions
     - name: Test with tox
       run: tox
     - name: Run coveralls
@@ -43,7 +46,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Finish Coveralls
-      uses: coverallsapp/github-action@v1
+      uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.github_token }}
         parallel-finished: true

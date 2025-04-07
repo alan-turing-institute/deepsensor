@@ -10,7 +10,7 @@
 
 ## :white_check_mark: Checklist before requesting a review
 (See the contributing guide for more details on these steps.)
-- [ ] I have installed developer dependencies with `pip install -r requirements/requirements.dev.txt` and running `pre-commit install` (or alternatively, manually running `ruff format` before commiting)
+- [ ] I have installed developer dependencies with `pip install .[dev]` and running `pre-commit install` (or alternatively, manually running `ruff format` before commiting)
 
 If changing or adding source code:
 - [ ] tests are included and are passing (run `pytest`).
