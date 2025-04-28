@@ -1,0 +1,1231 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>deepsensor.model.convnp &#8212; DeepSensor</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=7f8ff830"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/model/convnp';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="deepsensor.model.defaults" href="defaults.html" />
+    <link rel="prev" title="deepsensor.model.pred" href="pred.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/DeepSensorLogo2.png" class="logo__image only-light" alt="DeepSensor - Home"/>
+    <script>document.write(`<img src="../../_static/DeepSensorLogo2.png" class="logo__image only-dark" alt="DeepSensor - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../index.html">
+                    Welcome to DeepSensor’s documentation!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../getting-started/index.html">Getting started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../getting-started/overview.html">Overview: Why DeepSensor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting-started/data_requirements.html">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting-started/installation.html">Installation instructions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../user-guide/index.html">User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/deepsensor_design.html">DeepSensor design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/data_processor.html">DataProcessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/task.html">Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/task_loader.html">TaskLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/convnp.html">ConvNP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/training.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/prediction.html">Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/active_learning.html">Active learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/acquisition_functions.html">Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/extending.html">Adding models to DeepSensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../community/index.html">Community</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../community/contributing.html">Contributing to DeepSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../community/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../community/roadmap.html">DeepSensor Roadmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../community/faq.html">Community FAQ</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../research_ideas.html">DeepSensor research ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contact the core team</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../data/index.html">deepsensor.data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../data/sources.html">deepsensor.data.sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/loader.html">deepsensor.data.loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/processor.html">deepsensor.data.processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/task.html">deepsensor.data.task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/utils.html">deepsensor.data.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">deepsensor.model</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="model.html">deepsensor.model.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pred.html">deepsensor.model.pred</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">deepsensor.model.convnp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="defaults.html">deepsensor.model.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nps.html">deepsensor.model.nps</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../train/index.html">deepsensor.train</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../train/train.html">deepsensor.train.train</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../active_learning/index.html">deepsensor.active_learning</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../active_learning/acquisition_fns.html">deepsensor.active_learning.acquisition_fns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../active_learning/algorithms.html">deepsensor.active_learning.algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../plot.html">deepsensor.plot</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/alan-turing-institute/deepsensor/issues/new?title=Issue%20on%20page%20%2Freference/model/convnp.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/reference/model/convnp.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>deepsensor.model.convnp</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP"><code class="docutils literal notranslate"><span class="pre">ConvNP</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.__call__"><code class="docutils literal notranslate"><span class="pre">ConvNP.__call__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.alpha"><code class="docutils literal notranslate"><span class="pre">ConvNP.alpha()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.ar_sample"><code class="docutils literal notranslate"><span class="pre">ConvNP.ar_sample()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.beta"><code class="docutils literal notranslate"><span class="pre">ConvNP.beta()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.covariance"><code class="docutils literal notranslate"><span class="pre">ConvNP.covariance()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.joint_entropy"><code class="docutils literal notranslate"><span class="pre">ConvNP.joint_entropy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.k"><code class="docutils literal notranslate"><span class="pre">ConvNP.k()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.load"><code class="docutils literal notranslate"><span class="pre">ConvNP.load()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.logpdf"><code class="docutils literal notranslate"><span class="pre">ConvNP.logpdf()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.loss_fn"><code class="docutils literal notranslate"><span class="pre">ConvNP.loss_fn()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.mean"><code class="docutils literal notranslate"><span class="pre">ConvNP.mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.mean_marginal_entropy"><code class="docutils literal notranslate"><span class="pre">ConvNP.mean_marginal_entropy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.mixture_probs"><code class="docutils literal notranslate"><span class="pre">ConvNP.mixture_probs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.modify_task"><code class="docutils literal notranslate"><span class="pre">ConvNP.modify_task()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.sample"><code class="docutils literal notranslate"><span class="pre">ConvNP.sample()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.save"><code class="docutils literal notranslate"><span class="pre">ConvNP.save()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.scale"><code class="docutils literal notranslate"><span class="pre">ConvNP.scale()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.slice_diag"><code class="docutils literal notranslate"><span class="pre">ConvNP.slice_diag()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.std"><code class="docutils literal notranslate"><span class="pre">ConvNP.std()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.variance"><code class="docutils literal notranslate"><span class="pre">ConvNP.variance()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.concat_tasks"><code class="docutils literal notranslate"><span class="pre">concat_tasks()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-deepsensor.model.convnp">
+<span id="deepsensor-model-convnp"></span><h1>deepsensor.model.convnp<a class="headerlink" href="#module-deepsensor.model.convnp" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ConvNP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.html#deepsensor.model.model.DeepSensorModel" title="deepsensor.model.model.DeepSensorModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSensorModel</span></code></a></p>
+<p>A Convolutional Neural Process (ConvNP) regression probabilistic model (by default a ConvCNP).</p>
+<p>Wraps around the <code class="docutils literal notranslate"><span class="pre">neuralprocesses</span></code> package to construct a ConvNP model.
+See: <a class="github reference external" href="https://github.com/wesselb/neuralprocesses/blob/main/neuralprocesses/architectures/convgnp.py">wesselb/neuralprocesses</a>.
+Init kwargs passed to the <cite>ConvNP</cite> are passed to the <cite>neuralprocesses.construct_convgnp</cite> function
+and can be used to specify hyperparameters (see parameter list below). In particular, the
+<cite>likelihood</cite> parameter can be used to specify the likelihood of the model, which dictates
+whether the model outputs marginal distributions at each target point (a ConvCNP) or a
+joint Gaussian distribution over all target points (a ConvGNP). By default a ConvCNP
+with Gaussian likelihoods is constructed.</p>
+<dl class="simple">
+<dt>Additionally, the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> can optionally be instantiated with:</dt><dd><ul class="simple">
+<li><p>a <code class="docutils literal notranslate"><span class="pre">DataProcessor</span></code> object to auto-unnormalise the data at inference time with the <code class="docutils literal notranslate"><span class="pre">.predict</span></code> method.</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code> object to infer sensible default model parameters from the data.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Multiple dispatch is implemented using <code class="docutils literal notranslate"><span class="pre">plum</span></code> to allow for re-using the
+model’s forward prediction object when computing the logpdf, entropy, etc.
+Alternatively, the model can be run forwards with a <code class="docutils literal notranslate"><span class="pre">Task</span></code> object of data
+from the <code class="docutils literal notranslate"><span class="pre">TaskLoader</span></code>.</p>
+<p>Many of the <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> class methods utilise multiple dispatch so that they
+can either be run with a <code class="docutils literal notranslate"><span class="pre">Task</span></code> object or a <code class="docutils literal notranslate"><span class="pre">neuralprocesses</span></code> distribution
+object. This allows for re-using the model’s forward prediction object.</p>
+<dl class="simple">
+<dt>Dimension shapes are expressed in method docstrings in terms of:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">N_features</span></code>: number of features/dimensions in the target set.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">N_targets</span></code>: number of target points (1D for off-grid targets, 2D for gridded targets).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">N_components</span></code>: number of mixture components in the likelihood (for mixture likelihoods only).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">N_samples</span></code>: number of samples drawn from the distribution.</p></li>
+</ul>
+</dd>
+</dl>
+<p>If the model has multiple target sets and the <code class="docutils literal notranslate"><span class="pre">Task</span></code> object
+has different target locations for each set, a list of arrays is returned
+for each target set. Otherwise, a single array is returned.</p>
+<p class="rubric">Examples</p>
+<dl>
+<dt>Instantiate a <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> with all hyperparameters set to their default values:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ConvNP</span><span class="p">(</span><span class="n">data_processor</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Instantiate a <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> and override some hyperparameters:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ConvNP</span><span class="p">(</span><span class="n">data_processor</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">,</span> <span class="n">internal_density</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">unet_channels</span><span class="o">=</span><span class="p">(</span><span class="mi">128</span><span class="p">,)</span> <span class="o">*</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Instantiate a <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> with a pre-trained model saved in the folder <code class="docutils literal notranslate"><span class="pre">my_trained_model</span></code>:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ConvNP</span><span class="p">(</span><span class="n">data_processor</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">,</span> <span class="n">model_ID</span><span class="o">=</span><span class="s2">&quot;my_trained_model&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Instantiate a <code class="docutils literal notranslate"><span class="pre">ConvNP</span></code> with an existing <code class="docutils literal notranslate"><span class="pre">neuralprocesses</span></code> model object:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ConvNP</span><span class="p">(</span><span class="n">data_processor</span><span class="p">,</span> <span class="n">task_loader</span><span class="p">,</span> <span class="n">neural_process</span><span class="o">=</span><span class="n">my_neural_process_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_processor</strong> (<a class="reference internal" href="../data/processor.html#deepsensor.data.processor.DataProcessor" title="deepsensor.data.processor.DataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProcessor</span></code></a>, optional) – Used for unnormalising model predictions in
+<code class="docutils literal notranslate"><span class="pre">.predict</span></code> method.</p></li>
+<li><p><strong>task_loader</strong> (<a class="reference internal" href="../data/loader.html#deepsensor.data.loader.TaskLoader" title="deepsensor.data.loader.TaskLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskLoader</span></code></a>, optional) – Used for inferring sensible defaults for hyperparameters
+that are not set by the user.</p></li>
+<li><p><strong>model_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Folder to load the model config and weights from. This argument can only
+be used alongside the <code class="docutils literal notranslate"><span class="pre">data_processor</span></code> and <code class="docutils literal notranslate"><span class="pre">task_loader</span></code> arguments.</p></li>
+<li><p><strong>neural_process</strong> (<em>TFModel</em><em> | </em><em>TorchModel</em><em>, </em><em>optional</em>) – Pre-defined neural process PyTorch/TensorFlow model object. This argument can
+only be used alongside the <code class="docutils literal notranslate"><span class="pre">data_processor</span></code> and <code class="docutils literal notranslate"><span class="pre">task_loader</span></code> arguments.</p></li>
+<li><p><strong>internal_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Density of the ConvNP’s internal grid (in terms of number of points
+per 1x1 unit square). Defaults to 100.</p></li>
+<li><p><strong>likelihood</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Likelihood. Must be one of <code class="docutils literal notranslate"><span class="pre">&quot;cnp&quot;</span></code> (equivalently <code class="docutils literal notranslate"><span class="pre">&quot;het&quot;</span></code>),
+<code class="docutils literal notranslate"><span class="pre">&quot;gnp&quot;</span></code> (equivalently <code class="docutils literal notranslate"><span class="pre">&quot;lowrank&quot;</span></code>), <code class="docutils literal notranslate"><span class="pre">&quot;cnp-spikes-beta&quot;</span></code>,
+(equivalently <code class="docutils literal notranslate"><span class="pre">&quot;spikes-beta&quot;</span></code>) or “bernoulli-gamma”.
+Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;cnp&quot;</span></code>.</p></li>
+<li><p><strong>dim_x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Dimensionality of the inputs. Defaults to 1.</p></li>
+<li><p><strong>dim_y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Dimensionality of the outputs. Defaults to 1.</p></li>
+<li><p><strong>dim_yc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>, </em><em>optional</em>) – Dimensionality of the outputs of the context set. You should set this
+if the dimensionality of the outputs of the context set is not equal
+to the dimensionality of the outputs of the target set. You should
+also set this if you want to use multiple context sets. In that case,
+set this equal to a tuple of integers indicating the respective output
+dimensionalities.</p></li>
+<li><p><strong>dim_yt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Dimensionality of the outputs of the target set. You should set this
+if the dimensionality of the outputs of the target set is not equal to
+the dimensionality of the outputs of the context set.</p></li>
+<li><p><strong>dim_aux_t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Dimensionality of target-specific auxiliary variables.</p></li>
+<li><p><strong>conv_arch</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Convolutional architecture to use. Must be one of
+<code class="docutils literal notranslate"><span class="pre">&quot;unet[-res][-sep]&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;conv[-res][-sep]&quot;</span></code>. Defaults to
+<code class="docutils literal notranslate"><span class="pre">&quot;unet&quot;</span></code>.</p></li>
+<li><p><strong>unet_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>, </em><em>optional</em>) – Number of channels in the downsampling path of the UNet (including the bottleneck).
+Defaults to four downsampling layers, each with 64 channels. I.e. (64, 64, 64, 64).
+Note: The downsampling path is followed by an upsampling path with the same number of
+channels in the reverse order (plus extra channels for the skip connections).</p></li>
+<li><p><strong>unet_kernels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>, </em><em>optional</em>) – Sizes of the kernels in the UNet. Defaults to 5.</p></li>
+<li><p><strong>unet_resize_convs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Use resize convolutions rather than transposed convolutions in the
+UNet. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>unet_resize_conv_interp_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Interpolation method for the resize convolutions in the UNet. Can be
+set to <code class="docutils literal notranslate"><span class="pre">&quot;bilinear&quot;</span></code>. Defaults to “bilinear”.</p></li>
+<li><p><strong>num_basis_functions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of basis functions for the low-rank likelihood. Defaults to
+64.</p></li>
+<li><p><strong>dim_lv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Dimensionality of the latent variable. Setting to &gt;0 constructs a
+latent neural process. Defaults to 0.</p></li>
+<li><p><strong>encoder_scales</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em><em>, </em><em>optional</em>) – Initial value for the length scales of the set convolutions for the
+context sets embeddings. Set to a tuple equal to the number of context
+sets to use different values for each set. Set to a single value to use
+the same value for all context sets. Defaults to
+<code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">internal_density</span></code>.</p></li>
+<li><p><strong>encoder_scales_learnable</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether the encoder SetConv length scale(s) are learnable. Defaults to
+<code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>decoder_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Initial value for the length scale of the set convolution in the
+decoder. Defaults to <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">internal_density</span></code>.</p></li>
+<li><p><strong>decoder_scale_learnable</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether the decoder SetConv length scale(s) are learnable. Defaults to
+<code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>aux_t_mlp_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>, </em><em>optional</em>) – Widths of the layers of the MLP for the target-specific auxiliary
+variable. Defaults to three layers of width 128.</p></li>
+<li><p><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Epsilon added by the set convolutions before dividing by the density
+channel. Defaults to <code class="docutils literal notranslate"><span class="pre">1e-2</span></code>.</p></li>
+<li><p><strong>dtype</strong> (<em>dtype</em><em>, </em><em>optional</em>) – Data type.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requires_grad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.__call__" title="Link to this definition">#</a></dt>
+<dd><p>Compute ConvNP distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – <p>…</p>
+</p></li>
+<li><p><strong>n_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of samples to draw from the distribution, by default 10.</p></li>
+<li><p><strong>requires_grad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to compute gradients, by default False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>…</em> – The ConvNP distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.alpha">
+<span class="sig-name descname"><span class="pre">alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.alpha" title="Link to this definition">#</a></dt>
+<dd><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">numpy.ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Alpha parameter values of model’s distribution at target locations in task.</p>
+<p>Returned numpy arrays have shape <code class="docutils literal notranslate"><span class="pre">(N_features,</span> <span class="pre">*N_targets)</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method only works for models that return a distribution with
+a <code class="docutils literal notranslate"><span class="pre">dist.slab.alpha</span></code> attribute, e.g. models with a Beta or
+Bernoulli-Gamma likelihood, where it returns the alpha values of
+the slab component of the mixture model.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task containing the context and target data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>] –     Alpha values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.ar_sample">
+<span class="sig-name descname"><span class="pre">ar_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_target_AR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ar_subsample_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.ar_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.ar_sample" title="Link to this definition">#</a></dt>
+<dd><p>Autoregressive sampling from the model.</p>
+<p>AR sampling with optional functionality to only draw AR samples over a
+subset of the target set and then infill the rest of the sample with
+the model mean or joint sample conditioned on the AR samples.</p>
+<p>Returned numpy arrays have shape <code class="docutils literal notranslate"><span class="pre">(N_samples,</span> <span class="pre">N_features,</span> <span class="pre">*N_targets)</span></code>,</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>AR sampling only works for 0th context/target set, and only for models with
+a single target set.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task to sample from.</p></li>
+<li><p><strong>n_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of samples to draw from the distribution, by
+default 1.</p></li>
+<li><p><strong>X_target_AR</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, optional) – Locations to draw AR samples over. If None, AR samples will be
+drawn over the target locations in the task. Defaults to None.</p></li>
+<li><p><strong>ar_subsample_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Subsample target locations to draw AR samples over. Defaults
+to 1.</p></li>
+<li><p><strong>fill_type</strong> (<em>Literal</em><em>[</em><em>&quot;mean&quot;</em><em>, </em><em>&quot;sample&quot;</em><em>]</em><em>, </em><em>optional</em>) – How to infill the rest of the sample. Must be one of “mean” or
+“sample”. Defaults to “mean”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The samples.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.beta">
+<span class="sig-name descname"><span class="pre">beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.beta" title="Link to this definition">#</a></dt>
+<dd><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">numpy.ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Beta values of model’s distribution at target locations in task.</p>
+<p>Returned numpy arrays have shape <code class="docutils literal notranslate"><span class="pre">(N_features,</span> <span class="pre">*N_targets)</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method only works for models that return a distribution with
+a <code class="docutils literal notranslate"><span class="pre">dist.slab.beta</span></code> attribute, e.g. models with a Beta or
+Bernoulli-Gamma likelihood.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task containing the context and target data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>] –     Beta values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.covariance">
+<span class="sig-name descname"><span class="pre">covariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.covariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.covariance" title="Link to this definition">#</a></dt>
+<dd><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">covariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.covariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – <p>…</p>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>…</em> – …</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.joint_entropy">
+<span class="sig-name descname"><span class="pre">joint_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.joint_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.joint_entropy" title="Link to this definition">#</a></dt>
+<dd><p>Model entropy over target points given context points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dist</strong> (<em>neuralprocesses.dist.AbstractMultiOutputDistribution</em>) – The distribution to compute the entropy of.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – The model entropy.</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">joint_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.joint_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Model entropy over target points given context points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task to compute the entropy of.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – The model entropy.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.k">
+<span class="sig-name descname"><span class="pre">k</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.k" title="Link to this definition">#</a></dt>
+<dd><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">k</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">numpy.ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.k"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>K parameter values of model’s distribution at target locations in task.</p>
+<p>Returned numpy arrays have shape <code class="docutils literal notranslate"><span class="pre">(N_features,</span> <span class="pre">*N_targets)</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method only works for models that return a distribution with
+a <code class="docutils literal notranslate"><span class="pre">dist.slab.k</span></code> attribute, e.g. models with a Beta or
+Bernoulli-Gamma likelihood, where it returns the k values of
+the slab component of the mixture model.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task containing the context and target data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>] –     k values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_ID</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.load" title="Link to this definition">#</a></dt>
+<dd><p>Load a model from a folder containing model weights and config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Folder to load the model from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.logpdf">
+<span class="sig-name descname"><span class="pre">logpdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.logpdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.logpdf" title="Link to this definition">#</a></dt>
+<dd><p>Joint logpdf over all target sets.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the model has multiple target sets, the returned logpdf is the
+mean logpdf over all target sets.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>neuralprocesses.dist.AbstractMultiOutputDistribution</em>) – The distribution to compute the logpdf of.</p></li>
+<li><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task to compute the logpdf of.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – The logpdf.</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">logpdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.logpdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Joint logpdf over all target sets.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the model has multiple target sets, the returned logpdf is the
+mean logpdf over all target sets.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task to compute the logpdf of.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – The logpdf.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.loss_fn">
+<span class="sig-name descname"><span class="pre">loss_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_lv_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.loss_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.loss_fn" title="Link to this definition">#</a></dt>
+<dd><p>Compute the loss of a task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task to compute the loss of.</p></li>
+<li><p><strong>fix_noise</strong> – Whether to fix the noise to the value specified in the model
+config.</p></li>
+<li><p><strong>num_lv_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – If latent variable model, number of lv samples for evaluating
+the loss, by default 8.</p></li>
+<li><p><strong>normalise</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to normalise the loss by the number of target points,
+by default False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – The loss.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.mean">
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.mean" title="Link to this definition">#</a></dt>
+<dd><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Mean values of model’s distribution at target locations in task.</p>
+<p>Returned numpy arrays have shape <code class="docutils literal notranslate"><span class="pre">(N_features,</span> <span class="pre">*N_targets)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task containing the context and target data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>] –     Mean values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.mean_marginal_entropy">
+<span class="sig-name descname"><span class="pre">mean_marginal_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.mean_marginal_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.mean_marginal_entropy" title="Link to this definition">#</a></dt>
+<dd><p>Mean marginal entropy over target points given context points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dist</strong> (<em>neuralprocesses.dist.AbstractMultiOutputDistribution</em>) – The distribution to compute the entropy of.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – The mean marginal entropy.</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">mean_marginal_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.mean_marginal_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Mean marginal entropy over target points given context points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task to compute the entropy of.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – The mean marginal entropy.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.mixture_probs">
+<span class="sig-name descname"><span class="pre">mixture_probs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.mixture_probs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.mixture_probs" title="Link to this definition">#</a></dt>
+<dd><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">mixture_probs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.mixture_probs"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Mixture probabilities of model’s distribution at target locations in task.</p>
+<p>Returned numpy arrays have shape <code class="docutils literal notranslate"><span class="pre">(N_components,</span> <span class="pre">N_features,</span> <span class="pre">*N_targets)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task containing the context and target data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>] –     Mixture probabilities.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.modify_task">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">modify_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.modify_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.modify_task" title="Link to this definition">#</a></dt>
+<dd><p>Cast numpy arrays to TensorFlow or PyTorch tensors, add batch dim, and
+mask NaNs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – <p>…</p>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>…</em> – …</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.sample" title="Link to this definition">#</a></dt>
+<dd><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Create samples from a ConvNP distribution.</p>
+<p>Returned numpy arrays have shape <code class="docutils literal notranslate"><span class="pre">(N_samples,</span> <span class="pre">N_features,</span> <span class="pre">*N_targets)</span></code>,</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>neuralprocesses.dist.AbstractMultiOutputDistribution</em>) – The distribution to sample from.</p></li>
+<li><p><strong>n_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of samples to draw from the distribution, by
+default 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>] –     The samples as an array or list of arrays.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_ID</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.save" title="Link to this definition">#</a></dt>
+<dd><p>Save the model weights and config to a folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Folder to save the model to.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.scale" title="Link to this definition">#</a></dt>
+<dd><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">numpy.ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Scale parameter values of model’s distribution at target locations in task.</p>
+<p>Returned numpy arrays have shape <code class="docutils literal notranslate"><span class="pre">(N_features,</span> <span class="pre">*N_targets)</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method only works for models that return a distribution with
+a <code class="docutils literal notranslate"><span class="pre">dist.slab.scale</span></code> attribute, e.g. models with a Beta or
+Bernoulli-Gamma likelihood, where it returns the scale values of
+the slab component of the mixture model.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task containing the context and target data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>] –     Scale values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.slice_diag">
+<span class="sig-name descname"><span class="pre">slice_diag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.slice_diag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.slice_diag" title="Link to this definition">#</a></dt>
+<dd><p>Slice out the ConvCNP part of the ConvNP distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task to slice.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>…</em> – …</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">slice_diag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">neuralprocesses.dist.dist.AbstractDistribution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.slice_diag"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Slice out the ConvCNP part of the ConvNP distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dist</strong> (<em>neuralprocesses.dist.AbstractMultiOutputDistribution</em>) – The distribution to slice.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>…</em> – …</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.std">
+<span class="sig-name descname"><span class="pre">std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.std"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.std" title="Link to this definition">#</a></dt>
+<dd><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.std"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Standard deviation values of model’s distribution at target locations in task.</p>
+<p>Returned numpy arrays have shape <code class="docutils literal notranslate"><span class="pre">(N_features,</span> <span class="pre">*N_targets)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task containing the context and target data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>] –     Standard deviation values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.ConvNP.variance">
+<span class="sig-name descname"><span class="pre">variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.variance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.ConvNP.variance" title="Link to this definition">#</a></dt>
+<dd><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><span class="pre">deepsensor.data.task.Task</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#ConvNP.variance"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<p>Variance values of model’s distribution at target locations in task.</p>
+<p>Returned numpy arrays have shape <code class="docutils literal notranslate"><span class="pre">(N_features,</span> <span class="pre">*N_targets)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../data/task.html#deepsensor.data.task.Task" title="deepsensor.data.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task containing the context and target data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> | List[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>] –     Variance values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deepsensor.model.convnp.concat_tasks">
+<span class="sig-name descname"><span class="pre">concat_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deepsensor/model/convnp.html#concat_tasks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deepsensor.model.convnp.concat_tasks" title="Link to this definition">#</a></dt>
+<dd><p>Concatenate a list of tasks into a single task containing multiple batches.</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><cite>{warning}
+`concat_tasks</cite> has been moved to deepsensor.data.task and will be removed from “</p>
+<blockquote>
+<div><p>“deepsensor.model.convnp in a future release.</p>
+</div></blockquote>
+<p><a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a></p>
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./reference/model"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="pred.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">deepsensor.model.pred</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="defaults.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">deepsensor.model.defaults</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP"><code class="docutils literal notranslate"><span class="pre">ConvNP</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.__call__"><code class="docutils literal notranslate"><span class="pre">ConvNP.__call__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.alpha"><code class="docutils literal notranslate"><span class="pre">ConvNP.alpha()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.ar_sample"><code class="docutils literal notranslate"><span class="pre">ConvNP.ar_sample()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.beta"><code class="docutils literal notranslate"><span class="pre">ConvNP.beta()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.covariance"><code class="docutils literal notranslate"><span class="pre">ConvNP.covariance()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.joint_entropy"><code class="docutils literal notranslate"><span class="pre">ConvNP.joint_entropy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.k"><code class="docutils literal notranslate"><span class="pre">ConvNP.k()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.load"><code class="docutils literal notranslate"><span class="pre">ConvNP.load()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.logpdf"><code class="docutils literal notranslate"><span class="pre">ConvNP.logpdf()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.loss_fn"><code class="docutils literal notranslate"><span class="pre">ConvNP.loss_fn()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.mean"><code class="docutils literal notranslate"><span class="pre">ConvNP.mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.mean_marginal_entropy"><code class="docutils literal notranslate"><span class="pre">ConvNP.mean_marginal_entropy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.mixture_probs"><code class="docutils literal notranslate"><span class="pre">ConvNP.mixture_probs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.modify_task"><code class="docutils literal notranslate"><span class="pre">ConvNP.modify_task()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.sample"><code class="docutils literal notranslate"><span class="pre">ConvNP.sample()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.save"><code class="docutils literal notranslate"><span class="pre">ConvNP.save()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.scale"><code class="docutils literal notranslate"><span class="pre">ConvNP.scale()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.slice_diag"><code class="docutils literal notranslate"><span class="pre">ConvNP.slice_diag()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.std"><code class="docutils literal notranslate"><span class="pre">ConvNP.std()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.ConvNP.variance"><code class="docutils literal notranslate"><span class="pre">ConvNP.variance()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsensor.model.convnp.concat_tasks"><code class="docutils literal notranslate"><span class="pre">concat_tasks()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Andersson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
