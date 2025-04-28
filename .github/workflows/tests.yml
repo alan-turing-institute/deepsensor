@@ -43,7 +43,7 @@ jobs:
   finish:
     name: Finish Coveralls
     needs: test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - name: Finish Coveralls
       uses: coverallsapp/github-action@v2
