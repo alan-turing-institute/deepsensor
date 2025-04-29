@@ -15,7 +15,7 @@ import lab as B
 import deepsensor.torch as deepsensor
 
 from deepsensor.data.processor import DataProcessor
-from deepsensor.data.loader import TaskLoader
+from deepsensor.data.loader import TaskLoader, PatchwiseTaskLoader
 from deepsensor.model.convnp import ConvNP
 from deepsensor.train.train import Trainer
 from deepsensor.eval.metrics import compute_errors
@@ -703,6 +703,54 @@ class TestModel(unittest.TestCase):
             )
             np.testing.assert_array_equal(pred_var.time.values, expected_valid_times)
 
+
+def test_patchwise_prediction():
+    """Test that ``.predict_patchwise`` returns gridded predictions of expected shape."""
+
+    patch_size = 0.5
+    stride = 0.15
+
+    da = _gen_data_xr(dict(
+            time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+            x1=np.linspace(0, 1, 30),
+            x2=np.linspace(0, 1, 60),
+        ),
+        data_vars=["var"])
+
+    dp = DataProcessor()
+    ds = dp(da)  # Compute normalisation parameters
+
+    tl = PatchwiseTaskLoader(context=da, target=da)
+
+    tasks = tl(
+        "2020-01-01",
+        context_sampling="all",
+        target_sampling="all",
+        patch_strategy="sliding",
+        patch_size=patch_size,
+        stride=stride,
+    )
+
+    model = ConvNP(dp, tl)
+
+    pred = model.predict_patchwise(
+        tasks=tasks,
+        X_t=da,
+    )
+
+    # gridded predictions
+    assert [isinstance(ds, xr.Dataset) for ds in pred.values()]
+    for var_ID in pred:
+        assert_shape(
+            pred[var_ID]["mean"],
+            (1, da.x1.size, da.x2.size),
+        )
+        assert_shape(
+            pred[var_ID]["std"],
+            (1, da.x1.size, da.x2.size),
+        )
+        assert da.x1.size == pred[var_ID].x1.size
+        assert da.x2.size == pred[var_ID].x2.size
 
 def assert_shape(x, shape: tuple):
     """Assert that the shape of ``x`` matches ``shape``."""
