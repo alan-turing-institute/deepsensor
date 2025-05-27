@@ -190,7 +190,7 @@ on the top right of this page.
 
 ## Funding
 
-DeepSensor is funded by [The Alan Turing Institute](https://www.turing.ac.uk/) under the [Environmental monitoring: blending satellite and surface data](https://www.turing.ac.uk/research/research-projects/environmental-monitoring-blending-satellite-and-surface-data) and [Scivision](https://www.turing.ac.uk/research/research-projects/scivision) projects, led by PI [Dr Scott Hosking](https://www.turing.ac.uk/people/researchers/scott-hosking).
+DeepSensor has received funding from [The Alan Turing Institute](https://www.turing.ac.uk/) under the [Environmental monitoring: blending satellite and surface data](https://www.turing.ac.uk/research/research-projects/environmental-monitoring-blending-satellite-and-surface-data) and from [ARIA's Forecasting Tipping Points programme](https://www.aria.org.uk/opportunity-spaces/scoping-our-planet/forecasting-tipping-points/) and the (ARIA 'GRAIL')](https://www.bas.ac.uk/project/grail/) project, led by PI [Dr Scott Hosking](https://www.turing.ac.uk/people/researchers/scott-hosking).
 
 ## Contributors
 
