@@ -17,6 +17,11 @@ jobs:
               run: pip install -e .[docs]
             - name: "Run jupyterbook"
               run: jupyter-book build docs --all
+            - name: "Verify Jupyter Book output"
+              run: |
+                echo "Contents of docs/_build/html:"
+                ls -la docs/_build/html || exit 1
+                test -f docs/_build/html/index.html
             - name: "Deploy"
               uses: peaceiris/actions-gh-pages@v4
               if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/docs') }}
