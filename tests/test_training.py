@@ -3,14 +3,15 @@ import pandas as pd
 import xarray as xr
 
 import unittest
-
+from parameterized import parameterized
 from tqdm import tqdm
 
-import deepsensor.tensorflow as deepsensor
+# import deepsensor.tensorflow as deepsensor
+import deepsensor.torch
 
 from deepsensor.train.train import Trainer
 from deepsensor.data.processor import DataProcessor
-from deepsensor.data.loader import TaskLoader
+from deepsensor.data.loader import TaskLoader, PatchwiseTaskLoader
 from deepsensor.model.convnp import ConvNP
 from deepsensor.data.task import concat_tasks
 
@@ -115,6 +116,41 @@ class TestTraining(unittest.TestCase):
         loss = np.mean(epoch_losses)
         self.assertFalse(np.isnan(loss))
 
+    @parameterized.expand([["random"],["sliding", 0.1]])
+    def test_patchwise_training(self, patch_strategy, stride=None):
+        """
+        Test model training with patchwise tasks.
+        """
+        tl = PatchwiseTaskLoader(context=self.da, target=self.da)
+        model = ConvNP(self.data_processor, tl, unet_channels=(5, 5, 5), verbose=False)
+
+        # generate training tasks
+        n_train_dates = 10
+        dates = [np.random.choice(self.da.time.values) for i in range(n_train_dates)]
+        train_tasks = tl(
+            dates,
+            context_sampling="all",
+            target_sampling="all",
+            patch_strategy=patch_strategy,
+            patch_size=(0.4, 0.8),
+            stride=stride,
+        )
+
+        # Train
+        trainer = Trainer(model, lr=5e-5)
+        batch_size = None
+        # TODO check with batch_size > 1
+        # batch_size = 5
+        n_epochs = 5
+        epoch_losses = []
+        for epoch in tqdm(range(n_epochs)):
+            batch_losses = trainer(train_tasks, batch_size=batch_size)
+            epoch_losses.append(np.mean(batch_losses))
+
+        # Check for NaNs in the loss
+        loss = np.mean(epoch_losses)
+        self.assertFalse(np.isnan(loss))
+
     def test_training_multidim(self):
         """A basic test of the training loop with multidimensional context sets"""
         # Load raw data
@@ -149,6 +185,7 @@ class TestTraining(unittest.TestCase):
         # batch_size = None
         batch_size = 5
         n_epochs = 10
+
         epoch_losses = []
         for epoch in tqdm(range(n_epochs)):
             batch_losses = trainer(train_tasks, batch_size=batch_size)

@@ -31,7 +31,9 @@ class Task(dict):
     @classmethod
     def summarise_str(cls, k, v):
         """Return string summaries for the _str__ method."""
-        if plum.isinstance(v, B.Numeric):
+        if isinstance(v, float):
+            return v
+        elif plum.isinstance(v, B.Numeric):
             return v.shape
         elif plum.isinstance(v, tuple):
             return tuple(vi.shape for vi in v)
@@ -57,6 +59,8 @@ class Task(dict):
         """
         if v is None:
             return "None"
+        elif isinstance(v, float):
+            return f"{type(v).__name__}"
         elif plum.isinstance(v, B.Numeric):
             return f"{type(v).__name__}/{v.dtype}/{v.shape}"
         if plum.isinstance(v, deepsensor.backend.nps.mask.Masked):
