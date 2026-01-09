@@ -16,7 +16,7 @@ jobs:
             - name: "Install dependencies"
               run: pip install -e .[docs]
             - name: "Run jupyter-book"
-              run: jupyter-book build docs --all --verbose
+              run: jupyter-book build docs --all
             - name: "Verify Jupyter Book output"
               run: |
                 echo "Contents of docs/_build/html:"
