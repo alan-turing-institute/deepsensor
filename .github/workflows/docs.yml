@@ -15,8 +15,8 @@ jobs:
               run: pip install --upgrade pip
             - name: "Install dependencies"
               run: pip install -e .[docs]
-            - name: "Run jupyterbook"
-              run: jupyter-book build docs --all
+            - name: "Run jupyter-book"
+              run: jupyter-book build docs --all --verbose
             - name: "Verify Jupyter Book output"
               run: |
                 echo "Contents of docs/_build/html:"
