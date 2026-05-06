@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=80", "setuptools-scm[simple]>=9.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "deepsensor"
-version = "0.4.2"
+dynamic = ["version"]
 authors = [
     {name = "Tom R. Andersson", email="tomandersson3@gmail.com"},
 ]
