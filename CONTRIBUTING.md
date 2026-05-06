@@ -257,7 +257,7 @@ Note that these instructions are intended for the maintainers of DeepSensor.
 
 ## Release Management
 
-1. Bump the version manually in the files: `pyproject.toml` and `CITATION.cff`.
+1. Bump the version manually in `CITATION.cff`, including the release date.
 1. Draft a new release and create a new tag with the same new version name, e.g. v0.4.3.
 1. Click 'Generate release notes' and it will automatically fill the release notes based on the commit history between HEAD and the previous release. Delete most of the individual commit messages which are way too granular, and replace them with higher-level updates.
 1. Ensure this is set as the new version (which is on by default), and publish the release. You should see the publish action start to run [here](https://github.com/alan-turing-institute/deepsensor/actions/workflows/publish.yml), and when it completes the PyPI server and website will be updated with the new version.
