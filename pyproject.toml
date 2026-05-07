@@ -45,10 +45,7 @@ Bug_Tracker = "https://github.com/alan-turing-institute/deepsensor/issues"
 torch = ["torch>=2"]
 tf = ["tensorflow", "tensorflow_probability[tf]"]
 dev = [
-    "coveralls",
-    "parameterized",
     "pre-commit",
-    "pytest",
     "ruff",
 ]
 docs = [
@@ -57,7 +54,8 @@ docs = [
     "numpy",
     "sphinx",
 ]
-testing = [
+test = [
+    "coveralls",
     "mypy",
     "parameterized",
     "pytest",
