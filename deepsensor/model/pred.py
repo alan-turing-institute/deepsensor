@@ -332,7 +332,8 @@ def increase_spatial_resolution(
     if coord_names is None:
         coord_names = {"x1": "x1", "x2": "x2"}
     x1_name, x2_name = coord_names["x1"], coord_names["x2"]
-    x1, x2 = X_t_normalised.coords[x1_name], X_t_normalised.coords[x2_name]
+    x1 = X_t_normalised.coords[x1_name].to_numpy()
+    x2 = X_t_normalised.coords[x2_name].to_numpy()
     x1 = np.linspace(x1[0], x1[-1], int(x1.size * resolution_factor), dtype="float64")
     x2 = np.linspace(x2[0], x2[-1], int(x2.size * resolution_factor), dtype="float64")
     X_t_normalised = X_t_normalised.interp(
