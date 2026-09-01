@@ -5,7 +5,7 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    - cron: "5 0 * * 2" # run weekly tests
+    - cron: "37 2 * * 2" # run weekly tests
 
 jobs:
   test:
