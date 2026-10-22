@@ -60,7 +60,6 @@ test = [
     "parameterized",
     "pytest",
     "pytest-cov",
-    "tox",
 ]
 rioxarray = [
     "rioxarray"
