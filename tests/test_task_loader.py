@@ -1,25 +1,30 @@
+import copy
 import itertools
+import math
+import os
+import shutil
+import tempfile
+import unittest
+from typing import Sequence
 
-from parameterized import parameterized
-
-import xarray as xr
 import dask.array
 import numpy as np
 import pandas as pd
-import unittest
 
-import tempfile
-import copy
+import pytest
+import xarray as xr
+from _pytest.fixtures import SubRequest
+from parameterized import parameterized
 
+from deepsensor.data.loader import TaskLoader, PatchwiseTaskLoader
 from deepsensor.errors import InvalidSamplingStrategyError, SamplingTooManyPointsError
+
 from tests.utils import (
-    gen_random_data_xr,
-    gen_random_data_pandas,
     assert_allclose_pd,
     assert_allclose_xr,
+    gen_random_data_pandas,
+    gen_random_data_xr,
 )
-
-from deepsensor.data.loader import TaskLoader
 
 
 def _gen_data_xr(coords=None, dims=None, data_vars=None, use_dask=False):
@@ -313,6 +318,135 @@ class TestTaskLoader(unittest.TestCase):
         with self.assertRaises(AssertionError):
             tl = TaskLoader(context=self.df, target=self.df, links=[(0, 0)])
             task = tl("2020-01-01", "gapfill", "gapfill")
+
+    @parameterized.expand([[(0.3, 0.3)], [(0.6, 0.4)]])
+    def test_patch_size(self, patch_size) -> None:
+        """Test patch size sampling."""
+        # need to redefine the data generators because the patch size samplin
+        # where we want to test that context and or target have different
+        # spatial extents
+        da_data_0_1 = self.da
+
+        # smaller normalized coord
+        da_data_smaller = _gen_data_xr(
+            coords=dict(
+                time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+                x1=np.linspace(0.1, 0.9, 25),
+                x2=np.linspace(0.1, 0.9, 10),
+            )
+        )
+        # larger normalized coord
+        da_data_larger = _gen_data_xr(
+            coords=dict(
+                time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+                x1=np.linspace(-0.1, 1.1, 50),
+                x2=np.linspace(-0.1, 1.1, 50),
+            )
+        )
+
+        context = [da_data_0_1, da_data_smaller, da_data_larger]
+        tl = PatchwiseTaskLoader(
+            context=context,  # gridded xarray and off-grid pandas contexts
+            target=self.df,  # off-grid pandas targets
+        )
+
+        # TODO it would be better to do this with pytest.fixtures
+        # but could not get to work so far
+        task = tl(
+            "2020-01-01", "all", "all", patch_size=patch_size, patch_strategy="random"
+        )
+
+        # test date range
+        tasks = tl(
+            ["2020-01-01", "2020-01-02"],
+            "all",
+            "all",
+            patch_size=patch_size,
+            patch_strategy="random",
+        )
+
+        # test date range with num_samples per date
+        tasks = tl(
+            ["2020-01-01", "2020-01-02"],
+            context_sampling="all",
+            target_sampling="all",
+            patch_size=patch_size,
+            patch_strategy="random",
+            num_patch_tasks=2,
+        )
+
+    @parameterized.expand([[0.5, 0.45], [(0.3, 0.4), (0.3, 0.35)]])
+    def test_sliding_window(self, patch_size, stride) -> None:
+        """Test sliding window sampling."""
+        # need to redefine the data generators because the patch size samplin
+        # where we want to test that context and or target have different
+        # spatial extents
+        da_data_0_1 = self.da
+
+        # smaller normalized coord
+        da_data_smaller = _gen_data_xr(
+            coords=dict(
+                time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+                x1=np.linspace(0.1, 0.9, 25),
+                x2=np.linspace(0.1, 0.9, 10),
+            )
+        )
+        # larger normalized coord
+        da_data_larger = _gen_data_xr(
+            coords=dict(
+                time=pd.date_range("2020-01-01", "2020-01-31", freq="D"),
+                x1=np.linspace(-0.1, 1.1, 50),
+                x2=np.linspace(-0.1, 1.1, 50),
+            )
+        )
+
+        context = [da_data_0_1, da_data_smaller, da_data_larger]
+        tl = PatchwiseTaskLoader(
+            context=context,  # gridded xarray and off-grid pandas contexts
+            target=self.df,   # off-grid pandas targets
+        )
+
+        # test date range
+        tasks = tl(
+            ["2020-01-01", "2020-01-02"],
+            "all",
+            "all",
+            patch_size=patch_size,
+            patch_strategy="sliding",
+            stride=stride,
+        )
+
+        # test patch sizes are correct
+        for task in tasks:
+            assert math.isclose(task['bbox'][1] - task['bbox'][0], task['patch_size'][0])
+            assert math.isclose(task['bbox'][3] - task['bbox'][2], task['patch_size'][1])
+
+        # test stride sizes are correct
+        assert math.isclose(abs(tasks[0]['bbox'][2] - tasks[1]['bbox'][2]), tasks[0]['stride'][1])
+
+    @parameterized.expand(
+    [
+        ("sliding", (0.5, 0.5), (0.6, 0.6), Warning), # patch_size and stride as tuples
+        ("sliding", 0.5, 0.6, Warning),               # as floats
+        ("sliding", 1.0, 1.2, Warning),               # one argument above allowed range
+        ("sliding", -0.1, 0.6, Warning),              # and below allowed range
+        ("random", 1.1, None, ValueError)                # for sliding window as well
+    ]
+    )
+    def test_patchwise_task_loader_parameter_handling(self, patch_strategy, patch_size, stride, raised):
+        """Test that correct errors and warnings are raised"""
+
+        tl = PatchwiseTaskLoader(context=self.da, target=self.da)
+
+        with self.assertRaises(raised):
+            tl(
+                "2020-01-01",
+                context_sampling="all",
+                target_sampling="all",
+                patch_strategy=patch_strategy,
+                patch_size=patch_size,
+                stride=stride,
+            )
 
     def test_saving_and_loading(self):
         """Test saving and loading TaskLoader"""
