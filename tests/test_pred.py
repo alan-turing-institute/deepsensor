@@ -19,12 +19,12 @@ class TestPredictionHelpers(unittest.TestCase):
 
         for xarray_obj in (data, data.to_dataset(name="value")):
             with self.subTest(type=type(xarray_obj).__name__):
-                result = increase_spatial_resolution(xarray_obj, 0.5)
+                result = increase_spatial_resolution(xarray_obj, 2)
 
-                self.assertEqual(result.sizes["x1"], 2)
-                self.assertEqual(result.sizes["x2"], 3)
-                np.testing.assert_allclose(result.x1, [0.0, 1.0])
-                np.testing.assert_allclose(result.x2, [10.0, 15.0, 20.0])
+                self.assertEqual(result.sizes["x1"], 8)
+                self.assertEqual(result.sizes["x2"], 12)
+                np.testing.assert_allclose(result.x1, np.linspace(0.0, 1.0, 8))
+                np.testing.assert_allclose(result.x2, np.linspace(10.0, 20.0, 12))
 
 
 if __name__ == "__main__":
