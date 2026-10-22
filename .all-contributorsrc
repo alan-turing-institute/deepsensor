@@ -54,7 +54,8 @@
         "ideas",
         "research",
         "code",
-        "test"
+        "test",
+        "review"
       ]
     },
     {
@@ -191,7 +192,8 @@
         "doc",
         "test",
         "maintenance",
-        "bug"
+        "bug",
+        "review"
       ]
     },
     {
