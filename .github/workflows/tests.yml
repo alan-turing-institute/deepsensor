@@ -32,14 +32,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install .[test]
 
-    - name: Install dependencies
+    - name: Install dependencies (include tensorflow for python <= 3.13)
       if: matrix.python-version <= '3.13'
       run: |
-        pip install "tensorflow", "tensorflow_probability[tf]"
+        pip install "tensorflow" "tensorflow_probability[tf]"
         # use cpu only torch to avoid triton in ci
         pip install torch --index-url https://download.pytorch.org/whl/cpu
 
-    - name: Install dependencies
+    - name: Install dependencies (no tensorflow for python > 3.13)
       if: matrix.python-version > '3.13'
       run: |
         # use cpu only torch to avoid triton in ci
