@@ -1,8 +1,13 @@
+import sys
 import unittest
 import xarray as xr
 import numpy as np
 
-import deepsensor.tensorflow as deepsensor
+if sys.version_info <= (3, 13):
+    import deepsensor.tensorflow as deepsensor
+else:
+    import deepsensor.torch as deepsensor
+
 from deepsensor.active_learning.acquisition_fns import (
     AcquisitionFunction,
     MeanVariance,

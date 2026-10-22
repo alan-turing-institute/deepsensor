@@ -1,9 +1,13 @@
+import sys
 import xarray as xr
 import numpy as np
 import pandas as pd
 import unittest
 
-import deepsensor.tensorflow as deepsensor
+if sys.version_info <= (3, 13):
+    import deepsensor.tensorflow as deepsensor
+else:
+    import deepsensor.torch as deepsensor
 
 from deepsensor.data.processor import DataProcessor
 from deepsensor.data.loader import TaskLoader

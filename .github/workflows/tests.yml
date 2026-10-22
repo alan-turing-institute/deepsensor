@@ -11,27 +11,42 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8', '3.11']
+        python-version: ['3.11', '3.12', '3.13', '3.14']
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
     - name: Free Disk Space (Ubuntu)
       uses: jlumbroso/free-disk-space@main
     - name: Print space
       run: df -h
-    - name: Install dependencies
+    
+    - name: Install package
       run: |
         python -m pip install --upgrade pip
-        pip install .[dev,testing]
-        pip install tox-gh-actions
-    - name: Test with tox
-      run: tox
+        pip install .[test]
+
+    - name: Install dependencies (include tensorflow for python <= 3.13)
+      if: matrix.python-version <= '3.13'
+      run: |
+        pip install "tensorflow" "tensorflow_probability[tf]"
+        # use cpu only torch to avoid triton in ci
+        pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+    - name: Install dependencies (no tensorflow for python > 3.13)
+      if: matrix.python-version > '3.13'
+      run: |
+        # use cpu only torch to avoid triton in ci
+        pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+    - name: Test with pytest
+      run: pytest
     - name: Run coveralls
       run: coveralls --service=github
       env:
@@ -43,7 +58,7 @@ jobs:
   finish:
     name: Finish Coveralls
     needs: test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - name: Finish Coveralls
       uses: coverallsapp/github-action@v2

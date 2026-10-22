@@ -22,9 +22,9 @@ jobs:
       url: https://pypi.org/p/deepsensor
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: "3.x"
 

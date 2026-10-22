@@ -354,7 +354,12 @@ def _get_era5_reanalysis_data_parallel(
         else:
             raise ValueError(f"Invalid freq: {freq}")
 
-        era5_zarr = xr.open_zarr(source, consolidated=True, chunks={"time": 48})
+        era5_zarr = xr.open_zarr(
+            source,
+            consolidated=True,
+            chunks={"time": 48},
+            storage_options={"token": "anon"},
+        )
         if var_IDs is not None:
             era5_zarr = era5_zarr[var_IDs]
         era5_da = era5_zarr.sel(time=slice(*date_range))

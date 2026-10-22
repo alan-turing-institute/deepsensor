@@ -54,7 +54,8 @@
         "ideas",
         "research",
         "code",
-        "test"
+        "test",
+        "review"
       ]
     },
     {
@@ -183,15 +184,16 @@
       ]
     },
     {
-      "login": "davidwilby",
-      "name": "David Wilby",
+      "login": "davidwyld",
+      "name": "David Wyld",
       "avatar_url": "https://avatars.githubusercontent.com/u/24752124?v=4",
-      "profile": "http://davidwilby.dev",
+      "profile": "http://davidwyld.uk",
       "contributions": [
         "doc",
         "test",
         "maintenance",
-        "bug"
+        "bug",
+        "review"
       ]
     },
     {
@@ -220,6 +222,17 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "sylvesterkaczmarek",
+      "name": "Sylvester Kaczmarek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16242628?v=4",
+      "profile": "https://sylvesterkaczmarek.com/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
-  ]
+  ],
+  "repoType": "github"
 }

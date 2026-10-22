@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -6,8 +7,10 @@ import unittest
 from parameterized import parameterized
 from tqdm import tqdm
 
-# import deepsensor.tensorflow as deepsensor
-import deepsensor.torch
+if sys.version_info <= (3, 13):
+    import deepsensor.tensorflow as deepsensor
+else:
+    import deepsensor.torch as deepsensor
 
 from deepsensor.train.train import Trainer
 from deepsensor.data.processor import DataProcessor

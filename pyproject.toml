@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=80", "setuptools-scm[simple]>=9.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "deepsensor"
-version = "0.4.2"
+dynamic = ["version"]
 authors = [
     {name = "Tom R. Andersson", email="tomandersson3@gmail.com"},
 ]
@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent"
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "backends>=1.7.0",
     "backends-matrix",
@@ -45,24 +45,21 @@ Bug_Tracker = "https://github.com/alan-turing-institute/deepsensor/issues"
 torch = ["torch>=2"]
 tf = ["tensorflow", "tensorflow_probability[tf]"]
 dev = [
-    "coveralls",
-    "parameterized",
     "pre-commit",
-    "pytest",
     "ruff",
 ]
 docs = [
-    "jupyter-book",
+    "jupyter-book<2",
     "matplotlib",
     "numpy",
     "sphinx",
 ]
-testing = [
+test = [
+    "coveralls",
     "mypy",
     "parameterized",
     "pytest",
     "pytest-cov",
-    "tox",
 ]
 rioxarray = [
     "rioxarray"
