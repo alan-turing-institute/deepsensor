@@ -35,12 +35,15 @@ jobs:
     - name: Install dependencies
       if: matrix.python-version <= '3.13'
       run: |
-        pip install .[tf,torch]
+        pip install "tensorflow", "tensorflow_probability[tf]"
+        # use cpu only torch to avoid triton in ci
+        pip install torch --index-url https://download.pytorch.org/whl/cpu
 
     - name: Install dependencies
       if: matrix.python-version > '3.13'
       run: |
-        pip install .[torch]
+        # use cpu only torch to avoid triton in ci
+        pip install torch --index-url https://download.pytorch.org/whl/cpu
 
     - name: Test with pytest
       run: pytest
