@@ -220,6 +220,17 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "sylvesterkaczmarek",
+      "name": "Sylvester Kaczmarek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16242628?v=4",
+      "profile": "https://sylvesterkaczmarek.com/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
-  ]
+  ],
+  "repoType": "github"
 }
