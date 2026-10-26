@@ -48,14 +48,11 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/13321552?v=4",
       "profile": "https://github.com/acocac",
       "contributions": [
-        "userTesting",
-        "bug",
-        "mentoring",
         "ideas",
-        "research",
-        "code",
-        "test",
-        "review"
+        "question",
+        "promotion",
+        "fundingFinding",
+        "financial"
       ]
     },
     {
@@ -193,7 +190,12 @@
         "test",
         "maintenance",
         "bug",
-        "review"
+        "review",
+        "projectManagement",
+        "ideas",
+        "question",
+        "fundingFinding",
+        "financial"
       ]
     },
     {
@@ -231,6 +233,33 @@
       "contributions": [
         "bug",
         "code"
+      ]
+    },
+    {
+      "login": "MartinSJRogers",
+      "name": "Martin Rogers",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43956226?v=4",
+      "profile": "https://github.com/MartinSJRogers",
+      "contributions": [
+        "ideas",
+        "projectManagement",
+        "talk",
+        "question",
+        "promotion",
+        "fundingFinding",
+        "financial"
+      ]
+    },
+    {
+      "login": "louisavz",
+      "name": "louisavz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63079440?v=4",
+      "profile": "https://github.com/louisavz",
+      "contributions": [
+        "ideas",
+        "projectManagement",
+        "fundingFinding",
+        "financial"
       ]
     }
   ],
