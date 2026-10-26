@@ -113,7 +113,10 @@
       "contributions": [
         "ideas",
         "userTesting",
-        "bug"
+        "bug",
+        "test",
+        "code",
+        "doc"
       ]
     },
     {
@@ -189,11 +192,9 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/24752124?v=4",
       "profile": "http://davidwyld.uk",
       "contributions": [
-        "doc",
         "test",
-        "maintenance",
-        "bug",
-        "review"
+        "code",
+        "doc"
       ]
     },
     {
@@ -231,6 +232,19 @@
       "contributions": [
         "bug",
         "code"
+      ]
+    },
+    {
+      "login": "MartinSJRogers",
+      "name": "Martin Rogers",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43956226?v=4",
+      "profile": "https://github.com/MartinSJRogers",
+      "contributions": [
+        "code",
+        "test",
+        "doc",
+        "review",
+        "userTesting"
       ]
     }
   ],
