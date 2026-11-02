@@ -190,7 +190,21 @@ on the top right of this page.
 
 ## Funding
 
-DeepSensor has received funding from [The Alan Turing Institute](https://www.turing.ac.uk/) under the [Environmental monitoring: blending satellite and surface data](https://www.turing.ac.uk/research/research-projects/environmental-monitoring-blending-satellite-and-surface-data) project, and the ARIA [Forecasting Tipping Points programme](https://www.aria.org.uk/opportunity-spaces/scoping-our-planet/forecasting-tipping-points/) specifically as part of the [GIANT](https://www.bas.ac.uk/project/giant/) project. The PI for DeepSensor development is [Dr Scott Hosking](https://www.turing.ac.uk/people/researchers/scott-hosking).
+DeepSensor has received funding from:
+
+* The [Institute for Research Software](https://software.ac.uk) under the [Research Software Maintenance Fund Round 2](https://www.software.ac.uk/news/announcing-19-projects-funded-through-research-software-maintenance-fund-round-2) for the project _Fostering a community of users and contributors with DeepSensor_, PI: David Wyld, Co-Is: Alejandro Coca-Castro, Martin Rogers & Louisa van Zeeland.
+* The ARIA [Forecasting Tipping Points programme](https://www.aria.org.uk/opportunity-spaces/scoping-our-planet/forecasting-tipping-points/) specifically as part of the [GIANT](https://www.bas.ac.uk/project/giant/) project.
+* [The Alan Turing Institute](https://www.turing.ac.uk/) under the [Environmental monitoring: blending satellite and surface data](https://www.turing.ac.uk/research/research-projects/environmental-monitoring-blending-satellite-and-surface-data) project,
+
+## Core Team
+
+DeepSensor was originally developed in partnership between the British Antarctic Survey and the Alan Turing Institute.
+
+* David Wyld, [@davidwyld](https://github.com/davidwyld), British Antarctic Survey
+* Alejandro Coca-Castro, [@acocac](https://github.com/acocac), Alan Turing Institute
+* Martin Rogers, [@martinSJRogers](https://github.com/martinSJRogers), British Antarctic Survey 
+* Tom Andersson, [@tom-andersson](https://github.com/tom-andersson), British Antarctic Survey (now Google DeepMind) (original author, though no longer involved in maintenance).
+* Scott Hosking, [@scotthosking](https://github.com/scotthosking), Alan Turing Institute
 
 ## Contributors
 
