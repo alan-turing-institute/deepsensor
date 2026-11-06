@@ -11,10 +11,11 @@ jobs:
               with:
                 python-version: 3.11
             - uses: nikeee/setup-pandoc@v1
-            - name: "Upgrade pip"
-              run: pip install --upgrade pip
             - name: "Install dependencies"
-              run: pip install -e .[docs]
+              run: |
+                pip install --upgrade pip
+                pip install -e .
+                pip install --group docs
             - name: "Run jupyter-book"
               run: jupyter-book build docs --all
             - name: "Verify Jupyter Book output"

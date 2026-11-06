@@ -44,6 +44,11 @@ Bug_Tracker = "https://github.com/alan-turing-institute/deepsensor/issues"
 [project.optional-dependencies]
 torch = ["torch>=2"]
 tf = ["tensorflow", "tensorflow_probability[tf]"]
+rioxarray = [
+    "rioxarray"
+]
+
+[dependency-groups]
 dev = [
     "pre-commit",
     "ruff",
@@ -60,9 +65,6 @@ test = [
     "parameterized",
     "pytest",
     "pytest-cov",
-]
-rioxarray = [
-    "rioxarray"
 ]
 
 [tool.setuptools.package-data]
