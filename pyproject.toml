@@ -54,10 +54,13 @@ dev = [
     "ruff",
 ]
 docs = [
-    "jupyter-book<2",
-    "matplotlib",
-    "numpy",
-    "sphinx",
+    "mike",
+    "mkdocs-autoapi",
+    "mkdocs-include-markdown-plugin",
+    "mkdocs-jupyter",
+    "mkdocs-materialx",
+    "mkdocstrings[python]",
+    "properdocs",
 ]
 test = [
     "coveralls",
