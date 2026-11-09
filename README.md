@@ -193,9 +193,9 @@ on the top right of this page.
 DeepSensor has received funding from:
 
 * The [Institute for Research Software](https://software.ac.uk) under the [Research Software Maintenance Fund Round 2](https://www.software.ac.uk/news/announcing-19-projects-funded-through-research-software-maintenance-fund-round-2) for the project _Fostering a community of users and contributors with DeepSensor_, PI: David Wyld, Co-Is: Alejandro Coca-Castro, Martin Rogers & Louisa van Zeeland.
-* The ARIA [Forecasting Tipping Points programme](https://www.aria.org.uk/opportunity-spaces/scoping-our-planet/forecasting-tipping-points/) specifically as part of the [GIANT](https://www.bas.ac.uk/project/giant/) project (Scott Hosking co-PI of WP funding DeepSensor research and development).
-* [The Alan Turing Institute](https://www.turing.ac.uk/) under the [Environmental monitoring: blending satellite and surface data](https://www.turing.ac.uk/research/research-projects/environmental-monitoring-blending-satellite-and-surface-data) project (PI: Scott Hosking),
-* EPSRC Grant EP/Y028880/1, A national UK programme in AI and digital twins to address the biodiversity and climate crisis. (PI: Scott Hosking) of this funding that helped to improve the package documentation and additional features.
+* The ARIA [Forecasting Tipping Points programme](https://www.aria.org.uk/opportunity-spaces/scoping-our-planet/forecasting-tipping-points/) specifically as part of the [GIANT](https://giantgreenland.com/) project (Scott Hosking co-PI of WP funding DeepSensor research and development).
+* [The Alan Turing Institute](https://www.turing.ac.uk/) under the [Environmental monitoring: blending satellite and surface data](https://www.turing.ac.uk/research/research-projects/environmental-monitoring-blending-satellite-and-surface-data) project (PI: Scott Hosking).
+* EPSRC Grant EP/Y028880/1, A national UK programme in AI and digital twins to address the biodiversity and climate crisis (PI: Scott Hosking).
 
 ## Core Team
 
