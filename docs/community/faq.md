@@ -2,9 +2,8 @@
 
 This FAQ aims to answer common questions about the DeepSensor library. It is our way to streamline the onboarding process and clarify expectations.
 
-```{note}
-If you have a question you'd like to see answered here, make a request in a issue or in the [Slack channel](https://ai4environment.slack.com/archives/C05NQ76L87R).
-```
+!!!note
+    If you have a question you'd like to see answered here, make a request in a issue or in the [Slack channel](https://alanturinginstitute.enterprise.slack.com/archives/C05NQ76L87R).
 
 ## Questions
 
@@ -46,7 +45,7 @@ Check our [](./contributing.md) guide.
 **Q: How can I get in touch with other contributors or maintainers?**
 
 **Answer:**
-Request to join our Slack channel to stay in touch with other contributors and maintainers. You can join by [signing up for the Turing Environment & Sustainability stakeholder community](https://forms.office.com/pages/responsepage.aspx?id=p_SVQ1XklU-Knx-672OE-ZmEJNLHTHVFkqQ97AaCfn9UMTZKT1IwTVhJRE82UjUzMVE2MThSOU5RMC4u). The form includes a question on signing up for the Slack team, where you can find DeepSensor's channel.
+Request to join our Slack channel to stay in touch with other contributors and maintainers. You can join the slack channel [here](https://alanturinginstitute.enterprise.slack.com/archives/C05NQ76L87R).
 
 We also have a regular community Zoom call (join the Slack channel or get in touch to find out more).
 

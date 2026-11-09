@@ -5,16 +5,17 @@ before they begin. Others would prefer to just see some examples and
 get started right away.
 
 If you fall into the latter category,
-feel free to jump straight to the next page ([](data_processor.ipynb)).
+feel free to jump straight to the [next page](data_processor.ipynb).
 
 ## Design overview
 
 A schematic overview of the core components of DeepSensor is shown below. 
 This shows how the package's components process data & interact from end-to-end.
 
-![DeepSensor design](../../figs/deepsensor_design.png)
+![DeepSensor design](../images/deepsensor_design.png)
 
 The key classes are:
+
 * `DataProcessor`: Maps `xarray` and `pandas` data from their native units
 to a normalised and standardised format (and vice versa).
 * `TaskLoader`: Slices and samples normalised `xarray` and `pandas` data to generate `Task` objects for
@@ -29,8 +30,9 @@ Uses the `neuralprocesses` library. This is currently the only model provided by
 * `AcquisitionFunction`: Base class for active learning acquisition functions.
 * `GreedyAlgorithm`: Greedy search algorithm for active learning.
 
-In addition, a [`deepsensor.plot`](../reference/plot.rst) module provides useful plotting functions for
+In addition, a [`deepsensor.plot`](/autoapi/deepsensor/reference/plot) module provides useful plotting functions for
 visualising:
+
 * `Task` context and target sets,
 * ``DeepSensorModel`` predictions,
 * ``ConvNP`` internals (encoding and feature maps),

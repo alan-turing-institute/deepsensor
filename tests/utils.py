@@ -19,11 +19,11 @@ def gen_random_data_xr(
             dimensions.
         data_vars (list, optional):
             Data variables. Defaults to None. If None, variable is an
-            :class:`xarray.DataArray`. If not None, variable is an
-            :class:`xarray.Dataset` containing the data_vars.
+            xarray.DataArray. If not None, variable is an
+            xarray.Dataset containing the data_vars.
 
     Returns:
-        da (:class:`xarray.DataArray` | :class:`xarray.Dataset`):
+        da (xarray.DataArray | xarray.Dataset):
             Random xarray data.
     """
     if dims is None:
@@ -53,11 +53,11 @@ def gen_random_data_pandas(coords: dict, dims: list = None, cols: list = None):
             MultiIndex.
         cols (list, optional):
             Columns of the data. Defaults to None. If None, generate a
-            :class:`pandas.Series` with an arbitrary name. If not None, cols is
-            used to construct a :class:`pandas.DataFrame`.
+            pandas.Series with an arbitrary name. If not None, cols is
+            used to construct a pandas.DataFrame.
 
     Returns:
-        :class:`pandas.Series` | :class:`pandas.DataFrame`
+        pandas.Series | pandas.DataFrame
             Random pandas data.
     """
     if dims is None:

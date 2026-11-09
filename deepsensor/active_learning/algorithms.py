@@ -30,58 +30,58 @@ from typing import Union, List, Tuple, Optional
 class GreedyAlgorithm:
     """Greedy active learning sensor placement algorithm.
 
-    Given a set of :class:`~.data.task.Task` objects containing existing context data, the algorithm
+    Given a set of deepsensor.data.task.Task objects containing existing context data, the algorithm
     iteratively (i.e. 'greedily') proposes $N$ locations for new context points
     from a search grid, using active learning with a DeepSensorModel.
 
     Within each greedy iteration, the algorithm evaluates an acquisition function
     over the search grid. The acquisition function value at a given query location
     relates to the merit of a new observation at that point, and is averaged over
-    all :class:`~.data.task.Task` objects. The algorithm then
+    all deepsensor.data.task.Task objects. The algorithm then
     selects the context location with the 'best' (max or min) acquisition function value.
-    A new context observation is added to each :class:`~.data.task.Task` at that location.
+    A new context observation is added to each deepsensor.data.task.Task at that location.
     This process is repeated until $N$ new context locations have been proposed.
 
     The algorithm either computes the acquisition function values
     in parallel over all query locations, or sequentially. This is dictated by the
     type of acquisition function passed to the algorithm:
 
-        1. :class:`~.active_learning.acquisition_fns.AcquisitionFunction`:
+        1. deepsensor.active_learning.acquisition_fns.AcquisitionFunction:
         Returns a scalar acquisition function for
         a given query location. For example, the model's mean standard deviation
-        over target locations (``MeanStddev``). For a given :class:`~.data.task.Task`
+        over target locations (``MeanStddev``). For a given deepsensor.data.task.Task
         this requires running the model *once for every query location* with a new
         context point at that location, so these acquisition functions can be slow.
 
-        2. :class:`~.active_learning.acquisition_fns.AcquisitionFunctionParallel`:
+        2. deepsensor.active_learning.acquisition_fns.AcquisitionFunctionParallel:
         Returns all acquisition function values in parallel.
         For example, the model's standard deviation at query locations given
         the existing context data, which only requires running the model once for a
-        given :class:`~.data.task.Task`. These acquisition functions are faster than
+        given deepsensor.data.task.Task. These acquisition functions are faster than
         their sequential counterparts but are likely less informative.
 
     Acquisition functions that inherit from
-    :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`
+    deepsensor.active_learning.acquisition_fns.AcquisitionFunctionOracle
     require ground truth target values at target locations. In this case, the algorithm
-    must be provided with a :class:`~.data.loader.TaskLoader` object to sample these values.
+    must be provided with a deepsensor.data.loader.TaskLoader object to sample these values.
 
-    .. note::
+    Note:
         The algorithm is described in more detail in 'Environmental Sensor Placement with
         Convolutional Gaussian Neural Processes' (2023), https://doi.org/10.1017/eds.2023.22.
 
     Args:
-        model (:class:`~.model.model.DeepSensorModel`):
+        model (deepsensor.model.model.DeepSensorModel):
             Model to use for proposing new context points.
-        X_s (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+        X_s (xarray.Dataset | xarray.DataArray):
             Xarray object containing the spatial coordinates that define the search grid.
-        X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | pd.DataFrame):
+        X_t (xarray.Dataset | xarray.DataArray | pd.DataFrame):
             Target spatial coordinates. Can either be an xarray object containing the spatial
             coordinates of the target grid, or a pandas DataFrame containing a set of off-grid
             target locations.
-        X_s_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):
+        X_s_mask (xarray.Dataset | xarray.DataArray, optional):
             Optional 2D mask for gridded search coordinates to ignore. If provided, the acquisition
             function will only be computed at locations where the mask is True. Defaults to None.
-        X_t_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional):
+        X_t_mask (xarray.Dataset | xarray.DataArray, optional):
             Optional 2D mask (for gridded target coordinates) to ignore.
             Useful e.g. if you only care about improving the model's predictions over a certain
             area. Defaults to None.
@@ -89,19 +89,19 @@ class GreedyAlgorithm:
             Number of new context points to propose (i.e. number of greedy iterations), defaults to 1.
         X_normalised (bool, optional):
             Whether the coordinates of the X_* arguments above have been normalised
-            by a :class:`~.data.processor.DataProcessor`. Defaults to False.
+            by a deepsensor.data.processor.DataProcessor. Defaults to False.
         model_infill_method (str, optional):
             Method for generating pseudo observations from the model at search points,
             which are appended to Tasks when computing acquisition functions or at the
             end of a greedy iteration (unless overridden by ``query_infill`` or ``proposed_infill`` below).
             Currently, only "mean" infilling is supported. Defaults to "mean".
-        query_infill (:class:`xarray.DataArray`, optional):
+        query_infill (xarray.DataArray, optional):
             Gridded xarray object containing observations to use when querying candidate context
-            points. Must have all the same time points as the :class:`~.data.task.Task` objects
+            points. Must have all the same time points as the deepsensor.data.task.Task objects
             the algorithm is called with. If not on the same grid as ``X_s``, it will be linearly
             interpolated to the same grid. Useful for providing the model with true observations
             rather than its own predictions. Defaults to None.
-        proposed_infill (:class:`xarray.DataArray`, optional):
+        proposed_infill (xarray.DataArray, optional):
             Similar to ``query_infill``, but used when infilling pseudo observations at the end
             of a greedy iteration (rather than using model predictions). Useful e.g. to
             simulate the case where the model can obtain ground truth after requesting
@@ -115,8 +115,8 @@ class GreedyAlgorithm:
             algorithm is run on. Defaults to 0.
         progress_bar (bool, optional):
             Whether to display a progress bar when running the algorithm. Defaults to False.
-        task_loader (:class:`~.data.loader.TaskLoader`, optional):
-            If using an :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`,
+        task_loader (deepsensor.data.loader.TaskLoader, optional):
+            If using an deepsensor.active_learning.acquisition_fns.AcquisitionFunctionOracle,
             a TaskLoader object is required to sample ground truth target values at target
             locations. Defaults to None.
         verbose (bool, optional):
@@ -125,7 +125,7 @@ class GreedyAlgorithm:
     Raises:
         ValueError:
             If the ``model`` passed does not inherit from
-            :class:`~.model.model.DeepSensorModel`.
+            deepsensor.model.model.DeepSensorModel.
     """
 
     def __init__(
@@ -451,9 +451,9 @@ class GreedyAlgorithm:
         """Iteratively propose new context points using the greedy sensor placement algorithm.
 
         Args:
-            acquisition_fn (:class:`~.active_learning.acquisition_fns.AcquisitionFunction`):
+            acquisition_fn (deepsensor.active_learning.acquisition_fns.AcquisitionFunction):
                 The acquisition function to optimise.
-            tasks (List[:class:`~.data.task.Task`] | :class:`~.data.task.Task`):
+            tasks (List[deepsensor.data.task.Task] | deepsensor.data.task.Task):
                 Tasks containing existing context data. If a list of Tasks, the acquisition
                 function will be averaged over Tasks.
             diff (bool, optional):
@@ -465,16 +465,16 @@ class GreedyAlgorithm:
                 (see https://doi.org/10.1017/eds.2023.22). Defaults to False.
 
         Returns:
-            Tuple[:class:`pandas.DataFrame`, :class:`xarray.DataArray`]:
+            Tuple[pandas.DataFrame, xarray.DataArray]:
                 A tuple containing two objects:
 
-                - **X_new_df** (:class:`pandas.DataFrame`):
+                - **X_new_df** (pandas.DataFrame):
                 Proposed sensor placements. Columns are the x1 and x2 coordinates of the
                 sensor placements, and the index is the index of the greedy iteration
                 at which the sensor placement was proposed (which can be interpreted as
                 a priority order, with iteration 0 being the highest priority).
 
-                - **acquisition_fn_ds** (:class:`xarray.DataArray`):
+                - **acquisition_fn_ds** (xarray.DataArray):
                 Gridded acquisition function values at each search point. Dimensions
                 are ``iteration``, ``time`` (inferred from the input ``tasks``), followed
                 by the x1 and x2 coordinates of the spatial grid.
@@ -482,7 +482,7 @@ class GreedyAlgorithm:
         Raises:
             ValueError:
                 If ``acquisition_fn`` is an
-                :class:`~.active_learning.acquisition_fns.AcquisitionFunctionOracle`
+                deepsensor.active_learning.acquisition_fns.AcquisitionFunctionOracle
                 and ``task_loader`` is None.
             ValueError:
                 If ``min_or_max`` is not ``"min"`` or ``"max"``.

@@ -1,0 +1,99 @@
+site_name: DeepSensor
+repo_url: https://github.com/alan-turing-institute/deepsensor
+edit_uri: edit/main/docs/
+theme: 
+  name: materialx
+  custom_dir: docs/overrides
+  # topbar_style: primary
+  # logo: docs/images/DeepSensorLogo2.png
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - content.code.copy
+    - content.action.edit
+    - navigation.footer
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+
+plugins: 
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths:
+            - .
+          options:
+            docstring_style: google
+            # show_object_full_path: true
+            merge_init_into_class: true
+            show_docstring_functions: true
+            show_docstring_classes: true
+            show_source: false
+  - mkdocs-autoapi:
+      autoapi_dir: .
+      autoapi_ignore:
+        - tests/*
+      autoapi_file_patterns:
+        - "*.py"
+      autoapi_add_nav_entry: API Reference
+  - include-markdown:
+      rewrite_relative_urls: true
+  - mkdocs-jupyter:
+      include_source: True
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Getting Started: getting-started/index.md
+    - getting-started/overview.md
+    - getting-started/data_requirements.ipynb
+    - getting-started/installation.md
+  - User Guide:
+    - User Guide: user-guide/index.md
+    - DeepSensor design: user-guide/deepsensor_design.md
+    - user-guide/data_processor.ipynb
+    - user-guide/task.ipynb
+    - user-guide/task_loader.ipynb
+    - user-guide/convnp.ipynb
+    - user-guide/training.ipynb
+    - user-guide/prediction.ipynb
+    - user-guide/active_learning.ipynb
+    - user-guide/acquisition_functions.ipynb
+    - user-guide/extending.ipynb 
+  - Community: community/
+  - Resources: resources.md
+  - DeepSensor Research Ideas: research_ideas.md
+  - Contact the core team: contact.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji # (1)!
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
