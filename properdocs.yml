@@ -3,6 +3,7 @@ repo_url: https://github.com/alan-turing-institute/deepsensor
 edit_uri: edit/main/docs/
 theme: 
   name: materialx
+  custom_dir: docs/overrides
   # topbar_style: primary
   # logo: docs/images/DeepSensorLogo2.png
   icon:
