@@ -105,7 +105,7 @@ class ProbabilisticModel:
         """Computes the mean marginal entropy over target points based on given
         context data.
 
-        .. note::
+        Note:
             Note: Getting a vector of marginal entropies would be useful too.
 
 

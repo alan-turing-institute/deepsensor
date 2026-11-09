@@ -65,7 +65,7 @@ class GreedyAlgorithm:
     require ground truth target values at target locations. In this case, the algorithm
     must be provided with a :class:`~.data.loader.TaskLoader` object to sample these values.
 
-    .. note::
+    Note:
         The algorithm is described in more detail in 'Environmental Sensor Placement with
         Convolutional Gaussian Neural Processes' (2023), https://doi.org/10.1017/eds.2023.22.
 

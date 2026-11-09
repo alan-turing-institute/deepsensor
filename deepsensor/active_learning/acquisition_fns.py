@@ -415,8 +415,7 @@ class Stddev(AcquisitionFunctionParallel):
 class ExpectedImprovement(AcquisitionFunctionParallel):
     """Expected improvement acquisition function.
 
-    .. note::
-
+    Note:
         The current implementation of this acquisition function is only valid
         for maximisation.
     """

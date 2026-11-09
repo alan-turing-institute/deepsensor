@@ -29,12 +29,12 @@ def get_ghcnd_station_data(
     into a pandas DataFrame.
     Source: https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily.
 
-    .. note::
+    Note:
         Requires the `scotthosking/get-station-data` repository to be installed
         manually in your Python environment with:
         ``pip install git+https://github.com/scott-hosking/get-station-data.git``
 
-    .. note::
+    Note:
         Example key variable IDs:
         - ``"TAVG"``: Average temperature (degrees Celsius)
         - ``"TMAX"``: Maximum temperature (degrees Celsius)
@@ -47,7 +47,7 @@ def get_ghcnd_station_data(
         The full list of variable IDs can be found here:
         https://www.ncei.noaa.gov/pub/data/ghcn/daily/readme.txt
 
-    .. warning::
+    Warning:
         If this function is updated, the cache will be invalidated and the data will need
         to be re-downloaded. To avoid this risk, set ``cache=False`` and save the data to disk
         manually.
@@ -178,14 +178,14 @@ def get_era5_reanalysis_data(
     a different date range, data will only be downloaded if the new date range includes
     months that have not already been downloaded.
 
-    .. note::
+    Note:
         See the list of available variable IDs here: https://console.cloud.google.com/storage/browser/gcp-public-data-arco-era5/ar/1959-2022-full_37-1h-0p25deg-chunk-1.zarr-v2?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&prefix=&forceOnObjectsSortingFiltering=false
 
-    .. note::
+    Note:
         The aggregation method for when freq = "D" is "mean" (which may not be
         appropriate for accumulated variables like precipitation).
 
-    .. warning::
+    Warning:
         If this function is updated, the cache will be invalidated and the data will need
         to be re-downloaded. To avoid this risk, set ``cache=False`` and save the data to disk
         manually.
@@ -388,7 +388,7 @@ def get_gldas_land_mask(
     """Get GLDAS land mask at 0.25 degree resolution.
     Source: https://ldas.gsfc.nasa.gov/gldas/vegetation-class-mask.
 
-    .. warning::
+    Warning:
         If this function is updated, the cache will be invalidated and the data will need
         to be re-downloaded. To avoid this risk, set ``cache=False`` and save the data to disk
         manually.
@@ -467,29 +467,29 @@ def get_earthenv_auxiliary_data(
     """Download global static auxiliary data from EarthEnv into an xarray DataArray.
     See: https://www.earthenv.org/topography.
 
-    .. note::
+    Note:
         Requires the `rioxarray` package to be installed. e.g. via ``pip install rioxarray``.
         See the ``rioxarray`` pages for more installation options:
         https://corteva.github.io/rioxarray/stable/installation.html
 
-    .. note::
+    Note:
         This method downloads the data from EarthEnv to disk, then reads it into memory,
         and then deletes the file from disk. This is because EarthEnv does not support
         OpenDAP, so we cannot read the data directly into memory.
 
-    .. note::
+    Note:
         At 1KM resolution, the global data is ~3 GB per variable.
 
-    .. note::
+    Note:
         Topographic Position Index (TPI) is a measure of the local topographic position of a cell
         relative to its surrounding landscape. It is calculated as the difference between the
         elevation of a cell and the mean elevation of its surrounding landscape. This highlights
         topographic features such as mountains (positive TPI) and valleys (negative TPI).
 
-    .. todo::
+    To do:
         support land cover data: https://www.earthenv.org/landcover
 
-    .. warning::
+    Warning:
         If this function is updated, the cache will be invalidated and the data will need
         to be re-downloaded. To avoid this risk, set ``cache=False`` and save the data to disk
         manually.

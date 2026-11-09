@@ -252,7 +252,7 @@ class DataProcessor:
         """Get pre-computed normalisation params or compute them for variable
         ``var_ID``.
 
-        .. note::
+        Note:
             TODO do we need to pass var_ID? Can we just use the name of data?
 
         Args:
@@ -711,7 +711,7 @@ def mask_coord_array_normalised(
 def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
     """Check if ``da1`` and ``da2`` are on the same grid.
 
-    .. note::
+    Note:
         ``da1`` and ``da2`` are assumed normalised by ``DataProcessor``.
 
     Args:
@@ -732,7 +732,7 @@ def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
 def interp_da1_to_da2(da1: xr.DataArray, da2: xr.DataArray) -> xr.DataArray:
     """Interpolate ``da1`` to ``da2``.
 
-    .. note::
+    Note:
         ``da1`` and ``da2`` are assumed normalised by ``DataProcessor``.
 
     Args:

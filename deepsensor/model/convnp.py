@@ -541,7 +541,7 @@ class ConvNP(DeepSensorModel):
 
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
-        .. note::
+        Note:
             This method only works for models that return a distribution with
             a ``dist.slab.alpha`` attribute, e.g. models with a Beta or
             Bernoulli-Gamma likelihood, where it returns the alpha values of
@@ -577,7 +577,7 @@ class ConvNP(DeepSensorModel):
 
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
-        .. note::
+        Note:
             This method only works for models that return a distribution with
             a ``dist.slab.beta`` attribute, e.g. models with a Beta or
             Bernoulli-Gamma likelihood.
@@ -612,7 +612,7 @@ class ConvNP(DeepSensorModel):
 
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
-        .. note::
+        Note:
             This method only works for models that return a distribution with
             a ``dist.slab.k`` attribute, e.g. models with a Beta or
             Bernoulli-Gamma likelihood, where it returns the k values of
@@ -648,7 +648,7 @@ class ConvNP(DeepSensorModel):
 
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
-        .. note::
+        Note:
             This method only works for models that return a distribution with
             a ``dist.slab.scale`` attribute, e.g. models with a Beta or
             Bernoulli-Gamma likelihood, where it returns the scale values of
@@ -852,7 +852,7 @@ class ConvNP(DeepSensorModel):
     def logpdf(self, dist: AbstractMultiOutputDistribution, task: Task):
         """Joint logpdf over all target sets.
 
-        .. note::
+        Note:
             If the model has multiple target sets, the returned logpdf is the
             mean logpdf over all target sets.
 
@@ -875,7 +875,7 @@ class ConvNP(DeepSensorModel):
     def logpdf(self, task: Task):
         """Joint logpdf over all target sets.
 
-        .. note::
+        Note:
             If the model has multiple target sets, the returned logpdf is the
             mean logpdf over all target sets.
 
@@ -949,7 +949,7 @@ class ConvNP(DeepSensorModel):
 
         Returned numpy arrays have shape ``(N_samples, N_features, *N_targets)``,
 
-        .. note::
+        Note:
             AR sampling only works for 0th context/target set, and only for models with
             a single target set.
 
