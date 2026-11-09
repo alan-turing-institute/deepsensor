@@ -30,7 +30,7 @@ Uses the `neuralprocesses` library. This is currently the only model provided by
 * `AcquisitionFunction`: Base class for active learning acquisition functions.
 * `GreedyAlgorithm`: Greedy search algorithm for active learning.
 
-In addition, a [`deepsensor.plot`](../reference/plot.rst) module provides useful plotting functions for
+In addition, a [`deepsensor.plot`](/autoapi/deepsensor/reference/plot) module provides useful plotting functions for
 visualising:
 
 * `Task` context and target sets,
