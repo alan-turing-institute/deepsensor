@@ -36,7 +36,8 @@ plugins:
       autoapi_add_nav_entry: API Reference
   - include-markdown:
       rewrite_relative_urls: true
-  - mkdocs-jupyter
+  - mkdocs-jupyter:
+      include_source: True
 
 nav:
   - Home: index.md
