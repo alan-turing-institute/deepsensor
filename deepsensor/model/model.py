@@ -38,11 +38,11 @@ class ProbabilisticModel:
         data.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task containing context data.
 
         Returns:
-            :class:`numpy:numpy.ndarray`: Mean prediction over target points.
+            numpy:numpy.ndarray: Mean prediction over target points.
 
         Raises:
             NotImplementedError
@@ -55,11 +55,11 @@ class ProbabilisticModel:
         Shape (N,).
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task containing context data.
 
         Returns:
-            :class:`numpy:numpy.ndarray`: Marginal variance over target points.
+            numpy:numpy.ndarray: Marginal variance over target points.
 
         Raises:
             NotImplementedError
@@ -72,11 +72,11 @@ class ProbabilisticModel:
         points. Shape (N,).
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task containing context data.
 
         Returns:
-            :class:`numpy:numpy.ndarray`: Marginal standard deviation over target points.
+            numpy:numpy.ndarray: Marginal standard deviation over target points.
         """
         var = self.variance(task)
         return var**0.5
@@ -89,11 +89,11 @@ class ProbabilisticModel:
         context data. Shape (N, N).
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task containing context data.
 
         Returns:
-            :class:`numpy:numpy.ndarray`: Covariance matrix over target points.
+            numpy:numpy.ndarray: Covariance matrix over target points.
 
         Raises:
             NotImplementedError
@@ -110,7 +110,7 @@ class ProbabilisticModel:
 
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task containing context data.
 
         Returns:
@@ -128,7 +128,7 @@ class ProbabilisticModel:
 
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task containing context data.
 
         Returns:
@@ -145,7 +145,7 @@ class ProbabilisticModel:
         context data.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task containing context data.
 
         Returns:
@@ -161,7 +161,7 @@ class ProbabilisticModel:
         """Computes the model loss over target points based on given context data.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task containing context data.
 
         Returns:
@@ -179,13 +179,13 @@ class ProbabilisticModel:
 
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task containing context data.
             n_samples (int, optional):
                 Number of samples to draw. Defaults to 1.
 
         Returns:
-            tuple[:class:`numpy:numpy.ndarray`]: Joint samples over target points.
+            tuple[numpy:numpy.ndarray]: Joint samples over target points.
 
         Raises:
             NotImplementedError
@@ -200,9 +200,9 @@ class DeepSensorModel(ProbabilisticModel):
     pandas object containing off-grid predictions.
 
     Args:
-        data_processor (:class:`~.data.processor.DataProcessor`):
+        data_processor (deepsensor.data.processor.DataProcessor):
             DataProcessor object, used to unnormalise predictions.
-        task_loader (:class:`~.data.loader.TaskLoader`):
+        task_loader (deepsensor.data.loader.TaskLoader):
             TaskLoader object, used to determine target variables for unnormalising.
     """
 
@@ -247,16 +247,16 @@ class DeepSensorModel(ProbabilisticModel):
         Args:
             tasks (List[Task] | Task):
                 List of tasks containing context data.
-            X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`):
+            X_t (xarray.Dataset | xarray.DataArray | pandas.DataFrame | pandas.Series | pandas.Index | numpy:numpy.ndarray):
                 Target locations to predict at. Can be an xarray object
                 containingon-grid locations or a pandas object containing off-grid locations.
-            X_t_mask: :class:`xarray.Dataset` | :class:`xarray.DataArray`, optional
+            X_t_mask: xarray.Dataset | xarray.DataArray, optional
                 2D mask to apply to gridded ``X_t`` (zero/False will be NaNs). Will be interpolated
                 to the same grid as ``X_t``. Default None (no mask).
             X_t_is_normalised (bool):
                 Whether the ``X_t`` coords are normalised. If False, will normalise
                 the coords before passing to model. Default ``False``.
-            aux_at_targets_override (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+            aux_at_targets_override (xarray.Dataset | xarray.DataArray):
                 Optional auxiliary xarray data to override from the task_loader.
             aux_at_targets_override_is_normalised (bool):
                 Whether the `aux_at_targets_override` coords are normalised.
@@ -290,7 +290,7 @@ class DeepSensorModel(ProbabilisticModel):
                 Whether to print time taken for prediction. Default ``False``.
 
         Returns:
-            :class:`~.model.pred.Prediction`):
+            deepsensor.model.pred.Prediction):
                 A `dict`-like object mapping from target variable IDs to xarray or pandas objects
                 containing model predictions.
                 - If ``X_t`` is a pandas object, returns pandas objects
@@ -655,11 +655,11 @@ def add_valid_time_coord_to_pred_and_move_time_dims(pred: Prediction) -> Predict
     reorder the time dims from ("lead_time", "init_time") to ("init_time", "lead_time").
 
     Args:
-        pred (:class:`~.model.pred.Prediction`):
+        pred (deepsensor.model.pred.Prediction):
             Prediction object to add valid time coordinate to.
 
     Returns:
-        :class:`~.model.pred.Prediction`:
+        deepsensor.model.pred.Prediction:
             Prediction object with valid time coordinate added.
     """
     for var_ID in pred.keys():

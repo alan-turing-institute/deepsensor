@@ -183,7 +183,7 @@ class DataProcessor:
         """Load dask data into memory.
 
         Args:
-            data (:class:`xarray.DataArray` | :class:`xarray.Dataset`):
+            data (xarray.DataArray | xarray.Dataset):
                 Description of the parameter.
 
         Returns:
@@ -302,7 +302,7 @@ class DataProcessor:
         """Normalise or unnormalise a coordinate array.
 
         Args:
-            coord_array (:class:`numpy:numpy.ndarray`):
+            coord_array (numpy:numpy.ndarray):
                 Array of shape ``(2, N)`` containing coords.
             unnorm (bool, optional):
                 Whether to unnormalise. Defaults to ``False``.
@@ -319,15 +319,15 @@ class DataProcessor:
         """Normalise or unnormalise spatial coords in an array.
 
         Args:
-            x1 (:class:`numpy:numpy.ndarray`):
+            x1 (numpy:numpy.ndarray):
                 Array of shape ``(N_x1,)`` containing spatial coords of x1.
-            x2 (:class:`numpy:numpy.ndarray`):
+            x2 (numpy:numpy.ndarray):
                 Array of shape ``(N_x2,)`` containing spatial coords of x2.
             unnorm (bool, optional):
                 Whether to unnormalise. Defaults to ``False``.
 
         Returns:
-            Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]:
+            Tuple[numpy:numpy.ndarray, numpy:numpy.ndarray]:
                 Normalised or unnormalised spatial coords of x1 and x2.
         """
         x11, x12 = self.config["coords"]["x1"]["map"]
@@ -350,7 +350,7 @@ class DataProcessor:
         """Normalise spatial coords in a pandas or xarray object.
 
         Args:
-            data (:class:`xarray.DataArray`, :class:`xarray.Dataset`, :class:`pandas.DataFrame`, or :class:`pandas.Series`):
+            data (xarray.DataArray, xarray.Dataset, pandas.DataFrame, or pandas.Series):
                 [Description Needed]
             unnorm (bool, optional):
                 [Description Needed]. Defaults to [Default Value].
@@ -457,7 +457,7 @@ class DataProcessor:
         numpy object.
 
         Args:
-            data (:class:`xarray.DataArray`, :class:`xarray.Dataset`, :class:`pandas.DataFrame`, :class:`pandas.Series`, or :class:`numpy:numpy.ndarray`):
+            data (xarray.DataArray, xarray.Dataset, pandas.DataFrame, pandas.Series, or numpy:numpy.ndarray):
                 [Description Needed]
             var_ID (str):
                 [Description Needed]
@@ -523,7 +523,7 @@ class DataProcessor:
         pandas object.
 
         Args:
-            data (:class:`xarray.DataArray`, :class:`xarray.Dataset`, :class:`pandas.DataFrame`, or :class:`pandas.Series`):
+            data (xarray.DataArray, xarray.Dataset, pandas.DataFrame, or pandas.Series):
                 [Description Needed]
             method (str, optional):
                 [Description Needed]. Defaults to None.
@@ -586,7 +586,7 @@ class DataProcessor:
         """Normalise data.
 
         Args:
-            data (:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]):
+            data (xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]):
                 Data to be normalised. Can be an xarray DataArray, xarray
                 Dataset, pandas DataFrame, or a list containing objects of
                 these types.
@@ -596,7 +596,7 @@ class DataProcessor:
                 - "positive_semidefinite": Normalise to min=0 and std=1
 
         Returns:
-            :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]:
+            xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]:
                 Normalised data. Type or structure depends on the input.
         """
         if isinstance(data, list):
@@ -625,7 +625,7 @@ class DataProcessor:
         """Unnormalise data.
 
         Args:
-            data (:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]):
+            data (xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]):
                 Data to unnormalise.
             add_offset (bool, optional):
                 Whether to add the offset to the data when unnormalising. Set
@@ -633,7 +633,7 @@ class DataProcessor:
                 Defaults to True.
 
         Returns:
-            :class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame` | List[:class:`xarray.DataArray` | :class:`xarray.Dataset` | :class:`pandas.DataFrame`]:
+            xarray.DataArray | xarray.Dataset | pandas.DataFrame | List[xarray.DataArray | xarray.Dataset | pandas.DataFrame]:
                 Unnormalised data.
         """
         if isinstance(data, list):
@@ -646,11 +646,11 @@ def xarray_to_coord_array_normalised(da: Union[xr.Dataset, xr.DataArray]) -> np.
     """Convert xarray to normalised coordinate array.
 
     Args:
-        da (:class:`xarray.Dataset` | :class:`xarray.DataArray`)
+        da (xarray.Dataset | xarray.DataArray)
             ...
 
     Returns:
-        :class:`numpy:numpy.ndarray`
+        numpy:numpy.ndarray
             A normalised coordinate array of shape ``(2, N)``.
     """
     x1, x2 = da["x1"].values, da["x2"].values
@@ -664,13 +664,13 @@ def process_X_mask_for_X(X_mask: xr.DataArray, X: xr.DataArray) -> xr.DataArray:
     Both X_mask and X are xarray DataArrays with the same spatial coords.
 
     Args:
-        X_mask (:class:`xarray.DataArray`):
+        X_mask (xarray.DataArray):
             ...
-        X (:class:`xarray.DataArray`):
+        X (xarray.DataArray):
             ...
 
     Returns:
-        :class:`xarray.DataArray`
+        xarray.DataArray
             ...
     """
     X_mask = X_mask.astype(float).interp_like(
@@ -691,13 +691,13 @@ def mask_coord_array_normalised(
     array (True if point is inside mask, False if outside).
 
     Args:
-        coord_arr (:class:`numpy:numpy.ndarray`):
+        coord_arr (numpy:numpy.ndarray):
             ...
-        mask_da (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+        mask_da (xarray.Dataset | xarray.DataArray):
             ...
 
     Returns:
-        :class:`numpy:numpy.ndarray`
+        numpy:numpy.ndarray
             ...
     """
     if mask_da is None:
@@ -715,9 +715,9 @@ def da1_da2_same_grid(da1: xr.DataArray, da2: xr.DataArray) -> bool:
         ``da1`` and ``da2`` are assumed normalised by ``DataProcessor``.
 
     Args:
-        da1 (:class:`xarray.DataArray`):
+        da1 (xarray.DataArray):
             ...
-        da2 (:class:`xarray.DataArray`):
+        da2 (xarray.DataArray):
             ...
 
     Returns:
@@ -736,13 +736,13 @@ def interp_da1_to_da2(da1: xr.DataArray, da2: xr.DataArray) -> xr.DataArray:
         ``da1`` and ``da2`` are assumed normalised by ``DataProcessor``.
 
     Args:
-        da1 (:class:`xarray.DataArray`):
+        da1 (xarray.DataArray):
             ...
-        da2 (:class:`xarray.DataArray`):
+        da2 (xarray.DataArray):
             ...
 
     Returns:
-        :class:`xarray.DataArray`
+        xarray.DataArray
             Interpolated xarray.
     """
     return da1.interp(x1=da2["x1"], x2=da2["x2"], method="nearest")

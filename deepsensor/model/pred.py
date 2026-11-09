@@ -24,10 +24,10 @@ class Prediction(dict):
             List of target variable IDs.
         dates (List[Union[str, pd.Timestamp]])
             List of dates corresponding to the predictions.
-        X_t (:class:`xarray.Dataset` | :class:`xarray.DataArray` | :class:`pandas.DataFrame` | :class:`pandas.Series` | :class:`pandas.Index` | :class:`numpy:numpy.ndarray`)
+        X_t (xarray.Dataset | xarray.DataArray | pandas.DataFrame | pandas.Series | pandas.Index | numpy:numpy.ndarray)
             Target locations to predict at. Can be an xarray object containing
             on-grid locations or a pandas object containing off-grid locations.
-        X_t_mask (:class:`xarray.Dataset` | :class:`xarray.DataArray`, optional)
+        X_t_mask (xarray.Dataset | xarray.DataArray, optional)
             2D mask to apply to gridded ``X_t`` (zero/False will be NaNs). Will be interpolated
             to the same grid as ``X_t``. Default None (no mask).
         n_samples (int)
@@ -230,7 +230,7 @@ def create_empty_spatiotemporal_xarray(
     """...
 
     Args:
-        X (:class:`xarray.Dataset` | :class:`xarray.DataArray`):
+        X (xarray.Dataset | xarray.DataArray):
             ...
         dates (List[...]):
             ...

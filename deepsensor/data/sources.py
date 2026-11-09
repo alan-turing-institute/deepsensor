@@ -77,7 +77,7 @@ def get_ghcnd_station_data(
             Directory to store the cached data. Default is ``".datacache"``.
 
     Returns:
-        :class:`pandas.DataFrame`
+        pandas.DataFrame
             Station data with indexes ``time``, ``lat``, ``lon``, ``station`` and columns
             ``var1``, ``var2``, etc.
     """
@@ -217,7 +217,7 @@ def get_era5_reanalysis_data(
 
 
     Returns:
-        :class:`xarray.Dataset`
+        xarray.Dataset
             ERA5 reanalysis data with dimensions ``time``, ``lat``, ``lon`` and variables
             ``var1``, ``var2``, etc.
     """
@@ -407,7 +407,7 @@ def get_gldas_land_mask(
             Directory to store the cached data. Default is ``".datacache"``.
 
     Returns:
-        :class:`xarray.DataArray`
+        xarray.DataArray
             Land mask (1 = land, 0 = water) with dimensions ``lat``, ``lon``.
     """
     if not cache:
@@ -512,7 +512,7 @@ def get_earthenv_auxiliary_data(
             Directory to store the cached data. Default is ``".datacache"``.
 
     Returns:
-        :class:`xarray.DataArray`
+        xarray.DataArray
             Auxiliary data with dimensions ``lat``, ``lon`` and variable ``var_ID``.
     """
     if not cache:

@@ -30,9 +30,9 @@ def task(
     """Plot the context and target sets of a task.
 
     Args:
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             Task to plot.
-        task_loader (:class:`~.data.loader.TaskLoader`):
+        task_loader (deepsensor.data.loader.TaskLoader):
             Task loader used to load ``task``, containing variable IDs used for
             plotting.
         figsize (int, optional):
@@ -51,7 +51,7 @@ def task(
             across all context and target sets).
 
     Returns:
-        :class:`matplotlib:matplotlib.figure.Figure`:
+        matplotlib:matplotlib.figure.Figure:
     """
     if markersize is None:
         markersize = (2**2) * figsize / 3
@@ -167,11 +167,11 @@ def context_encoding(
     """Plot the ``ConvNP`` SetConv encoding of a context set in a task.
 
     Args:
-        model (:class:`~.model.convnp.ConvNP`):
+        model (deepsensor.model.convnp.ConvNP):
             ConvNP model.
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             Task containing context set to plot encoding of ...
-        task_loader (:class:`~.data.loader.TaskLoader`):
+        task_loader (deepsensor.data.loader.TaskLoader):
             DataLoader used to load the data, containing context set metadata
             used for plotting.
         batch_idx (int, optional):
@@ -306,18 +306,18 @@ def offgrid_context(
 ) -> None:
     """Plot the off-grid context points on ``axes``.
 
-    Uses a provided :class:`~.data.processor.DataProcessor` to unnormalise the
+    Uses a provided deepsensor.data.processor.DataProcessor to unnormalise the
     context coordinates if provided.
 
     Args:
-        axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]):
+        axes (numpy:numpy.ndarray | List[matplotlib:matplotlib.axes.Axes] | Tuple[matplotlib:matplotlib.axes.Axes]):
             Axes to plot on.
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             Task containing the context set to plot.
-        data_processor (:class:`~.data.processor.DataProcessor`, optional):
+        data_processor (deepsensor.data.processor.DataProcessor, optional):
             Data processor used to unnormalise the context set, by default
             None.
-        task_loader (:class:`~.data.loader.TaskLoader`, optional):
+        task_loader (deepsensor.data.loader.TaskLoader, optional):
             Task loader used to load the data, containing context set metadata
             used for plotting, by default None.
         plot_target (bool, optional):
@@ -409,13 +409,13 @@ def offgrid_context_observations(
     """Plot unnormalised context observation values.
 
     Args:
-        axes (:class:`numpy:numpy.ndarray` | List[:class:`matplotlib:matplotlib.axes.Axes`] | Tuple[:class:`matplotlib:matplotlib.axes.Axes`]):
+        axes (numpy:numpy.ndarray | List[matplotlib:matplotlib.axes.Axes] | Tuple[matplotlib:matplotlib.axes.Axes]):
             Axes to plot on.
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             Task containing the context set to plot.
-        data_processor (:class:`~.data.processor.DataProcessor`):
+        data_processor (deepsensor.data.processor.DataProcessor):
             Data processor used to unnormalise the context set.
-        task_loader (:class:`~.data.loader.TaskLoader`):
+        task_loader (deepsensor.data.loader.TaskLoader):
             Task loader used to load the data, containing context set metadata
             used for plotting.
         context_set_idx (int):
@@ -490,7 +490,7 @@ def receptive_field(
     Args:
         receptive_field (...):
             Receptive field to plot.
-        data_processor (:class:`~.data.processor.DataProcessor`):
+        data_processor (deepsensor.data.processor.DataProcessor):
             Data processor used to unnormalise the context set.
         crs (cartopy CRS):
             Coordinate reference system for the plots.
@@ -559,9 +559,9 @@ def feature_maps(
     forward pass with a ``Task``.
 
     Args:
-        model (:class:`~.model.model.convnp.ConvNP`):
+        model (deepsensor.model.model.convnp.ConvNP):
             ...
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             ...
         n_features_per_layer (int, optional):
             ..., by default 1.
@@ -690,12 +690,12 @@ def placements(
     """...
 
     Args:
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             Task containing the context set used to compute the acquisition
             function.
-        X_new_df (:class:`pandas.DataFrame`):
+        X_new_df (pandas.DataFrame):
             Dataframe containing the placement locations.
-        data_processor (:class:`~.data.processor.DataProcessor`):
+        data_processor (deepsensor.data.processor.DataProcessor):
             Data processor used to unnormalise the context set and placement
             locations.
         crs (cartopy CRS):
@@ -706,7 +706,7 @@ def placements(
             Figure size in inches, by default 3.
 
     Returns:
-        :class:`matplotlib:matplotlib.figure.Figure`
+        matplotlib:matplotlib.figure.Figure
             A figure containing the placement plots.
     """
     fig, ax = plt.subplots(subplot_kw={"projection": crs}, figsize=(figsize, figsize))
@@ -737,14 +737,14 @@ def acquisition_fn(
     max_ncol: int = 5,
 ) -> plt.Figure:  # pragma: no cover
     """Args:
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             Task containing the context set used to compute the acquisition
             function.
-        acquisition_fn_ds (:class:`numpy:numpy.ndarray`):
+        acquisition_fn_ds (numpy:numpy.ndarray):
             Acquisition function dataset.
-        X_new_df (:class:`pandas.DataFrame`):
+        X_new_df (pandas.DataFrame):
             Dataframe containing the placement locations.
-        data_processor (:class:`~.data.processor.DataProcessor`):
+        data_processor (deepsensor.data.processor.DataProcessor):
             Data processor used to unnormalise the context set and placement
             locations.
         crs (cartopy CRS):
@@ -873,16 +873,16 @@ def prediction(
     """Plot the mean and standard deviation of a prediction.
 
     Args:
-        pred (:class:`~.model.prediction.Prediction`):
+        pred (deepsensor.model.prediction.Prediction):
             Prediction to plot.
-        date (str | :class:`pandas:pandas.Timestamp`):
+        date (str | pandas:pandas.Timestamp):
             Date of the prediction.
-        data_processor (:class:`~.data.processor.DataProcessor`):
+        data_processor (deepsensor.data.processor.DataProcessor):
             Data processor used to unnormalise the context set.
-        task_loader (:class:`~.data.loader.TaskLoader`):
+        task_loader (deepsensor.data.loader.TaskLoader):
             Task loader used to load the data, containing context set metadata
             used for plotting.
-        task (:class:`~.data.task.Task`, optional):
+        task (deepsensor.data.task.Task, optional):
             Task containing the context data to overlay.
         prediction_parameters (List[str] | str, optional):
             Prediction parameters to plot, by default "all".
