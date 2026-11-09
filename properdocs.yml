@@ -30,7 +30,7 @@ plugins:
   - mkdocs-autoapi:
       autoapi_dir: .
       autoapi_ignore:
-        - tests/
+        - tests/*
       autoapi_file_patterns:
         - "*.py"
       autoapi_add_nav_entry: API Reference
