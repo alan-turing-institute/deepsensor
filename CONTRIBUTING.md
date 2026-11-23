@@ -151,7 +151,7 @@ One easy way to contribute to the documentation is to provide feedback in [this 
 
 Another way to contribute is to directly edit or add to the documentation and open a PR:
 * Follow all the forking instructions above
-* Install the documentation requirements: `pip install deepsensor[docs]`
+* Install the documentation requirements: `pip install --group docs`
 * Option A: Editing a markdown file
   * Simply make your edits!
 * Option B: Editing a jupyter notebook file

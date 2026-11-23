@@ -82,10 +82,10 @@ class ConvNP(DeepSensorModel):
             >>> ConvNP(data_processor, task_loader, neural_process=my_neural_process_model)
 
     Args:
-        data_processor (:class:`~.data.processor.DataProcessor`, optional):
+        data_processor (deepsensor.data.processor.DataProcessor, optional):
             Used for unnormalising model predictions in
             ``.predict`` method.
-        task_loader (:class:`~.data.loader.TaskLoader`, optional):
+        task_loader (deepsensor.data.loader.TaskLoader, optional):
             Used for inferring sensible defaults for hyperparameters
             that are not set by the user.
         model_ID (str, optional):
@@ -192,10 +192,10 @@ class ConvNP(DeepSensorModel):
         (unless overridden).
 
         Args:
-            data_processor (:class:`~.data.processor.DataProcessor`):
+            data_processor (deepsensor.data.processor.DataProcessor):
                 DataProcessor object. Used for unnormalising model predictions in
                 ``.predict`` method.
-            task_loader (:class:`~.data.loader.TaskLoader`):
+            task_loader (deepsensor.data.loader.TaskLoader):
                 TaskLoader object. Used for inferring sensible defaults for hyperparameters
                 that are not set by the user.
             verbose (bool, optional):
@@ -251,10 +251,10 @@ class ConvNP(DeepSensorModel):
         """Instantiate with a pre-defined neural process model.
 
         Args:
-            data_processor (:class:`~.data.processor.DataProcessor`):
+            data_processor (deepsensor.data.processor.DataProcessor):
                 DataProcessor object. Used for unnormalising model predictions in
                 ``.predict`` method.
-            task_loader (:class:`~.data.loader.TaskLoader`):
+            task_loader (deepsensor.data.loader.TaskLoader):
                 TaskLoader object. Used for inferring sensible defaults for hyperparameters
                 that are not set by the user.
             neural_process (TFModel | TorchModel):
@@ -283,10 +283,10 @@ class ConvNP(DeepSensorModel):
         """Instantiate a model from a folder containing model weights and config.
 
         Args:
-            data_processor (:class:`~.data.processor.DataProcessor`):
+            data_processor (deepsensor.data.processor.DataProcessor):
                 dataprocessor object. used for unnormalising model predictions in
                 ``.predict`` method.
-            task_loader (:class:`~.data.loader.TaskLoader`):
+            task_loader (deepsensor.data.loader.TaskLoader):
                 taskloader object. used for inferring sensible defaults for hyperparameters
                 that are not set by the user.
             model_ID (str):
@@ -369,7 +369,7 @@ class ConvNP(DeepSensorModel):
         mask NaNs.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 ...
 
         Returns:
@@ -392,7 +392,7 @@ class ConvNP(DeepSensorModel):
         """Compute ConvNP distribution.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 ...
             n_samples (int, optional):
                 Number of samples to draw from the distribution, by default 10.
@@ -426,7 +426,7 @@ class ConvNP(DeepSensorModel):
         and remove size-1 dimensions.
 
         Args:
-            x (:class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]):
+            x (numpy:numpy.ndarray | List[numpy:numpy.ndarray]):
                 List of target sets.
             squeeze_axes (List[int], optional):
                 Axes to squeeze out of the concatenated target sets. Defaults to (0, 1).
@@ -435,7 +435,7 @@ class ConvNP(DeepSensorModel):
                 merging multiple target sets. Defaults to 0.
 
         Returns:
-            (:class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]):
+            (numpy:numpy.ndarray | List[numpy:numpy.ndarray]):
                 Concatenated target sets.
         """
         if isinstance(x, (list, tuple)):
@@ -464,11 +464,11 @@ class ConvNP(DeepSensorModel):
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task containing the context and target data.
 
         Returns:
-            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+            numpy:numpy.ndarray | List[numpy:numpy.ndarray]:
                 Mean values.
         """
         dist = self(task)
@@ -487,11 +487,11 @@ class ConvNP(DeepSensorModel):
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task containing the context and target data.
 
         Returns:
-            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+            numpy:numpy.ndarray | List[numpy:numpy.ndarray]:
                 Variance values.
         """
         dist = self(task)
@@ -512,11 +512,11 @@ class ConvNP(DeepSensorModel):
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task containing the context and target data.
 
         Returns:
-            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+            numpy:numpy.ndarray | List[numpy:numpy.ndarray]:
                 Standard deviation values.
         """
         dist = self(task)
@@ -541,18 +541,18 @@ class ConvNP(DeepSensorModel):
 
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
-        .. note::
+        Note:
             This method only works for models that return a distribution with
             a ``dist.slab.alpha`` attribute, e.g. models with a Beta or
             Bernoulli-Gamma likelihood, where it returns the alpha values of
             the slab component of the mixture model.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task containing the context and target data.
 
         Returns:
-            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+            numpy:numpy.ndarray | List[numpy:numpy.ndarray]:
                 Alpha values.
         """
         dist = self(task)
@@ -577,17 +577,17 @@ class ConvNP(DeepSensorModel):
 
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
-        .. note::
+        Note:
             This method only works for models that return a distribution with
             a ``dist.slab.beta`` attribute, e.g. models with a Beta or
             Bernoulli-Gamma likelihood.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task containing the context and target data.
 
         Returns:
-            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+            numpy:numpy.ndarray | List[numpy:numpy.ndarray]:
                 Beta values.
         """
         dist = self(task)
@@ -612,18 +612,18 @@ class ConvNP(DeepSensorModel):
 
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
-        .. note::
+        Note:
             This method only works for models that return a distribution with
             a ``dist.slab.k`` attribute, e.g. models with a Beta or
             Bernoulli-Gamma likelihood, where it returns the k values of
             the slab component of the mixture model.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task containing the context and target data.
 
         Returns:
-            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+            numpy:numpy.ndarray | List[numpy:numpy.ndarray]:
                 k values.
         """
         dist = self(task)
@@ -648,18 +648,18 @@ class ConvNP(DeepSensorModel):
 
         Returned numpy arrays have shape ``(N_features, *N_targets)``.
 
-        .. note::
+        Note:
             This method only works for models that return a distribution with
             a ``dist.slab.scale`` attribute, e.g. models with a Beta or
             Bernoulli-Gamma likelihood, where it returns the scale values of
             the slab component of the mixture model.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task containing the context and target data.
 
         Returns:
-            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+            numpy:numpy.ndarray | List[numpy:numpy.ndarray]:
                 Scale values.
         """
         dist = self(task)
@@ -687,11 +687,11 @@ class ConvNP(DeepSensorModel):
         Returned numpy arrays have shape ``(N_components, N_features, *N_targets)``.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task containing the context and target data.
 
         Returns:
-            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+            numpy:numpy.ndarray | List[numpy:numpy.ndarray]:
                 Mixture probabilities.
         """
         dist = self(task)
@@ -706,7 +706,7 @@ class ConvNP(DeepSensorModel):
         """...
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 ...
 
         Returns:
@@ -743,7 +743,7 @@ class ConvNP(DeepSensorModel):
                 default 1.
 
         Returns:
-            :class:`numpy:numpy.ndarray` | List[:class:`numpy:numpy.ndarray`]:
+            numpy:numpy.ndarray | List[numpy:numpy.ndarray]:
                 The samples as an array or list of arrays.
         """
         dist = self(task)
@@ -754,7 +754,7 @@ class ConvNP(DeepSensorModel):
         """Slice out the ConvCNP part of the ConvNP distribution.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task to slice.
 
         Returns:
@@ -813,7 +813,7 @@ class ConvNP(DeepSensorModel):
         """Mean marginal entropy over target points given context points.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task to compute the entropy of.
 
         Returns:
@@ -840,7 +840,7 @@ class ConvNP(DeepSensorModel):
         """Model entropy over target points given context points.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task to compute the entropy of.
 
         Returns:
@@ -852,14 +852,14 @@ class ConvNP(DeepSensorModel):
     def logpdf(self, dist: AbstractMultiOutputDistribution, task: Task):
         """Joint logpdf over all target sets.
 
-        .. note::
+        Note:
             If the model has multiple target sets, the returned logpdf is the
             mean logpdf over all target sets.
 
         Args:
             dist (neuralprocesses.dist.AbstractMultiOutputDistribution):
                 The distribution to compute the logpdf of.
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task to compute the logpdf of.
 
         Returns:
@@ -875,12 +875,12 @@ class ConvNP(DeepSensorModel):
     def logpdf(self, task: Task):
         """Joint logpdf over all target sets.
 
-        .. note::
+        Note:
             If the model has multiple target sets, the returned logpdf is the
             mean logpdf over all target sets.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task to compute the logpdf of.
 
         Returns:
@@ -899,7 +899,7 @@ class ConvNP(DeepSensorModel):
         """Compute the loss of a task.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task to compute the loss of.
             fix_noise (...):
                 Whether to fix the noise to the value specified in the model
@@ -949,17 +949,17 @@ class ConvNP(DeepSensorModel):
 
         Returned numpy arrays have shape ``(N_samples, N_features, *N_targets)``,
 
-        .. note::
+        Note:
             AR sampling only works for 0th context/target set, and only for models with
             a single target set.
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 The task to sample from.
             n_samples (int, optional):
                 The number of samples to draw from the distribution, by
                 default 1.
-            X_target_AR (:class:`numpy:numpy.ndarray`, optional):
+            X_target_AR (numpy:numpy.ndarray, optional):
                 Locations to draw AR samples over. If None, AR samples will be
                 drawn over the target locations in the task. Defaults to None.
             ar_subsample_factor (int, optional):
@@ -970,7 +970,7 @@ class ConvNP(DeepSensorModel):
                 "sample". Defaults to "mean".
 
         Returns:
-            :class:`numpy:numpy.ndarray`
+            numpy:numpy.ndarray
                 The samples.
         """
         if len(task["X_t"]) > 1 or (task["Y_t"] is not None and len(task["Y_t"]) > 1):
@@ -1058,10 +1058,10 @@ class ConvNP(DeepSensorModel):
 def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
     """Concatenate a list of tasks into a single task containing multiple batches.
 
-    ```{warning}
-    `concat_tasks` has been moved to deepsensor.data.task and will be removed from "
-        "deepsensor.model.convnp in a future release.
-    ```
+    !!! warning
+        `concat_tasks` has been moved to deepsensor.data.task and will be removed from "
+            "deepsensor.model.convnp in a future release.
+
     """
     warnings.warn(
         "concat_tasks has been moved to deepsensor.data.task and will be removed from "

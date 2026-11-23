@@ -21,7 +21,7 @@ def compute_greatest_data_density(task_loader: TaskLoader) -> int:
     maximum data ppu.
 
     Args:
-        task_loader (:class:`~.data.loader.TaskLoader`):
+        task_loader (deepsensor.data.loader.TaskLoader):
             TaskLoader object containing context and target sets.
 
     Returns:
@@ -91,7 +91,7 @@ def gen_encoder_scales(model_ppu: int, task_loader: TaskLoader) -> List[float]:
         model_ppu (int):
             Model ppu (points per unit), i.e. the number of points per unit of
             input space.
-        task_loader (:class:`~.data.loader.TaskLoader`):
+        task_loader (deepsensor.data.loader.TaskLoader):
             TaskLoader object containing context and target sets.
 
     Returns:

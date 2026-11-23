@@ -1,4 +1,4 @@
-[//]: # (![]&#40;figs/DeepSensorLogo.png&#41;)
+[//]: # (![]&#40;docs/images/DeepSensorLogo.png&#41;)
 <ul style="text-align: center;">
 <img src="https://raw.githubusercontent.com/alan-turing-institute/deepsensor/main/figs/DeepSensorLogo2.png" width="700"/>
 </ul>

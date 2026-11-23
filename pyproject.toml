@@ -44,15 +44,23 @@ Bug_Tracker = "https://github.com/alan-turing-institute/deepsensor/issues"
 [project.optional-dependencies]
 torch = ["torch>=2"]
 tf = ["tensorflow", "tensorflow_probability[tf]"]
+rioxarray = [
+    "rioxarray"
+]
+
+[dependency-groups]
 dev = [
     "pre-commit",
     "ruff",
 ]
 docs = [
-    "jupyter-book<2",
-    "matplotlib",
-    "numpy",
-    "sphinx",
+    "mike",
+    "mkdocs-autoapi",
+    "mkdocs-include-markdown-plugin",
+    "mkdocs-jupyter",
+    "mkdocs-materialx",
+    "mkdocstrings[python]",
+    "properdocs",
 ]
 test = [
     "coveralls",
@@ -60,9 +68,6 @@ test = [
     "parameterized",
     "pytest",
     "pytest-cov",
-]
-rioxarray = [
-    "rioxarray"
 ]
 
 [tool.setuptools.package-data]

@@ -62,9 +62,9 @@ def train_epoch(
     """Train model for one epoch.
 
     Args:
-        model (:class:`~.model.convnp.ConvNP`):
+        model (deepsensor.model.convnp.ConvNP):
             Model to train.
-        tasks (List[:class:`~.data.task.Task`]):
+        tasks (List[deepsensor.data.task.Task]):
             List of tasks to train on.
         lr (float, optional):
             Learning rate, by default 5e-5.
@@ -72,7 +72,7 @@ def train_epoch(
             Batch size. Defaults to None. If None, no batching is performed.
         opt (Optimizer, optional):
             TF or Torch optimizer. Defaults to None. If None,
-            :class:`tensorflow:tensorflow.keras.optimizer.Adam` is used.
+            tensorflow:tensorflow.keras.optimizer.Adam is used.
         progress_bar (bool, optional):
             Whether to display a progress bar. Defaults to False.
         tqdm_notebook (bool, optional):

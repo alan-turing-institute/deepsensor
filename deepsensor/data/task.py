@@ -45,7 +45,7 @@ class Task(dict):
         """Summarise the task in a representation that can be printed.
 
         Args:
-            cls (:class:`deepsensor.data.task.Task`:):
+            cls (deepsensor.data.task.Task:):
                 Task class.
             k (str):
                 Key of the task dictionary.
@@ -105,7 +105,7 @@ class Task(dict):
                 Flag to set in the task dictionary's `ops` key.
 
         Returns:
-            :class:`deepsensor.data.task.Task`:
+            deepsensor.data.task.Task:
                 Task with f applied to the array elements and op_flag set in
                 the ``ops`` key.
         """
@@ -134,7 +134,7 @@ class Task(dict):
         """Add a batch dimension to the arrays in the task dictionary.
 
         Returns:
-            :class:`deepsensor.data.task.Task`:
+            deepsensor.data.task.Task:
                 Task with batch dimension added to the array elements.
         """
         return self.op(lambda x: x[None, ...], op_flag="batch_dim")
@@ -143,7 +143,7 @@ class Task(dict):
         """Cast the arrays in the task dictionary to float32.
 
         Returns:
-            :class:`deepsensor.data.task.Task`:
+            deepsensor.data.task.Task:
                 Task with arrays cast to float32.
         """
         return self.op(lambda x: x.astype(np.float32), op_flag="float32")
@@ -154,11 +154,11 @@ class Task(dict):
         Necessary for AR sampling, which doesn't yet permit gridded context sets.
 
         Args:
-            task : :class:`~.data.task.Task`
+            task : deepsensor.data.task.Task
                 ...
 
         Returns:
-            :class:`deepsensor.data.task.Task`:
+            deepsensor.data.task.Task:
                 ...
         """
         self["X_c"] = [flatten_X(X) for X in self["X_c"]]
@@ -176,7 +176,7 @@ class Task(dict):
         """If NaNs are present in task["Y_c"], remove them (and corresponding task["X_c"]).
 
         Returns:
-            :class:`deepsensor.data.task.Task`:
+            deepsensor.data.task.Task:
                 ...
         """
         if "batch_dim" in self["ops"]:
@@ -215,7 +215,7 @@ class Task(dict):
         """If NaNs are present in task["Y_t"], remove them (and corresponding task["X_t"]).
 
         Returns:
-            :class:`deepsensor.data.task.Task`:
+            deepsensor.data.task.Task:
                 ...
         """
         if "batch_dim" in self["ops"]:
@@ -259,7 +259,7 @@ class Task(dict):
         were.
 
         Returns:
-            :class:`deepsensor.data.task.Task`:
+            deepsensor.data.task.Task:
                 Task with NaNs set to zeros and a mask indicating where the
                 missing values are.
         """
@@ -288,7 +288,7 @@ class Task(dict):
         """...
 
         Returns:
-            :class:`deepsensor.data.task.Task`:
+            deepsensor.data.task.Task:
                 ...
         """
         if "batch_dim" not in self["ops"]:
@@ -310,7 +310,7 @@ class Task(dict):
         """Convert to tensor object based on deep learning backend.
 
         Returns:
-            :class:`deepsensor.data.task.Task`:
+            deepsensor.data.task.Task:
                 Task with arrays converted to deep learning tensor objects.
         """
 
@@ -343,13 +343,13 @@ def append_obs_to_task(
         option plus ability to remove observations.
 
     Args:
-        task (:class:`deepsensor.data.task.Task`:): The task to modify.
+        task (deepsensor.data.task.Task:): The task to modify.
         X_new (array-like): New observation coordinates.
         Y_new (array-like): New observation values.
         context_set_idx (int): Index of the context set to append to.
 
     Returns:
-        :class:`deepsensor.data.task.Task`:
+        deepsensor.data.task.Task:
             Task with new observation appended to the context set.
     """
     if not 0 <= context_set_idx <= len(task["X_c"]) - 1:
@@ -387,11 +387,11 @@ def flatten_X(X: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
     """Convert tuple of gridded coords to (2, N) array if necessary.
 
     Args:
-        X (:class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]):
+        X (numpy:numpy.ndarray | Tuple[numpy:numpy.ndarray, numpy:numpy.ndarray]):
             ...
 
     Returns:
-        :class:`numpy:numpy.ndarray`
+        numpy:numpy.ndarray
             ...
     """
     if type(X) is tuple:
@@ -405,11 +405,11 @@ def flatten_Y(Y: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray
     array if necessary.
 
     Args:
-        Y (:class:`numpy:numpy.ndarray` | Tuple[:class:`numpy:numpy.ndarray`, :class:`numpy:numpy.ndarray`]):
+        Y (numpy:numpy.ndarray | Tuple[numpy:numpy.ndarray, numpy:numpy.ndarray]):
             ...
 
     Returns:
-        :class:`numpy:numpy.ndarray`
+        numpy:numpy.ndarray
             ...
     """
     if Y.ndim == 3:
@@ -428,7 +428,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
         - Raise error if ``aux_t`` values passed (not supported I don't think)
 
     Args:
-        tasks (List[:class:`deepsensor.data.task.Task`:]):
+        tasks (List[deepsensor.data.task.Task:]):
             List of tasks to concatenate into a single task.
         multiple (int, optional):
             Contexts are padded to the smallest multiple of this number that is
@@ -439,7 +439,7 @@ def concat_tasks(tasks: List[Task], multiple: int = 1) -> Task:
             the computational graph in graph mode.
 
     Returns:
-        :class:`~.data.task.Task`: Task containing multiple batches.
+        deepsensor.data.task.Task: Task containing multiple batches.
 
     Raises:
         ValueError:

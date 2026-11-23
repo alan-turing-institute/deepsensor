@@ -4,14 +4,12 @@ This page contains a list of new features that we would like to add to DeepSenso
 Some of these have been raised as issues on the [GitHub issue tracker](https://github.com/alan-turing-institute/deepsensor/issues)
 with further details.
 
-```{note}
-We will soon create a GitHub project board to track progress on these items, which will provide a more up-to-date view of the roadmap.
-```
+!!! note
+    We will soon create a GitHub project board to track progress on these items, which will provide a more up-to-date view of the roadmap.
 
-```{note}
-We are unable to provide a timetable for the roadmap due to maintainer time constraints.
-If you are interested in contributing to the project, check out our [](./contributing.md) page.
-```
+!!! note
+    We are unable to provide a timetable for the roadmap due to maintainer time constraints.
+    If you are interested in contributing to the project, check out our [](./contributing.md) page.
 
 * Patch-wise training and inference
 * Saving a ``TaskLoader`` when instantiated with raw xarray/pandas objects

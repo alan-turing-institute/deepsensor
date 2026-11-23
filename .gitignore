@@ -12,3 +12,6 @@ _build
 *.png
 deepsensor.egg-info/
 .venv/
+site/
+.cache/ # the mkdocs jupyter cache dir
+.vscode/

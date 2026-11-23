@@ -23,7 +23,7 @@ class AcquisitionFunction:
         target_set_idx: int = 0,
     ):
         """Args:
-        model (:class:`~.model.model.ProbabilisticModel`):
+        model (deepsensor.model.model.ProbabilisticModel):
             [Description of the model parameter.]
         context_set_idx (int):
             Index of context set to add new observations to when computing
@@ -41,11 +41,11 @@ class AcquisitionFunction:
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task object containing context and target sets.
 
         Returns:
-            :class:`numpy:numpy.ndarray`:
+            numpy:numpy.ndarray:
                 Acquisition function value/s. Shape ().
 
         Raises:
@@ -74,13 +74,13 @@ class AcquisitionFunctionParallel(AcquisitionFunction):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task object containing context and target sets.
-            X_s (:class:`numpy:numpy.ndarray`):
+            X_s (numpy:numpy.ndarray):
                 Search points. Shape (2, N_search).
 
         Returns:
-            :class:`numpy:numpy.ndarray`:
+            numpy:numpy.ndarray:
                 Should return acquisition function value/s. Shape (N_search,).
 
         Raises:
@@ -102,7 +102,7 @@ class MeanStddev(AcquisitionFunction):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 [Description of the task parameter.]
 
         Returns:
@@ -123,7 +123,7 @@ class MeanVariance(AcquisitionFunction):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 [Description of the task parameter.]
 
         Returns:
@@ -156,7 +156,7 @@ class pNormStddev(AcquisitionFunction):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 [Description of the task parameter.]
 
         Returns:
@@ -179,7 +179,7 @@ class MeanMarginalEntropy(AcquisitionFunction):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task object containing context and target sets.
 
         Returns:
@@ -201,7 +201,7 @@ class JointEntropy(AcquisitionFunction):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task object containing context and target sets.
 
         Returns:
@@ -222,7 +222,7 @@ class OracleMAE(AcquisitionFunctionOracle):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task object containing context and target sets.
 
         Returns:
@@ -247,7 +247,7 @@ class OracleRMSE(AcquisitionFunctionOracle):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task object containing context and target sets.
 
         Returns:
@@ -272,7 +272,7 @@ class OracleMarginalNLL(AcquisitionFunctionOracle):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task object containing context and target sets.
 
         Returns:
@@ -297,7 +297,7 @@ class OracleJointNLL(AcquisitionFunctionOracle):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task object containing context and target sets.
 
         Returns:
@@ -331,9 +331,9 @@ class Random(AcquisitionFunctionParallel):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 [Description of the task parameter.]
-            X_s (:class:`numpy:numpy.ndarray`):
+            X_s (numpy:numpy.ndarray):
                 [Description of the X_s parameter.]
 
         Returns:
@@ -355,9 +355,9 @@ class ContextDist(AcquisitionFunctionParallel):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 [Description of the task parameter.]
-            X_s (:class:`numpy:numpy.ndarray`):
+            X_s (numpy:numpy.ndarray):
                 [Description of the X_s parameter.]
 
         Returns:
@@ -396,9 +396,9 @@ class Stddev(AcquisitionFunctionParallel):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 [Description of the task parameter.]
-            X_s (:class:`numpy:numpy.ndarray`):
+            X_s (numpy:numpy.ndarray):
                 [Description of the X_s parameter.]
 
         Returns:
@@ -415,8 +415,7 @@ class Stddev(AcquisitionFunctionParallel):
 class ExpectedImprovement(AcquisitionFunctionParallel):
     """Expected improvement acquisition function.
 
-    .. note::
-
+    Note:
         The current implementation of this acquisition function is only valid
         for maximisation.
     """
@@ -428,13 +427,13 @@ class ExpectedImprovement(AcquisitionFunctionParallel):
         :no-index:
 
         Args:
-            task (:class:`~.data.task.Task`):
+            task (deepsensor.data.task.Task):
                 Task object containing context and target sets.
-            X_s (:class:`numpy:numpy.ndarray`):
+            X_s (numpy:numpy.ndarray):
                 Search points. Shape (2, N_search).
 
         Returns:
-            :class:`numpy:numpy.ndarray`:
+            numpy:numpy.ndarray:
                 Acquisition function value/s. Shape (N_search,).
         """
         # Set the target points to the search points

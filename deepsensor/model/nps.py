@@ -12,7 +12,7 @@ def convert_task_to_nps_args(task: Task):
         TODO move to ConvNP class?
 
     Args:
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             Task object containing context and target sets.
 
     Returns:
@@ -79,7 +79,7 @@ def run_nps_model(
     Args:
         neural_process (neuralprocesses.Model):
             Neural process model.
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             Task object containing context and target sets.
         n_samples (int, optional):
             Number of samples to draw from the model. Defaults to ``None``
@@ -111,7 +111,7 @@ def run_nps_model_ar(neural_process, task: Task, num_samples: int = 1):
     Args:
         neural_process (neuralprocesses.Model):
             Neural process model.
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             Task object containing context and target sets.
         num_samples (int, optional):
             Number of samples to draw from the model. Defaults to 1.
@@ -231,7 +231,7 @@ def construct_neural_process(
             density channel. Defaults to ``1e-2``.
 
     Returns:
-        :class:`.model.Model`:
+        .model.Model:
             ConvNP model.
 
     Raises:
@@ -295,11 +295,11 @@ def compute_encoding_tensor(model, task: Task):
     Args:
         model (...):
             Model object.
-        task (:class:`~.data.task.Task`):
+        task (deepsensor.data.task.Task):
             Task object containing context and target sets.
 
     Returns:
-        encoding : :class:`numpy:numpy.ndarray`
+        encoding : numpy:numpy.ndarray
             Encoding tensor? #TODO
     """
     neural_process_encoder = backend.nps.Model(model.model.encoder, lambda x: x)

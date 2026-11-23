@@ -7,16 +7,16 @@ import xarray as xr
 
 
 def construct_x1x2_ds(gridded_ds):
-    """Construct an :class:`xarray.Dataset` containing two vars, where each var is
+    """Construct an xarray.Dataset containing two vars, where each var is
     a 2D gridded channel whose values contain the x_1 and x_2 coordinate
     values, respectively.
 
     Args:
-        gridded_ds (:class:`xarray.Dataset`):
+        gridded_ds (xarray.Dataset):
             ...
 
     Returns:
-        :class:`xarray.Dataset`
+        xarray.Dataset
             ...
     """
     X1, X2 = np.meshgrid(gridded_ds.x1, gridded_ds.x2, indexing="ij")
@@ -28,7 +28,7 @@ def construct_x1x2_ds(gridded_ds):
 
 
 def construct_circ_time_ds(dates, freq):
-    """Return an :class:`xarray.Dataset` containing a circular variable for time.
+    """Return an xarray.Dataset containing a circular variable for time.
 
     The ``freq`` entry dictates the frequency of cycling of the circular
     variable. E.g.:
@@ -44,7 +44,7 @@ def construct_circ_time_ds(dates, freq):
             ...
 
     Returns:
-        :class:`xarray.Dataset`
+        xarray.Dataset
             ...
     """
     # Ensure dates are pandas
@@ -83,7 +83,7 @@ def compute_xarray_data_resolution(ds: Union[xr.DataArray, xr.Dataset]) -> float
     degrees.
 
     Args:
-        ds (:class:`xarray.DataArray` | :class:`xarray.Dataset`):
+        ds (xarray.DataArray | xarray.Dataset):
             Xarray object with coordinates x1 and x2.
 
     Returns:
@@ -112,7 +112,7 @@ def compute_pandas_data_resolution(
     the distance between the closest 5% of neighbouring observations.
 
     Args:
-        df (:class:`pandas.DataFrame` | :class:`pandas.Series`):
+        df (pandas.DataFrame | pandas.Series):
             Dataframe or series with indexes time, x1, and x2.
         n_times (int, optional):
             Number of dates to sample. Defaults to 1000. If "all", all dates
